@@ -3,7 +3,22 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kenkel_jon", "kenkel_jon.vcxproj", "{945DA05E-449B-441F-B718-034C0520263B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{F089765B-4770-4379-979D-099FFBE79A19}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Game", "Game", "{5934B994-84DD-4E4A-94B7-AA22975C5E46}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{B442B8C9-B10D-4CA8-B002-1B36C1CBEBEC}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AssetBuilder", "Code\Tools\AssetBuilder\AssetBuilder.vcxproj", "{ABF804FE-993A-43E2-A242-F3090A290B12}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BuildAssets", "Code\Game\BuildAssets\BuildAssets.vcxproj", "{3670C64E-AAA0-4056-BF89-744D0276F609}"
+	ProjectSection(ProjectDependencies) = postProject
+		{ABF804FE-993A-43E2-A242-F3090A290B12} = {ABF804FE-993A-43E2-A242-F3090A290B12}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Code\Game\Game\WindowsProgram.vcxproj", "{433FF686-9527-4C97-8EF4-060152A428B5}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Graphics", "Code\Engine\Graphics\Graphics.vcxproj", "{9814E114-0EB4-4B6A-89D6-5C1C4F9EA13F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,16 +28,46 @@ Global
 		Release|OpenGL_32 = Release|OpenGL_32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{945DA05E-449B-441F-B718-034C0520263B}.Debug|Direct3D_64.ActiveCfg = Debug|x64
-		{945DA05E-449B-441F-B718-034C0520263B}.Debug|Direct3D_64.Build.0 = Debug|x64
-		{945DA05E-449B-441F-B718-034C0520263B}.Debug|OpenGL_32.ActiveCfg = Debug|Win32
-		{945DA05E-449B-441F-B718-034C0520263B}.Debug|OpenGL_32.Build.0 = Debug|Win32
-		{945DA05E-449B-441F-B718-034C0520263B}.Release|Direct3D_64.ActiveCfg = Release|x64
-		{945DA05E-449B-441F-B718-034C0520263B}.Release|Direct3D_64.Build.0 = Release|x64
-		{945DA05E-449B-441F-B718-034C0520263B}.Release|OpenGL_32.ActiveCfg = Release|Win32
-		{945DA05E-449B-441F-B718-034C0520263B}.Release|OpenGL_32.Build.0 = Release|Win32
+		{ABF804FE-993A-43E2-A242-F3090A290B12}.Debug|Direct3D_64.ActiveCfg = Debug|x64
+		{ABF804FE-993A-43E2-A242-F3090A290B12}.Debug|Direct3D_64.Build.0 = Debug|x64
+		{ABF804FE-993A-43E2-A242-F3090A290B12}.Debug|OpenGL_32.ActiveCfg = Debug|Win32
+		{ABF804FE-993A-43E2-A242-F3090A290B12}.Debug|OpenGL_32.Build.0 = Debug|Win32
+		{ABF804FE-993A-43E2-A242-F3090A290B12}.Release|Direct3D_64.ActiveCfg = Release|x64
+		{ABF804FE-993A-43E2-A242-F3090A290B12}.Release|Direct3D_64.Build.0 = Release|x64
+		{ABF804FE-993A-43E2-A242-F3090A290B12}.Release|OpenGL_32.ActiveCfg = Release|Win32
+		{ABF804FE-993A-43E2-A242-F3090A290B12}.Release|OpenGL_32.Build.0 = Release|Win32
+		{3670C64E-AAA0-4056-BF89-744D0276F609}.Debug|Direct3D_64.ActiveCfg = Debug|x64
+		{3670C64E-AAA0-4056-BF89-744D0276F609}.Debug|Direct3D_64.Build.0 = Debug|x64
+		{3670C64E-AAA0-4056-BF89-744D0276F609}.Debug|OpenGL_32.ActiveCfg = Debug|Win32
+		{3670C64E-AAA0-4056-BF89-744D0276F609}.Debug|OpenGL_32.Build.0 = Debug|Win32
+		{3670C64E-AAA0-4056-BF89-744D0276F609}.Release|Direct3D_64.ActiveCfg = Release|x64
+		{3670C64E-AAA0-4056-BF89-744D0276F609}.Release|Direct3D_64.Build.0 = Release|x64
+		{3670C64E-AAA0-4056-BF89-744D0276F609}.Release|OpenGL_32.ActiveCfg = Release|Win32
+		{3670C64E-AAA0-4056-BF89-744D0276F609}.Release|OpenGL_32.Build.0 = Release|Win32
+		{433FF686-9527-4C97-8EF4-060152A428B5}.Debug|Direct3D_64.ActiveCfg = Debug|x64
+		{433FF686-9527-4C97-8EF4-060152A428B5}.Debug|Direct3D_64.Build.0 = Debug|x64
+		{433FF686-9527-4C97-8EF4-060152A428B5}.Debug|OpenGL_32.ActiveCfg = Debug|Win32
+		{433FF686-9527-4C97-8EF4-060152A428B5}.Debug|OpenGL_32.Build.0 = Debug|Win32
+		{433FF686-9527-4C97-8EF4-060152A428B5}.Release|Direct3D_64.ActiveCfg = Release|x64
+		{433FF686-9527-4C97-8EF4-060152A428B5}.Release|Direct3D_64.Build.0 = Release|x64
+		{433FF686-9527-4C97-8EF4-060152A428B5}.Release|OpenGL_32.ActiveCfg = Release|Win32
+		{433FF686-9527-4C97-8EF4-060152A428B5}.Release|OpenGL_32.Build.0 = Release|Win32
+		{9814E114-0EB4-4B6A-89D6-5C1C4F9EA13F}.Debug|Direct3D_64.ActiveCfg = Debug|Win32
+		{9814E114-0EB4-4B6A-89D6-5C1C4F9EA13F}.Debug|Direct3D_64.Build.0 = Debug|Win32
+		{9814E114-0EB4-4B6A-89D6-5C1C4F9EA13F}.Debug|OpenGL_32.ActiveCfg = Debug|Win32
+		{9814E114-0EB4-4B6A-89D6-5C1C4F9EA13F}.Debug|OpenGL_32.Build.0 = Debug|Win32
+		{9814E114-0EB4-4B6A-89D6-5C1C4F9EA13F}.Release|Direct3D_64.ActiveCfg = Release|Win32
+		{9814E114-0EB4-4B6A-89D6-5C1C4F9EA13F}.Release|Direct3D_64.Build.0 = Release|Win32
+		{9814E114-0EB4-4B6A-89D6-5C1C4F9EA13F}.Release|OpenGL_32.ActiveCfg = Release|Win32
+		{9814E114-0EB4-4B6A-89D6-5C1C4F9EA13F}.Release|OpenGL_32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{ABF804FE-993A-43E2-A242-F3090A290B12} = {B442B8C9-B10D-4CA8-B002-1B36C1CBEBEC}
+		{3670C64E-AAA0-4056-BF89-744D0276F609} = {5934B994-84DD-4E4A-94B7-AA22975C5E46}
+		{433FF686-9527-4C97-8EF4-060152A428B5} = {5934B994-84DD-4E4A-94B7-AA22975C5E46}
+		{9814E114-0EB4-4B6A-89D6-5C1C4F9EA13F} = {F089765B-4770-4379-979D-099FFBE79A19}
 	EndGlobalSection
 EndGlobal
