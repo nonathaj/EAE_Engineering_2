@@ -26,12 +26,17 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Code\Game\Game\Wind
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Graphics", "Code\Engine\Graphics\Graphics.vcxproj", "{9814E114-0EB4-4B6A-89D6-5C1C4F9EA13F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1F4101D0-3385-4A3A-8A36-26191589916C} = {1F4101D0-3385-4A3A-8A36-26191589916C}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Windows", "Code\Engine\Windows\Windows.vcxproj", "{3872EBBB-BF0F-48C5-A9FD-9BD896CA3304}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External", "External", "{F153F58F-2453-4FE4-8E29-310C59DBDBFB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenGLExtensions", "Code\External\OpenGLExtensions\OpenGLExtensions.vcxproj", "{1F4101D0-3385-4A3A-8A36-26191589916C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Core", "Code\Engine\Core\Core.vcxproj", "{2C8EFEC2-3737-4E5B-B155-B2BBBBD798B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,6 +94,14 @@ Global
 		{1F4101D0-3385-4A3A-8A36-26191589916C}.Release|Direct3D_64.Build.0 = Release|x64
 		{1F4101D0-3385-4A3A-8A36-26191589916C}.Release|OpenGL_32.ActiveCfg = Release|Win32
 		{1F4101D0-3385-4A3A-8A36-26191589916C}.Release|OpenGL_32.Build.0 = Release|Win32
+		{2C8EFEC2-3737-4E5B-B155-B2BBBBD798B7}.Debug|Direct3D_64.ActiveCfg = Debug|x64
+		{2C8EFEC2-3737-4E5B-B155-B2BBBBD798B7}.Debug|Direct3D_64.Build.0 = Debug|x64
+		{2C8EFEC2-3737-4E5B-B155-B2BBBBD798B7}.Debug|OpenGL_32.ActiveCfg = Debug|Win32
+		{2C8EFEC2-3737-4E5B-B155-B2BBBBD798B7}.Debug|OpenGL_32.Build.0 = Debug|Win32
+		{2C8EFEC2-3737-4E5B-B155-B2BBBBD798B7}.Release|Direct3D_64.ActiveCfg = Release|x64
+		{2C8EFEC2-3737-4E5B-B155-B2BBBBD798B7}.Release|Direct3D_64.Build.0 = Release|x64
+		{2C8EFEC2-3737-4E5B-B155-B2BBBBD798B7}.Release|OpenGL_32.ActiveCfg = Release|Win32
+		{2C8EFEC2-3737-4E5B-B155-B2BBBBD798B7}.Release|OpenGL_32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -100,5 +113,6 @@ Global
 		{9814E114-0EB4-4B6A-89D6-5C1C4F9EA13F} = {F089765B-4770-4379-979D-099FFBE79A19}
 		{3872EBBB-BF0F-48C5-A9FD-9BD896CA3304} = {F089765B-4770-4379-979D-099FFBE79A19}
 		{1F4101D0-3385-4A3A-8A36-26191589916C} = {F153F58F-2453-4FE4-8E29-310C59DBDBFB}
+		{2C8EFEC2-3737-4E5B-B155-B2BBBBD798B7} = {F089765B-4770-4379-979D-099FFBE79A19}
 	EndGlobalSection
 EndGlobal

@@ -12,7 +12,7 @@
 #include "Resources/Resource.h"
 // WindowsFunctions.h contains convenience functionality for Windows features;
 // in this example program we just use it to get error messages
-#include "Windows/WindowsFunctions.h"
+#include "../../Engine/Windows/Functions.h"
 
 // Static Data Initialization
 //===========================
