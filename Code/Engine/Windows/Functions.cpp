@@ -1,7 +1,7 @@
 // Header Files
 //=============
 
-#include "WindowsFunctions.h"
+#include "Functions.h"
 
 #include <iostream>
 #include <ShlObj.h>

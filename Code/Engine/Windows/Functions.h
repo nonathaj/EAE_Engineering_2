@@ -5,7 +5,7 @@
 #ifndef EAE6320_WINDOWSFUNCTIONS_H
 #define EAE6320_WINDOWSFUNCTIONS_H
 
-#include "WindowsIncludes.h"
+#include "Includes.h"
 
 #include <cstdint>
 #include <string>

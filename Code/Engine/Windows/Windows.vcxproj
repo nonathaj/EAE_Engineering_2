@@ -19,11 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="WindowsFunctions.cpp" />
+    <ClCompile Include="Functions.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="WindowsFunctions.h" />
-    <ClInclude Include="WindowsIncludes.h" />
+    <ClInclude Include="Functions.h" />
+    <ClInclude Include="Includes.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3872EBBB-BF0F-48C5-A9FD-9BD896CA3304}</ProjectGuid>

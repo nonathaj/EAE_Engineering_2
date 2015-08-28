@@ -5,7 +5,7 @@
 
 #include <iostream>
 #include <string>
-#include "../../Engine/Windows/WindowsFunctions.h"
+#include "../../Engine/Windows/Functions.h"
 
 // Static Data Initialization
 //===========================
