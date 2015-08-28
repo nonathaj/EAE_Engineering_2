@@ -6,6 +6,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <IntDir>$(IntermediateDir)</IntDir>
+    <LibraryPath>$(LibDir);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
