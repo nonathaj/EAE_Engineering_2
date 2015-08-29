@@ -428,14 +428,14 @@ namespace
 					std::stringstream errorMessage;
 					errorMessage << "Direct3D failed to compile the fragment shader from the file " << sourceCodeFileName
 						<< ":\n" << reinterpret_cast<char*>( errorMessages->GetBufferPointer() );
-					DEBUG_PRINT( errorMessage.str() );
+					DEBUG_PRINT( errorMessage.str().c_str() );
 					errorMessages->Release();
 				}
 				else
 				{
 					std::stringstream errorMessage;
 					errorMessage << "Direct3D failed to compile the fragment shader from the file " << sourceCodeFileName;
-					DEBUG_PRINT( errorMessage.str() );
+					DEBUG_PRINT( errorMessage.str().c_str() );
 				}
 				return false;
 			}
@@ -484,14 +484,14 @@ namespace
 					std::stringstream errorMessage;
 					errorMessage << "Direct3D failed to compile the vertex shader from the file " << sourceCodeFileName
 						<< ":\n" << reinterpret_cast<char*>( errorMessages->GetBufferPointer() );
-					DEBUG_PRINT( errorMessage.str() );
+					DEBUG_PRINT( errorMessage.str().c_str() );
 					errorMessages->Release();
 				}
 				else
 				{
 					std::stringstream errorMessage;
 					errorMessage << "Direct3D failed to compile the vertex shader from the file " << sourceCodeFileName;
-					DEBUG_PRINT( errorMessage.str() );
+					DEBUG_PRINT( errorMessage.str().c_str() );
 				}
 				return false;
 			}

@@ -27,6 +27,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Code\Game\Game\Wind
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Graphics", "Code\Engine\Graphics\Graphics.vcxproj", "{9814E114-0EB4-4B6A-89D6-5C1C4F9EA13F}"
 	ProjectSection(ProjectDependencies) = postProject
+		{2C8EFEC2-3737-4E5B-B155-B2BBBBD798B7} = {2C8EFEC2-3737-4E5B-B155-B2BBBBD798B7}
 		{1F4101D0-3385-4A3A-8A36-26191589916C} = {1F4101D0-3385-4A3A-8A36-26191589916C}
 	EndProjectSection
 EndProject

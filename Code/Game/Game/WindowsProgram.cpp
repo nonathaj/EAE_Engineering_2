@@ -14,6 +14,8 @@
 // in this example program we just use it to get error messages
 #include "../../Engine/Windows/Functions.h"
 
+#include "../../Engine/Graphics/Graphics.h"
+
 // Static Data Initialization
 //===========================
 
@@ -449,6 +451,9 @@ bool UnregisterMainWindowClass( const HINSTANCE i_thisInstanceOfTheProgram )
 
 bool WaitForMainWindowToClose( int& o_exitCode )
 {
+
+	eae6320::Graphics::Initialize(s_mainWindow);
+
 	// Any time something happens that Windows cares about, it will send the main window a message.
 
 	// One of the messages it sends is that the application should quit;
@@ -485,6 +490,7 @@ bool WaitForMainWindowToClose( int& o_exitCode )
 			// A real game might have something like the following:
 			//	someGameClass.OnNewFrame();
 			// or similar, though.)
+			eae6320::Graphics::Render();
 		}
 		else
 		{
@@ -505,6 +511,8 @@ bool WaitForMainWindowToClose( int& o_exitCode )
 			DispatchMessage( &message );
 		}
 	} while ( message.message != WM_QUIT );
+
+	eae6320::Graphics::ShutDown();
 
 	// The exit code for the application is stored in the WPARAM of a WM_QUIT message
 	o_exitCode = static_cast<int>( message.wParam );
