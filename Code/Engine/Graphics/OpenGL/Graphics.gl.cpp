@@ -10,7 +10,7 @@
 #include <gl/GLU.h>
 #include <string>
 #include <sstream>
-#include "../../Core/Console.h"
+#include "../../System/Console.h"
 #include "../../Windows/Functions.h"
 #include "../../../External/OpenGlExtensions/OpenGlExtensions.h"
 

@@ -5,7 +5,7 @@
 #include "..\Windows\Includes.h"
 #include "Console.h"
 
-namespace Core
+namespace System
 {
 	void ConsolePrint(bool i_displayFileAndLine, const char * i_file, const unsigned int i_line, const char * i_fmt, ...)
 	{
