@@ -108,7 +108,7 @@
       <AdditionalDependencies>%(AdditionalDependencies);Graphics.lib;Windows.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(TargetPath)" "$(GameDir)" /Y</Command>
+      <Command>copy "$(TargetPath)" "$(GameDir)" /y</Command>
       <Message>Copy the final executable of the game to the Game directory</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -128,7 +128,7 @@
       </Command>
     </CustomBuildStep>
     <PostBuildEvent>
-      <Command>copy "$(TargetPath)" "$(GameDir)" /Y</Command>
+      <Command>copy "$(TargetPath)" "$(GameDir)" /y</Command>
       <Message>Copy the final executable of the game to the Game directory</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -148,7 +148,7 @@
       <AdditionalDependencies>%(AdditionalDependencies);Graphics.lib;Windows.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(TargetPath)" "$(GameDir)" /Y</Command>
+      <Command>copy "$(TargetPath)" "$(GameDir)" /y</Command>
       <Message>Copy the final executable of the game to the Game directory</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -172,7 +172,7 @@
       </Command>
     </CustomBuildStep>
     <PostBuildEvent>
-      <Command>copy "$(TargetPath)" "$(GameDir)" /Y</Command>
+      <Command>copy "$(TargetPath)" "$(GameDir)" /y</Command>
       <Message>Copy the final executable of the game to the Game directory</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>

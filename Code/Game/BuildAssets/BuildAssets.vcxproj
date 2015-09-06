@@ -145,8 +145,6 @@
       <Outputs>_ALWAYS_RUN_</Outputs>
     </CustomBuildStep>
   </ItemDefinitionGroup>
-  <ItemGroup>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

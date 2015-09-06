@@ -3,8 +3,10 @@
   <ItemGroup>
     <ClCompile Include="EntryPoint.cpp" />
     <ClCompile Include="HelperFunctions.cpp" />
+    <ClCompile Include="AssetBuilder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HelperFunctions.h" />
+    <ClInclude Include="AssetBuilder.h" />
   </ItemGroup>
 </Project>
