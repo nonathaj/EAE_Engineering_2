@@ -108,9 +108,16 @@
       <AdditionalDependencies>%(AdditionalDependencies);Graphics.lib;Windows.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(TargetPath)" "$(GameDir)" /y</Command>
-      <Message>Copy the final executable of the game to the Game directory</Message>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
     </PostBuildEvent>
+    <CustomBuildStep>
+      <Command>copy "$(TargetPath)" "$(GameDir)" /y</Command>
+      <Message>Copying the final executable of the game to the Game directory</Message>
+      <Outputs>$(GameDir)$(TargetFileName)</Outputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -124,12 +131,15 @@
       <AdditionalDependencies>%(AdditionalDependencies);Graphics.lib;Windows.lib</AdditionalDependencies>
     </Link>
     <CustomBuildStep>
-      <Command>
-      </Command>
+      <Command>copy "$(TargetPath)" "$(GameDir)" /y</Command>
+      <Message>Copying the final executable of the game to the Game directory</Message>
+      <Outputs>$(GameDir)$(TargetFileName)</Outputs>
     </CustomBuildStep>
     <PostBuildEvent>
-      <Command>copy "$(TargetPath)" "$(GameDir)" /y</Command>
-      <Message>Copy the final executable of the game to the Game directory</Message>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -148,9 +158,16 @@
       <AdditionalDependencies>%(AdditionalDependencies);Graphics.lib;Windows.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(TargetPath)" "$(GameDir)" /y</Command>
-      <Message>Copy the final executable of the game to the Game directory</Message>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
     </PostBuildEvent>
+    <CustomBuildStep>
+      <Command>copy "$(TargetPath)" "$(GameDir)" /y</Command>
+      <Message>Copying the final executable of the game to the Game directory</Message>
+      <Outputs>$(GameDir)$(TargetFileName)</Outputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -168,12 +185,15 @@
       <AdditionalDependencies>%(AdditionalDependencies);Graphics.lib;Windows.lib</AdditionalDependencies>
     </Link>
     <CustomBuildStep>
-      <Command>
-      </Command>
+      <Command>copy "$(TargetPath)" "$(GameDir)" /y</Command>
+      <Message>Copying the final executable of the game to the Game directory</Message>
+      <Outputs>$(GameDir)$(TargetFileName)</Outputs>
     </CustomBuildStep>
     <PostBuildEvent>
-      <Command>copy "$(TargetPath)" "$(GameDir)" /y</Command>
-      <Message>Copy the final executable of the game to the Game directory</Message>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
