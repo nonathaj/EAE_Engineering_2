@@ -200,16 +200,14 @@ namespace
 			{
 				//// Return a boolean [true]
 				lua_pushboolean(io_luaState, true);
-				const int returnValueCount = 1;
-				return returnValueCount;
+				return 1;
 			}
 			else
 			{
 				//// On failure return two values: a boolean [false] and the error message
 				lua_pushboolean(io_luaState, false);
 				lua_pushstring(io_luaState, errorMessage.c_str());
-				const int returnValueCount = 2;
-				return returnValueCount;
+				return 2;
 			}
 		}
 	}
@@ -227,8 +225,7 @@ namespace
 		if ( eae6320::CreateDirectoryIfNecessary( i_path, &errorMessage ) )
 		{
 			//// Return nothing
-			const int returnValueCount = 0;
-			return returnValueCount;
+			return 0;
 		}
 		else
 		{
@@ -251,8 +248,7 @@ namespace
 		if ( eae6320::DoesFileExist( i_path, &errorMessage, &errorCode ) )
 		{
 			lua_pushboolean( io_luaState, true );
-			const int returnValueCount = 1;
-			return returnValueCount;
+			return 1;
 		}
 		else
 		{
@@ -264,8 +260,7 @@ namespace
 			{
 				lua_pushboolean( io_luaState, false );
 				lua_pushstring( io_luaState, errorMessage.c_str() );
-				const int returnValueCount = 2;
-				return returnValueCount;
+				return 2;
 			}
 			else
 			{
@@ -292,16 +287,14 @@ namespace
 		{
 			//// Return the value as a string
 			lua_pushstring(io_luaState, value.c_str());
-			const int returnValueCount = 1;
-			return returnValueCount;
+			return 1;
 		}
 		else
 		{
 			//// On failure return two values: a nil and the error message
 			lua_pushnil(io_luaState);
 			lua_pushstring(io_luaState, errorMessage.c_str());
-			const int returnValueCount = 2;
-			return returnValueCount;
+			return 2;
 		}
 	}
 
@@ -324,8 +317,7 @@ namespace
 			const lua_Number lastWriteTime_asNumber = static_cast<lua_Number>( lastWriteTime );
 			//// Return the last write time as a number
 			lua_pushnumber(io_luaState, lastWriteTime_asNumber);
-			const int returnValueCount = 1;
-			return returnValueCount;
+			return 1;
 		}
 		else
 		{
@@ -359,7 +351,6 @@ namespace
 		OutputErrorMessage( i_errorMessage, i_optionalFileName );
 
 		// Return nothing
-		const int returnValueCount = 0;
-		return returnValueCount;
+		return 0;
 	}
 }
