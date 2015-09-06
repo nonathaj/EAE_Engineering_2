@@ -157,8 +157,8 @@ void eae6320::Graphics::Render()
 				const D3DPRIMITIVETYPE primitiveType = D3DPT_TRIANGLELIST;
 				// It's possible to start rendering primitives in the middle of the stream
 				const unsigned int indexOfFirstVertexToRender = 0;
-				// We are drawing a single triangle
-				const unsigned int primitiveCountToRender = 1;
+				// We are drawing ***2*** triangles
+				const unsigned int primitiveCountToRender = 2;
 				result = s_direct3dDevice->DrawPrimitive( primitiveType, indexOfFirstVertexToRender, primitiveCountToRender );
 				assert( SUCCEEDED( result ) );
 			}
@@ -345,7 +345,8 @@ namespace
 		{
 			// We are drawing a single triangle
 			const unsigned int verticesPerTriangle = 3;
-			const unsigned int bufferSize = verticesPerTriangle * sizeof( sVertex );
+			const uint32_t numTriangles = 2;
+			const unsigned int bufferSize = verticesPerTriangle * numTriangles * sizeof( sVertex );
 			// We will define our own vertex format
 			const DWORD useSeparateVertexDeclaration = 0;
 			// Place the vertex buffer into memory that Direct3D thinks is the most appropriate
@@ -384,6 +385,15 @@ namespace
 
 				vertexData[2].x = 1.0f;
 				vertexData[2].y = 0.0f;
+
+				vertexData[3].x = 0.0f;
+				vertexData[3].y = 0.0f;
+
+				vertexData[4].x = 0.0f;
+				vertexData[4].y = 1.0f;
+
+				vertexData[5].x = 1.0f;
+				vertexData[5].y = 1.0f;
 			}
 			// The buffer must be "unlocked" before it can be used
 			{
