@@ -8,7 +8,7 @@
 #include <d3d9.h>
 #include <d3dx9shader.h>
 #include <sstream>
-#include "../../UserOutput/UserOutput.h"
+#include "../../System/Console.h"
 
 // Static Data Initialization
 //===========================
@@ -177,8 +177,8 @@ void eae6320::Graphics::Render()
 				const unsigned int indexOfFirstVertexToRender = 0;
 				const unsigned int indexOfFirstIndexToUse = 0;
 				// We are drawing a square
-				const unsigned int vertexCountToRender = EAE6320_TODO;	// How vertices from the vertex buffer will be used?
-				const unsigned int primitiveCountToRender = EAE6320_TODO;	// How many triangles will be drawn?
+				const unsigned int vertexCountToRender = 4;	// How vertices from the vertex buffer will be used?
+				const unsigned int primitiveCountToRender = 2;	// How many triangles will be drawn?
 				result = s_direct3dDevice->DrawIndexedPrimitive( primitiveType,
 					indexOfFirstVertexToRender, indexOfFirstVertexToRender, vertexCountToRender,
 					indexOfFirstIndexToUse, primitiveCountToRender );
@@ -284,7 +284,7 @@ namespace
 		}
 		else
 		{
-			eae6320::UserOutput::Print( "Direct3D failed to create a Direct3D9 device" );
+			DEBUG_PRINT( "Direct3D failed to create a Direct3D9 device" );
 			return false;
 		}
 	}
@@ -308,7 +308,7 @@ namespace
 		unsigned int bufferSize;
 		{
 			// We are drawing a square
-			const unsigned int triangleCount = EAE6320_TODO;	// How many triangles does a square have?
+			const unsigned int triangleCount = 1;	// How many triangles does a square have?
 			const unsigned int vertexCountPerTriangle = 3;
 			bufferSize = triangleCount * vertexCountPerTriangle * sizeof( uint32_t );
 			// We'll use 32-bit indices in this class to keep things simple
@@ -321,7 +321,7 @@ namespace
 				&s_indexBuffer, notUsed );
 			if ( FAILED( result ) )
 			{
-				eae6320::UserOutput::Print( "Direct3D failed to create an index buffer" );
+				DEBUG_PRINT( "Direct3D failed to create an index buffer" );
 				return false;
 			}
 		}
@@ -336,7 +336,7 @@ namespace
 					reinterpret_cast<void**>( &indexData ), useDefaultLockingBehavior );
 				if ( FAILED( result ) )
 				{
-					eae6320::UserOutput::Print( "Direct3D failed to lock the index buffer" );
+					DEBUG_PRINT( "Direct3D failed to lock the index buffer" );
 					return false;
 				}
 			}
@@ -351,20 +351,21 @@ namespace
 				// (also remember to maintain the correct handedness for the triangle winding order).
 
 				// Triangle 0
-				indexData[0] = EAE6320_TODO;
-				indexData[1] = EAE6320_TODO;
-				indexData[2] = EAE6320_TODO;
+				indexData[0] = 0;
+				indexData[1] = 3;
+				indexData[2] = 2;
 
 				// Triangle 1
-				indexData[3] = EAE6320_TODO;
-				// etc...
+				indexData[3] = 0;
+				indexData[4] = 1;
+				indexData[5] = 3;
 			}
 			// The buffer must be "unlocked" before it can be used
 			{
 				const HRESULT result = s_indexBuffer->Unlock();
 				if ( FAILED( result ) )
 				{
-					eae6320::UserOutput::Print( "Direct3D failed to unlock the index buffer" );
+					DEBUG_PRINT( "Direct3D failed to unlock the index buffer" );
 					return false;
 				}
 			}
@@ -384,7 +385,7 @@ namespace
 		}
 		else
 		{
-			eae6320::UserOutput::Print( "DirectX failed to create a Direct3D9 interface" );
+			DEBUG_PRINT( "DirectX failed to create a Direct3D9 interface" );
 			return false;
 		}
 	}
@@ -435,13 +436,13 @@ namespace
 				result = s_direct3dDevice->SetVertexDeclaration( s_vertexDeclaration );
 				if ( FAILED( result ) )
 				{
-					eae6320::UserOutput::Print( "Direct3D failed to set the vertex declaration" );
+					DEBUG_PRINT( "Direct3D failed to set the vertex declaration" );
 					return false;
 				}
 			}
 			else
 			{
-				eae6320::UserOutput::Print( "Direct3D failed to create a Direct3D9 vertex declaration" );
+				DEBUG_PRINT( "Direct3D failed to create a Direct3D9 vertex declaration" );
 				return false;
 			}
 		}
@@ -449,7 +450,7 @@ namespace
 		// Create a vertex buffer
 		{
 			// We are drawing one square
-			const unsigned int vertexCount = EAE6320_TODO;	// What is the minimum number of vertices a square needs (so that no data is duplicated)?
+			const unsigned int vertexCount = 4;	// What is the minimum number of vertices a square needs (so that no data is duplicated)?
 			const unsigned int bufferSize = vertexCount * sizeof( sVertex );
 			// We will define our own vertex format
 			const DWORD useSeparateVertexDeclaration = 0;
@@ -460,7 +461,7 @@ namespace
 				&s_vertexBuffer, notUsed );
 			if ( FAILED( result ) )
 			{
-				eae6320::UserOutput::Print( "Direct3D failed to create a vertex buffer" );
+				DEBUG_PRINT( "Direct3D failed to create a vertex buffer" );
 				return false;
 			}
 		}
@@ -475,7 +476,7 @@ namespace
 					reinterpret_cast<void**>( &vertexData ), useDefaultLockingBehavior );
 				if ( FAILED( result ) )
 				{
-					eae6320::UserOutput::Print( "Direct3D failed to lock the vertex buffer" );
+					DEBUG_PRINT( "Direct3D failed to lock the vertex buffer" );
 					return false;
 				}
 			}
@@ -500,20 +501,41 @@ namespace
 				vertexData[0].x = 0.0f;
 				vertexData[0].y = 0.0f;
 				// Red
-				vertexData[0].r = 255;
-				vertexData[0].g = 0;
+				vertexData[0].r = 0;
+				vertexData[0].g = 255;
 				vertexData[0].b = 0;
 				vertexData[0].a = 255;
 
-				vertexData[1].x = EAE6320;
-				// etc.
+				vertexData[1].x = 0.0f;
+				vertexData[1].y = 1.0f;
+				// Red
+				vertexData[1].r = 0;
+				vertexData[1].g = 0;
+				vertexData[1].b = 255;
+				vertexData[1].a = 255;
+
+				vertexData[2].x = 1.0f;
+				vertexData[2].y = 0.0f;
+				// Red
+				vertexData[2].r = 255;
+				vertexData[2].g = 0;
+				vertexData[2].b = 0;
+				vertexData[2].a = 255;
+
+				vertexData[3].x = 1.0f;
+				vertexData[3].y = 1.0f;
+				// Red
+				vertexData[3].r = 255;
+				vertexData[3].g = 255;
+				vertexData[3].b = 0;
+				vertexData[3].a = 255;
 			}
 			// The buffer must be "unlocked" before it can be used
 			{
 				const HRESULT result = s_vertexBuffer->Unlock();
 				if ( FAILED( result ) )
 				{
-					eae6320::UserOutput::Print( "Direct3D failed to unlock the vertex buffer" );
+					DEBUG_PRINT( "Direct3D failed to unlock the vertex buffer" );
 					return false;
 				}
 			}
@@ -534,7 +556,7 @@ namespace
 		}
 		else
 		{
-			eae6320::UserOutput::Print( "Direct3D failed to get the device's creation parameters" );
+			DEBUG_PRINT( "Direct3D failed to get the device's creation parameters" );
 		}
 		return result;
 	}
@@ -568,14 +590,14 @@ namespace
 					std::stringstream errorMessage;
 					errorMessage << "Direct3D failed to compile the fragment shader from the file " << sourceCodeFileName
 						<< ":\n" << reinterpret_cast<char*>( errorMessages->GetBufferPointer() );
-					eae6320::UserOutput::Print( errorMessage.str() );
+					DEBUG_PRINT( errorMessage.str() );
 					errorMessages->Release();
 				}
 				else
 				{
 					std::stringstream errorMessage;
 					errorMessage << "Direct3D failed to compile the fragment shader from the file " << sourceCodeFileName;
-					eae6320::UserOutput::Print( errorMessage.str() );
+					DEBUG_PRINT( errorMessage.str() );
 				}
 				return false;
 			}
@@ -587,7 +609,7 @@ namespace
 				&s_fragmentShader );
 			if ( FAILED( result ) )
 			{
-				eae6320::UserOutput::Print( "Direct3D failed to create the fragment shader" );
+				DEBUG_PRINT( "Direct3D failed to create the fragment shader" );
 				wereThereErrors = true;
 			}
 			compiledShader->Release();
@@ -624,14 +646,14 @@ namespace
 					std::stringstream errorMessage;
 					errorMessage << "Direct3D failed to compile the vertex shader from the file " << sourceCodeFileName
 						<< ":\n" << reinterpret_cast<char*>( errorMessages->GetBufferPointer() );
-					eae6320::UserOutput::Print( errorMessage.str() );
+					DEBUG_PRINT( errorMessage.str() );
 					errorMessages->Release();
 				}
 				else
 				{
 					std::stringstream errorMessage;
 					errorMessage << "Direct3D failed to compile the vertex shader from the file " << sourceCodeFileName;
-					eae6320::UserOutput::Print( errorMessage.str() );
+					DEBUG_PRINT( errorMessage.str() );
 				}
 				return false;
 			}
@@ -643,7 +665,7 @@ namespace
 				&s_vertexShader );
 			if ( FAILED( result ) )
 			{
-				eae6320::UserOutput::Print( "Direct3D failed to create the vertex shader" );
+				DEBUG_PRINT( "Direct3D failed to create the vertex shader" );
 				wereThereErrors = true;
 			}
 			compiledShader->Release();

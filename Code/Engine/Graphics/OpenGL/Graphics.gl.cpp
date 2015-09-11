@@ -164,7 +164,7 @@ void eae6320::Graphics::Render()
 			// It is possible to start rendering in the middle of an index buffer
 			const GLvoid* const offset = 0;
 			// We are drawing a square
-			const GLsizei primitiveCountToRender = EAE6320_TODO;	// How many triangles will be drawn?
+			const GLsizei primitiveCountToRender = 2;	// How many triangles will be drawn?
 			const GLsizei vertexCountPerTriangle = 3;
 			const GLsizei vertexCountToRender = primitiveCountToRender * vertexCountPerTriangle;
 			glDrawElements( mode, vertexCountToRender, indexType, offset );
@@ -494,7 +494,7 @@ namespace
 		// Assign the data to the buffer
 		{
 			// We are drawing a square
-			const unsigned int vertexCount = EAE6320_TODO;	// What is the minimum number of vertices a square needs (so that no data is duplicated)?
+			const unsigned int vertexCount = 4;	// What is the minimum number of vertices a square needs (so that no data is duplicated)?
 			sVertex vertexData[vertexCount];
 			// Fill in the data for the triangle
 			{
@@ -517,13 +517,34 @@ namespace
 				vertexData[0].x = 0.0f;
 				vertexData[0].y = 0.0f;
 				// Red
-				vertexData[0].r = 255;
-				vertexData[0].g = 0;
+				vertexData[0].r = 0;
+				vertexData[0].g = 255;
 				vertexData[0].b = 0;
 				vertexData[0].a = 255;
 
-				vertexData[1].x = EAE6320;
-				// etc.
+				vertexData[1].x = 0.0f;
+				vertexData[1].y = 1.0f;
+				// Red
+				vertexData[1].r = 0;
+				vertexData[1].g = 0;
+				vertexData[1].b = 255;
+				vertexData[1].a = 255;
+
+				vertexData[2].x = 1.0f;
+				vertexData[2].y = 0.0f;
+				// Red
+				vertexData[2].r = 255;
+				vertexData[2].g = 0;
+				vertexData[2].b = 0;
+				vertexData[2].a = 255;
+
+				vertexData[3].x = 1.0f;
+				vertexData[3].y = 1.0f;
+				// Red
+				vertexData[3].r = 255;
+				vertexData[3].g = 255;
+				vertexData[3].b = 0;
+				vertexData[3].a = 255;
 			}
 			glBufferData( GL_ARRAY_BUFFER, vertexCount * sizeof( sVertex ), reinterpret_cast<GLvoid*>( vertexData ),
 				// Our code will only ever write to the buffer
@@ -657,7 +678,7 @@ namespace
 		// Allocate space and copy the triangle data into the index buffer
 		{
 			// We are drawing a square
-			const unsigned int triangleCount = EAE6320_TODO;	// How many triangles does a square have?
+			const unsigned int triangleCount = 2;	// How many triangles does a square have?
 			const unsigned int vertexCountPerTriangle = 3;
 			uint32_t indexData[triangleCount * vertexCountPerTriangle];
 			// Fill in the data for the triangle
@@ -671,13 +692,14 @@ namespace
 				// (also remember to maintain the correct handedness for the triangle winding order).
 
 				// Triangle 0
-				indexData[0] = EAE6320_TODO;
-				indexData[1] = EAE6320_TODO;
-				indexData[2] = EAE6320_TODO;
+				indexData[0] = 0;
+				indexData[1] = 2;
+				indexData[2] = 3;
 
 				// Triangle 1
-				indexData[3] = EAE6320_TODO;
-				// etc...
+				indexData[3] = 0;
+				indexData[4] = 3;
+				indexData[5] = 1;
 			}
 
 			const GLsizeiptr bufferSize = triangleCount * vertexCountPerTriangle * sizeof( uint32_t );

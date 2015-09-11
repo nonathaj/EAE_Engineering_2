@@ -1,21 +1,22 @@
 
 #include <stdarg.h>		// for va_<xxx>
 #include <stdio.h>		// for vsprintf_s()
+#include <string>
 
 #include "..\Windows\Includes.h"
 #include "Console.h"
 
 namespace System
 {
-	void ConsolePrint(bool i_displayFileAndLine, const char * i_file, const unsigned int i_line, const char * i_fmt, ...)
+	void ConsolePrint(bool i_displayFileAndLine, std::string i_file, const unsigned int i_line, std::string i_fmt, ...)
 	{
 		const size_t lenTemp = 1024;
 		char strTemp[lenTemp];
 
 		if (i_displayFileAndLine)
-			sprintf_s(strTemp, "DEBUG (%s Line # %d): %s\n", i_file, i_line, i_fmt);	//add the file, line number, and format string
+			sprintf_s(strTemp, "DEBUG (%s Line # %d): %s\n", i_file.c_str(), i_line, i_fmt.c_str());	//add the file, line number, and format string
 		else
-			sprintf_s(strTemp, "DEBUG: %s\n", i_fmt);									//only add the format string
+			sprintf_s(strTemp, "DEBUG: %s\n", i_fmt.c_str());									//only add the format string
 
 		const size_t lenOutput = lenTemp + 32;
 

@@ -3,7 +3,7 @@
 
 namespace System
 {
-	void ConsolePrint(bool displayFileAndLine, const char * i_file, const unsigned int i_line, const char * i_fmt, ...);
+	void ConsolePrint(bool displayFileAndLine, std::string i_file, const unsigned int i_line, std::string i_fmt, ...);
 }
 
 // This is how we handle variable argument pre-processor macros
