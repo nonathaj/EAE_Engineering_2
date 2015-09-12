@@ -947,7 +947,7 @@ namespace
 			indexData[5] = 1;
 		}
 
-		mesh = Lame::Mesh::Create(vertexData, vertexCount, indexData, indexCount);
+		mesh = Lame::Mesh::CreateRightHanded(vertexData, vertexCount, indexData, indexCount);
 		return mesh != nullptr;
 	}
 }
