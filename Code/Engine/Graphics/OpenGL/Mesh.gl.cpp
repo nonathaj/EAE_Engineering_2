@@ -314,11 +314,16 @@ namespace Lame
 			}
 		}
 
-		Mesh *mesh = new Mesh(i_vertex_count, i_index_count);
-		if (mesh)
+		if (!wereThereErrors)
 		{
-			mesh->vertex_array_id_ = vertex_array_id_;
-			return mesh;
+			Mesh *mesh = new Mesh(i_vertex_count, i_index_count);
+			if (mesh)
+			{
+				mesh->vertex_array_id_ = vertex_array_id_;
+				return mesh;
+			}
+			else
+				return nullptr;
 		}
 		else
 			return nullptr;

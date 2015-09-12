@@ -111,7 +111,6 @@ namespace
 
 			vertexData[0].x = 0.0f;
 			vertexData[0].y = 0.0f;
-			// Red
 			vertexData[0].r = 0;
 			vertexData[0].g = 255;
 			vertexData[0].b = 0;
@@ -119,7 +118,6 @@ namespace
 
 			vertexData[1].x = 0.0f;
 			vertexData[1].y = 1.0f;
-			// Red
 			vertexData[1].r = 0;
 			vertexData[1].g = 0;
 			vertexData[1].b = 255;
@@ -127,7 +125,6 @@ namespace
 
 			vertexData[2].x = 1.0f;
 			vertexData[2].y = 0.0f;
-			// Red
 			vertexData[2].r = 255;
 			vertexData[2].g = 0;
 			vertexData[2].b = 0;
@@ -135,7 +132,6 @@ namespace
 
 			vertexData[3].x = 1.0f;
 			vertexData[3].y = 1.0f;
-			// Red
 			vertexData[3].r = 255;
 			vertexData[3].g = 255;
 			vertexData[3].b = 0;
@@ -146,14 +142,6 @@ namespace
 		uint32_t indexData[indexCount];
 		// Fill in the data for the triangle
 		{
-			// EAE6320_TODO:
-			// You will need to fill in 3 indices for each triangle that needs to be drawn.
-			// Each index will be a 32-bit unsigned integer,
-			// and will index into the vertex buffer array that you have created.
-			// The order of indices is important, but the correct order will depend on
-			// which vertex you have assigned to which spot in your vertex buffer
-			// (also remember to maintain the correct handedness for the triangle winding order).
-
 			// Triangle 0
 			indexData[0] = 0;
 			indexData[1] = 2;
@@ -275,22 +263,6 @@ bool eae6320::Graphics::ShutDown()
 			delete mesh;
 			mesh = nullptr;
 		}
-		/*
-		if ( s_vertexArrayId != 0 )
-		{
-			const GLsizei arrayCount = 1;
-			glDeleteVertexArrays( arrayCount, &s_vertexArrayId );
-			const GLenum errorCode = glGetError();
-			if ( errorCode != GL_NO_ERROR )
-			{
-				std::stringstream errorMessage;
-				errorMessage << "OpenGL failed to delete the vertex array: " <<
-					reinterpret_cast<const char*>( gluErrorString( errorCode ) );
-				DEBUG_PRINT( errorMessage.str() );
-			}
-			s_vertexArrayId = 0;
-		}
-		*/
 
 		if ( wglMakeCurrent( s_deviceContext, NULL ) != FALSE )
 		{
