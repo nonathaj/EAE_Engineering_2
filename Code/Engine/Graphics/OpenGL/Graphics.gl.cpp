@@ -14,6 +14,9 @@
 #include "../../Windows/Functions.h"
 #include "../../../External/OpenGlExtensions/OpenGlExtensions.h"
 
+#include "../Mesh.h"
+#include "../Vertex.h"
+
 // Static Data Initialization
 //===========================
 
@@ -59,6 +62,8 @@ namespace
 	// Its output is:
 	//	* The final color that the pixel should be
 	GLuint s_programId = 0;
+
+	Lame::Mesh *mesh = nullptr;
 }
 
 // Helper Function Declarations
@@ -81,6 +86,88 @@ namespace
 		sLogInfo( const size_t i_size ) { memory = reinterpret_cast<GLchar*>( malloc( i_size ) ); }
 		~sLogInfo() { if ( memory ) free( memory ); }
 	};
+
+	bool CreateMesh()
+	{
+		const size_t vertexCount = 4;
+		Lame::Vertex vertexData[vertexCount];
+		// Fill in the data for the triangle
+		{
+			// You will need to fill in two pieces of information for each vertex:
+			//	* 2 floats for the POSITION
+			//	* 4 uint8_ts for the COLOR
+
+			// The floats for POSITION are for the X and Y coordinates, like in Assignment 02.
+			// The difference this time is that there should be fewer (because we are sharing data).
+
+			// The uint8_ts for COLOR are "RGBA", where "RGB" stands for "Red Green Blue" and "A" for "Alpha".
+			// Conceptually each of these values is a [0,1] value, but we store them as an 8-bit value to save space
+			// (color doesn't need as much precision as position),
+			// which means that the data we send to the GPU will be [0,255].
+			// For now the alpha value should _always_ be 255, and so you will choose color by changing the first three RGB values.
+			// To make white you should use (255, 255, 255), to make black (0, 0, 0).
+			// To make pure red you would use the max for R and nothing for G and B, so (1, 0, 0).
+			// Experiment with other values to see what happens!
+
+			vertexData[0].x = 0.0f;
+			vertexData[0].y = 0.0f;
+			// Red
+			vertexData[0].r = 0;
+			vertexData[0].g = 255;
+			vertexData[0].b = 0;
+			vertexData[0].a = 255;
+
+			vertexData[1].x = 0.0f;
+			vertexData[1].y = 1.0f;
+			// Red
+			vertexData[1].r = 0;
+			vertexData[1].g = 0;
+			vertexData[1].b = 255;
+			vertexData[1].a = 255;
+
+			vertexData[2].x = 1.0f;
+			vertexData[2].y = 0.0f;
+			// Red
+			vertexData[2].r = 255;
+			vertexData[2].g = 0;
+			vertexData[2].b = 0;
+			vertexData[2].a = 255;
+
+			vertexData[3].x = 1.0f;
+			vertexData[3].y = 1.0f;
+			// Red
+			vertexData[3].r = 255;
+			vertexData[3].g = 255;
+			vertexData[3].b = 0;
+			vertexData[3].a = 255;
+		}
+
+		const size_t indexCount = 6;
+		uint32_t indexData[indexCount];
+		// Fill in the data for the triangle
+		{
+			// EAE6320_TODO:
+			// You will need to fill in 3 indices for each triangle that needs to be drawn.
+			// Each index will be a 32-bit unsigned integer,
+			// and will index into the vertex buffer array that you have created.
+			// The order of indices is important, but the correct order will depend on
+			// which vertex you have assigned to which spot in your vertex buffer
+			// (also remember to maintain the correct handedness for the triangle winding order).
+
+			// Triangle 0
+			indexData[0] = 0;
+			indexData[1] = 2;
+			indexData[2] = 3;
+
+			// Triangle 1
+			indexData[3] = 0;
+			indexData[4] = 3;
+			indexData[5] = 1;
+		}
+
+		mesh = Lame::Mesh::Create(vertexData, vertexCount, indexData, indexCount);
+		return mesh != nullptr;
+	}
 }
 
 // Interface
@@ -107,10 +194,14 @@ bool eae6320::Graphics::Initialize( const HWND i_renderingWindow )
 	}
 
 	// Initialize the graphics objects
-	if ( !CreateVertexArray() )
+	if ( !CreateMesh() )
 	{
 		goto OnError;
 	}
+	
+	//if (!CreateVertexArray())
+	//	goto OnError;
+
 	if ( !CreateProgram() )
 	{
 		goto OnError;
@@ -147,29 +238,8 @@ void eae6320::Graphics::Render()
 			glUseProgram( s_programId );
 			assert( glGetError() == GL_NO_ERROR );
 		}
-		// Bind a specific vertex buffer to the device as a data source
-		{
-			glBindVertexArray( s_vertexArrayId );
-			assert( glGetError() == GL_NO_ERROR );
-		}
-		// Render objects from the current streams
-		{
-			// We are using triangles as the "primitive" type,
-			// and we have defined the vertex buffer as a triangle list
-			// (meaning that every triangle is defined by three vertices)
-			const GLenum mode = GL_TRIANGLES;
-			// We'll use 32-bit indices in this class to keep things simple
-			// (i.e. every index will be a 32 bit unsigned integer)
-			const GLenum indexType = GL_UNSIGNED_INT;
-			// It is possible to start rendering in the middle of an index buffer
-			const GLvoid* const offset = 0;
-			// We are drawing a square
-			const GLsizei primitiveCountToRender = 2;	// How many triangles will be drawn?
-			const GLsizei vertexCountPerTriangle = 3;
-			const GLsizei vertexCountToRender = primitiveCountToRender * vertexCountPerTriangle;
-			glDrawElements( mode, vertexCountToRender, indexType, offset );
-			assert( glGetError() == GL_NO_ERROR );
-		}
+		bool drawSuccess = mesh->Draw();
+		assert( drawSuccess );
 	}
 
 	// Everything has been drawn to the "back buffer", which is just an image in memory.
@@ -200,6 +270,12 @@ bool eae6320::Graphics::ShutDown()
 			}
 			s_programId = 0;
 		}
+		if (mesh)
+		{
+			delete mesh;
+			mesh = nullptr;
+		}
+		/*
 		if ( s_vertexArrayId != 0 )
 		{
 			const GLsizei arrayCount = 1;
@@ -214,6 +290,7 @@ bool eae6320::Graphics::ShutDown()
 			}
 			s_vertexArrayId = 0;
 		}
+		*/
 
 		if ( wglMakeCurrent( s_deviceContext, NULL ) != FALSE )
 		{
