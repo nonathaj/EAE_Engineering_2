@@ -5,8 +5,10 @@
 
 #include <iostream>
 #include <string>
+#include <sstream>
 #include "../../Engine/Windows/Functions.h"
 #include "../../External/Lua/Includes.h"
+#include "../../Engine/System/Console.h"
 
 // Static Data Initialization
 //===========================
@@ -151,9 +153,11 @@ namespace
 {
 	void OutputErrorMessage( const char* const i_errorMessage, const char* const i_optionalFileName )
 	{
+		std::stringstream error;
+		error << (i_optionalFileName ? i_optionalFileName : "Asset Build") << ": error: " << i_errorMessage << "\n";
+		DEBUG_PRINT(error.str());
 		// This formatting causes the errors to show up in Visual Studio's "Error List" tab
-		std::cerr << ( i_optionalFileName ? i_optionalFileName : "Asset Build" ) << ": error: " <<
-			i_errorMessage << "\n";
+		std::cerr << error.str();
 	}
 
 	// Lua Wrapper Functions
