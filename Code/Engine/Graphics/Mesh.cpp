@@ -13,7 +13,7 @@
 namespace
 {
 	bool LoadAssetFromLua(const std::string &i_path, std::function<void(lua_State&)> i_loadTableValuesCallback);
-	void LoadMesh(lua_State &i_luaStateFrom, Lame::Vertex*& o_vertices, size_t& o_vertex_count, uint32_t*& o_indices, size_t& o_index_count);
+	void LoadMesh(lua_State &io_luaStateFrom, Lame::Vertex*& o_vertices, size_t& o_vertex_count, uint32_t*& o_indices, size_t& o_index_count);
 }
 
 namespace Lame
@@ -25,7 +25,7 @@ namespace Lame
 
 		uint32_t *indices;
 		size_t index_count;
-
+		
 		LoadAssetFromLua(i_mesh_path, std::bind(LoadMesh, std::placeholders::_1, vertices, vertex_count, indices, index_count));
 
 		return CreateRightHanded(vertices, vertex_count, indices, index_count);
@@ -34,10 +34,29 @@ namespace Lame
 
 namespace
 {
-	void LoadMesh(lua_State &i_luaStateFrom, Lame::Vertex*& o_vertices, size_t& o_vertex_count, uint32_t*& o_indices, size_t& o_index_count)
+	void LoadMesh(lua_State &io_luaStateFrom, Lame::Vertex*& o_vertices, size_t& o_vertex_count, uint32_t*& o_indices, size_t& o_index_count)
 	{
 		//TODO
 		//Load the vertex and index data and apply it to the provided arrays/sizes
+		char const * const vertex_key = "vertex";
+		lua_pushstring(&io_luaStateFrom, vertex_key);
+		lua_gettable(&io_luaStateFrom, -2);
+		if (lua_istable(&io_luaStateFrom, -1))
+		{
+			//handle the vertex array
+			o_vertex_count = luaL_len(&io_luaStateFrom, -1);
+			for (size_t x = 1; x < o_vertex_count + 1; x++)
+			{
+				lua_pushinteger(&io_luaStateFrom, x);	//the key we are looking for
+				lua_gettable(&io_luaStateFrom, -2);		//check the table for the key, and replace the key with the value
+			}
+
+		}
+		else
+		{
+			DEBUG_PRINT("The value at \"%s\" must be a table instead of a %s", vertex_key, luaL_typename(&io_luaStateFrom, -1));
+			lua_pop(&io_luaStateFrom, 1);
+		}
 	}
 
 	bool LoadAssetFromLua(const std::string &i_path, std::function<void(lua_State&)> i_loadTableValuesCallback)

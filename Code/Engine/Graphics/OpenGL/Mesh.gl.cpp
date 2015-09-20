@@ -44,7 +44,7 @@ namespace Lame
 			return nullptr;
 		}
 
-		for (int x = 0; x < i_index_count; x += 3)
+		for (size_t x = 0; x < i_index_count; x += 3)
 			std::swap(i_indices[x], i_indices[x + 2]);
 
 		return CreateRightHanded(i_vertices, i_vertex_count, i_indices, i_index_count);
@@ -371,7 +371,9 @@ namespace Lame
 			glDrawElements(mode, index_count_, indexType, offset);
 			GLenum errorCode = glGetError();
 			if (errorCode == GL_NO_ERROR)
+			{
 				return true;
+			}
 			else
 			{
 				DEBUG_PRINT("Error while attempting to draw mesh: %s", reinterpret_cast<const char *>(gluErrorString(errorCode)));

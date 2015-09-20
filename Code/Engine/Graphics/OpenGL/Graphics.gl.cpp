@@ -557,6 +557,7 @@ namespace
 				const GLsizei shaderSourceCount = 2;
 				const GLchar* shaderSources[] =
 				{
+					"#version 330\n", //version number must come first
 					"#define EAE6320_PLATFORM_GL\n",
 					reinterpret_cast<GLchar*>(shaderSource)
 				};
@@ -755,6 +756,7 @@ namespace
 				const GLsizei shaderSourceCount = 2;
 				const GLchar* shaderSources[] =
 				{
+					"#version 330\n", //version number must come first
 					"#define EAE6320_PLATFORM_GL\n",
 					reinterpret_cast<GLchar*>(shaderSource)
 				};
