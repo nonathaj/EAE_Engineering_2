@@ -2,6 +2,7 @@
 #define _LAME_MESH_H
 
 #include <cstdint>
+#include <string>
 
 #if EAE6320_PLATFORM_D3D
 #include <d3d9.h>
@@ -22,6 +23,8 @@ namespace Lame
 		
 		static Mesh* CreateLeftHanded(Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count);
 		static Mesh* CreateRightHanded(Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count);
+
+		static Mesh* Create(std::string i_mesh_path);
 
 		bool Draw();
 

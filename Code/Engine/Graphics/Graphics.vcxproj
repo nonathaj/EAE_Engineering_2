@@ -29,6 +29,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="OpenGL\Graphics.gl.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -138,7 +139,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>Opengl32.lib;glu32.lib;OpenGLExtensions.lib;System.lib</AdditionalDependencies>
+      <AdditionalDependencies>Opengl32.lib;glu32.lib;OpenGLExtensions.lib;System.lib;Lua.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(LibDir)</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4006,4221 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
@@ -158,7 +159,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>d3d9.lib;d3dx9.lib;System.lib</AdditionalDependencies>
+      <AdditionalDependencies>d3d9.lib;d3dx9.lib;System.lib;Lua.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(LibDir);$(DXSDK_DIR)Lib\x64</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4006,4221 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
@@ -183,7 +184,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>Opengl32.lib;glu32.lib;OpenGLExtensions.lib;System.lib</AdditionalDependencies>
+      <AdditionalDependencies>Opengl32.lib;glu32.lib;OpenGLExtensions.lib;System.lib;Lua.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(LibDir)</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4006,4221 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
@@ -207,7 +208,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>d3d9.lib;d3dx9.lib;System.lib</AdditionalDependencies>
+      <AdditionalDependencies>d3d9.lib;d3dx9.lib;System.lib;Lua.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(LibDir);$(DXSDK_DIR)Lib\x64</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4006,4221 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
