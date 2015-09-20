@@ -386,7 +386,7 @@ namespace
 		return true;
 	}
 
-	bool LoadAndAllocateShaderProgram( const char* i_path, void*& o_shader, size_t& o_size, std::string* o_errorMessage )
+	bool LoadAndAllocateShaderProgram(const char* i_path, void*& o_shader, size_t& o_size, std::string* o_errorMessage)
 	{
 		bool wereThereErrors = false;
 
@@ -402,16 +402,16 @@ namespace
 				const DWORD onlySucceedIfFileExists = OPEN_EXISTING;
 				const DWORD useDefaultAttributes = FILE_ATTRIBUTE_NORMAL;
 				const HANDLE dontUseTemplateFile = NULL;
-				fileHandle = CreateFile( i_path, desiredAccess, otherProgramsCanStillReadTheFile,
-					useDefaultSecurity, onlySucceedIfFileExists, useDefaultAttributes, dontUseTemplateFile );
-				if ( fileHandle == INVALID_HANDLE_VALUE )
+				fileHandle = CreateFile(i_path, desiredAccess, otherProgramsCanStillReadTheFile,
+					useDefaultSecurity, onlySucceedIfFileExists, useDefaultAttributes, dontUseTemplateFile);
+				if (fileHandle == INVALID_HANDLE_VALUE)
 				{
 					wereThereErrors = true;
-					if ( o_errorMessage )
+					if (o_errorMessage)
 					{
+						std::string windowsErrorMessage = eae6320::GetLastWindowsError();
 						std::stringstream errorMessage;
-						errorMessage << "Windows failed to open the shader file: " <<
-							eae6320::GetLastWindowsError();
+						errorMessage << "Windows failed to open the shader file: " << windowsErrorMessage;
 						*o_errorMessage = errorMessage.str();
 					}
 					goto OnExit;
@@ -420,39 +420,41 @@ namespace
 			// Get the file's size
 			{
 				LARGE_INTEGER fileSize_integer;
-				if ( GetFileSizeEx( fileHandle, &fileSize_integer ) != FALSE )
+				if (GetFileSizeEx(fileHandle, &fileSize_integer) != FALSE)
 				{
-					assert( fileSize_integer.QuadPart <= SIZE_MAX );
-					o_size = static_cast<size_t>( fileSize_integer.QuadPart );
+					assert(fileSize_integer.QuadPart <= SIZE_MAX);
+					o_size = static_cast<size_t>(fileSize_integer.QuadPart);
 				}
 				else
 				{
 					wereThereErrors = true;
-					if ( o_errorMessage )
+					if (o_errorMessage)
 					{
+						std::string windowsErrorMessage = eae6320::GetLastWindowsError();
 						std::stringstream errorMessage;
-						errorMessage << "Windows failed to get the size of shader: " <<
-							eae6320::GetLastWindowsError();
+						errorMessage << "Windows failed to get the size of shader: " << windowsErrorMessage;
 						*o_errorMessage = errorMessage.str();
 					}
 					goto OnExit;
 				}
+				// Add an extra byte for a NULL terminator
+				o_size += 1;
 			}
 			// Read the file's contents into temporary memory
-			o_shader = malloc( o_size );
-			if ( o_shader )
+			o_shader = malloc(o_size);
+			if (o_shader)
 			{
 				DWORD bytesReadCount;
 				OVERLAPPED* readSynchronously = NULL;
-				if ( ReadFile( fileHandle, o_shader, o_size,
-					&bytesReadCount, readSynchronously ) == FALSE )
+				if (ReadFile(fileHandle, o_shader, o_size,
+					&bytesReadCount, readSynchronously) == FALSE)
 				{
 					wereThereErrors = true;
-					if ( o_errorMessage )
+					if (o_errorMessage)
 					{
+						std::string windowsErrorMessage = eae6320::GetLastWindowsError();
 						std::stringstream errorMessage;
-						errorMessage << "Windows failed to read the contents of shader: " <<
-							eae6320::GetLastWindowsError();
+						errorMessage << "Windows failed to read the contents of shader: " << windowsErrorMessage;
 						*o_errorMessage = errorMessage.str();
 					}
 					goto OnExit;
@@ -461,7 +463,7 @@ namespace
 			else
 			{
 				wereThereErrors = true;
-				if ( o_errorMessage )
+				if (o_errorMessage)
 				{
 					std::stringstream errorMessage;
 					errorMessage << "Failed to allocate " << o_size << " bytes to read in the shader program " << i_path;
@@ -469,24 +471,26 @@ namespace
 				}
 				goto OnExit;
 			}
+			// Add the NULL terminator
+			reinterpret_cast<char*>(o_shader)[o_size - 1] = '\0';
 		}
 
 	OnExit:
 
-		if ( wereThereErrors && o_shader )
+		if (wereThereErrors && o_shader)
 		{
-			free( o_shader );
+			free(o_shader);
 			o_shader = NULL;
 		}
-		if ( fileHandle != INVALID_HANDLE_VALUE )
+		if (fileHandle != INVALID_HANDLE_VALUE)
 		{
-			if ( CloseHandle( fileHandle ) == FALSE )
+			if (CloseHandle(fileHandle) == FALSE)
 			{
-				if ( !wereThereErrors && o_errorMessage )
+				if (!wereThereErrors && o_errorMessage)
 				{
+					std::string windowsError = eae6320::GetLastWindowsError();
 					std::stringstream errorMessage;
-					errorMessage << "Windows failed to close the shader file handle: " <<
-						eae6320::GetLastWindowsError();
+					errorMessage << "Windows failed to close the shader file handle: " << windowsError;
 					*o_errorMessage = errorMessage.str();
 				}
 				wereThereErrors = true;
@@ -519,7 +523,7 @@ namespace
 			// Load the shader source code
 			size_t fileSize;
 			{
-				const char* sourceCodeFileName = "data/fragmentShader.glsl";
+				const char* sourceCodeFileName = "data/fragment.shader";
 				std::string errorMessage;
 				if ( !LoadAndAllocateShaderProgram( sourceCodeFileName, shaderSource, fileSize, &errorMessage ) )
 				{
@@ -550,9 +554,15 @@ namespace
 			}
 			// Set the source code into the shader
 			{
-				const GLsizei shaderSourceCount = 1;
+				const GLsizei shaderSourceCount = 2;
+				const GLchar* shaderSources[] =
+				{
+					"#define EAE6320_PLATFORM_GL\n",
+					reinterpret_cast<GLchar*>(shaderSource)
+				};
+				const GLint* sourcesAreNullTerminated = NULL;
 				const GLint length = static_cast<GLuint>( fileSize );
-				glShaderSource( fragmentShaderId, shaderSourceCount, reinterpret_cast<GLchar**>( &shaderSource ), &length );
+				glShaderSource( fragmentShaderId, shaderSourceCount, shaderSources, sourcesAreNullTerminated);
 				const GLenum errorCode = glGetError();
 				if ( errorCode != GL_NO_ERROR )
 				{
@@ -689,15 +699,15 @@ namespace
 		return !wereThereErrors;
 	}
 
-	bool LoadVertexShader( const GLuint i_programId )
+	bool LoadVertexShader(const GLuint i_programId)
 	{
 		// Verify that compiling shaders at run-time is supported
 		{
 			GLboolean isShaderCompilingSupported;
-			glGetBooleanv( GL_SHADER_COMPILER, &isShaderCompilingSupported );
-			if ( !isShaderCompilingSupported )
+			glGetBooleanv(GL_SHADER_COMPILER, &isShaderCompilingSupported);
+			if (!isShaderCompilingSupported)
 			{
-				DEBUG_PRINT( "Compiling shaders at run-time isn't supported on this implementation (this should never happen)" );
+				DEBUG_PRINT("Compiling shaders at run-time isn't supported on this implementation (this should never happen)");
 				return false;
 			}
 		}
@@ -711,57 +721,62 @@ namespace
 			// Load the shader source code
 			size_t fileSize;
 			{
-				const char* sourceCodeFileName = "data/vertexShader.glsl";
+				const char* sourceCodeFileName = "data/vertex.shader";
 				std::string errorMessage;
-				if ( !LoadAndAllocateShaderProgram( sourceCodeFileName, shaderSource, fileSize, &errorMessage ) )
+				if (!LoadAndAllocateShaderProgram(sourceCodeFileName, shaderSource, fileSize, &errorMessage))
 				{
 					wereThereErrors = true;
-					DEBUG_PRINT( errorMessage );
+					DEBUG_PRINT(errorMessage);
 					goto OnExit;
 				}
 			}
 			// Generate a shader
-			vertexShaderId = glCreateShader( GL_VERTEX_SHADER );
+			vertexShaderId = glCreateShader(GL_VERTEX_SHADER);
 			{
 				const GLenum errorCode = glGetError();
-				if ( errorCode != GL_NO_ERROR )
+				if (errorCode != GL_NO_ERROR)
 				{
 					wereThereErrors = true;
 					std::stringstream errorMessage;
 					errorMessage << "OpenGL failed to get an unused vertex shader ID: " <<
-						reinterpret_cast<const char*>( gluErrorString( errorCode ) );
-					DEBUG_PRINT( errorMessage.str() );
+						reinterpret_cast<const char*>(gluErrorString(errorCode));
+					DEBUG_PRINT(errorMessage.str());
 					goto OnExit;
 				}
-				else if ( vertexShaderId == 0 )
+				else if (vertexShaderId == 0)
 				{
 					wereThereErrors = true;
-					DEBUG_PRINT( "OpenGL failed to get an unused vertex shader ID" );
+					DEBUG_PRINT("OpenGL failed to get an unused vertex shader ID");
 					goto OnExit;
 				}
 			}
 			// Set the source code into the shader
 			{
-				const GLsizei shaderSourceCount = 1;
-				const GLint length = static_cast<GLuint>( fileSize );
-				glShaderSource( vertexShaderId, shaderSourceCount, reinterpret_cast<GLchar**>( &shaderSource ), &length );
+				const GLsizei shaderSourceCount = 2;
+				const GLchar* shaderSources[] =
+				{
+					"#define EAE6320_PLATFORM_GL\n",
+					reinterpret_cast<GLchar*>(shaderSource)
+				};
+				const GLint* sourcesAreNullTerminated = NULL;
+				glShaderSource(vertexShaderId, shaderSourceCount, shaderSources, sourcesAreNullTerminated);
 				const GLenum errorCode = glGetError();
-				if ( errorCode != GL_NO_ERROR )
+				if (errorCode != GL_NO_ERROR)
 				{
 					wereThereErrors = true;
 					std::stringstream errorMessage;
 					errorMessage << "OpenGL failed to set the vertex shader source code: " <<
-						reinterpret_cast<const char*>( gluErrorString( errorCode ) );
-					DEBUG_PRINT( errorMessage.str() );
+						reinterpret_cast<const char*>(gluErrorString(errorCode));
+					DEBUG_PRINT(errorMessage.str());
 					goto OnExit;
 				}
 			}
 		}
 		// Compile the shader source code
 		{
-			glCompileShader( vertexShaderId );
+			glCompileShader(vertexShaderId);
 			GLenum errorCode = glGetError();
-			if ( errorCode == GL_NO_ERROR )
+			if (errorCode == GL_NO_ERROR)
 			{
 				// Get compilation info
 				// (this won't be used unless compilation fails
@@ -769,15 +784,15 @@ namespace
 				std::string compilationInfo;
 				{
 					GLint infoSize;
-					glGetShaderiv( vertexShaderId, GL_INFO_LOG_LENGTH, &infoSize );
+					glGetShaderiv(vertexShaderId, GL_INFO_LOG_LENGTH, &infoSize);
 					errorCode = glGetError();
-					if ( errorCode == GL_NO_ERROR )
+					if (errorCode == GL_NO_ERROR)
 					{
-						sLogInfo info( static_cast<size_t>( infoSize ) );
+						sLogInfo info(static_cast<size_t>(infoSize));
 						GLsizei* dontReturnLength = NULL;
-						glGetShaderInfoLog( vertexShaderId, static_cast<GLsizei>( infoSize ), dontReturnLength, info.memory );
+						glGetShaderInfoLog(vertexShaderId, static_cast<GLsizei>(infoSize), dontReturnLength, info.memory);
 						errorCode = glGetError();
-						if ( errorCode == GL_NO_ERROR )
+						if (errorCode == GL_NO_ERROR)
 						{
 							compilationInfo = info.memory;
 						}
@@ -786,8 +801,8 @@ namespace
 							wereThereErrors = true;
 							std::stringstream errorMessage;
 							errorMessage << "OpenGL failed to get compilation info of the vertex shader source code: " <<
-								reinterpret_cast<const char*>( gluErrorString( errorCode ) );
-							DEBUG_PRINT( errorMessage.str() );
+								reinterpret_cast<const char*>(gluErrorString(errorCode));
+							DEBUG_PRINT(errorMessage.str());
 							goto OnExit;
 						}
 					}
@@ -796,24 +811,24 @@ namespace
 						wereThereErrors = true;
 						std::stringstream errorMessage;
 						errorMessage << "OpenGL failed to get the length of the vertex shader compilation info: " <<
-							reinterpret_cast<const char*>( gluErrorString( errorCode ) );
-						DEBUG_PRINT( errorMessage.str() );
+							reinterpret_cast<const char*>(gluErrorString(errorCode));
+						DEBUG_PRINT(errorMessage.str());
 						goto OnExit;
 					}
 				}
 				// Check to see if there were compilation errors
 				GLint didCompilationSucceed;
 				{
-					glGetShaderiv( vertexShaderId, GL_COMPILE_STATUS, &didCompilationSucceed );
+					glGetShaderiv(vertexShaderId, GL_COMPILE_STATUS, &didCompilationSucceed);
 					errorCode = glGetError();
-					if ( errorCode == GL_NO_ERROR )
+					if (errorCode == GL_NO_ERROR)
 					{
-						if ( didCompilationSucceed == GL_FALSE )
+						if (didCompilationSucceed == GL_FALSE)
 						{
 							wereThereErrors = true;
 							std::stringstream errorMessage;
 							errorMessage << "The vertex shader failed to compile:\n" << compilationInfo;
-							DEBUG_PRINT( errorMessage.str() );
+							DEBUG_PRINT(errorMessage.str());
 							goto OnExit;
 						}
 					}
@@ -822,8 +837,8 @@ namespace
 						wereThereErrors = true;
 						std::stringstream errorMessage;
 						errorMessage << "OpenGL failed to find out if compilation of the vertex shader source code succeeded: " <<
-							reinterpret_cast<const char*>( gluErrorString( errorCode ) );
-						DEBUG_PRINT( errorMessage.str() );
+							reinterpret_cast<const char*>(gluErrorString(errorCode));
+						DEBUG_PRINT(errorMessage.str());
 						goto OnExit;
 					}
 				}
@@ -833,48 +848,48 @@ namespace
 				wereThereErrors = true;
 				std::stringstream errorMessage;
 				errorMessage << "OpenGL failed to compile the vertex shader source code: " <<
-					reinterpret_cast<const char*>( gluErrorString( errorCode ) );
-				DEBUG_PRINT( errorMessage.str() );
+					reinterpret_cast<const char*>(gluErrorString(errorCode));
+				DEBUG_PRINT(errorMessage.str());
 				goto OnExit;
 			}
 		}
 		// Attach the shader to the program
 		{
-			glAttachShader( i_programId, vertexShaderId );
+			glAttachShader(i_programId, vertexShaderId);
 			const GLenum errorCode = glGetError();
-			if ( errorCode != GL_NO_ERROR )
+			if (errorCode != GL_NO_ERROR)
 			{
 				wereThereErrors = true;
 				std::stringstream errorMessage;
 				errorMessage << "OpenGL failed to attach the vertex shader to the program: " <<
-					reinterpret_cast<const char*>( gluErrorString( errorCode ) );
-				DEBUG_PRINT( errorMessage.str() );
+					reinterpret_cast<const char*>(gluErrorString(errorCode));
+				DEBUG_PRINT(errorMessage.str());
 				goto OnExit;
 			}
 		}
 
 	OnExit:
 
-		if ( vertexShaderId != 0 )
+		if (vertexShaderId != 0)
 		{
 			// Even if the shader was successfully compiled
 			// once it has been attached to the program we can (and should) delete our reference to it
 			// (any associated memory that OpenGL has allocated internally will be freed
 			// once the program is deleted)
-			glDeleteShader( vertexShaderId );
+			glDeleteShader(vertexShaderId);
 			const GLenum errorCode = glGetError();
-			if ( errorCode != GL_NO_ERROR )
+			if (errorCode != GL_NO_ERROR)
 			{
 				std::stringstream errorMessage;
 				errorMessage << "OpenGL failed to delete the vertex shader ID: " <<
-					reinterpret_cast<const char*>( gluErrorString( errorCode ) );
-				DEBUG_PRINT( errorMessage.str() );
+					reinterpret_cast<const char*>(gluErrorString(errorCode));
+				DEBUG_PRINT(errorMessage.str());
 			}
 			vertexShaderId = 0;
 		}
-		if ( shaderSource != NULL )
+		if (shaderSource != NULL)
 		{
-			free( shaderSource );
+			free(shaderSource);
 			shaderSource = NULL;
 		}
 

@@ -268,15 +268,19 @@ namespace
 		// Load the source code from file and compile it
 		ID3DXBuffer* compiledShader;
 		{
-			const char* sourceCodeFileName = "data/fragmentShader.hlsl";
-			const D3DXMACRO* noMacros = NULL;
+			const char* sourceCodeFileName = "data/fragment.shader";
+			const D3DXMACRO defines[] =
+			{
+				{ "EAE6320_PLATFORM_D3D", "1" },
+				{ NULL, NULL }
+			};
 			ID3DXInclude* noIncludes = NULL;
 			const char* entryPoint = "main";
 			const char* profile = "ps_3_0";
 			const DWORD noFlags = 0;
 			ID3DXBuffer* errorMessages = NULL;
 			ID3DXConstantTable** noConstants = NULL;
-			HRESULT result = D3DXCompileShaderFromFile( sourceCodeFileName, noMacros, noIncludes, entryPoint, profile, noFlags,
+			HRESULT result = D3DXCompileShaderFromFile( sourceCodeFileName, defines, noIncludes, entryPoint, profile, noFlags,
 				&compiledShader, &errorMessages, noConstants );
 			if ( SUCCEEDED( result ) )
 			{
@@ -324,15 +328,19 @@ namespace
 		// Load the source code from file and compile it
 		ID3DXBuffer* compiledShader;
 		{
-			const char* sourceCodeFileName = "data/vertexShader.hlsl";
-			const D3DXMACRO* noMacros = NULL;
+			const char* sourceCodeFileName = "data/vertex.shader";
+			const D3DXMACRO defines[] =
+			{
+				{ "EAE6320_PLATFORM_D3D", "1" },
+				{ NULL, NULL }
+			};
 			ID3DXInclude* noIncludes = NULL;
 			const char* entryPoint = "main";
 			const char* profile = "vs_3_0";
 			const DWORD noFlags = 0;
 			ID3DXBuffer* errorMessages = NULL;
 			ID3DXConstantTable** noConstants = NULL;
-			HRESULT result = D3DXCompileShaderFromFile( sourceCodeFileName, noMacros, noIncludes, entryPoint, profile, noFlags,
+			HRESULT result = D3DXCompileShaderFromFile( sourceCodeFileName, defines, noIncludes, entryPoint, profile, noFlags,
 				&compiledShader, &errorMessages, noConstants );
 			if ( SUCCEEDED( result ) )
 			{
