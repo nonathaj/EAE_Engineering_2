@@ -554,7 +554,7 @@ namespace
 			}
 			// Set the source code into the shader
 			{
-				const GLsizei shaderSourceCount = 2;
+				const GLsizei shaderSourceCount = 3;
 				const GLchar* shaderSources[] =
 				{
 					"#version 330\n", //version number must come first
@@ -753,7 +753,7 @@ namespace
 			}
 			// Set the source code into the shader
 			{
-				const GLsizei shaderSourceCount = 2;
+				const GLsizei shaderSourceCount = 3;
 				const GLchar* shaderSources[] =
 				{
 					"#version 330\n", //version number must come first
