@@ -34,7 +34,6 @@ namespace Lame
 
 		if (LoadMeshAssetTableFromLua(i_mesh_path, vertices, vertex_count, indices, index_count))
 		{
-			DEBUG_PRINT("Mesh::Create verts=%d inds=%d", vertex_count, index_count);
 			Mesh *mesh = CreateRightHanded(vertices, vertex_count, indices, index_count);
 			delete[] vertices;
 			delete[] indices;
@@ -151,7 +150,6 @@ namespace
 			//Pop the index array
 			lua_pop(io_luaStateFrom, 1);
 		}
-		DEBUG_PRINT("successfuly finished load mesh verts=%d inds=%d", o_vertex_count, o_index_count);
 
 		return true;
 	}
