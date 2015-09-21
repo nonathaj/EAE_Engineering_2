@@ -82,7 +82,10 @@ bool eae6320::Graphics::Initialize( const HWND i_renderingWindow )
 
 	// Initialize the graphics objects
 	if (!(mesh = Lame::Mesh::Create("data/square.mesh")))
+	{
+		MessageBox(i_renderingWindow, "Failed to load the square.mesh file.", "Mesh loading error", 0);
 		goto OnError;
+	}
 
 	if ( !LoadVertexShader() )
 	{

@@ -60,21 +60,7 @@ namespace Lame
 		}
 	}
 
-	Mesh* Mesh::CreateRightHanded(Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
-	{
-		if (i_index_count % 3 != 0)		//index buffer must be a list of triangles
-		{
-			DEBUG_PRINT("Cannot create a Mesh with non-triangular data. (Ensure number of indices is divisible by 3)");
-			return nullptr;
-		}
-
-		for (int x = 0; x < i_index_count; x += 3)
-			std::swap(i_indices[x], i_indices[x + 2]);
-
-		return CreateLeftHanded(i_vertices, i_vertex_count, i_indices, i_index_count);
-	}
-
-	Mesh* Mesh::CreateLeftHanded(Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
+	Mesh* Mesh::Create(Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
 	{
 		if (i_index_count % 3 != 0)		//index buffer must be a list of triangles
 		{
@@ -239,8 +225,14 @@ namespace Lame
 				}
 				// Fill the buffer
 				{
-					for (size_t x = 0; x < i_index_count; x++)
-						indexData[x] = i_indices[x];
+					//Direct3D uses left-handed notation by default.
+					//We must reorder the indices as we enter them into the buffer.
+					for (size_t x = 0; x < i_index_count; x += 3)
+					{
+						indexData[x] = i_indices[x + 2];
+						indexData[x + 1] = i_indices[x + 1];
+						indexData[x + 2] = i_indices[x];
+					}
 				}
 				// The buffer must be "unlocked" before it can be used
 				{

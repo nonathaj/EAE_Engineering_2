@@ -88,7 +88,7 @@ namespace Engine
 					return i_lhs == i_rhs;
 
 				//Compare the ULP difference to our maxULP difference allowed
-				return abs(left - right) <= maxULPdiff;
+				return static_cast<size_t>(abs(left - right)) <= maxULPdiff;
 			}
 		}
 	}

@@ -34,7 +34,7 @@ namespace Lame
 
 		if (LoadMeshAssetTableFromLua(i_mesh_path, vertices, vertex_count, indices, index_count))
 		{
-			Mesh *mesh = CreateRightHanded(vertices, vertex_count, indices, index_count);
+			Mesh *mesh = Create(vertices, vertex_count, indices, index_count);
 			delete[] vertices;
 			delete[] indices;
 			return mesh;
