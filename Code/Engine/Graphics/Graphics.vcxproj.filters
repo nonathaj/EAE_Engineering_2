@@ -22,10 +22,12 @@
       <Filter>Direct3D</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Color.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Vertex.h" />
+    <ClInclude Include="Color.h" />
   </ItemGroup>
 </Project>

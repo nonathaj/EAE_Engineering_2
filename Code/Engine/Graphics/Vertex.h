@@ -2,11 +2,14 @@
 #define _LAME_VERTEX_H
 
 #include <cstdint>
+#include "Color.h"
+#include "../../External/Lua/Includes.h"
 
 namespace Lame
 {
 	struct Vertex
 	{
+	public:
 		// POSITION, 2 floats == 8 bytes, Offset = 0
 		float x, y;
 		// COLOR0, 4 uint8_ts == 4 bytes, Offset = 8

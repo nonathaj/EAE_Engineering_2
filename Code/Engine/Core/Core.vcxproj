@@ -18,6 +18,25 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="FloatMath.h" />
+    <ClInclude Include="Math.h" />
+    <ClInclude Include="Matrix.h" />
+    <ClInclude Include="MatrixMath.h" />
+    <ClInclude Include="Vector2.h" />
+    <ClInclude Include="Vector3.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="FloatMath.inl" />
+    <None Include="Math.inl" />
+    <None Include="MatrixMath.inl" />
+    <None Include="Vector2.inl" />
+    <None Include="Vector3.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Vector2.cpp" />
+    <ClCompile Include="Vector3.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2C8EFEC2-3737-4E5B-B155-B2BBBBD798B7}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

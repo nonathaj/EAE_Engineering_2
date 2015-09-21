@@ -47,14 +47,20 @@ int CreateMainWindowAndReturnExitCodeWhenItCloses( const HINSTANCE i_thisInstanc
 	// Try to create the main window
 	if ( CreateMainWindow( i_thisInstanceOfTheProgram, i_initialWindowDisplayState ) )
 	{
-		eae6320::Graphics::Initialize(s_mainWindow);
-		
-		// If the main window was successfully created wait for it to be closed
-		const int exitCode = WaitForMainWindowToCloseAndReturnExitCode( i_thisInstanceOfTheProgram );
-		
-		eae6320::Graphics::ShutDown();
-		
-		return exitCode;
+		if (eae6320::Graphics::Initialize(s_mainWindow))
+		{
+			// If the main window was successfully created wait for it to be closed
+			const int exitCode = WaitForMainWindowToCloseAndReturnExitCode(i_thisInstanceOfTheProgram);
+
+			eae6320::Graphics::ShutDown();
+
+			return exitCode;
+		}
+		else
+		{
+			//Our graphics code failed to initialize.  Return a made-up error code
+			return -2;
+		}
 	}
 	else
 	{
