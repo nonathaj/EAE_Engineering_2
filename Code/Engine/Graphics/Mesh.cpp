@@ -12,13 +12,22 @@
 
 namespace
 {
+	//Loads the lua mesh file, and generates a lua_State with it at the top of the stack
 	bool LoadMeshAssetTableFromLua(const std::string &i_path, Lame::Vertex*& o_vertices, size_t& o_vertex_count, uint32_t*& o_indices, size_t& o_index_count);
+
+	//Loads the mesh data from the table at the top of the stack
 	bool LoadMesh(lua_State* io_luaStateFrom, Lame::Vertex*& o_vertices, size_t& o_vertex_count, uint32_t*& o_indices, size_t& o_index_count);
+
+	//Loads a color from the top of the stack
 	bool LoadColor(lua_State* io_luaStateFrom, double& o_r, double& o_g, double& o_b, double& o_a);
+
+	//Loads a position from the top of the stack
 	bool LoadPosition(lua_State* io_luaStateFrom, double& o_x, double& o_y);
+
+	//Loads a vertex from the top of the stack
 	bool LoadVertex(lua_State* io_luaStateFrom, Lame::Vertex& o_vertex);
 
-	//Returns a double from a table at the top of the stack
+	//Returns a double from a table at the top of the stack (NaN, if the value is not a lua number)
 	double GetDoubleFromTable(lua_State& io_luaStateFrom, size_t i_indexInTable);
 }
 
