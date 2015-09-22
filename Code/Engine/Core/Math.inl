@@ -63,10 +63,34 @@ namespace Engine
 		template<typename T>
 		inline T Repeat(T i_num, T i_lim)
 		{
-			T result = i_num - ((int)(i_num / i_lim)) * i_lim;
+			T result = i_num - floor(i_num / i_lim) * i_lim;
 			if (result < 0)
 				result += i_lim;
 			return result;
+		}
+
+
+		template<typename T>
+		inline T Clamp(T i_num, T i_min, T i_max)
+		{
+			if (i_num <= i_min)
+				return i_min;
+			if (i_num >= i_max)
+				return i_max;
+			return i_num;
+		}
+
+		template<typename T>
+		inline T Lerp(T i_num, T i_target, float i_percent)
+		{
+			i_percent = Clamp(i_percent, 0.0f, 1.0f);
+			return i_num + (i_target - i_num) * i_percent);
+		}
+
+		template<typename T>
+		inline bool IsWithinRange(T i_num, T i_min, T i_max)
+		{
+			return i_num >= i_min && i_num <= i_max;
 		}
 		
 		namespace Int

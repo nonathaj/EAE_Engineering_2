@@ -28,7 +28,7 @@ namespace
 	bool LoadVertex(lua_State* io_luaStateFrom, Lame::Vertex& o_vertex);
 
 	//Returns a double from a table at the top of the stack (NaN, if the value is not a lua number)
-	double GetDoubleFromTable(lua_State& io_luaStateFrom, size_t i_indexInTable);
+	double GetDoubleFromTable(lua_State* io_luaStateFrom, size_t i_indexInTable);
 }
 
 namespace Lame

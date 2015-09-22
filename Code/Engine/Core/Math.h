@@ -32,6 +32,15 @@ namespace Engine
 		template<typename T>
 		inline T Repeat(T i_num, T i_lim);
 
+		template<typename T>
+		inline T Clamp(T i_num, T i_min, T i_max);
+
+		template<typename T>
+		inline T Lerp(T i_num, T i_target, float i_percent);
+
+		template<typename T>
+		inline bool IsWithinRange(T i_num, T i_min, T i_max);
+
 		namespace Int
 		{
 			template<typename T>
