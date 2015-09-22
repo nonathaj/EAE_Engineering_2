@@ -82,6 +82,7 @@
     <ClInclude Include="$(LuaVersion)\src\lzio.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="LuaHelpers.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(LuaVersion)\src\lapi.c">
@@ -180,5 +181,6 @@
     <ClCompile Include="$(LuaVersion)\src\lzio.c">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="LuaHelpers.cpp" />
   </ItemGroup>
 </Project>

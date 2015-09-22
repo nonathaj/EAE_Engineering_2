@@ -45,6 +45,7 @@
     <ClInclude Include="$(LuaVersion)\src\lvm.h" />
     <ClInclude Include="$(LuaVersion)\src\lzio.h" />
     <ClInclude Include="Includes.h" />
+    <ClInclude Include="LuaHelpers.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(LuaVersion)\src\lapi.c" />
@@ -79,6 +80,7 @@
     <ClCompile Include="$(LuaVersion)\src\lundump.c" />
     <ClCompile Include="$(LuaVersion)\src\lvm.c" />
     <ClCompile Include="$(LuaVersion)\src\lzio.c" />
+    <ClCompile Include="LuaHelpers.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{45CDCFF0-7F57-457F-9706-C3C15E7EA597}</ProjectGuid>
