@@ -10,45 +10,50 @@
 namespace LuaHelpers
 {
 	//Is there a table at the top of the stack?
-	bool IsTable(lua_State* io_luaStateFrom);
+	bool IsTable(lua_State* io_luaStateFrom, int i_index = -1);
+
+	//Gets the array length of the table at the top of the stack
+	size_t TableLength(lua_State* io_luaState, int i_index = -1);
+	size_t DictionaryLength(lua_State* io_luaState, int i_index = -1);
 
 	//Pushes a value on top of the lua stack
-	template<typename T>
-	void Push(lua_State* io_luaState, const T& i_val);
+	void Push(lua_State* io_luaState, lua_Integer const& i_val);
+	void Push(lua_State* io_luaState, std::string const& i_val);
+	void Push(lua_State* io_luaState, nullptr_t const& i_val);			//push nil
+	void Push(lua_State* io_luaState, lua_Number const& i_val);
+	void Push(lua_State* io_luaState, lua_Unsigned const& i_val);
+	void Push(lua_State* io_luaState, bool const& i_val);
 
 	//Peeks at the item at the top of the stack
-	template<typename T>
-	bool Peek(lua_State* io_luaState, T& o_val);
+	bool Peek(lua_State* io_luaState, lua_Number& o_val);
+	bool Peek(lua_State* io_luaState, std::string& o_val);
+	bool Peek(lua_State* io_luaState, bool& o_val);
+	bool Peek(lua_State* io_luaState, lua_Integer& o_val);
+	bool Peek(lua_State* io_luaState, lua_Unsigned & o_val);
+	bool Peek(lua_State* io_luaState, nullptr_t const& i_val);			//is the top of the stack nil?
 
-	//Pops at the item at the top of the stack
-	template<typename T>
-	bool PopValue(lua_State* io_luaState, T& o_val);
+	//Pops items off the top of the stack
+	void Pop(lua_State* io_luaState, int i_amount = 1);
 
-	void Pop(lua_State* io_luaState, size_t i_amount = 1);
-
-	//Gets a value from a table at the top of the stack, with the given index key
-	template<typename K, typename T>
-	bool GetFromTable(lua_State* io_luaState, const K& i_indexInTable, T& o_val);
+	//Swaps a key at the top of the stack with it's value in the table right below it in the stack
+	bool SwapTableKey(lua_State* io_luaState);
 
 	//Gets an array from the top of the stack, with the given index key, and pops it off (item is ALWAYS popped off, even if failure)
-	template<typename T>
-	bool PopArray(lua_State* io_luaState, std::vector<T>& o_val);
+	bool PopArray(lua_State* io_luaState, std::vector<lua_Integer>& o_val);
+	bool PopArray(lua_State* io_luaState, std::vector<std::string>& o_val);
+	bool PopArray(lua_State* io_luaState, std::vector<lua_Number>& o_val);
+	bool PopArray(lua_State* io_luaState, std::vector<lua_Unsigned>& o_val);
 
 	//Gets a dictionary from the top of the stack, with the given index key, and pops it off (item is ALWAYS popped off, even if failure)
-	template<typename K, typename T>
-	bool PopDictionary(lua_State* io_luaState, std::map<K, T> o_val);
-
-	//attempts to push a new table on the stack with the given key
-	template<typename T>
-	bool PushTable(lua_State* io_luaState, const T& i_key);
+	bool PopDictionary(lua_State* io_luaState, std::map<std::string, lua_Integer>& o_val);
+	bool PopDictionary(lua_State* io_luaState, std::map<std::string, std::string>& o_val);
+	bool PopDictionary(lua_State* io_luaState, std::map<std::string, lua_Number>& o_val);
+	bool PopDictionary(lua_State* io_luaState, std::map<std::string, lua_Unsigned>& o_val);
 
 	//Loads the lua table file, and generates a lua_State with the return'd table at the top of the stack
 	lua_State* LoadAssetTable(const std::string& i_path);
 
-	size_t TableLength(lua_State* io_luaState);
-
 	bool Close(lua_State*& io_luaState);
 }
-#include "LuaHelpers.inl"
 
 #endif //_EXTERNAL_LUA_LUAHELPERS_H

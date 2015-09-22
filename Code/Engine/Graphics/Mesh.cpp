@@ -62,116 +62,144 @@ namespace Lame
 
 namespace
 {
-	/* TODO
 	bool Load(const std::string &i_path, Lame::Vertex*& o_vertices, size_t& o_vertex_count, uint32_t*& o_indices, size_t& o_index_count)
 	{
 		using namespace LuaHelpers;
-		
-		bool failed = false;
+		o_vertices = nullptr;
+		o_indices = nullptr;
 
 		lua_State* state = LoadAssetTable(i_path);
 
-		//Push the whole vertex table
-		if (PushTable(state, "vertex"))
+		bool success = state != nullptr;
+		if (success)
 		{
-			char * const posTable = "vertex";
-			char * const colorTable = "color";
-			o_vertex_count = TableLength(state);
-			o_vertices = new Lame::Vertex[o_vertex_count];
-			for (size_t x = 1; x <= o_vertex_count; x++)
+			//Push the whole vertex table, and ensure it's a table
+			Push(state, "vertex");
+			if (
+				(success = SwapTableKey(state)) &&			//we were able to find the key
+				(success = IsTable(state))					//what we found was a table
+				)
 			{
-				//Push an individual vertex
-				if (PushTable(state, x))
-				{
-					Lame::Vertex &vert = o_vertices[x - 1];
-					std::vector<double> pos, color;
-					if ( PushTable(state, posTable) && PopArray(state, pos) && pos.size() == 2 &&
-						 PushTable(state, colorTable) && PopArray(state, color) && color.size() == 4)
-					{
-						vert.x = static_cast<float>(pos[0]);
-						vert.y = static_cast<float>(pos[1]);
-						vert.r = static_cast<uint8_t>(color[0] * 255.0);
-						vert.g = static_cast<uint8_t>(color[1] * 255.0);
-						vert.b = static_cast<uint8_t>(color[2] * 255.0);
-						vert.a = static_cast<uint8_t>(color[3] * 255.0);
-					}
-					else
-					{
-						failed = true;
-						goto OnExit;
-					}
-					Pop(state);		//pop the vertex
-				}
-				else
-				{
-					failed = true;
-					goto OnExit;
-				}
-			}
+				DEBUG_PRINT("vertex loaded successfully");
+				//allocated the vertex table
+				o_vertex_count = TableLength(state);
+				o_vertices = new Lame::Vertex[o_vertex_count];
 
-			//pop the vertex array
-			Pop(state);
-		}
-		else
-		{
-			failed = true;
-			goto OnExit;
-		}
-
-		char * const indexTable = "index";
-		if (PushTable(state, indexTable))
-		{
-			size_t triangle_count = TableLength(state);
-			o_index_count = triangle_count * 3;
-			o_indices = new uint32_t[o_index_count];
-			for (size_t x = 1; x <= triangle_count; x++)
-			{
-				//Push the triangle table
-				if (PushTable(state, x))
+				//Iterate the vertex data
+				for (size_t x = 1; x <= o_vertex_count; x++)
 				{
+					//Push an individual vertex
+					Push(state, static_cast<lua_Unsigned>(x));
 					if (
-						!GetFromTable(state, x, o_indices[x * 3]) ||
-						!GetFromTable(state, x + 1, o_indices[x * 3 + 1]) ||
-						!GetFromTable(state, x + 2, o_indices[x * 3 + 2])
+						(success = SwapTableKey(state)) &&			//we were able to find the key
+						(success = IsTable(state))					//what we found was a table
 						)
 					{
-						failed = true;
-						goto OnExit;
+						//find the vertex we are working on
+						Lame::Vertex &vert = o_vertices[x - 1];
+
+						//find it's position
+						std::vector<double> pos;
+						Push(state, "pos");									//push the position table
+						if (
+							(success = SwapTableKey(state)) &&					//we were able to find the key
+							(success = PopArray(state, pos)) &&					//pop a table
+							(success = pos.size() == 2)							//table is the right size
+							)
+						{
+							//assign the position
+							vert.x = static_cast<float>(pos[0]);
+							vert.y = static_cast<float>(pos[1]);
+						}
+						DEBUG_PRINT("pos %d", pos.size());
+
+						if (success)
+						{
+							std::vector<double> color;
+							Push(state, "color");							//push the color table
+							if (
+								(success = SwapTableKey(state)) &&					//we were able to find the key
+								(success = PopArray(state, color)) &&				//pop a table
+								(success = pos.size() == 4)							//table is the right size
+								)
+							{
+								vert.r = static_cast<uint8_t>(color[0] * 255.0);
+								vert.g = static_cast<uint8_t>(color[1] * 255.0);
+								vert.b = static_cast<uint8_t>(color[2] * 255.0);
+								vert.a = static_cast<uint8_t>(color[3] * 255.0);
+							}
+							DEBUG_PRINT("color %d", color.size());
+						}
+
+						DEBUG_PRINT("Vertex (%f, %f) (%f, %f, %f, %f)", vert.x, vert.y, vert.r, vert.g, vert.b, vert.a);
+					}
+					Pop(state);	//pop the vertex
+
+					//if we failed in loading this vertex, break out of the loop
+					if (!success)
+						break;
+				}
+			}
+			Pop(state); //pop the vertex array
+		}
+		if (success)		//if we succeeded in loading the vertex data, load the index data
+		{
+			//Push the whole index table, and ensure it's a table
+			Push(state, "index");
+			if (
+				(success = SwapTableKey(state)) &&			//we were able to find the key
+				(success = IsTable(state))					//what we found was a table
+				)
+			{
+				//allocate the index data
+				size_t triangle_count = TableLength(state);
+				o_index_count = triangle_count * 3;
+				o_indices = new uint32_t[o_index_count];
+				//iterate all the triangles
+				for (size_t x = 1; x <= triangle_count; x++)
+				{
+					Push(state, static_cast<lua_Unsigned>(x));			//push the triangle index
+					std::vector<uint32_t> indices;
+					if (
+						(success = SwapTableKey(state)) &&			//we were able to find the key
+						(success = PopArray(state, indices)) &&		//pop a table
+						(success = indices.size() == 3)				//table is the right size
+						)
+					{
+						o_indices[x * 3] = indices[0];
+						o_indices[x * 3 + 1] = indices[1];
+						o_indices[x * 3 + 2] = indices[2];
 					}
 
-					Pop(state);		//pop the triangle table
+					//if we failed in loading this triangle, break out of the loop
+					if (!success)
+						break;
 				}
-				else
-				{
-					failed = true;
-					goto OnExit;
-				}
-				
 			}
-			Pop(state); //pop the index table
-		}
-		else
-		{
-			failed = true;
-			goto OnExit;
+			Pop(state);		//pop the whole index table
 		}
 
-	OnExit:
 		if (state)
+		{
+			Pop(state);		//pop the wrapper table
 			Close(state);
+		}
 
-		if (failed)
+		if (!success)
 		{
 			if (o_vertices)
+			{
 				delete[] o_vertices;
-			o_vertices = nullptr;
+				o_vertices = nullptr;
+			}
 			if (o_indices)
+			{
 				delete[] o_indices;
-			o_indices = nullptr;
+				o_indices = nullptr;
+			}
 		}
-		return !failed;
+		return success;
 	}
-	*/
 
 	bool LoadMesh(lua_State* io_luaStateFrom, Lame::Vertex*& o_vertices, size_t& o_vertex_count, uint32_t*& o_indices, size_t& o_index_count)
 	{
