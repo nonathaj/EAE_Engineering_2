@@ -82,6 +82,9 @@
     <ClCompile Include="$(LuaVersion)\src\lzio.c" />
     <ClCompile Include="LuaHelpers.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="LuaHelpers.inl" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{45CDCFF0-7F57-457F-9706-C3C15E7EA597}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

@@ -5,12 +5,6 @@
 #include "LuaHelpers.h"
 #include "../../Engine/System/Console.h"
 
-namespace
-{
-	bool GetDoubleFromTableReady(lua_State* io_luaState, double& o_val);
-	bool GetStringFromTableReady(lua_State* io_luaState, std::string& o_val);
-}
-
 namespace LuaHelpers
 {
 	//Is there a table at the top of the stack?
@@ -19,137 +13,25 @@ namespace LuaHelpers
 		return lua_istable(io_luaStateFrom, -1);
 	}
 
-	template<double>
-	double GetFromTable(lua_State* io_luaState, const int& i_indexInTable)
+	size_t TableLength(lua_State* io_luaState)
 	{
-		double value = std::numeric_limits<double>::quiet_NaN();
-
-		if (IsTable(io_luaStateFrom))
-		{
-			lua_pushinteger(io_luaStateFrom, i_indexInTable);
-			lua_gettable(io_luaStateFrom, -2);
-			if (lua_isnumber(io_luaStateFrom, -1))
-				value = lua_tonumber(io_luaStateFrom, -1);
-			lua_pop(io_luaStateFrom, 1);
-		}
-
-		return value;
+		return luaL_len(io_luaState, -1);
 	}
 
-	//Returns a double from a table at the top of the stack
-	double GetDoubleFromTable(lua_State* io_luaStateFrom, const int& i_indexInTable)
+	void Pop(lua_State* io_luaState, size_t i_amount)
 	{
-		double value = std::numeric_limits<double>::quiet_NaN();
-
-		if (IsTable(io_luaStateFrom))
-		{
-			lua_pushinteger(io_luaStateFrom, i_indexInTable);
-			lua_gettable(io_luaStateFrom, -2);
-			if (lua_isnumber(io_luaStateFrom, -1))
-				value = lua_tonumber(io_luaStateFrom, -1);
-			lua_pop(io_luaStateFrom, 1);
-		}
-
-		return value;
+		lua_pop(io_luaState, i_amount);
 	}
 
-	double GetDoubleFromTable(lua_State* io_luaStateFrom, const std::string& i_indexInTable)
+	bool Close(lua_State*& io_luaState)
 	{
-		double value = std::numeric_limits<double>::quiet_NaN();
-
-		if (IsTable(io_luaStateFrom))
-		{
-			lua_pushstring(io_luaStateFrom, i_indexInTable.c_str());
-			lua_gettable(io_luaStateFrom, -2);
-			if (lua_isnumber(io_luaStateFrom, -1))
-				value = lua_tonumber(io_luaStateFrom, -1);
-			lua_pop(io_luaStateFrom, 1);
-		}
-
-		return value;
-	}
-
-	std::vector<double> GetDoublesFromArrayTable(lua_State* io_luaState)
-	{
-		std::vector<double> values;
-
-		if (IsTable(io_luaState))
-		{
-			size_t value_count = luaL_len(io_luaState, -1);
-			for (size_t x = 1; x <= value_count; x++)
-				values.push_back(GetDoubleFromTable(io_luaState, x));
-		}
-
-		return values;
-	}
-
-	std::vector<std::string> GetStringsFromArrayTable(lua_State* io_luaState)
-	{
-		std::vector<std::string> values;
-
-		if (IsTable(io_luaState))
-		{
-			size_t value_count = luaL_len(io_luaState, -1);
-			for (size_t x = 1; x <= value_count; x++)
-				values.push_back(GetStringFromTable(io_luaState, x));
-		}
-
-		return values;
-	}
-
-	std::string GetStringFromTable(lua_State* io_luaState, const int& i_indexInTable)
-	{
-		std::string str;
-
-		if (IsTable(io_luaState))
-		{
-			lua_pushinteger(io_luaState, i_indexInTable);
-			lua_gettable(io_luaState, -2);
-			if (lua_isnumber(io_luaState, -1))
-				str = lua_tostring(io_luaState, -1);
-			lua_pop(io_luaState, 1);
-		}
-
-		return str;
-	}
-
-	std::string GetStringFromTable(lua_State* io_luaState, const std::string& i_indexInTable)
-	{
-		std::string str;
-
-		if (IsTable(io_luaState))
-		{
-			lua_pushstring(io_luaState, i_indexInTable.c_str());
-			lua_gettable(io_luaState, -2);
-			if (lua_isnumber(io_luaState, -1))
-				str = lua_tostring(io_luaState, -1);
-			lua_pop(io_luaState, 1);
-		}
-
-		return str;
-	}
-
-	bool PushTable(lua_State* io_luaState, const std::string& i_key)
-	{
-		lua_pushstring(io_luaState, i_key.c_str());
-		lua_gettable(io_luaState, -2);
-		if (!IsTable(io_luaState))
-		{
-			lua_pop(io_luaState, 1);
+		if (!io_luaState)
 			return false;
-		}
-		return true;
-	}
 
-	bool PushTable(lua_State* io_luaState, const int& i_key)
-	{
-		lua_pushinteger(io_luaState, i_key);
-		lua_gettable(io_luaState, -2);
-		if (!IsTable(io_luaState))
-		{
-			lua_pop(io_luaState, 1);
-			return false;
-		}
+		assert(lua_gettop(io_luaState) == 0);
+
+		lua_close(io_luaState);
+		io_luaState = nullptr;
 		return true;
 	}
 
@@ -245,28 +127,201 @@ namespace LuaHelpers
 
 		return nullptr;
 	}
-}
 
-namespace
-{
-	bool GetDoubleFromTableReady(lua_State* io_luaState, double& o_val)
+	////////////////////////////////////
+	// Push Functions
+	////////////////////////////////////
+	template<>
+	void Push(lua_State* io_luaState, lua_Integer const& i_val)
+	{
+		lua_pushinteger(io_luaState, i_val);
+	}
+
+	template<>
+	void Push(lua_State* io_luaState, std::string const& i_val)
+	{
+		lua_pushstring(io_luaState, i_val.c_str());
+	}
+
+	template<>
+	void Push(lua_State* io_luaState, char const * const& i_val)
+	{
+		lua_pushstring(io_luaState, i_val);
+	}
+
+	template<>
+	void Push(lua_State* io_luaState, nullptr_t const& i_val)
+	{
+		lua_pushnil(io_luaState);
+	}
+
+	template<>
+	void Push(lua_State* io_luaState, lua_Number const& i_val)
+	{
+		lua_pushnumber(io_luaState, i_val);
+	}
+
+	template<>
+	void Push(lua_State* io_luaState, lua_Unsigned const& i_val)
+	{
+		lua_pushunsigned(io_luaState, i_val);
+	}
+
+	void Push(lua_State* io_luaState, const char* i_val)
+	{
+		lua_pushstring(io_luaState, i_val);
+	}
+	////////////////////////////////////
+	////////////////////////////////////
+
+	////////////////////////////////////
+	// Peek Functions
+	////////////////////////////////////
+	template<>
+	bool Peek(lua_State* io_luaState, lua_Number& o_val)
+	{
+		if (lua_isnumber(io_luaState, -1))
+		{
+			o_val = lua_tonumber(io_luaState, -1);
+			return true;
+		}
+		return false;
+	}
+
+	template<>
+	bool Peek(lua_State* io_luaState, std::string& o_val)
+	{
+		if (lua_isstring(io_luaState, -1))
+		{
+			o_val = lua_tostring(io_luaState, -1);
+			return true;
+		}
+		return false;
+	}
+
+	template<>
+	bool Peek(lua_State* io_luaState, const char*& o_val)
+	{
+		if (lua_isstring(io_luaState, -1))
+		{
+			o_val = lua_tostring(io_luaState, -1);
+			return true;
+		}
+		return false;
+	}
+
+	template<>
+	bool Peek(lua_State* io_luaState, bool& o_val)
+	{
+		if (lua_isboolean(io_luaState, -1))
+		{
+			o_val = lua_toboolean(io_luaState, -1) != 0;
+			return true;
+		}
+		return false;
+	}
+
+	template<>
+	bool Peek(lua_State* io_luaState, lua_Integer& o_val)
+	{
+		if (lua_isnumber(io_luaState, -1))
+		{
+			o_val = lua_tointeger(io_luaState, -1);
+			return true;
+		}
+		return false;
+	}
+
+	////////////////////////////////////
+	////////////////////////////////////
+
+	template<typename T>
+	bool PopValue(lua_State* io_luaState, T& o_val)
+	{
+		bool pass = Peek(io_luaState, o_val);
+		Pop(io_luaState);
+		return pass;
+	}
+
+	template<typename K, typename T>
+	bool GetFromTable(lua_State* io_luaState, const K& i_indexInTable, T& o_val)
 	{
 		bool found = false;
-		if (LuaHelpers::IsTable(io_luaState))
+		if (IsTable(io_luaState))
 		{
+			Push(io_luaState, i_indexInTable);
 			lua_gettable(io_luaState, -2);
-			if (lua_isnumber(io_luaState, -1))
-			{
-				o_val = lua_tonumber(io_luaState, -1);
-				found = true;
-			}
-			lua_pop(io_luaState, 1);
+			found = PopValue(io_luaState, o_val);
 		}
 		return found;
 	}
 
-	bool GetStringFromTableReady(lua_State* io_luaState, std::string& o_val)
-	{
 
+	template<typename T>
+	bool PopArray(lua_State* io_luaState, std::vector<T>& o_val)
+	{
+		if (!IsTable(io_luaState))
+		{
+			Pop(io_luaState);
+			return false;
+		}
+
+		T item;
+		size_t value_count = TableLength(io_luaState);
+		o_val.reserve(value_count);
+		for (size_t x = 1; x <= value_count; x++)
+		{
+			if (GetFromTable(io_luaState, x, item))
+				o_val.push_back(item);
+			else
+			{
+				Pop(io_luaState);
+				return false;
+			}
+		}
+		Pop(io_luaState);
+		return true;
+	}
+
+	template<typename K, typename T>
+	bool PopDictionary(lua_State* io_luaState, std::map<K, T> o_val)
+	{
+		if (!IsTable(io_luaState))
+		{
+			Pop(io_luaState);
+			return false;
+		}
+
+		K key;
+		T val;
+		Push(io_luaState, nullptr);
+		while (lua_next(io_luaState, -2))
+		{
+			if (Pop(io_luaState, val) && Pop(io_luaState, key))
+				o_val.insert(key, val);
+			else
+			{
+				Pop(io_luaState);
+				return false;
+			}
+		}
+		Pop(io_luaState);
+		return true;
+	}
+
+	template<typename T>
+	bool PushTable(lua_State* io_luaState, const T& i_key)
+	{
+		if (!IsTable(io_luaState))
+			return false;
+
+		Push(io_luaState, i_key);
+		lua_gettable(io_luaState, -2);
+		if (!IsTable(io_luaState))
+		{
+			Pop(io_luaState);
+			return false;
+		}
+		return true;
 	}
 }

@@ -183,4 +183,7 @@
     </ClCompile>
     <ClCompile Include="LuaHelpers.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="LuaHelpers.inl" />
+  </ItemGroup>
 </Project>

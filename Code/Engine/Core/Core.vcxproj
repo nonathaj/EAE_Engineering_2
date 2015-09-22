@@ -28,7 +28,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="FloatMath.inl" />
-    <None Include="Math.inl" />
     <None Include="MatrixMath.inl" />
     <None Include="Vector2.inl" />
     <None Include="Vector3.inl" />

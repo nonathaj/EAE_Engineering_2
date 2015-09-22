@@ -6,6 +6,7 @@
 
 #include "Mesh.h"
 #include "../../External/Lua/Includes.h"
+#include "../../External/Lua/LuaHelpers.h"
 #include "../System/Console.h"
 
 #include "Vertex.h"
@@ -29,6 +30,9 @@ namespace
 
 	//Returns a double from a table at the top of the stack (NaN, if the value is not a lua number)
 	double GetDoubleFromTable(lua_State* io_luaStateFrom, size_t i_indexInTable);
+
+	bool Load(const std::string &i_path, Lame::Vertex*& o_vertices, size_t& o_vertex_count, uint32_t*& o_indices, size_t& o_index_count);
+
 }
 
 namespace Lame
@@ -58,6 +62,117 @@ namespace Lame
 
 namespace
 {
+	/* TODO
+	bool Load(const std::string &i_path, Lame::Vertex*& o_vertices, size_t& o_vertex_count, uint32_t*& o_indices, size_t& o_index_count)
+	{
+		using namespace LuaHelpers;
+		
+		bool failed = false;
+
+		lua_State* state = LoadAssetTable(i_path);
+
+		//Push the whole vertex table
+		if (PushTable(state, "vertex"))
+		{
+			char * const posTable = "vertex";
+			char * const colorTable = "color";
+			o_vertex_count = TableLength(state);
+			o_vertices = new Lame::Vertex[o_vertex_count];
+			for (size_t x = 1; x <= o_vertex_count; x++)
+			{
+				//Push an individual vertex
+				if (PushTable(state, x))
+				{
+					Lame::Vertex &vert = o_vertices[x - 1];
+					std::vector<double> pos, color;
+					if ( PushTable(state, posTable) && PopArray(state, pos) && pos.size() == 2 &&
+						 PushTable(state, colorTable) && PopArray(state, color) && color.size() == 4)
+					{
+						vert.x = static_cast<float>(pos[0]);
+						vert.y = static_cast<float>(pos[1]);
+						vert.r = static_cast<uint8_t>(color[0] * 255.0);
+						vert.g = static_cast<uint8_t>(color[1] * 255.0);
+						vert.b = static_cast<uint8_t>(color[2] * 255.0);
+						vert.a = static_cast<uint8_t>(color[3] * 255.0);
+					}
+					else
+					{
+						failed = true;
+						goto OnExit;
+					}
+					Pop(state);		//pop the vertex
+				}
+				else
+				{
+					failed = true;
+					goto OnExit;
+				}
+			}
+
+			//pop the vertex array
+			Pop(state);
+		}
+		else
+		{
+			failed = true;
+			goto OnExit;
+		}
+
+		char * const indexTable = "index";
+		if (PushTable(state, indexTable))
+		{
+			size_t triangle_count = TableLength(state);
+			o_index_count = triangle_count * 3;
+			o_indices = new uint32_t[o_index_count];
+			for (size_t x = 1; x <= triangle_count; x++)
+			{
+				//Push the triangle table
+				if (PushTable(state, x))
+				{
+					if (
+						!GetFromTable(state, x, o_indices[x * 3]) ||
+						!GetFromTable(state, x + 1, o_indices[x * 3 + 1]) ||
+						!GetFromTable(state, x + 2, o_indices[x * 3 + 2])
+						)
+					{
+						failed = true;
+						goto OnExit;
+					}
+
+					Pop(state);		//pop the triangle table
+				}
+				else
+				{
+					failed = true;
+					goto OnExit;
+				}
+				
+			}
+			Pop(state); //pop the index table
+		}
+		else
+		{
+			failed = true;
+			goto OnExit;
+		}
+
+	OnExit:
+		if (state)
+			Close(state);
+
+		if (failed)
+		{
+			if (o_vertices)
+				delete[] o_vertices;
+			o_vertices = nullptr;
+			if (o_indices)
+				delete[] o_indices;
+			o_indices = nullptr;
+		}
+		return !failed;
+	}
+	*/
+
 	bool LoadMesh(lua_State* io_luaStateFrom, Lame::Vertex*& o_vertices, size_t& o_vertex_count, uint32_t*& o_indices, size_t& o_index_count)
 	{
 		//Load the vertex data
