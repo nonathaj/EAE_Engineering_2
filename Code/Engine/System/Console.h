@@ -1,9 +1,11 @@
 #ifndef __SYSTEM_CONSOLE_H
 #define __SYSTEM_CONSOLE_H
 
+#include <string>
+
 namespace System
 {
-	void ConsolePrint(bool displayFileAndLine, std::string i_file, const unsigned int i_line, std::string i_fmt, ...);
+	void ConsolePrint(bool i_displayFileAndLine, std::string i_file, const unsigned int i_line, std::string i_fmt, ...);
 }
 
 // This is how we handle variable argument pre-processor macros

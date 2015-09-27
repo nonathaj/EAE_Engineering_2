@@ -162,7 +162,7 @@ local function BuildAssets( i_assetsToBuild )
 
 	for i, assetBuildTable in ipairs( i_assetsToBuild ) do
 		local tool = assetBuildTable.tool
-		for fileNum, fileData in ipaits(assetBuildTable.files) do
+		for fileNum, fileData in ipairs(assetBuildTable.files) do
 			if not BuildAsset(tool, fileData.source, fileData.target) then
 				-- If there's an error then the asset build should fail,
 				-- but we can still try to build any remaining assets

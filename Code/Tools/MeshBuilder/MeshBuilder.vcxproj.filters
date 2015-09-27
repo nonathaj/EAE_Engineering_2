@@ -2,12 +2,9 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="EntryPoint.cpp" />
-    <ClCompile Include="AssetBuilder.cpp" />
+    <ClCompile Include="MeshBuilder.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\Scripts\BuildAssets.lua" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="AssetBuilder.h" />
+    <ClInclude Include="MeshBuilder.h" />
   </ItemGroup>
 </Project>
