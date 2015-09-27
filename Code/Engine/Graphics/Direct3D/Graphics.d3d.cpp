@@ -41,7 +41,8 @@ namespace
 	//	* The final color that the pixel should be
 	IDirect3DPixelShader9* s_fragmentShader = NULL;
 
-	Lame::Mesh *mesh = nullptr;
+	Lame::Mesh *squareMesh = nullptr;
+	Lame::Mesh *triangleMesh = nullptr;
 }
 
 // Helper Function Declarations
@@ -81,9 +82,14 @@ bool eae6320::Graphics::Initialize( const HWND i_renderingWindow )
 	}
 
 	// Initialize the graphics objects
-	if (!(mesh = Lame::Mesh::Create("data/square.mesh")))
+	if (!(squareMesh = Lame::Mesh::Create("data/square.mesh")))
 	{
 		MessageBox(i_renderingWindow, "Failed to load the square.mesh file.", "Mesh loading error", 0);
+		goto OnError;
+	}
+	if (!(triangleMesh = Lame::Mesh::Create("data/triangle.mesh")))
+	{
+		MessageBox(i_renderingWindow, "Failed to load the triangle.mesh file.", "Mesh loading error", 0);
 		goto OnError;
 	}
 
@@ -138,7 +144,9 @@ void eae6320::Graphics::Render()
 				result = s_direct3dDevice->SetPixelShader( s_fragmentShader );
 				assert( SUCCEEDED( result ) );
 			}
-			result = mesh->Draw();
+			result = squareMesh->Draw();
+			assert(SUCCEEDED(result));
+			result = triangleMesh->Draw();
 			assert(SUCCEEDED(result));
 		}
 		result = s_direct3dDevice->EndScene();
@@ -177,10 +185,16 @@ bool eae6320::Graphics::ShutDown()
 				s_fragmentShader = NULL;
 			}
 
-			if (mesh)
+			if (squareMesh)
 			{
-				delete mesh;
-				mesh = nullptr;
+				delete squareMesh;
+				squareMesh = nullptr;
+			}
+
+			if (triangleMesh)
+			{
+				delete triangleMesh;
+				triangleMesh = nullptr;
 			}
 
 			s_direct3dDevice->Release();

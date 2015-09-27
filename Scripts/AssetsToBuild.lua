@@ -13,6 +13,7 @@ return
 		files = 
 		{
 			{ source = "square.mesh", target = "square.mesh" },
+			{ source = "triangle.mesh", target = "triangle.mesh" },
 		}
 	},
 }
