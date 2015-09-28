@@ -47,7 +47,8 @@ namespace
 	//	* The final color that the pixel should be
 	GLuint s_programId = 0;
 
-	Lame::Mesh *mesh = nullptr;
+	Lame::Mesh *squareMesh = nullptr;
+	Lame::Mesh *triangleMesh = nullptr;
 }
 
 // Helper Function Declarations
@@ -95,9 +96,14 @@ bool eae6320::Graphics::Initialize( const HWND i_renderingWindow )
 	}
 
 	// Initialize the graphics objects
-	if ( !(mesh = Lame::Mesh::Create("data/square.mesh")) )
+	if ( !(squareMesh = Lame::Mesh::Create("data/square.mesh")) )
 	{
 		MessageBox(i_renderingWindow, "Failed to load the square.mesh file.", "Mesh loading error", 0);
+		goto OnError;
+	}
+	if ( !(triangleMesh = Lame::Mesh::Create("data/triangle.mesh")) )
+	{
+		MessageBox(i_renderingWindow, "Failed to load the triangle.mesh file.", "Mesh loading error", 0);
 		goto OnError;
 	}
 
@@ -137,8 +143,11 @@ void eae6320::Graphics::Render()
 			glUseProgram( s_programId );
 			assert( glGetError() == GL_NO_ERROR );
 		}
-		bool drawSuccess = mesh->Draw();
+		bool drawSuccess = squareMesh->Draw();
 		assert( drawSuccess );
+
+		drawSuccess = triangleMesh->Draw();
+		assert(drawSuccess);
 	}
 
 	// Everything has been drawn to the "back buffer", which is just an image in memory.
@@ -170,10 +179,15 @@ bool eae6320::Graphics::ShutDown()
 			s_programId = 0;
 		}
 
-		if (mesh)
+		if (squareMesh)
 		{
-			delete mesh;
-			mesh = nullptr;
+			delete squareMesh;
+			squareMesh = nullptr;
+		}
+		if (triangleMesh)
+		{
+			delete triangleMesh;
+			triangleMesh = nullptr;
 		}
 
 		if ( wglMakeCurrent( s_deviceContext, NULL ) != FALSE )
