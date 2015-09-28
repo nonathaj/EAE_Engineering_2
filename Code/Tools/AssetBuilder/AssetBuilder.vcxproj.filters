@@ -5,9 +5,6 @@
     <ClCompile Include="AssetBuilder.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\Scripts\BuildAssets.lua" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="AssetBuilder.h" />
   </ItemGroup>
 </Project>
