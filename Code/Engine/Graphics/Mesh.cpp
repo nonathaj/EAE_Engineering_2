@@ -25,7 +25,7 @@ namespace Lame
 
 		//find the file length
 		in.seekg(0, in.end);
-		size_t fileLength = in.tellg();
+		size_t fileLength = static_cast<size_t>(in.tellg());
 		in.seekg(0, in.beg);
 		
 		//read the data from the file
