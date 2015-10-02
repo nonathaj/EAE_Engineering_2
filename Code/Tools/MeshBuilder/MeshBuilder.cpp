@@ -5,6 +5,7 @@
 
 #include <sstream>
 #include <cassert>
+#include <fstream>
 
 #include "../../Engine/Windows/Functions.h"
 
@@ -44,15 +45,23 @@ bool eae6320::MeshBuilder::Build( const std::vector<std::string>& )
 
 	// Copy the source to the target
 	{
-		const bool dontFailIfTargetAlreadyExists = false;
-		const bool updateTheTargetFileTime = true;
-		std::string errorMessage;
-		if (!CopyFile(m_path_source, m_path_target, dontFailIfTargetAlreadyExists, updateTheTargetFileTime, &errorMessage))
+		Lame::Vertex *vertices;
+		size_t vertexCount;
+		uint32_t *indices;
+		size_t indexCount;
+		if (LoadMeshAssetTableFromLua(m_path_source, vertices, vertexCount, indices, indexCount))
 		{
-			wereThereErrors = true;
-			std::stringstream decoratedErrorMessage;
-			decoratedErrorMessage << "Windows failed to copy \"" << m_path_source << "\" to \"" << m_path_target << "\": " << errorMessage;
-			eae6320::OutputErrorMessage(decoratedErrorMessage.str().c_str(), __FILE__);
+			uint32_t vertexCount32 = static_cast<uint32_t>(vertexCount);
+			uint32_t indexCount32 = static_cast<uint32_t>(indexCount);
+			std::ofstream out(m_path_target, std::ofstream::binary);
+
+			//write the data
+			out.write(reinterpret_cast<const char *>(&vertexCount32), sizeof(vertexCount32));
+			out.write(reinterpret_cast<const char *>(&indexCount32), sizeof(indexCount32));
+			out.write(reinterpret_cast<const char *>(vertices), sizeof(Lame::Vertex) * vertexCount);
+			out.write(reinterpret_cast<const char *>(indices), sizeof(uint32_t) * indexCount);
+			
+			out.close();
 		}
 	}
 
@@ -354,7 +363,7 @@ namespace
 			return true;
 		}
 	}
-
+	
 	bool LoadColor(lua_State* io_luaStateFrom, double& o_r, double& o_g, double& o_b, double& o_a)
 	{
 		if (!lua_istable(io_luaStateFrom, -1))
@@ -380,4 +389,4 @@ namespace
 			return true;
 		}
 	}
-}
+} //anonymous namespace

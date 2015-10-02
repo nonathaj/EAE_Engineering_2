@@ -141,7 +141,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>Opengl32.lib;glu32.lib;OpenGLExtensions.lib;System.lib;Lua.lib</AdditionalDependencies>
+      <AdditionalDependencies>Opengl32.lib;glu32.lib;OpenGLExtensions.lib;System.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(LibDir)</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4006,4221 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
@@ -161,7 +161,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>d3d9.lib;d3dx9.lib;System.lib;Lua.lib</AdditionalDependencies>
+      <AdditionalDependencies>d3d9.lib;d3dx9.lib;System.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(LibDir);$(DXSDK_DIR)Lib\x64</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4006,4221 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
@@ -186,7 +186,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>Opengl32.lib;glu32.lib;OpenGLExtensions.lib;System.lib;Lua.lib</AdditionalDependencies>
+      <AdditionalDependencies>Opengl32.lib;glu32.lib;OpenGLExtensions.lib;System.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(LibDir)</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4006,4221 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
@@ -210,7 +210,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>d3d9.lib;d3dx9.lib;System.lib;Lua.lib</AdditionalDependencies>
+      <AdditionalDependencies>d3d9.lib;d3dx9.lib;System.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(LibDir);$(DXSDK_DIR)Lib\x64</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4006,4221 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
