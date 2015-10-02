@@ -23,11 +23,18 @@
     </ClCompile>
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Color.cpp" />
+    <ClCompile Include="OpenGL\Effect.gl.cpp">
+      <Filter>OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Direct3D\Effect.d3d.cpp">
+      <Filter>Direct3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="Color.h" />
+    <ClInclude Include="Effect.h" />
   </ItemGroup>
 </Project>
