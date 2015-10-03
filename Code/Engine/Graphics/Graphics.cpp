@@ -10,9 +10,6 @@
 #include "Effect.h"
 #include "Mesh.h"
 
-// Static Data Initialization
-//===========================
-
 namespace
 {
 	Lame::Context *context = nullptr;
@@ -21,16 +18,12 @@ namespace
 	Lame::Mesh *triangleMesh = nullptr;
 }
 
-// Interface
-//==========
-
 bool eae6320::Graphics::Initialize( const HWND i_renderingWindow )
 {
 	context = Lame::Context::Create(i_renderingWindow);
 	if (!context)
 		goto OnError;
 
-	// Initialize the graphics objects
 	if (!(squareMesh = Lame::Mesh::Create(context, "data/square.mesh")))
 	{
 		MessageBox(i_renderingWindow, "Failed to load the square.mesh file.", "Mesh loading error", 0);
@@ -44,6 +37,7 @@ bool eae6320::Graphics::Initialize( const HWND i_renderingWindow )
 
 	if (!(effect = Lame::Effect::Create(context, "data/vertex.shader", "data/fragment.shader")))
 	{
+		MessageBox(i_renderingWindow, "Failed to load the shader files.", "Shader loading error", 0);
 		goto OnError;
 	}
 
@@ -97,6 +91,8 @@ bool eae6320::Graphics::ShutDown()
 			Lame::Mesh::Destroy(triangleMesh, context);
 			triangleMesh = nullptr;
 		}
+		delete context;
+		context = nullptr;
 	}
 
 	return !wereThereErrors;
