@@ -55,10 +55,10 @@ void eae6320::Graphics::Render()
 	assert(success);
 	{
 		//bind the effect
-		{
-			bool bindSuccess = effect->Bind(context);
-			assert(bindSuccess);
-		}
+		success = effect->Bind(context);
+		assert(success);
+
+		//Draw the meshes
 		success = squareMesh->Draw(context);
 		assert(success);
 		success = triangleMesh->Draw(context);
@@ -70,8 +70,6 @@ void eae6320::Graphics::Render()
 
 bool eae6320::Graphics::ShutDown()
 {
-	bool wereThereErrors = false;
-
 	if (context)
 	{
 		if (effect)
@@ -95,5 +93,5 @@ bool eae6320::Graphics::ShutDown()
 		context = nullptr;
 	}
 
-	return !wereThereErrors;
+	return true;
 }

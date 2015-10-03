@@ -28,8 +28,15 @@ namespace Lame
 		size_t fileLength = static_cast<size_t>(in.tellg());
 		in.seekg(0, in.beg);
 		
-		//read the data from the file
+		//Create a buffer for the data
 		char *fileData = new char[fileLength];
+		if (!fileData)
+		{
+			DEBUG_PRINT("Failed to create temporary buffer for mesh");
+			return nullptr;
+		}
+
+		//read the data from the file
 		in.read(fileData, fileLength);
 
 		//close the file
@@ -38,8 +45,16 @@ namespace Lame
 		//find the actual location of our data
 		uint32_t *vertex_count = reinterpret_cast<uint32_t*>(fileData);
 		uint32_t *index_count = vertex_count + 1;
-		Vertex *vertices = reinterpret_cast<Vertex*>( fileData + 2 * sizeof(uint32_t) );
-		uint32_t *indices = reinterpret_cast<uint32_t*>( fileData + 2 * sizeof(uint32_t) + *vertex_count * sizeof(Vertex));
+		Vertex *vertices = reinterpret_cast<Vertex*>(index_count + 1);
+		uint32_t *indices = reinterpret_cast<uint32_t*>(vertices + *vertex_count);
+		
+		//if the end of indices is beyond the end of the file
+		if (reinterpret_cast<void*>(indices + *index_count) > fileData + fileLength)
+		{
+			DEBUG_PRINT("Loaded data for mesh %s is invalid", i_mesh_path.c_str());
+			delete[] fileData;
+			return nullptr;
+		}
 
 		//create the mesh
 		Mesh *mesh = Create(i_context, vertices, *vertex_count, indices, *index_count);
