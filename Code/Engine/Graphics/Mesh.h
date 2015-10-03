@@ -14,23 +14,26 @@
 namespace Lame
 {
 	struct Vertex;
+	class Context;
 
 	class Mesh
 	{
 	public:
-		
-		~Mesh();
-		
 		//Create a mesh with right-handed indices
-		static Mesh* Create(Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count);
-		static Mesh* Create(std::string i_mesh_path);
+		static Mesh* Create(const Context *i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count);
+		static Mesh* Create(const Context *i_context, std::string i_mesh_path);
 
-		bool Draw();
+		//Destroy a mesh
+		static void Destroy(Mesh *i_mesh, const Context *i_context);
+
+		bool Draw(const Context *i_context);
 
 		size_t get_vertex_count() { return vertex_count_; }
 		size_t get_index_count() { return index_count_; }
 
 	private:
+
+		~Mesh() {}
 
 		Mesh(size_t i_vertex_count, size_t i_index_count);
 

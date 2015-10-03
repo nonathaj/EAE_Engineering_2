@@ -5,6 +5,7 @@
 #include <sstream>
 #include <d3d9.h>
 
+#include "../Context.h"
 #include "../Vertex.h"
 #include "../Graphics.h"
 #include "../../System/Console.h"
@@ -14,10 +15,10 @@ namespace Lame
 {
 	namespace
 	{
-		HRESULT GetVertexProcessingUsage(DWORD& o_usage)
+		HRESULT GetVertexProcessingUsage(IDirect3DDevice9* i_device, DWORD& o_usage)
 		{
 			D3DDEVICE_CREATION_PARAMETERS deviceCreationParameters;
-			const HRESULT result = eae6320::Graphics::get_direct3dDevice()->GetCreationParameters(&deviceCreationParameters);
+			const HRESULT result = i_device->GetCreationParameters(&deviceCreationParameters);
 			if (SUCCEEDED(result))
 			{
 				DWORD vertexProcessingType = deviceCreationParameters.BehaviorFlags &
@@ -40,27 +41,28 @@ namespace Lame
 		vertex_declaration_(nullptr)
 	{ }
 
-	Mesh::~Mesh()
+	void Mesh::Destroy(Mesh *i_mesh, const Context *i_context)
 	{
-		if (vertex_buffer_)
+		if (i_mesh->vertex_buffer_)
 		{
-			vertex_buffer_->Release();
-			vertex_buffer_ = nullptr;
+			i_mesh->vertex_buffer_->Release();
+			i_mesh->vertex_buffer_ = nullptr;
 		}
-		if (index_buffer_)
+		if (i_mesh->index_buffer_)
 		{
-			index_buffer_->Release();
-			index_buffer_ = nullptr;
+			i_mesh->index_buffer_->Release();
+			i_mesh->index_buffer_ = nullptr;
 		}
-		if (vertex_declaration_)
+		if (i_mesh->vertex_declaration_)
 		{
-			eae6320::Graphics::get_direct3dDevice()->SetVertexDeclaration(nullptr);
-			vertex_declaration_->Release();
-			vertex_declaration_ = nullptr;
+			i_context->get_direct3dDevice()->SetVertexDeclaration(nullptr);
+			i_mesh->vertex_declaration_->Release();
+			i_mesh->vertex_declaration_ = nullptr;
 		}
+		delete i_mesh;
 	}
 
-	Mesh* Mesh::Create(Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
+	Mesh* Mesh::Create(const Context *i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
 	{
 		if (i_index_count % 3 != 0)		//index buffer must be a list of triangles
 		{
@@ -76,7 +78,7 @@ namespace Lame
 		DWORD usage = 0;
 		{
 			// The type of vertex processing should match what was specified when the device interface was created with CreateDevice()
-			const HRESULT result = GetVertexProcessingUsage(usage);
+			const HRESULT result = GetVertexProcessingUsage(i_context->get_direct3dDevice(), usage);
 			if (FAILED(result))
 			{
 				DEBUG_PRINT("Unable to get vertex processing usage information");
@@ -114,10 +116,10 @@ namespace Lame
 					// The following marker signals the end of the vertex declaration
 					D3DDECL_END()
 				};
-				HRESULT result = eae6320::Graphics::get_direct3dDevice()->CreateVertexDeclaration(vertexElements, &mesh->vertex_declaration_);
+				HRESULT result = i_context->get_direct3dDevice()->CreateVertexDeclaration(vertexElements, &mesh->vertex_declaration_);
 				if (SUCCEEDED(result))
 				{
-					result = eae6320::Graphics::get_direct3dDevice()->SetVertexDeclaration(mesh->vertex_declaration_);
+					result = i_context->get_direct3dDevice()->SetVertexDeclaration(mesh->vertex_declaration_);
 					if (FAILED(result))
 					{
 						DEBUG_PRINT("Direct3D failed to set the vertex declaration");
@@ -141,7 +143,7 @@ namespace Lame
 				// Place the vertex buffer into memory that Direct3D thinks is the most appropriate
 				const D3DPOOL useDefaultPool = D3DPOOL_DEFAULT;
 				HANDLE* const notUsed = NULL;
-				const HRESULT result = eae6320::Graphics::get_direct3dDevice()->CreateVertexBuffer(static_cast<UINT>(bufferSize), usage, useSeparateVertexDeclaration, useDefaultPool,
+				const HRESULT result = i_context->get_direct3dDevice()->CreateVertexBuffer(static_cast<UINT>(bufferSize), usage, useSeparateVertexDeclaration, useDefaultPool,
 					&mesh->vertex_buffer_, notUsed);
 				if (FAILED(result))
 				{
@@ -198,7 +200,7 @@ namespace Lame
 				// Place the index buffer into memory that Direct3D thinks is the most appropriate
 				const D3DPOOL useDefaultPool = D3DPOOL_DEFAULT;
 				HANDLE* notUsed = NULL;
-				const HRESULT result = eae6320::Graphics::get_direct3dDevice()->CreateIndexBuffer(bufferSize, usage, format, useDefaultPool,
+				const HRESULT result = i_context->get_direct3dDevice()->CreateIndexBuffer(bufferSize, usage, format, useDefaultPool,
 					&mesh->index_buffer_, notUsed);
 				if (FAILED(result))
 				{
@@ -250,7 +252,7 @@ namespace Lame
 		return mesh;
 	}
 
-	bool Mesh::Draw()
+	bool Mesh::Draw(const Context *i_context)
 	{
 		HRESULT result;
 		// Bind a specific vertex buffer to the device as a data source
@@ -261,13 +263,13 @@ namespace Lame
 			const unsigned int bufferOffset = 0;
 			// The "stride" defines how large a single vertex is in the stream of data
 			const unsigned int bufferStride = sizeof(Vertex);
-			result = eae6320::Graphics::get_direct3dDevice()->SetStreamSource(streamIndex, vertex_buffer_, bufferOffset, bufferStride);
+			result = i_context->get_direct3dDevice()->SetStreamSource(streamIndex, vertex_buffer_, bufferOffset, bufferStride);
 			if (!SUCCEEDED(result))
 				return false;
 		}
 		// Bind a specific index buffer to the device as a data source
 		{
-			result = eae6320::Graphics::get_direct3dDevice()->SetIndices(index_buffer_);
+			result = i_context->get_direct3dDevice()->SetIndices(index_buffer_);
 			if (!SUCCEEDED(result))
 				return false;
 		}
@@ -281,7 +283,7 @@ namespace Lame
 			const UINT indexOfFirstVertexToRender = 0;
 			const UINT indexOfFirstIndexToUse = 0;
 			const UINT primitiveCountToRender = static_cast<UINT>(index_count_ / 3);	// How many triangles will be drawn?
-			result = eae6320::Graphics::get_direct3dDevice()->DrawIndexedPrimitive(primitiveType,
+			result = i_context->get_direct3dDevice()->DrawIndexedPrimitive(primitiveType,
 				indexOfFirstVertexToRender, indexOfFirstVertexToRender, 4,
 				indexOfFirstIndexToUse, 2);
 			return SUCCEEDED(result);

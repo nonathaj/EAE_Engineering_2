@@ -13,14 +13,16 @@
 
 namespace Lame
 {
+	class Context;
+
 	class Effect
 	{
 	public:
 		~Effect();
 		
-		static Effect* Create(std::string i_vertex_path, std::string i_fragment_path);
+		static Effect* Create(const Context *i_context, std::string i_vertex_path, std::string i_fragment_path);
 
-		bool Bind();
+		bool Bind(const Context *i_context);
 
 	private:
 

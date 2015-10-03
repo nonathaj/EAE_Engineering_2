@@ -13,7 +13,7 @@
 
 namespace Lame
 {
-	Mesh* Mesh::Create(std::string i_mesh_path)
+	Mesh* Mesh::Create(const Context *i_context, std::string i_mesh_path)
 	{
 		//Open the file
 		std::ifstream in(i_mesh_path, std::ifstream::binary);
@@ -42,7 +42,7 @@ namespace Lame
 		uint32_t *indices = reinterpret_cast<uint32_t*>( fileData + 2 * sizeof(uint32_t) + *vertex_count * sizeof(Vertex));
 
 		//create the mesh
-		Mesh *mesh = Create(vertices, *vertex_count, indices, *index_count);
+		Mesh *mesh = Create(i_context, vertices, *vertex_count, indices, *index_count);
 
 		//cleanup the loaded file
 		delete[] fileData;

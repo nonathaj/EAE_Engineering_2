@@ -19,12 +19,12 @@ namespace Lame
 		vertex_array_id_(0)
 	{ }
 
-	Mesh::~Mesh()
+	void Mesh::Destroy(Mesh *i_mesh, const Context *i_context)
 	{
-		if (vertex_array_id_ != 0)
+		if (i_mesh->vertex_array_id_ != 0)
 		{
 			const GLsizei arrayCount = 1;
-			glDeleteVertexArrays(arrayCount, &vertex_array_id_);
+			glDeleteVertexArrays(arrayCount, &i_mesh->vertex_array_id_);
 			const GLenum errorCode = glGetError();
 			if (errorCode != GL_NO_ERROR)
 			{
@@ -32,11 +32,12 @@ namespace Lame
 				errorMessage << "OpenGL failed to delete the vertex array: " << reinterpret_cast<const char*>(gluErrorString(errorCode));
 				DEBUG_PRINT(errorMessage.str());
 			}
-			vertex_array_id_ = 0;
+			i_mesh->vertex_array_id_ = 0;
 		}
+		delete i_mesh;
 	}
 
-	Mesh* Mesh::Create(Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
+	Mesh* Mesh::Create(const Context *i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
 	{
 		if (i_index_count % 3 != 0)		//index buffer must be a list of triangles
 		{
@@ -332,7 +333,7 @@ namespace Lame
 			return nullptr;
 	}
 
-	bool Mesh::Draw()
+	bool Mesh::Draw(const Context *i_context)
 	{
 		// Bind a specific vertex buffer to the device as a data source
 		{

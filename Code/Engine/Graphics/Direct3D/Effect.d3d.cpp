@@ -11,18 +11,18 @@
 #include <sstream>
 #include <d3dx9shader.h>
 
-#include "../Graphics.h"
+#include "../Context.h"
 #include "../../System/Console.h"
 
 namespace
 {
-	bool LoadFragmentShader(std::string i_path, IDirect3DPixelShader9*& o_fragmentShader);
-	bool LoadVertexShader(std::string i_path, IDirect3DVertexShader9*& o_vertexShader);
+	bool LoadFragmentShader(const Lame::Context *i_context, std::string i_path, IDirect3DPixelShader9*& o_fragmentShader);
+	bool LoadVertexShader(const Lame::Context *i_context, std::string i_path, IDirect3DVertexShader9*& o_vertexShader);
 }
 
 namespace Lame
 {
-	Effect* Effect::Create(std::string i_vertex_path, std::string i_fragment_path)
+	Effect* Effect::Create(const Context *i_context, std::string i_vertex_path, std::string i_fragment_path)
 	{
 		// The vertex shader is a program that operates on vertices.
 		// Its input comes from a C/C++ "draw call" and is:
@@ -43,7 +43,7 @@ namespace Lame
 		//	* The final color that the pixel should be
 		IDirect3DPixelShader9* fragmentShader = nullptr;
 
-		if (!LoadFragmentShader(i_fragment_path, fragmentShader) || !LoadVertexShader(i_vertex_path, vertexShader))
+		if (!LoadFragmentShader(i_context, i_fragment_path, fragmentShader) || !LoadVertexShader(i_context, i_vertex_path, vertexShader))
 			return nullptr;
 
 		Effect *effect = new Effect();
@@ -55,12 +55,12 @@ namespace Lame
 		return effect;
 	}
 
-	bool Effect::Bind()
+	bool Effect::Bind(const Context *i_context)
 	{
-		HRESULT result = eae6320::Graphics::get_direct3dDevice()->SetVertexShader(vertexShader);
+		HRESULT result = i_context->get_direct3dDevice()->SetVertexShader(vertexShader);
 		bool success = SUCCEEDED(result);
 		assert(success);
-		result = eae6320::Graphics::get_direct3dDevice()->SetPixelShader(pixelShader);
+		result = i_context->get_direct3dDevice()->SetPixelShader(pixelShader);
 		success = success && SUCCEEDED(result);
 		assert(success);
 		return success;
@@ -83,7 +83,7 @@ namespace Lame
 
 namespace
 {
-	bool LoadFragmentShader(std::string i_path, IDirect3DPixelShader9*& o_fragmentShader)
+	bool LoadFragmentShader(const Lame::Context *i_context, std::string i_path, IDirect3DPixelShader9*& o_fragmentShader)
 	{
 		// Load the source code from file and compile it
 		ID3DXBuffer* compiledShader;
@@ -130,7 +130,7 @@ namespace
 		// Create the fragment shader object
 		bool wereThereErrors = false;
 		{
-			HRESULT result = eae6320::Graphics::get_direct3dDevice()->CreatePixelShader(reinterpret_cast<DWORD*>(compiledShader->GetBufferPointer()),
+			HRESULT result = i_context->get_direct3dDevice()->CreatePixelShader(reinterpret_cast<DWORD*>(compiledShader->GetBufferPointer()),
 				&o_fragmentShader);
 			if (FAILED(result))
 			{
@@ -142,7 +142,7 @@ namespace
 		return !wereThereErrors;
 	}
 
-	bool LoadVertexShader(std::string i_path, IDirect3DVertexShader9*& o_vertexShader)
+	bool LoadVertexShader(const Lame::Context *i_context, std::string i_path, IDirect3DVertexShader9*& o_vertexShader)
 	{
 		// Load the source code from file and compile it
 		ID3DXBuffer* compiledShader;
@@ -189,7 +189,7 @@ namespace
 		// Create the vertex shader object
 		bool wereThereErrors = false;
 		{
-			HRESULT result = eae6320::Graphics::get_direct3dDevice()->CreateVertexShader(reinterpret_cast<DWORD*>(compiledShader->GetBufferPointer()),
+			HRESULT result = i_context->get_direct3dDevice()->CreateVertexShader(reinterpret_cast<DWORD*>(compiledShader->GetBufferPointer()),
 				&o_vertexShader);
 			if (FAILED(result))
 			{
