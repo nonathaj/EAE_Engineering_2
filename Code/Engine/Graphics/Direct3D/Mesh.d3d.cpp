@@ -4,6 +4,8 @@
 #include <string>
 #include <sstream>
 #include <d3d9.h>
+#include <algorithm>
+#include <iterator>
 
 #include "../Context.h"
 #include "../Vertex.h"
@@ -62,6 +64,7 @@ namespace Lame
 		delete i_mesh;
 	}
 
+	//Create a mesh with LEFT-HANDED indices
 	Mesh* Mesh::Create(const Context *i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
 	{
 		if (i_index_count % 3 != 0)		//index buffer must be a list of triangles
@@ -82,7 +85,7 @@ namespace Lame
 			if (FAILED(result))
 			{
 				DEBUG_PRINT("Unable to get vertex processing usage information");
-				delete mesh;
+				Destroy(mesh, i_context);
 				return nullptr;
 			}
 			// Our code will only ever write to the buffer
@@ -123,14 +126,14 @@ namespace Lame
 					if (FAILED(result))
 					{
 						DEBUG_PRINT("Direct3D failed to set the vertex declaration");
-						delete mesh;
+						Destroy(mesh, i_context);
 						return nullptr;
 					}
 				}
 				else
 				{
 					DEBUG_PRINT("Direct3D failed to create a Direct3D9 vertex declaration");
-					delete mesh;
+					Destroy(mesh, i_context);
 					return nullptr;
 				}
 			}
@@ -148,7 +151,7 @@ namespace Lame
 				if (FAILED(result))
 				{
 					DEBUG_PRINT("Direct3D failed to create a vertex buffer");
-					delete mesh;
+					Destroy(mesh, i_context);
 					return nullptr;
 				}
 			}
@@ -164,16 +167,16 @@ namespace Lame
 					if (FAILED(result))
 					{
 						DEBUG_PRINT("Direct3D failed to lock the vertex buffer");
-						delete mesh;
+						Destroy(mesh, i_context);
 						return nullptr;
 					}
 				}
 				//Fill the buffer
 				{
-					for (size_t x = 0; x < i_vertex_count; x++)
-					{
-						vertexData[x] = i_vertices[x];
-					}
+					memcpy(vertexData, i_vertices, i_vertex_count * sizeof(*i_vertices));
+
+					//Preferred, but VC++ doesn't like unchecked iterators
+					//std::copy(i_vertices, i_vertices + i_vertex_count, vertexData);
 				}
 				// The buffer must be "unlocked" before it can be used
 				{
@@ -181,7 +184,7 @@ namespace Lame
 					if (FAILED(result))
 					{
 						DEBUG_PRINT("Direct3D failed to unlock the vertex buffer");
-						delete mesh;
+						Destroy(mesh, i_context);
 						return nullptr;
 					}
 				}
@@ -205,7 +208,7 @@ namespace Lame
 				if (FAILED(result))
 				{
 					DEBUG_PRINT("Direct3D failed to create an index buffer");
-					delete mesh;
+					Destroy(mesh, i_context);
 					return nullptr;
 				}
 			}
@@ -221,20 +224,16 @@ namespace Lame
 					if (FAILED(result))
 					{
 						DEBUG_PRINT("Direct3D failed to lock the index buffer");
-						delete mesh;
+						Destroy(mesh, i_context);
 						return nullptr;
 					}
 				}
 				// Fill the buffer
 				{
-					//Direct3D uses left-handed notation by default.
-					//We must reorder the indices as we enter them into the buffer.
-					for (size_t x = 0; x < i_index_count; x += 3)
-					{
-						indexData[x] = i_indices[x + 2];
-						indexData[x + 1] = i_indices[x + 1];
-						indexData[x + 2] = i_indices[x];
-					}
+					memcpy(indexData, i_indices, i_index_count * sizeof(*i_indices));
+					
+					//Preferred, but VC++ doesn't like unchecked iterators
+					//std::copy(i_indices, i_indices + i_index_count, indexData);
 				}
 				// The buffer must be "unlocked" before it can be used
 				{
@@ -242,7 +241,7 @@ namespace Lame
 					if (FAILED(result))
 					{
 						DEBUG_PRINT("Direct3D failed to unlock the index buffer");
-						delete mesh;
+						Destroy(mesh, i_context);
 						return nullptr;
 					}
 				}

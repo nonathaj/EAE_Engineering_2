@@ -19,7 +19,6 @@ namespace Lame
 	class Mesh
 	{
 	public:
-		//Create a mesh with right-handed indices
 		static Mesh* Create(const Context *i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count);
 		static Mesh* Create(const Context *i_context, std::string i_mesh_path);
 
@@ -34,7 +33,7 @@ namespace Lame
 	private:
 
 		~Mesh() {}
-
+		
 		Mesh(size_t i_vertex_count, size_t i_index_count);
 
 		//Do not allow meshes to be managed without pointers

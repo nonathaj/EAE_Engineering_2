@@ -34,6 +34,8 @@ namespace
 
 	//Returns a double from a table at the top of the stack (NaN, if the value is not a lua number)
 	double GetDoubleFromTable(lua_State& io_luaStateFrom, size_t i_indexInTable);
+
+	bool SwapTriangleIndexOrder(uint32_t*& i_indices, size_t i_num_indices);
 }
 
 // Build
@@ -41,35 +43,75 @@ namespace
 
 bool eae6320::MeshBuilder::Build( const std::vector<std::string>& )
 {
-	bool wereThereErrors = false;
+	bool errors = false;
 
 	// Copy the source to the target
+	Lame::Vertex *vertices = nullptr;
+	size_t vertexCount;
+	uint32_t *indices = nullptr;
+	size_t indexCount;
+	if (LoadMeshAssetTableFromLua(m_path_source, vertices, vertexCount, indices, indexCount))
 	{
-		Lame::Vertex *vertices;
-		size_t vertexCount;
-		uint32_t *indices;
-		size_t indexCount;
-		if (LoadMeshAssetTableFromLua(m_path_source, vertices, vertexCount, indices, indexCount))
+		//loaded indices are right-handed
+		
+#if EAE6320_PLATFORM_D3D
+		if (!SwapTriangleIndexOrder(indices, indexCount))	//the indices need to be swapped
+		{
+			eae6320::OutputErrorMessage("Failed to swap index order for mesh file.");
+			errors = true;
+		}
+		else
+#elif EAE6320_PLATFORM_GL
+		//the indices are already in order.
+#endif
 		{
 			uint32_t vertexCount32 = static_cast<uint32_t>(vertexCount);
 			uint32_t indexCount32 = static_cast<uint32_t>(indexCount);
 			std::ofstream out(m_path_target, std::ofstream::binary);
 
-			//write the data
-			out.write(reinterpret_cast<const char *>(&vertexCount32), sizeof(vertexCount32));
-			out.write(reinterpret_cast<const char *>(&indexCount32), sizeof(indexCount32));
-			out.write(reinterpret_cast<const char *>(vertices), sizeof(Lame::Vertex) * vertexCount);
-			out.write(reinterpret_cast<const char *>(indices), sizeof(uint32_t) * indexCount);
-			
-			out.close();
+			if (out)
+			{
+				//write the data
+				out.write(reinterpret_cast<const char *>(&vertexCount32), sizeof(vertexCount32));
+				out.write(reinterpret_cast<const char *>(&indexCount32), sizeof(indexCount32));
+				out.write(reinterpret_cast<const char *>(vertices), sizeof(Lame::Vertex) * vertexCount);
+				out.write(reinterpret_cast<const char *>(indices), sizeof(uint32_t) * indexCount);
+
+				out.close();
+			}
+			else
+			{
+				eae6320::OutputErrorMessage("Failed to open the output file for writing");
+				errors = true;
+			}
 		}
 	}
+	else
+		errors = true;
 
-	return !wereThereErrors;
+	if(vertices)
+		delete[] vertices;
+	if(indices)
+		delete[] indices;
+	return !errors;
 }
-
+#include "../../Engine/System/Console.h"
 namespace
 {
+	bool SwapTriangleIndexOrder(uint32_t*& i_indices, size_t i_num_indices)
+	{
+		if (i_num_indices % 3 != 0)
+			return false;
+
+		size_t numTrianges = i_num_indices / 3;
+		for (size_t x = 0; x < numTrianges; x++)
+		{
+			std::swap(i_indices[x * 3], i_indices[x * 3 + 2]);
+		}
+
+		return true;
+	}
+
 	bool LoadMesh(lua_State* io_luaStateFrom, Lame::Vertex*& o_vertices, size_t& o_vertex_count, uint32_t*& o_indices, size_t& o_index_count)
 	{
 		//Load the vertex data
