@@ -12,7 +12,7 @@
 #include <d3dx9shader.h>
 
 #include "../Context.h"
-#include "../../System/Console.h"
+#include "../../System/UserOutput.h"
 
 namespace
 {
@@ -51,6 +51,10 @@ namespace Lame
 		{
 			effect->vertexShader = vertexShader;
 			effect->pixelShader = fragmentShader;
+		}
+		else
+		{
+			System::UserOutput::Display("Failed to create Effect, due to insufficient memory.", "Effect Loading Error");
 		}
 		return effect;
 	}
@@ -115,14 +119,14 @@ namespace
 					std::stringstream errorMessage;
 					errorMessage << "Direct3D failed to compile the fragment shader from the file " << i_path
 						<< ":\n" << reinterpret_cast<char*>(errorMessages->GetBufferPointer());
-					DEBUG_PRINT(errorMessage.str());
+					System::UserOutput::Display(errorMessage.str());
 					errorMessages->Release();
 				}
 				else
 				{
 					std::stringstream errorMessage;
 					errorMessage << "Direct3D failed to compile the fragment shader from the file " << i_path;
-					DEBUG_PRINT(errorMessage.str());
+					System::UserOutput::Display(errorMessage.str());
 				}
 				return false;
 			}
@@ -134,7 +138,7 @@ namespace
 				&o_fragmentShader);
 			if (FAILED(result))
 			{
-				DEBUG_PRINT("Direct3D failed to create the fragment shader");
+				System::UserOutput::Display("Direct3D failed to create the fragment shader");
 				wereThereErrors = true;
 			}
 			compiledShader->Release();
@@ -174,14 +178,14 @@ namespace
 					std::stringstream errorMessage;
 					errorMessage << "Direct3D failed to compile the vertex shader from the file " << i_path
 						<< ":\n" << reinterpret_cast<char*>(errorMessages->GetBufferPointer());
-					DEBUG_PRINT(errorMessage.str());
+					System::UserOutput::Display(errorMessage.str());
 					errorMessages->Release();
 				}
 				else
 				{
 					std::stringstream errorMessage;
 					errorMessage << "Direct3D failed to compile the vertex shader from the file " << i_path;
-					DEBUG_PRINT(errorMessage.str());
+					System::UserOutput::Display(errorMessage.str());
 				}
 				return false;
 			}
@@ -193,7 +197,7 @@ namespace
 				&o_vertexShader);
 			if (FAILED(result))
 			{
-				DEBUG_PRINT("Direct3D failed to create the vertex shader");
+				System::UserOutput::Display("Direct3D failed to create the vertex shader");
 				wereThereErrors = true;
 			}
 			compiledShader->Release();

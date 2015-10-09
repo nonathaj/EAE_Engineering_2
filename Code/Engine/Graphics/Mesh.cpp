@@ -7,6 +7,7 @@
 #include <string>
 
 #include "Mesh.h"
+#include "../System/UserOutput.h"
 #include "../System/Console.h"
 
 #include "Vertex.h"
@@ -15,11 +16,15 @@ namespace Lame
 {
 	Mesh* Mesh::Create(const Context *i_context, std::string i_mesh_path)
 	{
+		std::string errorHeader = "Mesh loading error";
+
 		//Open the file
 		std::ifstream in(i_mesh_path, std::ifstream::binary);
 		if (!in)
 		{
-			DEBUG_PRINT("Failed to open %s mesh file.", i_mesh_path.c_str());
+			std::stringstream error;
+			error << "Failed to open " << i_mesh_path << " mesh file";
+			System::UserOutput::Display(error.str(), errorHeader);
 			return nullptr;
 		}
 
@@ -32,7 +37,7 @@ namespace Lame
 		char *fileData = new char[fileLength];
 		if (!fileData)
 		{
-			DEBUG_PRINT("Failed to create temporary buffer for mesh");
+			System::UserOutput::Display("Failed to create temporary buffer for mesh", errorHeader);
 			return nullptr;
 		}
 
@@ -51,7 +56,9 @@ namespace Lame
 		//if the end of indices is beyond the end of the file
 		if (reinterpret_cast<void*>(indices + *index_count) > fileData + fileLength)
 		{
-			DEBUG_PRINT("Loaded data for mesh %s is invalid", i_mesh_path.c_str());
+			std::stringstream error;
+			error << "Loaded data for mesh " << i_mesh_path << " is invalid";
+			System::UserOutput::Display(error.str(), errorHeader);
 			delete[] fileData;
 			return nullptr;
 		}

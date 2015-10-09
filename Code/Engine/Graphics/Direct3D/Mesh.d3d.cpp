@@ -10,7 +10,7 @@
 #include "../Context.h"
 #include "../Vertex.h"
 #include "../Graphics.h"
-#include "../../System/Console.h"
+#include "../../System/UserOutput.h"
 #include "../../../External/OpenGlExtensions/OpenGlExtensions.h"
 
 namespace Lame
@@ -29,7 +29,7 @@ namespace Lame
 			}
 			else
 			{
-				DEBUG_PRINT("Direct3D failed to get the device's creation parameters");
+				System::UserOutput::Display("Direct3D failed to get the device's creation parameters");
 			}
 			return result;
 		}
@@ -69,13 +69,16 @@ namespace Lame
 	{
 		if (i_index_count % 3 != 0)		//index buffer must be a list of triangles
 		{
-			DEBUG_PRINT("Cannot create a Mesh with non-triangular data. (Ensure number of indices is divisible by 3)");
+			System::UserOutput::Display("Cannot create a Mesh with non-triangular data. (Ensure number of indices is divisible by 3)");
 			return nullptr;
 		}
 
 		Mesh *mesh = new Mesh(i_vertex_count, i_index_count);
 		if (!mesh)
+		{
+			System::UserOutput::Display("Failed to create Mesh, due to insufficient memory.", "Mesh Loading Error");
 			return nullptr;
+		}
 
 		// The usage tells Direct3D how this vertex buffer will be used
 		DWORD usage = 0;
@@ -84,7 +87,7 @@ namespace Lame
 			const HRESULT result = GetVertexProcessingUsage(i_context->get_direct3dDevice(), usage);
 			if (FAILED(result))
 			{
-				DEBUG_PRINT("Unable to get vertex processing usage information");
+				System::UserOutput::Display("Unable to get vertex processing usage information");
 				Destroy(mesh, i_context);
 				return nullptr;
 			}
@@ -125,14 +128,14 @@ namespace Lame
 					result = i_context->get_direct3dDevice()->SetVertexDeclaration(mesh->vertex_declaration_);
 					if (FAILED(result))
 					{
-						DEBUG_PRINT("Direct3D failed to set the vertex declaration");
+						System::UserOutput::Display("Direct3D failed to set the vertex declaration");
 						Destroy(mesh, i_context);
 						return nullptr;
 					}
 				}
 				else
 				{
-					DEBUG_PRINT("Direct3D failed to create a Direct3D9 vertex declaration");
+					System::UserOutput::Display("Direct3D failed to create a Direct3D9 vertex declaration");
 					Destroy(mesh, i_context);
 					return nullptr;
 				}
@@ -150,7 +153,7 @@ namespace Lame
 					&mesh->vertex_buffer_, notUsed);
 				if (FAILED(result))
 				{
-					DEBUG_PRINT("Direct3D failed to create a vertex buffer");
+					System::UserOutput::Display("Direct3D failed to create a vertex buffer");
 					Destroy(mesh, i_context);
 					return nullptr;
 				}
@@ -166,7 +169,7 @@ namespace Lame
 						reinterpret_cast<void**>(&vertexData), useDefaultLockingBehavior);
 					if (FAILED(result))
 					{
-						DEBUG_PRINT("Direct3D failed to lock the vertex buffer");
+						System::UserOutput::Display("Direct3D failed to lock the vertex buffer");
 						Destroy(mesh, i_context);
 						return nullptr;
 					}
@@ -183,7 +186,7 @@ namespace Lame
 					const HRESULT result = mesh->vertex_buffer_->Unlock();
 					if (FAILED(result))
 					{
-						DEBUG_PRINT("Direct3D failed to unlock the vertex buffer");
+						System::UserOutput::Display("Direct3D failed to unlock the vertex buffer");
 						Destroy(mesh, i_context);
 						return nullptr;
 					}
@@ -207,7 +210,7 @@ namespace Lame
 					&mesh->index_buffer_, notUsed);
 				if (FAILED(result))
 				{
-					DEBUG_PRINT("Direct3D failed to create an index buffer");
+					System::UserOutput::Display("Direct3D failed to create an index buffer");
 					Destroy(mesh, i_context);
 					return nullptr;
 				}
@@ -223,7 +226,7 @@ namespace Lame
 						reinterpret_cast<void**>(&indexData), useDefaultLockingBehavior);
 					if (FAILED(result))
 					{
-						DEBUG_PRINT("Direct3D failed to lock the index buffer");
+						System::UserOutput::Display("Direct3D failed to lock the index buffer");
 						Destroy(mesh, i_context);
 						return nullptr;
 					}
@@ -240,7 +243,7 @@ namespace Lame
 					const HRESULT result = mesh->index_buffer_->Unlock();
 					if (FAILED(result))
 					{
-						DEBUG_PRINT("Direct3D failed to unlock the index buffer");
+						System::UserOutput::Display("Direct3D failed to unlock the index buffer");
 						Destroy(mesh, i_context);
 						return nullptr;
 					}

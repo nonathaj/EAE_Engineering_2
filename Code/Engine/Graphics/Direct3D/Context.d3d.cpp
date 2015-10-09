@@ -4,7 +4,7 @@
 #include <cassert>
 #include <d3dx9shader.h>
 
-#include "../../System/Console.h"
+#include "../../System/UserOutput.h"
 
 namespace
 {
@@ -27,6 +27,10 @@ namespace Lame
 		{
 			context->direct3dDevice = direct3dDevice;
 			context->direct3dInterface = direct3dInterface;
+		}
+		else
+		{
+			System::UserOutput::Display("Failed to create Direct3D Context, due to insufficient memory.", "Context Loading Error");
 		}
 		return context;
 
@@ -136,7 +140,7 @@ namespace
 		}
 		else
 		{
-			DEBUG_PRINT("Direct3D failed to create a Direct3D9 device");
+			System::UserOutput::Display("Direct3D failed to create a Direct3D9 device");
 			return false;
 		}
 	}
@@ -152,7 +156,7 @@ namespace
 		}
 		else
 		{
-			DEBUG_PRINT("DirectX failed to create a Direct3D9 interface");
+			System::UserOutput::Display("DirectX failed to create a Direct3D9 interface");
 			return false;
 		}
 	}
