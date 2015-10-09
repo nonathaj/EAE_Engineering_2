@@ -21,6 +21,7 @@ namespace
 
 bool eae6320::Graphics::Initialize( const HWND i_renderingWindow )
 {
+	//if any of our files fail to create
 	if (!(context = Lame::Context::Create(i_renderingWindow)) ||
 		!(squareMesh = Lame::Mesh::Create(context, "data/square.mesh")) ||
 		!(triangleMesh = Lame::Mesh::Create(context, "data/triangle.mesh")) ||
@@ -40,13 +41,13 @@ void eae6320::Graphics::Render()
 	assert(success);
 	{
 		//bind the effect
-		success = effect->Bind(context);
+		success = effect->Bind();
 		assert(success);
 
 		//Draw the meshes
-		success = squareMesh->Draw(context);
+		success = squareMesh->Draw();
 		assert(success);
-		success = triangleMesh->Draw(context);
+		success = triangleMesh->Draw();
 		assert(success);
 	}
 	success = context->EndFrame();
@@ -65,13 +66,13 @@ bool eae6320::Graphics::ShutDown()
 
 		if (squareMesh)
 		{
-			Lame::Mesh::Destroy(squareMesh, context);
+			delete squareMesh;
 			squareMesh = nullptr;
 		}
 
 		if (triangleMesh)
 		{
-			Lame::Mesh::Destroy(triangleMesh, context);
+			delete triangleMesh;
 			triangleMesh = nullptr;
 		}
 		delete context;

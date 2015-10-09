@@ -19,18 +19,20 @@ namespace Lame
 	{
 	public:
 		~Effect();
-		
-		static Effect* Create(const Context *i_context, std::string i_vertex_path, std::string i_fragment_path);
 
-		bool Bind(const Context *i_context);
+		static Effect* Create(Context *& i_context, std::string i_vertex_path, std::string i_fragment_path);
+		static void Destroy(Effect *i_effect);
+
+		bool Bind();
 
 	private:
-
 		//Do not allow Effects to be managed without pointers
-		Effect() {}
+		Effect();
+		Effect(Context *& i_context) : context(i_context) {}
 		Effect(const Effect &i_mesh);
 		Effect& operator=(const Effect &i_mesh);
 
+		Context *& context;
 #if EAE6320_PLATFORM_D3D
 		IDirect3DVertexShader9 *vertexShader;
 		IDirect3DPixelShader9 *pixelShader;

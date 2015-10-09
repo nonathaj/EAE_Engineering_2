@@ -14,7 +14,7 @@
 
 namespace Lame
 {
-	Mesh* Mesh::Create(const Context *i_context, std::string i_mesh_path)
+	Mesh* Mesh::Create(Context *&i_context, std::string i_mesh_path)
 	{
 		std::string errorHeader = "Mesh loading error";
 

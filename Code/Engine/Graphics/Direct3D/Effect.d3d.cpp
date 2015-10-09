@@ -22,7 +22,7 @@ namespace
 
 namespace Lame
 {
-	Effect* Effect::Create(const Context *i_context, std::string i_vertex_path, std::string i_fragment_path)
+	Effect* Effect::Create(Context *&i_context, std::string i_vertex_path, std::string i_fragment_path)
 	{
 		// The vertex shader is a program that operates on vertices.
 		// Its input comes from a C/C++ "draw call" and is:
@@ -46,7 +46,7 @@ namespace Lame
 		if (!LoadFragmentShader(i_context, i_fragment_path, fragmentShader) || !LoadVertexShader(i_context, i_vertex_path, vertexShader))
 			return nullptr;
 
-		Effect *effect = new Effect();
+		Effect *effect = new Effect(i_context);
 		if (effect)
 		{
 			effect->vertexShader = vertexShader;
@@ -59,12 +59,18 @@ namespace Lame
 		return effect;
 	}
 
-	bool Effect::Bind(const Context *i_context)
+	bool Effect::Bind()
 	{
-		HRESULT result = i_context->get_direct3dDevice()->SetVertexShader(vertexShader);
+		if (!context)
+		{
+			System::UserOutput::Display("Direct3D Context has been destroyed, failed to bind Effect.", "Effect bind failure");
+			return false;
+		}
+
+		HRESULT result = context->get_direct3dDevice()->SetVertexShader(vertexShader);
 		bool success = SUCCEEDED(result);
 		assert(success);
-		result = i_context->get_direct3dDevice()->SetPixelShader(pixelShader);
+		result = context->get_direct3dDevice()->SetPixelShader(pixelShader);
 		success = success && SUCCEEDED(result);
 		assert(success);
 		return success;
@@ -72,6 +78,11 @@ namespace Lame
 
 	Effect::~Effect()
 	{
+		if (!context)
+		{
+			System::UserOutput::Display("Direct3D Context has been destroyed before effect.", "WARNING: Effect destruction after context");
+		}
+
 		if (vertexShader)
 		{
 			vertexShader->Release();

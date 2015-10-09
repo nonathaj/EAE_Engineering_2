@@ -35,37 +35,41 @@ namespace Lame
 		}
 	}
 
-	Mesh::Mesh(size_t i_vertex_count, size_t i_index_count) :
+	Mesh::Mesh(size_t i_vertex_count, size_t i_index_count, Context *&i_context) :
 		vertex_count_(i_vertex_count),
 		index_count_(i_index_count),
+		context(i_context),
 		vertex_buffer_(nullptr),
 		index_buffer_(nullptr),
 		vertex_declaration_(nullptr)
 	{ }
 
-	void Mesh::Destroy(Mesh *i_mesh, const Context *i_context)
+	Mesh::~Mesh()
 	{
-		if (i_mesh->vertex_buffer_)
+		if (!context)
 		{
-			i_mesh->vertex_buffer_->Release();
-			i_mesh->vertex_buffer_ = nullptr;
+			System::UserOutput::Display("Direct3D context has been destroyed before mesh.");
 		}
-		if (i_mesh->index_buffer_)
+		if (vertex_buffer_)
 		{
-			i_mesh->index_buffer_->Release();
-			i_mesh->index_buffer_ = nullptr;
+			vertex_buffer_->Release();
+			vertex_buffer_ = nullptr;
 		}
-		if (i_mesh->vertex_declaration_)
+		if (index_buffer_)
 		{
-			i_context->get_direct3dDevice()->SetVertexDeclaration(nullptr);
-			i_mesh->vertex_declaration_->Release();
-			i_mesh->vertex_declaration_ = nullptr;
+			index_buffer_->Release();
+			index_buffer_ = nullptr;
 		}
-		delete i_mesh;
+		if (vertex_declaration_)
+		{
+			context->get_direct3dDevice()->SetVertexDeclaration(nullptr);
+			vertex_declaration_->Release();
+			vertex_declaration_ = nullptr;
+		}
 	}
 
 	//Create a mesh with LEFT-HANDED indices
-	Mesh* Mesh::Create(const Context *i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
+	Mesh* Mesh::Create(Context *&i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
 	{
 		if (i_index_count % 3 != 0)		//index buffer must be a list of triangles
 		{
@@ -73,7 +77,7 @@ namespace Lame
 			return nullptr;
 		}
 
-		Mesh *mesh = new Mesh(i_vertex_count, i_index_count);
+		Mesh *mesh = new Mesh(i_vertex_count, i_index_count, i_context);
 		if (!mesh)
 		{
 			System::UserOutput::Display("Failed to create Mesh, due to insufficient memory.", "Mesh Loading Error");
@@ -88,7 +92,7 @@ namespace Lame
 			if (FAILED(result))
 			{
 				System::UserOutput::Display("Unable to get vertex processing usage information");
-				Destroy(mesh, i_context);
+				delete mesh;
 				return nullptr;
 			}
 			// Our code will only ever write to the buffer
@@ -129,14 +133,14 @@ namespace Lame
 					if (FAILED(result))
 					{
 						System::UserOutput::Display("Direct3D failed to set the vertex declaration");
-						Destroy(mesh, i_context);
+						delete mesh;
 						return nullptr;
 					}
 				}
 				else
 				{
 					System::UserOutput::Display("Direct3D failed to create a Direct3D9 vertex declaration");
-					Destroy(mesh, i_context);
+					delete mesh;
 					return nullptr;
 				}
 			}
@@ -154,7 +158,7 @@ namespace Lame
 				if (FAILED(result))
 				{
 					System::UserOutput::Display("Direct3D failed to create a vertex buffer");
-					Destroy(mesh, i_context);
+					delete mesh;
 					return nullptr;
 				}
 			}
@@ -170,7 +174,7 @@ namespace Lame
 					if (FAILED(result))
 					{
 						System::UserOutput::Display("Direct3D failed to lock the vertex buffer");
-						Destroy(mesh, i_context);
+						delete mesh;
 						return nullptr;
 					}
 				}
@@ -187,7 +191,7 @@ namespace Lame
 					if (FAILED(result))
 					{
 						System::UserOutput::Display("Direct3D failed to unlock the vertex buffer");
-						Destroy(mesh, i_context);
+						delete mesh;
 						return nullptr;
 					}
 				}
@@ -211,7 +215,7 @@ namespace Lame
 				if (FAILED(result))
 				{
 					System::UserOutput::Display("Direct3D failed to create an index buffer");
-					Destroy(mesh, i_context);
+					delete mesh;
 					return nullptr;
 				}
 			}
@@ -227,7 +231,7 @@ namespace Lame
 					if (FAILED(result))
 					{
 						System::UserOutput::Display("Direct3D failed to lock the index buffer");
-						Destroy(mesh, i_context);
+						delete mesh;
 						return nullptr;
 					}
 				}
@@ -244,7 +248,7 @@ namespace Lame
 					if (FAILED(result))
 					{
 						System::UserOutput::Display("Direct3D failed to unlock the index buffer");
-						Destroy(mesh, i_context);
+						delete mesh;
 						return nullptr;
 					}
 				}
@@ -254,7 +258,7 @@ namespace Lame
 		return mesh;
 	}
 
-	bool Mesh::Draw(const Context *i_context)
+	bool Mesh::Draw()
 	{
 		HRESULT result;
 		// Bind a specific vertex buffer to the device as a data source
@@ -265,13 +269,13 @@ namespace Lame
 			const unsigned int bufferOffset = 0;
 			// The "stride" defines how large a single vertex is in the stream of data
 			const unsigned int bufferStride = sizeof(Vertex);
-			result = i_context->get_direct3dDevice()->SetStreamSource(streamIndex, vertex_buffer_, bufferOffset, bufferStride);
+			result = context->get_direct3dDevice()->SetStreamSource(streamIndex, vertex_buffer_, bufferOffset, bufferStride);
 			if (!SUCCEEDED(result))
 				return false;
 		}
 		// Bind a specific index buffer to the device as a data source
 		{
-			result = i_context->get_direct3dDevice()->SetIndices(index_buffer_);
+			result = context->get_direct3dDevice()->SetIndices(index_buffer_);
 			if (!SUCCEEDED(result))
 				return false;
 		}
@@ -285,7 +289,7 @@ namespace Lame
 			const UINT indexOfFirstVertexToRender = 0;
 			const UINT indexOfFirstIndexToUse = 0;
 			const UINT primitiveCountToRender = static_cast<UINT>(index_count_ / 3);	// How many triangles will be drawn?
-			result = i_context->get_direct3dDevice()->DrawIndexedPrimitive(primitiveType,
+			result = context->get_direct3dDevice()->DrawIndexedPrimitive(primitiveType,
 				indexOfFirstVertexToRender, indexOfFirstVertexToRender, 4,
 				indexOfFirstIndexToUse, 2);
 			return SUCCEEDED(result);

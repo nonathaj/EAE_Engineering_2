@@ -34,7 +34,7 @@ namespace
 
 namespace Lame
 {
-	Effect* Effect::Create(const Context *i_context, std::string i_vertex_path, std::string i_fragment_path)
+	Effect* Effect::Create(Context *&i_context, std::string i_vertex_path, std::string i_fragment_path)
 	{
 		// A vertex shader is a program that operates on vertices.
 		// Its input comes from a C/C++ "draw call" and is:
@@ -57,7 +57,7 @@ namespace Lame
 		if (!CreateProgram(programId, i_vertex_path, i_fragment_path))
 			return nullptr;
 		
-		Effect *effect = new Effect();
+		Effect *effect = new Effect(i_context);
 		if (effect)
 		{
 			effect->programId = programId;
@@ -69,7 +69,7 @@ namespace Lame
 		return effect;
 	}
 
-	bool Effect::Bind(const Context *i_context)
+	bool Effect::Bind()
 	{
 		// Set the vertex and fragment shaders
 		glUseProgram(programId);

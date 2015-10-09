@@ -13,18 +13,19 @@
 
 namespace Lame
 {
-	Mesh::Mesh(size_t i_vertex_count, size_t i_index_count) : 
+	Mesh::Mesh(size_t i_vertex_count, size_t i_index_count, Context *&i_context) :
 		vertex_count_(i_vertex_count), 
 		index_count_(i_index_count),
+		context(i_context),
 		vertex_array_id_(0)
 	{ }
 
-	void Mesh::Destroy(Mesh *i_mesh, const Context *i_context)
+	Mesh::~Mesh()
 	{
-		if (i_mesh->vertex_array_id_ != 0)
+		if (vertex_array_id_ != 0)
 		{
 			const GLsizei arrayCount = 1;
-			glDeleteVertexArrays(arrayCount, &i_mesh->vertex_array_id_);
+			glDeleteVertexArrays(arrayCount, &vertex_array_id_);
 			const GLenum errorCode = glGetError();
 			if (errorCode != GL_NO_ERROR)
 			{
@@ -32,13 +33,12 @@ namespace Lame
 				errorMessage << "OpenGL failed to delete the vertex array: " << reinterpret_cast<const char*>(gluErrorString(errorCode));
 				System::UserOutput::Display(errorMessage.str());
 			}
-			i_mesh->vertex_array_id_ = 0;
+			vertex_array_id_ = 0;
 		}
-		delete i_mesh;
 	}
 
 	//Create a mesh with RIGHT-HANDED indices
-	Mesh* Mesh::Create(const Context *i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
+	Mesh* Mesh::Create(Context *&i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
 	{
 		if (i_index_count % 3 != 0)		//index buffer must be a list of triangles
 		{
@@ -321,7 +321,7 @@ namespace Lame
 
 		if (!wereThereErrors)
 		{
-			Mesh *mesh = new Mesh(i_vertex_count, i_index_count);
+			Mesh *mesh = new Mesh(i_vertex_count, i_index_count, i_context);
 			if (mesh)
 			{
 				mesh->vertex_array_id_ = vertex_array_id_;
@@ -334,7 +334,7 @@ namespace Lame
 			return nullptr;
 	}
 
-	bool Mesh::Draw(const Context *i_context)
+	bool Mesh::Draw()
 	{
 		// Bind a specific vertex buffer to the device as a data source
 		{
