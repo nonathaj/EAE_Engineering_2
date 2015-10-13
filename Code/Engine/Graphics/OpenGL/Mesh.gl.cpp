@@ -37,8 +37,21 @@ namespace Lame
 		}
 	}
 
+	Mesh* Mesh::CreateLeftHanded(Context *&i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
+	{
+		if (i_index_count % 3 != 0)		//index buffer must be a list of triangles
+		{
+			System::UserOutput::Display("Cannot create a Mesh with non-triangular data. (Ensure number of indices is divisible by 3)");
+			return nullptr;
+		}
+		SwapIndexOrder(i_indices, i_index_count);
+		Mesh *mesh = CreateRightHanded(i_context, i_vertices, i_vertex_count, i_indices, i_index_count);
+		SwapIndexOrder(i_indices, i_index_count);
+		return mesh;
+	}
+
 	//Create a mesh with RIGHT-HANDED indices
-	Mesh* Mesh::Create(Context *&i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
+	Mesh* Mesh::CreateRightHanded(Context *&i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
 	{
 		if (i_index_count % 3 != 0)		//index buffer must be a list of triangles
 		{

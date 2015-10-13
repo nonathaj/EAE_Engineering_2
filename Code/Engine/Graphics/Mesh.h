@@ -19,7 +19,9 @@ namespace Lame
 	class Mesh
 	{
 	public:
-		static Mesh* Create(Context *&i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count);
+		static Mesh* CreateRightHanded(Context *&i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count);
+		static Mesh* CreateLeftHanded(Context *&i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count);
+		
 		static Mesh* Create(Context *&i_context, std::string i_mesh_path);
 
 		//Destroy a mesh
@@ -41,6 +43,9 @@ namespace Lame
 		size_t vertex_count_;		//the number of vertices stored in this mesh
 		size_t index_count_;		//the number of indices stored in this mesh
 		Context *&context;
+
+		//Swaps the order of indices (between right and left handed-ness) without error checking
+		static void SwapIndexOrder(uint32_t *i_indices, size_t i_index_count);
 
 #if EAE6320_PLATFORM_D3D
 		IDirect3DVertexBuffer9 *vertex_buffer_;

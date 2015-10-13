@@ -14,6 +14,12 @@
 
 namespace Lame
 {
+	void Mesh::SwapIndexOrder(uint32_t *i_indices, size_t i_index_count)
+	{
+		for (size_t x = 0; x < i_index_count; x += 3)
+			std::swap(i_indices[x], i_indices[x + 2]);
+	}
+
 	Mesh* Mesh::Create(Context *&i_context, std::string i_mesh_path)
 	{
 		std::string errorHeader = "Mesh loading error";
@@ -64,7 +70,12 @@ namespace Lame
 		}
 
 		//create the mesh
-		Mesh *mesh = Create(i_context, vertices, *vertex_count, indices, *index_count);
+		Mesh *mesh = nullptr;
+#if EAE6320_PLATFORM_D3D
+		mesh = CreateLeftHanded(i_context, vertices, *vertex_count, indices, *index_count);
+#elif EAE6320_PLATFORM_GL
+		mesh = CreateRightHanded(i_context, vertices, *vertex_count, indices, *index_count);
+#endif
 
 		//cleanup the loaded file
 		delete[] fileData;
