@@ -3,9 +3,14 @@
 
 #include <cstdint>
 #include <string>
+#include <unordered_map>
+
+#include "../Core/HashedString.h"
+#include "../Core/Vector2.h"
 
 #if EAE6320_PLATFORM_D3D
 #include <d3d9.h>
+#include <D3DX9Shader.h>
 #elif EAE6320_PLATFORM_GL
 #include "../../Engine/Windows/Includes.h"
 #include <gl/GL.h>
@@ -18,12 +23,15 @@ namespace Lame
 	class Effect
 	{
 	public:
+		static Effect* Create(Context *& i_context, std::string i_vertex_path, std::string i_fragment_path);
 		~Effect();
 
-		static Effect* Create(Context *& i_context, std::string i_vertex_path, std::string i_fragment_path);
-		static void Destroy(Effect *i_effect);
-
 		bool Bind();
+
+		enum HandleMode { All, Vertex, Fragment, };
+
+		bool CacheConstant(HandleMode i_mode, const std::string &i_constant, Engine::HashedString* o_constantId = nullptr);
+		bool SetConstant(HandleMode i_mode, const Engine::HashedString &i_constant, const Engine::Vector2 &i_val);
 
 	private:
 		//Do not allow Effects to be managed without pointers
@@ -35,10 +43,16 @@ namespace Lame
 		Context *& context;
 #if EAE6320_PLATFORM_D3D
 		IDirect3DVertexShader9 *vertexShader;
-		IDirect3DPixelShader9 *pixelShader;
+		IDirect3DPixelShader9 *fragmentShader;
+		ID3DXConstantTable *vertexConstantTable;
+		ID3DXConstantTable *fragmentConstantTable;
+
+		std::unordered_map<Engine::HashedString, D3DXHANDLE> constants;
 #elif EAE6320_PLATFORM_GL
 		// OpenGL encapsulates a matching vertex shader and fragment shader into what it calls a "program".
 		GLuint programId;
+
+		std::unordered_map<Engine::HashedString, GLint> constants;
 #endif
 	};
 }

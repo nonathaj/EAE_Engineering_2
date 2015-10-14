@@ -7,6 +7,7 @@
     <ClInclude Include="MatrixMath.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
+    <ClInclude Include="HashedString.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FloatMath.inl" />
@@ -14,9 +15,11 @@
     <None Include="MatrixMath.inl" />
     <None Include="Vector2.inl" />
     <None Include="Vector3.inl" />
+    <None Include="HashedString.inl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="Vector3.cpp" />
+    <ClCompile Include="HashedString.cpp" />
   </ItemGroup>
 </Project>

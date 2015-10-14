@@ -2,7 +2,11 @@
 	This is an example of a vertex shader
 */
 
+////////////////////////////////////////////////////////////////////////////////////////
 #if defined( EAE6320_PLATFORM_D3D )
+////////////////////////////////////////////////////////////////////////////////////////
+
+uniform float2 position_offset;
 
 // Entry Point
 //============
@@ -42,10 +46,7 @@ void main(
 		// When we move to 3D graphics the screen position that the vertex shader outputs
 		// will be different than the position that is input to it from C code,
 		// but for now the "out" position is set directly from the "in" position:
-		o_position = float4( i_position.x, i_position.y, 0.0, 1.0 );
-		// Or, equivalently:
-		// o_position = float4( i_position.xy, 0.0, 1.0 );
-		// o_position = float4( i_position, 0.0, 1.0 );
+		o_position = float4( i_position + position_offset, 0.0, 1.0 );
 	}
 	// Pass the input color to the fragment shader unchanged:
 	{
@@ -53,7 +54,9 @@ void main(
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////////////
 #elif defined( EAE6320_PLATFORM_GL )
+////////////////////////////////////////////////////////////////////////////////////////
 
 // The version of GLSL to use must come first
 //#version 330
@@ -63,6 +66,8 @@ void main(
 
 // Input
 //======
+
+uniform vec2 position_offset;
 
 // The locations assigned are arbitrary
 // but must match the C calls to glVertexAttribPointer()
@@ -97,10 +102,7 @@ void main()
 		// When we move to 3D graphics the screen position that the vertex shader outputs
 		// will be different than the position that is input to it from C code,
 		// but for now the "out" position is set directly from the "in" position:
-		gl_Position = vec4( i_position.x, i_position.y, 0.0, 1.0 );
-		// Or, equivalently:
-		// gl_Position = vec4( i_position.xy, 0.0, 1.0 );
-		// gl_Position = vec4( i_position, 0.0, 1.0 );
+		gl_Position = vec4( i_position + position_offset, 0.0, 1.0 );
 	}
 	// Pass the input color to the fragment shader unchanged:
 	{
@@ -108,4 +110,6 @@ void main()
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////////////
 #endif
+////////////////////////////////////////////////////////////////////////////////////////

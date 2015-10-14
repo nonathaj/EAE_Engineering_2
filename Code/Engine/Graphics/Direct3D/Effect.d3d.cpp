@@ -9,15 +9,14 @@
 #include <cstdlib>
 #include <string>
 #include <sstream>
-#include <d3dx9shader.h>
 
 #include "../Context.h"
 #include "../../System/UserOutput.h"
 
 namespace
 {
-	bool LoadFragmentShader(const Lame::Context *i_context, std::string i_path, IDirect3DPixelShader9*& o_fragmentShader);
-	bool LoadVertexShader(const Lame::Context *i_context, std::string i_path, IDirect3DVertexShader9*& o_vertexShader);
+	bool LoadFragmentShader(const Lame::Context *i_context, std::string i_path, IDirect3DPixelShader9*& o_fragmentShader, ID3DXConstantTable** o_fragmentConstantTable);
+	bool LoadVertexShader(const Lame::Context *i_context, std::string i_path, IDirect3DVertexShader9*& o_vertexShader, ID3DXConstantTable** o_vertexConstantTable);
 }
 
 namespace Lame
@@ -43,14 +42,17 @@ namespace Lame
 		//	* The final color that the pixel should be
 		IDirect3DPixelShader9* fragmentShader = nullptr;
 
-		if (!LoadFragmentShader(i_context, i_fragment_path, fragmentShader) || !LoadVertexShader(i_context, i_vertex_path, vertexShader))
+		ID3DXConstantTable *vertexConstantTable = nullptr;
+		ID3DXConstantTable *fragmentConstantTable = nullptr;
+
+		if (!LoadFragmentShader(i_context, i_fragment_path, fragmentShader, &fragmentConstantTable) || !LoadVertexShader(i_context, i_vertex_path, vertexShader, &vertexConstantTable))
 			return nullptr;
 
 		Effect *effect = new Effect(i_context);
 		if (effect)
 		{
 			effect->vertexShader = vertexShader;
-			effect->pixelShader = fragmentShader;
+			effect->fragmentShader = fragmentShader;
 		}
 		else
 		{
@@ -70,7 +72,7 @@ namespace Lame
 		HRESULT result = context->get_direct3dDevice()->SetVertexShader(vertexShader);
 		bool success = SUCCEEDED(result);
 		assert(success);
-		result = context->get_direct3dDevice()->SetPixelShader(pixelShader);
+		result = context->get_direct3dDevice()->SetPixelShader(fragmentShader);
 		success = success && SUCCEEDED(result);
 		assert(success);
 		return success;
@@ -83,22 +85,83 @@ namespace Lame
 			System::UserOutput::Display("Direct3D Context has been destroyed before effect.", "WARNING: Effect destruction after context");
 		}
 
+		if (vertexConstantTable)
+		{
+			vertexConstantTable->Release();
+			vertexConstantTable = nullptr;
+		}
+		if (fragmentConstantTable)
+		{
+			fragmentConstantTable->Release();
+			fragmentConstantTable = nullptr;
+		}
+
 		if (vertexShader)
 		{
 			vertexShader->Release();
 			vertexShader = nullptr;
 		}
-		if (pixelShader)
+		if (fragmentShader)
 		{
-			pixelShader->Release();
-			pixelShader = nullptr;
+			fragmentShader->Release();
+			fragmentShader = nullptr;
 		}
+	}
+
+	bool Effect::CacheConstant(HandleMode i_mode, const std::string &i_constant, Engine::HashedString* o_constantId)
+	{
+		Engine::HashedString hashed(i_constant.c_str());
+		if (o_constantId)
+			*o_constantId = hashed;
+
+		//if we already have this constant cached, we already successfully cached it
+		if (constants.find(hashed) != constants.end())
+			return true;
+
+		D3DXHANDLE handle = nullptr;
+
+		//attmept to find the handle in the vertex constant table.
+		if(!handle && (i_mode == HandleMode::Vertex || i_mode == HandleMode::All))
+			vertexConstantTable->GetConstantByName(NULL, i_constant.c_str());
+
+		//attempt to find the handle in the fragment constant table.
+		if (!handle && (i_mode == HandleMode::Fragment || i_mode == HandleMode::All))
+			handle = fragmentConstantTable->GetConstantByName(NULL, i_constant.c_str());
+
+		if (handle)
+			constants[hashed] = handle;
+
+		return handle;
+	}
+
+	bool Effect::SetConstant(HandleMode i_mode, const Engine::HashedString &i_constant, const Engine::Vector2 &i_val)
+	{
+		auto itr = constants.find(i_constant);
+		if (itr == constants.end())					//fail if we don't have a cache'd version of this constant
+			return false;
+
+		D3DXHANDLE handle = itr->second;
+		float floatArray[2];
+		{
+			floatArray[0] = i_val.x;
+			floatArray[1] = i_val.y;
+		}
+		HRESULT result = D3DERR_INVALIDCALL;
+		bool vertexCheck = i_mode == HandleMode::Vertex || i_mode == HandleMode::All;
+		if (vertexCheck)
+			result = vertexConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, floatArray, 2);
+		
+		bool fragmentCheck = i_mode == HandleMode::Fragment || i_mode == HandleMode::All;
+		if(fragmentCheck && (!vertexCheck || !SUCCEEDED(result)))
+			result = fragmentConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, floatArray, 2);
+
+		return SUCCEEDED(result);
 	}
 }
 
 namespace
 {
-	bool LoadFragmentShader(const Lame::Context *i_context, std::string i_path, IDirect3DPixelShader9*& o_fragmentShader)
+	bool LoadFragmentShader(const Lame::Context *i_context, std::string i_path, IDirect3DPixelShader9*& o_fragmentShader, ID3DXConstantTable** o_fragmentConstantTable)
 	{
 		// Load the source code from file and compile it
 		ID3DXBuffer* compiledShader;
@@ -113,9 +176,8 @@ namespace
 			const char* profile = "ps_3_0";
 			const DWORD noFlags = 0;
 			ID3DXBuffer* errorMessages = NULL;
-			ID3DXConstantTable** noConstants = NULL;
 			HRESULT result = D3DXCompileShaderFromFile(i_path.c_str(), defines, noIncludes, entryPoint, profile, noFlags,
-				&compiledShader, &errorMessages, noConstants);
+				&compiledShader, &errorMessages, o_fragmentConstantTable);
 			if (SUCCEEDED(result))
 			{
 				if (errorMessages)
@@ -157,7 +219,7 @@ namespace
 		return !wereThereErrors;
 	}
 
-	bool LoadVertexShader(const Lame::Context *i_context, std::string i_path, IDirect3DVertexShader9*& o_vertexShader)
+	bool LoadVertexShader(const Lame::Context *i_context, std::string i_path, IDirect3DVertexShader9*& o_vertexShader, ID3DXConstantTable** o_vertexConstantTable)
 	{
 		// Load the source code from file and compile it
 		ID3DXBuffer* compiledShader;
@@ -172,9 +234,8 @@ namespace
 			const char* profile = "vs_3_0";
 			const DWORD noFlags = 0;
 			ID3DXBuffer* errorMessages = NULL;
-			ID3DXConstantTable** noConstants = NULL;
 			HRESULT result = D3DXCompileShaderFromFile(i_path.c_str(), defines, noIncludes, entryPoint, profile, noFlags,
-				&compiledShader, &errorMessages, noConstants);
+				&compiledShader, &errorMessages, o_vertexConstantTable);
 			if (SUCCEEDED(result))
 			{
 				if (errorMessages)
