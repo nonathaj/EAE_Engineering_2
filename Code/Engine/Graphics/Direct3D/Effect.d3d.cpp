@@ -108,7 +108,7 @@ namespace Lame
 		}
 	}
 
-	bool Effect::CacheConstant(HandleMode i_mode, const std::string &i_constant, Engine::HashedString* o_constantId)
+	bool Effect::CacheConstant(const std::string &i_constant, Engine::HashedString* o_constantId)
 	{
 		Engine::HashedString hashed(i_constant.c_str());
 		if (o_constantId)
@@ -118,44 +118,36 @@ namespace Lame
 		if (constants.find(hashed) != constants.end())
 			return true;
 
-		D3DXHANDLE handle = nullptr;
-
-		//attmept to find the handle in the vertex constant table.
-		if(!handle && (i_mode == HandleMode::Vertex || i_mode == HandleMode::All))
-			vertexConstantTable->GetConstantByName(NULL, i_constant.c_str());
-
-		//attempt to find the handle in the fragment constant table.
-		if (!handle && (i_mode == HandleMode::Fragment || i_mode == HandleMode::All))
-			handle = fragmentConstantTable->GetConstantByName(NULL, i_constant.c_str());
+		D3DXHANDLE handle = vertexConstantTable->GetConstantByName(nullptr, i_constant.c_str());
+		if(!handle)
+			handle = fragmentConstantTable->GetConstantByName(nullptr, i_constant.c_str());
 
 		if (handle)
 			constants[hashed] = handle;
-
 		return handle;
 	}
 
-	bool Effect::SetConstant(HandleMode i_mode, const Engine::HashedString &i_constant, const Engine::Vector2 &i_val)
+	bool Effect::SetConstant(const Engine::HashedString &i_constant, const Engine::Vector2 &i_val)
 	{
 		auto itr = constants.find(i_constant);
 		if (itr == constants.end())					//fail if we don't have a cache'd version of this constant
 			return false;
 
 		D3DXHANDLE handle = itr->second;
-		float floatArray[2];
-		{
-			floatArray[0] = i_val.x;
-			floatArray[1] = i_val.y;
-		}
-		HRESULT result = D3DERR_INVALIDCALL;
-		bool vertexCheck = i_mode == HandleMode::Vertex || i_mode == HandleMode::All;
-		if (vertexCheck)
-			result = vertexConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, floatArray, 2);
-		
-		bool fragmentCheck = i_mode == HandleMode::Fragment || i_mode == HandleMode::All;
-		if(fragmentCheck && (!vertexCheck || !SUCCEEDED(result)))
+		float floatArray[] = { i_val.x, i_val.y };
+		HRESULT result = vertexConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, floatArray, 2);
+		if(!SUCCEEDED(result))
 			result = fragmentConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, floatArray, 2);
 
-		return SUCCEEDED(result);
+		if (!SUCCEEDED(result))
+		{
+			System::UserOutput::Display("DirectX failed to set a constant uniform value.");
+			return false;
+		}
+		else
+		{
+			return true;
+		}
 	}
 }
 
