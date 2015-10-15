@@ -61,6 +61,21 @@ namespace Lame
 		if (effect)
 		{
 			effect->programId = programId;
+
+			//find the position offset uniform handle
+			effect->positionHandle = glGetUniformLocation(effect->programId, PositionUniformName);
+			if (effect->positionHandle < 0)
+			{
+				const GLenum errorCode = glGetError();
+				if (errorCode != GL_NO_ERROR)
+				{
+					std::stringstream errorMessage;
+					errorMessage << "OpenGL failed to find the position uniform: " << reinterpret_cast<const char*>(gluErrorString(errorCode));
+					System::UserOutput::Display(errorMessage.str());
+					return false;
+				}
+				delete effect;
+			}
 		}
 		else
 		{
@@ -94,37 +109,15 @@ namespace Lame
 		}
 	}
 
-	bool Effect::CacheConstant(const std::string &i_constant, Engine::HashedString* o_constantId)
+	bool Effect::SetPosition(Engine::Vector2 i_position)
 	{
-		Engine::HashedString hashed(i_constant.c_str());
-		if (o_constantId)
-			*o_constantId = hashed;
-
-		//if we already have this constant cached, we already successfully cached it
-		if (constants.find(hashed) != constants.end())
-			return true;
-
-		GLint location = glGetUniformLocation(programId, i_constant.c_str());
-		if (location >= 0)
-			constants[hashed] = location;
-		return location >= 0;
-	}
-
-	bool Effect::SetConstant(const Engine::HashedString &i_constant, const Engine::Vector2 &i_val)
-	{
-		auto itr = constants.find(i_constant);
-		if (itr == constants.end())					//fail if we don't have a cache'd version of this constant
-			return false;
-
-		GLint handle = itr->second;
-		float floatArray[] = { i_val.x, i_val.y };
-		glUniform2fv(handle, 1, floatArray);
-
+		float floatArray[] = { i_position.x, i_position.y };
+		glUniform2fv(positionHandle, 1, floatArray);
 		const GLenum errorCode = glGetError();
 		if (errorCode != GL_NO_ERROR)
 		{
 			std::stringstream errorMessage;
-			errorMessage << "OpenGL failed to set a constant uniform value: " << reinterpret_cast<const char*>(gluErrorString(errorCode));
+			errorMessage << "OpenGL failed to set the position uniform value: " << reinterpret_cast<const char*>(gluErrorString(errorCode));
 			System::UserOutput::Display(errorMessage.str());
 			return false;
 		}

@@ -5,9 +5,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "../Core/HashedString.h"
 #include "../Core/Vector2.h"
-#include "../Core/Vector3.h"
 
 #if EAE6320_PLATFORM_D3D
 #include <d3d9.h>
@@ -29,8 +27,7 @@ namespace Lame
 
 		bool Bind();
 
-		bool CacheConstant(const std::string &i_constant, Engine::HashedString* o_constantId = nullptr);
-		bool SetConstant(const Engine::HashedString &i_constant, const Engine::Vector2 &i_val);
+		bool SetPosition(Engine::Vector2 i_position);
 
 	private:
 		//Do not allow Effects to be managed without pointers
@@ -45,18 +42,13 @@ namespace Lame
 		IDirect3DPixelShader9 *fragmentShader;
 		ID3DXConstantTable *vertexConstantTable;
 		ID3DXConstantTable *fragmentConstantTable;
-
-		typedef D3DXHANDLE ConstantHandle;
+		D3DXHANDLE positionHandle;
 #elif EAE6320_PLATFORM_GL
 		// OpenGL encapsulates a matching vertex shader and fragment shader into what it calls a "program".
 		GLuint programId;
-
-		typedef GLint ConstantHandle;
-#else
-#error No typedef for ConstantHandle
+		GLint positionHandle;
 #endif
-
-		std::unordered_map<Engine::HashedString, ConstantHandle> constants;
+		static char const * const PositionUniformName;
 	};
 }
 
