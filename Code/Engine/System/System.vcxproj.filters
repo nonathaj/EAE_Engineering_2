@@ -3,9 +3,14 @@
   <ItemGroup>
     <ClInclude Include="Console.h" />
     <ClInclude Include="UserOutput.h" />
+    <ClInclude Include="Time.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Console.Win32.cpp" />
     <ClCompile Include="UserOutput.cpp" />
+    <ClCompile Include="Time.Win32.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Time.inl" />
   </ItemGroup>
 </Project>

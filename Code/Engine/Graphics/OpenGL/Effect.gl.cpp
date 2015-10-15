@@ -125,7 +125,7 @@ namespace Lame
 			return false;
 
 		GLint handle = itr->second;
-		float floatArray[] = { i_val.x, i_val.y };
+		float floatArray[] = { i_val.x(), i_val.y() };
 		glUniform2fv(handle, 1, floatArray);
 
 		const GLenum errorCode = glGetError();

@@ -20,11 +20,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Console.h" />
+    <ClInclude Include="Time.h" />
     <ClInclude Include="UserOutput.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Console.Win32.cpp" />
+    <ClCompile Include="Time.Win32.cpp" />
     <ClCompile Include="UserOutput.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Time.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C3F612E1-A6E2-4BC5-8E5F-B3DC25E27D82}</ProjectGuid>

@@ -30,6 +30,7 @@
       <Filter>OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="Graphics.cpp" />
+    <ClCompile Include="Effect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics.h" />

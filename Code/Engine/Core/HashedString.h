@@ -45,7 +45,7 @@ namespace std
 	template<>
 	struct hash<Engine::HashedString>
 	{
-		uint32_t operator()(const Engine::HashedString &i_str) const { return hash<uint32_t>()(i_str.Get()); }
+		uint32_t operator()(const Engine::HashedString &i_str) const { return static_cast<uint32_t>(hash<uint32_t>()(i_str.Get())); }
 	};
 }
 

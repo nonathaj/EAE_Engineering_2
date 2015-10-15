@@ -54,6 +54,8 @@ namespace Lame
 		{
 			effect->vertexShader = vertexShader;
 			effect->fragmentShader = fragmentShader;
+			effect->vertexConstantTable = vertexConstantTable;
+			effect->fragmentConstantTable = fragmentConstantTable;
 
 			if (!effect->CacheConstant(PositionUniformName))
 			{
@@ -132,7 +134,7 @@ namespace Lame
 
 		if (handle)
 			constants[hashed] = handle;
-		return handle;
+		return handle != nullptr;
 	}
 
 	bool Effect::SetConstant(const Engine::HashedString &i_constant, const Engine::Vector2 &i_val)
@@ -142,7 +144,7 @@ namespace Lame
 			return false;
 
 		D3DXHANDLE handle = itr->second;
-		float floatArray[] = { i_val.x, i_val.y };
+		float floatArray[] = { i_val.x(), i_val.y() };
 		HRESULT result = vertexConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, floatArray, 2);
 		if (!SUCCEEDED(result))
 			result = fragmentConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, floatArray, 2);
