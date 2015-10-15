@@ -45,7 +45,8 @@ namespace Lame
 		ID3DXConstantTable *vertexConstantTable = nullptr;
 		ID3DXConstantTable *fragmentConstantTable = nullptr;
 
-		if (!LoadFragmentShader(i_context, i_fragment_path, fragmentShader, &fragmentConstantTable) || !LoadVertexShader(i_context, i_vertex_path, vertexShader, &vertexConstantTable))
+		if (!LoadFragmentShader(i_context, i_fragment_path, fragmentShader, &fragmentConstantTable) || 
+			!LoadVertexShader(i_context, i_vertex_path, vertexShader, &vertexConstantTable))
 			return nullptr;
 
 		Effect *effect = new Effect(i_context);
@@ -54,10 +55,9 @@ namespace Lame
 			effect->vertexShader = vertexShader;
 			effect->fragmentShader = fragmentShader;
 
-			D3DXHANDLE handle = vertexConstantTable->GetConstantByName(nullptr, PositionUniformName);
-			if (!handle)
+			if (!effect->CacheConstant(PositionUniformName))
 			{
-				System::UserOutput::Display("Failed to find Position uniform in vertex shader");
+				System::UserOutput::Display("Failed to find Position uniform constant");
 				delete effect;
 				return nullptr;
 			}
@@ -116,14 +116,40 @@ namespace Lame
 		}
 	}
 
-	bool Effect::SetPosition(Engine::Vector2 i_position)
+	bool Effect::CacheConstant(const std::string &i_constant, Engine::HashedString* o_constantId)
 	{
-		float floatArray[] = { i_position.x, i_position.y };
-		HRESULT result = vertexConstantTable->SetFloatArray(context->get_direct3dDevice(), positionHandle, floatArray, 2);
+		Engine::HashedString hashed(i_constant.c_str());
+		if (o_constantId)
+			*o_constantId = hashed;
+
+		//if we already have this constant cached, we already successfully cached it
+		if (constants.find(hashed) != constants.end())
+			return true;
+
+		D3DXHANDLE handle = vertexConstantTable->GetConstantByName(nullptr, i_constant.c_str());
+		if (!handle)
+			handle = fragmentConstantTable->GetConstantByName(nullptr, i_constant.c_str());
+
+		if (handle)
+			constants[hashed] = handle;
+		return handle;
+	}
+
+	bool Effect::SetConstant(const Engine::HashedString &i_constant, const Engine::Vector2 &i_val)
+	{
+		auto itr = constants.find(i_constant);
+		if (itr == constants.end())					//fail if we don't have a cache'd version of this constant
+			return false;
+
+		D3DXHANDLE handle = itr->second;
+		float floatArray[] = { i_val.x, i_val.y };
+		HRESULT result = vertexConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, floatArray, 2);
+		if (!SUCCEEDED(result))
+			result = fragmentConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, floatArray, 2);
 
 		if (!SUCCEEDED(result))
 		{
-			System::UserOutput::Display("DirectX failed to set the position constant uniform value.");
+			System::UserOutput::Display("DirectX failed to set a constant uniform value.");
 			return false;
 		}
 		else
