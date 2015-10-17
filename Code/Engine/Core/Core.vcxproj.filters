@@ -8,6 +8,7 @@
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="HashedString.h" />
+    <ClInclude Include="TypeHandling.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FloatMath.inl" />
@@ -16,6 +17,7 @@
     <None Include="Vector2.inl" />
     <None Include="Vector3.inl" />
     <None Include="HashedString.inl" />
+    <None Include="TypeHandling.inl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Vector2.cpp" />

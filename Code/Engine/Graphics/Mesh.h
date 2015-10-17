@@ -19,21 +19,24 @@ namespace Lame
 	class Mesh
 	{
 	public:
-		static Mesh* CreateRightHanded(Context *&i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count);
-		static Mesh* CreateLeftHanded(Context *&i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count);
+		//load a mesh with defined data
+		static Mesh* CreateRightHanded(Context *i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count);
+		static Mesh* CreateLeftHanded(Context *i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count);
 		
-		static Mesh* Create(Context *&i_context, std::string i_mesh_path);
+		//load a mesh from the mesh binary file
+		static Mesh* Create(Context *i_context, std::string i_mesh_path);
 
 		//Destroy a mesh
 		~Mesh();
 
+		//render the mesh
 		bool Draw();
 
 		size_t get_vertex_count() { return vertex_count_; }
 		size_t get_index_count() { return index_count_; }
 
 	private:
-		Mesh(size_t i_vertex_count, size_t i_index_count, Context *&i_context);
+		Mesh(size_t i_vertex_count, size_t i_index_count, Context *i_context);
 
 		//Do not allow meshes to be managed without pointers
 		Mesh();
@@ -42,7 +45,7 @@ namespace Lame
 
 		size_t vertex_count_;		//the number of vertices stored in this mesh
 		size_t index_count_;		//the number of indices stored in this mesh
-		Context *&context;
+		Context *context;
 
 		//Swaps the order of indices (between right and left handed-ness) without error checking
 		static void SwapIndexOrder(uint32_t *i_indices, size_t i_index_count);

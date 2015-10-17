@@ -13,7 +13,7 @@
 
 namespace Lame
 {
-	Mesh::Mesh(size_t i_vertex_count, size_t i_index_count, Context *&i_context) :
+	Mesh::Mesh(size_t i_vertex_count, size_t i_index_count, Context *i_context) :
 		vertex_count_(i_vertex_count), 
 		index_count_(i_index_count),
 		context(i_context),
@@ -37,7 +37,7 @@ namespace Lame
 		}
 	}
 
-	Mesh* Mesh::CreateLeftHanded(Context *&i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
+	Mesh* Mesh::CreateLeftHanded(Context *i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
 	{
 		if (i_index_count % 3 != 0)		//index buffer must be a list of triangles
 		{
@@ -51,7 +51,7 @@ namespace Lame
 	}
 
 	//Create a mesh with RIGHT-HANDED indices
-	Mesh* Mesh::CreateRightHanded(Context *&i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
+	Mesh* Mesh::CreateRightHanded(Context *i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
 	{
 		if (i_index_count % 3 != 0)		//index buffer must be a list of triangles
 		{
