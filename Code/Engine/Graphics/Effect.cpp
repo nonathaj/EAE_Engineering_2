@@ -11,4 +11,3 @@ namespace Lame
 		return SetConstant(PositionUniformId, i_position);
 	}
 }
-

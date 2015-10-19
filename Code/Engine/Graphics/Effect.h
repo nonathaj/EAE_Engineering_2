@@ -11,6 +11,7 @@
 
 #if EAE6320_PLATFORM_D3D
 #include <d3d9.h>
+#include <D3DX9Shader.h>
 #elif EAE6320_PLATFORM_GL
 #include "../../Engine/Windows/Includes.h"
 #include <gl/GL.h>
@@ -45,9 +46,8 @@ namespace Lame
 		IDirect3DPixelShader9 *fragmentShader;
 		ID3DXConstantTable *vertexConstantTable;
 		ID3DXConstantTable *fragmentConstantTable;
-		D3DXHANDLE positionHandle;
 
-		typedef const char* ConstantHandle;
+		typedef D3DXHANDLE ConstantHandle;
 #elif EAE6320_PLATFORM_GL
 		// OpenGL encapsulates a matching vertex shader and fragment shader into what it calls a "program".
 		GLuint programId;
