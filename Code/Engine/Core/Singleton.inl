@@ -11,8 +11,8 @@ namespace Engine
 	template<class T>
 	T & Singleton<T>::Get()
 	{
-		if( m_pInstance == 0 ) 
-			m_pInstance = new T;
+		if( !m_pInstance ) 
+			m_pInstance = new T();
 
 		return *m_pInstance;
 	}
@@ -24,11 +24,11 @@ namespace Engine
 		{
 			delete m_pInstance;
 		
-			m_pInstance = 0;
+			m_pInstance = nullptr;
 		}
 	}
 
 	template <class T>
-	T * Singleton<T>::m_pInstance = 0;
+	T * Singleton<T>::m_pInstance = nullptr;
 
 } // namespace Engine

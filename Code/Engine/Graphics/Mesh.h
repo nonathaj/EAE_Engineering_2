@@ -33,8 +33,9 @@ namespace Lame
 		//render the mesh
 		bool Draw();
 
-		size_t get_vertex_count() { return vertex_count_; }
-		size_t get_index_count() { return index_count_; }
+		inline size_t get_vertex_count() { return vertex_count_; }
+		inline size_t get_index_count() { return index_count_; }
+		inline std::shared_ptr<Context> get_context() { return context; }
 	private:
 		Mesh(size_t i_vertex_count, size_t i_index_count, std::shared_ptr<Context> i_context);
 

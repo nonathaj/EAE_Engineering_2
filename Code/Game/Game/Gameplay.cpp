@@ -24,6 +24,9 @@ namespace
 	std::shared_ptr<Engine::GameObject> square;
 	std::shared_ptr<Engine::GameObject> triangle1;
 	std::shared_ptr<Engine::GameObject> triangle2;
+
+	//effect
+	std::shared_ptr<Lame::Effect> effect;
 }
 
 namespace Gameplay
@@ -39,6 +42,11 @@ namespace Gameplay
 			return false;
 		}
 
+		//load the effect we are going to use for everything in the game
+		effect = std::shared_ptr<Lame::Effect>(Lame::Effect::Create(Graphics::Get().context(), "data/vertex.shader", "data/fragment.shader"));
+		if (!effect)
+			return nullptr;
+
 		//Create our renderables
 		square = CreateObject("data/square.mesh");
 		triangle1 = CreateObject("data/triangle.mesh");
@@ -48,6 +56,7 @@ namespace Gameplay
 			Shutdown();
 			return false;
 		}
+		triangle2->position(Engine::Vector3(1, 1, 0));
 		
 		Engine::Time::Setup();
 
@@ -72,6 +81,8 @@ namespace Gameplay
 		triangle1.reset();
 		triangle2.reset();
 
+		effect.reset();
+
 		Graphics::Release();
 		return true;
 	}
@@ -83,10 +94,6 @@ namespace
 	{
 		std::shared_ptr<Lame::Mesh> mesh(Lame::Mesh::Create(Graphics::Get().context(), i_mesh));
 		if (!mesh)
-			return nullptr;
-
-		std::shared_ptr<Lame::Effect> effect(Lame::Effect::Create(Graphics::Get().context(), "data/vertex.shader", "data/fragment.shader"));
-		if (!effect)
 			return nullptr;
 
 		//create the gameObject

@@ -11,7 +11,7 @@ const Engine::Vector3 Engine::Vector3::right = Vector3(1, 0, 0);
 const Engine::Vector3 Engine::Vector3::forward = Vector3(0, 0, 1);
 const Engine::Vector3 Engine::Vector3::back = Vector3(0, 0, -1);
 
-Engine::Vector3::Vector3(const Vector2 &i_vec)
-	:m_x(i_vec.x()), m_y(i_vec.y()), m_z(0)
+Engine::Vector3::Vector3(const Vector2 &i_vec, float i_z)
+	:m_x(i_vec.x()), m_y(i_vec.y()), m_z(i_z)
 {
 }

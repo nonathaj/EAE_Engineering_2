@@ -24,7 +24,7 @@ namespace Engine
 		static const Vector3 back;		//(0, 0, -1)
 
 		inline Vector3();
-		Vector3(const Vector2 &i_vec);
+		Vector3(const Vector2 &i_vec, float i_z = 0.0f);
 		inline Vector3(const Vector3 &i_vec);
 		inline Vector3(float i_x, float i_y, float i_z);
 		inline ~Vector3();

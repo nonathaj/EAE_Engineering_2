@@ -22,12 +22,16 @@ namespace Lame
 	class Graphics
 	{
 	public:
+		Graphics() :context_(nullptr), renderables_() {}
 		Graphics(std::shared_ptr<Context> i_context);
 
 		bool Render();
 
 		bool Add(std::shared_ptr<RenderableComponent> i_renderable);
 		bool Remove(std::shared_ptr<RenderableComponent> i_renderable);
+
+		//does this renderable have the same context as this graphics object
+		bool MatchesContext(std::shared_ptr<RenderableComponent> i_renderable);
 
 		inline std::shared_ptr<Context> context() const { return context_; }
 		inline void context(std::shared_ptr<Context> i_context) { context_ = i_context; }

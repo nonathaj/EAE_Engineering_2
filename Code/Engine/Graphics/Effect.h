@@ -11,7 +11,7 @@
 
 #if EAE6320_PLATFORM_D3D
 #include <d3d9.h>
-#include <D3DX9Shader.h>
+struct ID3DXConstantTable;		//forward declare the directX constant table
 #elif EAE6320_PLATFORM_GL
 #include "../../Engine/Windows/Includes.h"
 #include <gl/GL.h>
@@ -36,8 +36,10 @@ namespace Lame
 		//sets the value of a cache'd constant
 		bool SetConstant(const Engine::HashedString &i_constant, const Engine::Vector2 &i_val);
 
+		std::shared_ptr<Context> get_context() { return context; }
+
 	private:
-		Effect(std::shared_ptr<Context> i_context) : context(i_context) {}
+		Effect(std::shared_ptr<Context> i_context) : context(i_context), constants() {}
 
 		//Do not allow Effects to be managed without pointers
 		Effect();
@@ -48,10 +50,13 @@ namespace Lame
 #if EAE6320_PLATFORM_D3D
 		IDirect3DVertexShader9 *vertexShader;
 		IDirect3DPixelShader9 *fragmentShader;
+
 		ID3DXConstantTable *vertexConstantTable;
 		ID3DXConstantTable *fragmentConstantTable;
 
-		typedef D3DXHANDLE ConstantHandle;
+		//TODO find a way to use D3DXHANDLE here instead of const char* without including more directx headers
+		// we can't forwad declare the D3DXHANDLE (because it's a typedef, not a normal type), without risking screwing it up.
+		typedef const char* ConstantHandle;
 #elif EAE6320_PLATFORM_GL
 		// OpenGL encapsulates a matching vertex shader and fragment shader into what it calls a "program".
 		GLuint programId;

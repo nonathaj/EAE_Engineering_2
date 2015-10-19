@@ -25,8 +25,30 @@ namespace Lame
 		return success;
 	}
 
+	bool Graphics::MatchesContext(std::shared_ptr<RenderableComponent> i_renderable)
+	{
+		//check for a valid renderable
+		if (!i_renderable)
+			return false;
+
+		//check the mesh or effect for a context
+		std::shared_ptr<Context> ct;
+		if (i_renderable->effect())
+			ct = i_renderable->effect()->get_context();
+		else if (i_renderable->mesh())
+			ct = i_renderable->mesh()->get_context();
+		else
+			return false;
+
+		//compare the context to this graphic's context
+		return context() == ct;
+	}
+
 	bool Graphics::Add(std::shared_ptr<RenderableComponent> i_renderable)
 	{
+		if (!MatchesContext(i_renderable))
+			return false;
+
 		auto itr = std::find(renderables_.begin(), renderables_.end(), i_renderable);
 		if (itr == renderables_.end())
 		{
@@ -38,6 +60,10 @@ namespace Lame
 
 	bool Graphics::Remove(std::shared_ptr<RenderableComponent> i_renderable)
 	{
+		//first check if this renderable even has the same context as us, if not, then we can't even remove it
+		if (!MatchesContext(i_renderable))
+			return false;
+
 		auto itr = std::find(renderables_.begin(), renderables_.end(), i_renderable);
 		if (itr != renderables_.end())
 		{
