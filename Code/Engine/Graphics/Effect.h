@@ -30,13 +30,17 @@ namespace Lame
 		bool Bind();
 		bool SetPosition(Engine::Vector2 i_position);
 
+		//Cache a constant for dynamic setting
 		bool CacheConstant(const std::string &i_constant, Engine::HashedString* o_constantId = nullptr);
+
+		//sets the value of a cache'd constant
 		bool SetConstant(const Engine::HashedString &i_constant, const Engine::Vector2 &i_val);
 
 	private:
+		Effect(std::shared_ptr<Context> i_context) : context(i_context) {}
+
 		//Do not allow Effects to be managed without pointers
 		Effect();
-		Effect(std::shared_ptr<Context> i_context) : context(i_context) {}
 		Effect(const Effect &i_mesh);
 		Effect& operator=(const Effect &i_mesh);
 
