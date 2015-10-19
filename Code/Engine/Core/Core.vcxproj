@@ -24,6 +24,8 @@
     <ClInclude Include="Math.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="MatrixMath.h" />
+    <ClInclude Include="MemoryHelper.h" />
+    <ClInclude Include="Singleton.h" />
     <ClInclude Include="TypeHandling.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
@@ -33,12 +35,14 @@
     <None Include="HashedString.inl" />
     <None Include="Math.inl" />
     <None Include="MatrixMath.inl" />
+    <None Include="Singleton.inl" />
     <None Include="TypeHandling.inl" />
     <None Include="Vector2.inl" />
     <None Include="Vector3.inl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HashedString.cpp" />
+    <ClCompile Include="MemoryHelper.cpp" />
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="Vector3.cpp" />
   </ItemGroup>

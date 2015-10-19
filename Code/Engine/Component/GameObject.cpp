@@ -10,6 +10,5 @@ namespace Engine
 		enabled_(true),
 		components_()
 	{
-
 	}
 }

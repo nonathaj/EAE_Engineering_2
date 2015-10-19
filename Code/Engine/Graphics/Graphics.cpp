@@ -2,82 +2,48 @@
 //=============
 
 #include "Graphics.h"
-
-#include <cassert>
-
-#include "../../Engine/System/UserOutput.h"
 #include "Context.h"
-#include "Vertex.h"
-#include "Effect.h"
-#include "Mesh.h"
+#include "RenderableComponent.h"
 
-namespace
+namespace Lame
 {
-	Lame::Context *context = nullptr;
-	Lame::Effect *effect = nullptr;
-	Lame::Mesh *squareMesh = nullptr;
-	Lame::Mesh *triangleMesh = nullptr;
-}
-
-bool eae6320::Graphics::Initialize( const HWND i_renderingWindow )
-{
-	//if any of our files fail to create
-	if (!(context = Lame::Context::Create(i_renderingWindow)) ||
-		!(squareMesh = Lame::Mesh::Create(context, "data/square.mesh")) ||
-		!(triangleMesh = Lame::Mesh::Create(context, "data/triangle.mesh")) ||
-		!(effect = Lame::Effect::Create(context, "data/vertex.shader", "data/fragment.shader"))
-		)
+	Graphics::Graphics(std::shared_ptr<Context> i_context) :
+		context_(i_context), renderables_()
 	{
-		ShutDown();
+	}
+
+	bool Graphics::Render()
+	{
+		bool success = context()->BeginFrame();
+		if (!success)
+			return false;
+		for (size_t x = 0; x < renderables_.size(); x++)
+		{
+			success = renderables_[x]->Render() && success;
+		}
+		success = context()->EndFrame() && success;
+		return success;
+	}
+
+	bool Graphics::Add(std::shared_ptr<RenderableComponent> i_renderable)
+	{
+		auto itr = std::find(renderables_.begin(), renderables_.end(), i_renderable);
+		if (itr == renderables_.end())
+		{
+			renderables_.push_back(i_renderable);
+			return true;
+		}
 		return false;
 	}
-	else
-		return true;
-}
 
-void eae6320::Graphics::Render()
-{
-	bool success = context->BeginFrame();
-	assert(success);
+	bool Graphics::Remove(std::shared_ptr<RenderableComponent> i_renderable)
 	{
-		//bind the effect
-		success = effect->Bind();
-		assert(success);
-
-		//Draw the meshes
-		success = squareMesh->Draw();
-		assert(success);
-		success = triangleMesh->Draw();
-		assert(success);
+		auto itr = std::find(renderables_.begin(), renderables_.end(), i_renderable);
+		if (itr != renderables_.end())
+		{
+			renderables_.erase(itr);
+			return true;
+		}
+		return false;
 	}
-	success = context->EndFrame();
-	assert(success);
-}
-
-bool eae6320::Graphics::ShutDown()
-{
-	if (context)
-	{
-		if (effect)
-		{
-			delete effect;
-			effect = nullptr;
-		}
-
-		if (squareMesh)
-		{
-			delete squareMesh;
-			squareMesh = nullptr;
-		}
-
-		if (triangleMesh)
-		{
-			delete triangleMesh;
-			triangleMesh = nullptr;
-		}
-		delete context;
-		context = nullptr;
-	}
-
-	return true;
 }

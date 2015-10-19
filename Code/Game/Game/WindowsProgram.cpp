@@ -16,6 +16,8 @@
 
 #include "../../Engine/Graphics/Graphics.h"
 
+#include "Gameplay.h"
+
 // Static Data Initialization
 //===========================
 
@@ -47,18 +49,18 @@ int CreateMainWindowAndReturnExitCodeWhenItCloses( const HINSTANCE i_thisInstanc
 	// Try to create the main window
 	if ( CreateMainWindow( i_thisInstanceOfTheProgram, i_initialWindowDisplayState ) )
 	{
-		if (eae6320::Graphics::Initialize(s_mainWindow))
+		if (Gameplay::Initialize(s_mainWindow))
 		{
 			// If the main window was successfully created wait for it to be closed
 			const int exitCode = WaitForMainWindowToCloseAndReturnExitCode(i_thisInstanceOfTheProgram);
 
-			eae6320::Graphics::ShutDown();
+			Gameplay::Shutdown();
 
 			return exitCode;
 		}
 		else
 		{
-			//Our graphics code failed to initialize.  Return a made-up error code
+			//Our game code failed to initialize.  Return a made-up error code
 			return -2;
 		}
 	}
@@ -498,7 +500,7 @@ bool WaitForMainWindowToClose( int& o_exitCode )
 			// A real game might have something like the following:
 			//	someGameClass.OnNewFrame();
 			// or similar, though.)
-			eae6320::Graphics::Render();
+			Gameplay::RunFrame();
 		}
 		else
 		{

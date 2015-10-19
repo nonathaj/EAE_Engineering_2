@@ -34,7 +34,7 @@ namespace
 
 namespace Lame
 {
-	Effect* Effect::Create(Context *&i_context, std::string i_vertex_path, std::string i_fragment_path)
+	Effect* Effect::Create(std::shared_ptr<Context> i_context, std::string i_vertex_path, std::string i_fragment_path)
 	{
 		// A vertex shader is a program that operates on vertices.
 		// Its input comes from a C/C++ "draw call" and is:

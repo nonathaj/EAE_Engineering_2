@@ -4,6 +4,8 @@
 #include "../../Windows/Includes.h"
 #include "../../Windows/Functions.h"
 
+#include <d3dx9shader.h>
+
 #include <cassert>
 #include <cstdint>
 #include <cstdlib>
@@ -21,7 +23,7 @@ namespace
 
 namespace Lame
 {
-	Effect* Effect::Create(Context *&i_context, std::string i_vertex_path, std::string i_fragment_path)
+	Effect* Effect::Create(std::shared_ptr<Context> i_context, std::string i_vertex_path, std::string i_fragment_path)
 	{
 		// The vertex shader is a program that operates on vertices.
 		// Its input comes from a C/C++ "draw call" and is:
@@ -45,8 +47,8 @@ namespace Lame
 		ID3DXConstantTable *vertexConstantTable = nullptr;
 		ID3DXConstantTable *fragmentConstantTable = nullptr;
 
-		if (!LoadFragmentShader(i_context, i_fragment_path, fragmentShader, &fragmentConstantTable) || 
-			!LoadVertexShader(i_context, i_vertex_path, vertexShader, &vertexConstantTable))
+		if (!LoadFragmentShader(i_context.get(), i_fragment_path, fragmentShader, &fragmentConstantTable) || 
+			!LoadVertexShader(i_context.get(), i_vertex_path, vertexShader, &vertexConstantTable))
 			return nullptr;
 
 		Effect *effect = new Effect(i_context);

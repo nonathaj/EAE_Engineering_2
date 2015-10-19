@@ -4,13 +4,13 @@
 #include <cstdint>
 #include <string>
 #include <unordered_map>
+#include <memory>
 
 #include "../Core/Vector2.h"
 #include "../Core/HashedString.h"
 
 #if EAE6320_PLATFORM_D3D
 #include <d3d9.h>
-#include <D3DX9Shader.h>
 #elif EAE6320_PLATFORM_GL
 #include "../../Engine/Windows/Includes.h"
 #include <gl/GL.h>
@@ -23,7 +23,7 @@ namespace Lame
 	class Effect
 	{
 	public:
-		static Effect* Create(Context *& i_context, std::string i_vertex_path, std::string i_fragment_path);
+		static Effect* Create(std::shared_ptr<Context> i_context, std::string i_vertex_path, std::string i_fragment_path);
 		~Effect();
 
 		bool Bind();
@@ -35,11 +35,11 @@ namespace Lame
 	private:
 		//Do not allow Effects to be managed without pointers
 		Effect();
-		Effect(Context *& i_context) : context(i_context) {}
+		Effect(std::shared_ptr<Context> i_context) : context(i_context) {}
 		Effect(const Effect &i_mesh);
 		Effect& operator=(const Effect &i_mesh);
 
-		Context *& context;
+		std::shared_ptr<Context> context;
 #if EAE6320_PLATFORM_D3D
 		IDirect3DVertexShader9 *vertexShader;
 		IDirect3DPixelShader9 *fragmentShader;
@@ -47,7 +47,7 @@ namespace Lame
 		ID3DXConstantTable *fragmentConstantTable;
 		D3DXHANDLE positionHandle;
 
-		typedef D3DXHANDLE ConstantHandle;
+		typedef const char* ConstantHandle;
 #elif EAE6320_PLATFORM_GL
 		// OpenGL encapsulates a matching vertex shader and fragment shader into what it calls a "program".
 		GLuint programId;

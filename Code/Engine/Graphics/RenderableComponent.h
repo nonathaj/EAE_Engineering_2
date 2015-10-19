@@ -12,17 +12,17 @@ namespace Lame
 	{
 		ADD_TYPEID()
 	public:
-		RenderableComponent(std::weak_ptr<Engine::GameObject> go, Mesh* i_mesh, Effect* i_effect);
+		RenderableComponent(std::weak_ptr<Engine::GameObject> go, std::shared_ptr<Mesh> i_mesh, std::shared_ptr<Effect> i_effect);
 
 		bool Render();
 
-		inline Lame::Mesh* mesh() { return mesh_; }
-		inline Lame::Effect* effect() { return effect_; }
+		inline std::shared_ptr<Mesh> mesh() { return mesh_; }
+		inline std::shared_ptr<Effect> effect() { return effect_; }
 	private:
 		RenderableComponent();
 
-		Mesh* mesh_;
-		Effect* effect_;
+		std::shared_ptr<Mesh> mesh_;
+		std::shared_ptr<Effect> effect_;
 	};
 }
 

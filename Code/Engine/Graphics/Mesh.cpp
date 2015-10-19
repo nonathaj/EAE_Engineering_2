@@ -20,7 +20,7 @@ namespace Lame
 			std::swap(i_indices[x], i_indices[x + 2]);
 	}
 
-	Mesh* Mesh::Create(Context *i_context, std::string i_mesh_path)
+	Mesh* Mesh::Create(std::shared_ptr<Context> i_context, std::string i_mesh_path)
 	{
 		std::string errorHeader = "Mesh loading error";
 

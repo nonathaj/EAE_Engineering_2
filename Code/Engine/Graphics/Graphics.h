@@ -9,18 +9,33 @@
 //=============
 
 #include "../../Engine/Windows/Includes.h"
+#include <memory>
+#include <vector>
 
 // Interface
 //==========
-
-namespace eae6320
+namespace Lame
 {
-	namespace Graphics
+	class Context;
+	class RenderableComponent;
+
+	class Graphics
 	{
-		bool Initialize( const HWND i_renderingWindow );
-		void Render();
-		bool ShutDown();
-	}
+	public:
+		Graphics(std::shared_ptr<Context> i_context);
+
+		bool Render();
+
+		bool Add(std::shared_ptr<RenderableComponent> i_renderable);
+		bool Remove(std::shared_ptr<RenderableComponent> i_renderable);
+
+		inline std::shared_ptr<Context> context() const { return context_; }
+		inline void context(std::shared_ptr<Context> i_context) { context_ = i_context; }
+
+	private:
+		std::shared_ptr<Context> context_;
+		std::vector<std::shared_ptr<RenderableComponent>> renderables_;
+	};
 }
 
 #endif	// EAE6320_GRAPHICS_H
