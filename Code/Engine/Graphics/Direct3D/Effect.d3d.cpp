@@ -139,14 +139,14 @@ namespace Lame
 		return handle != nullptr;
 	}
 
-	bool Effect::SetConstant(const Engine::HashedString &i_constant, const Engine::Vector2 &i_val)
+	bool Effect::SetConstant(const Engine::HashedString &i_constant, const eae6320::Math::cVector &i_val)
 	{
 		auto itr = constants.find(i_constant);
 		if (itr == constants.end())					//fail if we don't have a cache'd version of this constant
 			return false;
 
 		D3DXHANDLE handle = itr->second;
-		float floatArray[] = { i_val.x(), i_val.y() };
+		float floatArray[] = { i_val.x, i_val.y, i_val.z };
 		HRESULT result = vertexConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, floatArray, 2);
 		if (!SUCCEEDED(result))
 			result = fragmentConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, floatArray, 2);

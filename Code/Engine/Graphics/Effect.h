@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <memory>
 
-#include "../Core/Vector2.h"
+#include "../Core/eae6320/cVector.h"
 #include "../Core/HashedString.h"
 
 #if EAE6320_PLATFORM_D3D
@@ -28,13 +28,13 @@ namespace Lame
 		~Effect();
 
 		bool Bind();
-		bool SetPosition(Engine::Vector2 i_position);
+		bool SetPosition(eae6320::Math::cVector i_position);
 
 		//Cache a constant for dynamic setting
 		bool CacheConstant(const std::string &i_constant, Engine::HashedString* o_constantId = nullptr);
 
 		//sets the value of a cache'd constant
-		bool SetConstant(const Engine::HashedString &i_constant, const Engine::Vector2 &i_val);
+		bool SetConstant(const Engine::HashedString &i_constant, const eae6320::Math::cVector &i_val);
 
 		std::shared_ptr<Context> get_context() { return context; }
 

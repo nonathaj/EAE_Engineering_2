@@ -4,11 +4,13 @@
     <ClInclude Include="Console.h" />
     <ClInclude Include="UserOutput.h" />
     <ClInclude Include="Time.h" />
+    <ClInclude Include="UserInput.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Console.Win32.cpp" />
     <ClCompile Include="UserOutput.cpp" />
     <ClCompile Include="Time.Win32.cpp" />
+    <ClCompile Include="UserInput.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Time.inl" />

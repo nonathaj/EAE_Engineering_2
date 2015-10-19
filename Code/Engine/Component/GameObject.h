@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "../Core/Vector3.h"
+#include "../Core/eae6320/cVector.h"
 
 namespace Engine
 {
@@ -15,8 +15,8 @@ namespace Engine
 	public:
 		GameObject();
 
-		inline Vector3 position() const { return position_; }
-		inline void position(const Vector3& i_pos) { position_ = i_pos; }
+		inline eae6320::Math::cVector position() const { return position_; }
+		inline void position(const eae6320::Math::cVector& i_pos) { position_ = i_pos; }
 
 		inline std::string name() const { return name_; }
 		inline void name(const std::string& i_name) { name_ = i_name; }
@@ -25,7 +25,7 @@ namespace Engine
 		inline void enabled(const bool& i_enabled) { enabled_ = i_enabled; }
 
 	private:
-		Vector3 position_;
+		eae6320::Math::cVector position_;
 		std::string name_;
 
 		bool enabled_;

@@ -21,11 +21,13 @@
   <ItemGroup>
     <ClInclude Include="Console.h" />
     <ClInclude Include="Time.h" />
+    <ClInclude Include="UserInput.h" />
     <ClInclude Include="UserOutput.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Console.Win32.cpp" />
     <ClCompile Include="Time.Win32.cpp" />
+    <ClCompile Include="UserInput.cpp" />
     <ClCompile Include="UserOutput.cpp" />
   </ItemGroup>
   <ItemGroup>

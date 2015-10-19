@@ -10,6 +10,15 @@
     <ClInclude Include="HashedString.h" />
     <ClInclude Include="TypeHandling.h" />
     <ClInclude Include="Singleton.h" />
+    <ClInclude Include="eae6320\cMatrix_transformation.h">
+      <Filter>eae6320</Filter>
+    </ClInclude>
+    <ClInclude Include="eae6320\cQuaternion.h">
+      <Filter>eae6320</Filter>
+    </ClInclude>
+    <ClInclude Include="eae6320\cVector.h">
+      <Filter>eae6320</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FloatMath.inl" />
@@ -25,5 +34,19 @@
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="Vector3.cpp" />
     <ClCompile Include="HashedString.cpp" />
+    <ClCompile Include="eae6320\cMatrix_transformation.cpp">
+      <Filter>eae6320</Filter>
+    </ClCompile>
+    <ClCompile Include="eae6320\cQuaternion.cpp">
+      <Filter>eae6320</Filter>
+    </ClCompile>
+    <ClCompile Include="eae6320\cVector.cpp">
+      <Filter>eae6320</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="eae6320">
+      <UniqueIdentifier>{e787dd63-ad09-481c-bfac-c88d7b04e3cd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

@@ -12,6 +12,7 @@
 #include "../../Engine/System/Time.h"
 #include "../../Engine/Component/GameObject.h"
 #include "../../Engine/Graphics/RenderableComponent.h"
+#include "../../Engine/System/UserInput.h"
 
 namespace
 {
@@ -27,6 +28,8 @@ namespace
 
 	//effect
 	std::shared_ptr<Lame::Effect> effect;
+
+	void HandleInput();
 }
 
 namespace Gameplay
@@ -56,7 +59,7 @@ namespace Gameplay
 			Shutdown();
 			return false;
 		}
-		triangle2->position(Engine::Vector3(1, 1, 0));
+		triangle2->position(eae6320::Math::cVector(1, 1, 0));
 		
 		Engine::Time::Setup();
 
@@ -68,8 +71,7 @@ namespace Gameplay
 		Engine::Time::Service();
 		double deltaTime = Engine::Time::DeltaTime();
 
-		//TODO
-		//game logic here
+		HandleInput();
 
 		bool renderSuccess = Graphics::Get().Render();
 		return renderSuccess;
@@ -90,6 +92,16 @@ namespace Gameplay
 
 namespace
 {
+	void HandleInput()
+	{
+		using namespace System::UserInput;
+
+		if (KeyPressed('w') || KeyPressed('w')) //forward
+		{
+			square->position(eae6320::Math::cVector(1, 1, 0));
+		}
+	}
+
 	std::shared_ptr<Engine::GameObject> CreateObject(std::string i_mesh)
 	{
 		std::shared_ptr<Lame::Mesh> mesh(Lame::Mesh::Create(Graphics::Get().context(), i_mesh));
