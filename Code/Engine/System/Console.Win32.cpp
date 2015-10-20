@@ -14,9 +14,9 @@ namespace System
 		char strTemp[lenTemp];
 
 		if (i_displayFileAndLine)
-			sprintf_s(strTemp, "DEBUG (%s Line # %d): %s\n", i_file.c_str(), i_line, i_fmt.c_str());	//add the file, line number, and format string
+			sprintf_s(strTemp, "%s:%d - %s\n", i_file.c_str(), i_line, i_fmt.c_str());	//add the file, line number, and format string
 		else
-			sprintf_s(strTemp, "DEBUG: %s\n", i_fmt.c_str());									//only add the format string
+			sprintf_s(strTemp, "%s\n", i_fmt.c_str());									//only add the format string
 
 		const size_t lenOutput = lenTemp + 32;
 

@@ -5,14 +5,25 @@
     <ClInclude Include="UserOutput.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="UserInput.h" />
+    <ClInclude Include="eae6320\Time.h">
+      <Filter>eae6320</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Console.Win32.cpp" />
     <ClCompile Include="UserOutput.cpp" />
     <ClCompile Include="Time.Win32.cpp" />
     <ClCompile Include="UserInput.cpp" />
+    <ClCompile Include="eae6320\Time.cpp">
+      <Filter>eae6320</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Time.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="eae6320">
+      <UniqueIdentifier>{73262e0c-3e74-4487-9a97-7a2c8c7c03dd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
