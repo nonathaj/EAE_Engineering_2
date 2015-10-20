@@ -6,6 +6,8 @@
 // Header Files
 //=============
 
+#include "../../Engine/System/Console.h"
+
 #include "WindowsProgram.h"
 // WindowsIncludes.h is a file I made that #includes the important windows.h file
 // along with any associated #defines that we want in order to get Windows functionality.
@@ -45,3 +47,15 @@ int WINAPI WinMain(
 	// are paying attention and expecting specific values.
 	return exitCode;
 }
+
+#ifdef _DEBUG
+//Called after main returns, but before the program exits
+struct AtExit
+{
+	~AtExit()
+	{
+		bool hasMemoryLeaks = _CrtDumpMemoryLeaks() == TRUE;
+		DEBUG_PRINT("Final check for Memory Leaks complete. %s", hasMemoryLeaks ? "Memory leaks were found." : "No memory leaks found.");
+	}
+} doAtExit;
+#endif	//_DEBUG
