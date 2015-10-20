@@ -85,8 +85,6 @@ namespace Gameplay
 		eae6320::Time::OnNewFrame();
 		float deltaTime = eae6320::Time::GetSecondsElapsedThisFrame();
 
-		DEBUG_PRINT("delta=%f", deltaTime);
-
 		HandleInput(deltaTime);
 
 		bool renderSuccess = graphics->Render();
