@@ -118,14 +118,14 @@ namespace Lame
 		return location >= 0;
 	}
 
-	bool Effect::SetConstant(const Engine::HashedString &i_constant, const Engine::Vector2 &i_val)
+	bool Effect::SetConstant(const Engine::HashedString &i_constant, const eae6320::Math::cVector &i_val)
 	{
 		auto itr = constants.find(i_constant);
 		if (itr == constants.end())					//fail if we don't have a cache'd version of this constant
 			return false;
 
 		GLint handle = itr->second;
-		float floatArray[] = { i_val.x(), i_val.y() };
+		float floatArray[] = { i_val.x, i_val.y, i_val.z };
 		glUniform2fv(handle, 1, floatArray);
 
 		const GLenum errorCode = glGetError();

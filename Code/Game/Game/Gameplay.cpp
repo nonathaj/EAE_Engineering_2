@@ -13,13 +13,13 @@
 #include "../../Engine/Component/GameObject.h"
 #include "../../Engine/Graphics/RenderableComponent.h"
 #include "../../Engine/System/UserInput.h"
+#include "../../Engine/System/Console.h"
 
 namespace
 {
-	//the graphics singleton
-	typedef Engine::Singleton<Lame::Graphics> Graphics;
-
 	std::shared_ptr<Engine::GameObject> CreateObject(std::string i_mesh);
+
+	std::unique_ptr<Lame::Graphics> graphics;
 
 	//gameobject
 	std::shared_ptr<Engine::GameObject> square;
@@ -29,7 +29,7 @@ namespace
 	//effect
 	std::shared_ptr<Lame::Effect> effect;
 
-	void HandleInput();
+	void HandleInput(double deltaTime);
 }
 
 namespace Gameplay
@@ -37,16 +37,23 @@ namespace Gameplay
 	bool Initialize(HWND i_window)
 	{
 		//generate a new graphics object
-		Graphics::Release();
-		Graphics::Get().context(std::shared_ptr<Lame::Context>(Lame::Context::Create(i_window)));
-		if (!Graphics::Get().context()) //if we failed to generate a graphics context, shutdown the game
+		{
+			std::shared_ptr<Lame::Context> context(Lame::Context::Create(i_window));
+			if (!context)
+			{
+				Shutdown();
+				return false;
+			}
+			graphics = std::unique_ptr<Lame::Graphics>(new Lame::Graphics(context));
+		}
+		if (!graphics->context()) //if we failed to generate a graphics context, shutdown the game
 		{
 			Shutdown();
 			return false;
 		}
 
 		//load the effect we are going to use for everything in the game
-		effect = std::shared_ptr<Lame::Effect>(Lame::Effect::Create(Graphics::Get().context(), "data/vertex.shader", "data/fragment.shader"));
+		effect = std::shared_ptr<Lame::Effect>(Lame::Effect::Create(graphics->context(), "data/vertex.shader", "data/fragment.shader"));
 		if (!effect)
 			return nullptr;
 
@@ -59,7 +66,8 @@ namespace Gameplay
 			Shutdown();
 			return false;
 		}
-		triangle2->position(eae6320::Math::cVector(1, 1, 0));
+		triangle1->position(eae6320::Math::cVector(-0.5f, -0.5f));
+		triangle2->position(eae6320::Math::cVector(0.2f, 0.2f));
 		
 		Engine::Time::Setup();
 
@@ -71,9 +79,9 @@ namespace Gameplay
 		Engine::Time::Service();
 		double deltaTime = Engine::Time::DeltaTime();
 
-		HandleInput();
+		HandleInput(deltaTime);
 
-		bool renderSuccess = Graphics::Get().Render();
+		bool renderSuccess = graphics->Render();
 		return renderSuccess;
 	}
 
@@ -85,26 +93,32 @@ namespace Gameplay
 
 		effect.reset();
 
-		Graphics::Release();
+		graphics.reset();
 		return true;
 	}
 }
 
 namespace
 {
-	void HandleInput()
+	void HandleInput(double deltaTime)
 	{
 		using namespace System::UserInput;
 
-		if (KeyPressed('w') || KeyPressed('w')) //forward
-		{
-			square->position(eae6320::Math::cVector(1, 1, 0));
-		}
+		float movementAmount = 0.5f * static_cast<float>(deltaTime);
+
+		if (KeyPressed('W') || KeyPressed('w'))								//up
+			square->Move(eae6320::Math::cVector(0.0f, movementAmount));
+		else if(KeyPressed('S') || KeyPressed('s'))							//down
+			square->Move(eae6320::Math::cVector(0.0f, -movementAmount));
+		else if (KeyPressed('D') || KeyPressed('d'))						//right
+			square->Move(eae6320::Math::cVector(movementAmount, 0.0f));
+		else if (KeyPressed('A') || KeyPressed('a'))						//left
+			square->Move(eae6320::Math::cVector(-movementAmount, 0.0f));
 	}
 
 	std::shared_ptr<Engine::GameObject> CreateObject(std::string i_mesh)
 	{
-		std::shared_ptr<Lame::Mesh> mesh(Lame::Mesh::Create(Graphics::Get().context(), i_mesh));
+		std::shared_ptr<Lame::Mesh> mesh(Lame::Mesh::Create(graphics->context(), i_mesh));
 		if (!mesh)
 			return nullptr;
 
@@ -119,7 +133,7 @@ namespace
 			return nullptr;
 
 		//add the renderable to the graphics system
-		if (!Graphics::Get().Add(renderable))
+		if (!graphics->Add(renderable))
 			return nullptr;
 
 		return go;

@@ -11,4 +11,9 @@ namespace Engine
 		components_()
 	{
 	}
+
+	void GameObject::Move(const eae6320::Math::cVector& i_movement)
+	{
+		position_ += i_movement;
+	}
 }

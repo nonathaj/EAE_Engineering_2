@@ -15,6 +15,8 @@ namespace Engine
 	public:
 		GameObject();
 
+		void Move(const eae6320::Math::cVector& i_movement);
+
 		inline eae6320::Math::cVector position() const { return position_; }
 		inline void position(const eae6320::Math::cVector& i_pos) { position_ = i_pos; }
 

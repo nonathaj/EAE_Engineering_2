@@ -17,7 +17,8 @@ namespace Engine
 				if(freq == 0)
 				{
 					LARGE_INTEGER frequency;
-					assert(QueryPerformanceFrequency(&frequency));
+					bool freqFound = QueryPerformanceFrequency(&frequency) == TRUE;
+					assert(freqFound);
 					freq = frequency.QuadPart;
 				}
 			}
@@ -39,7 +40,8 @@ namespace Engine
 		Tick GetCurrentSystemTick()
 		{
 			LARGE_INTEGER now;
-			assert(QueryPerformanceCounter(&now));
+			bool freqFound = QueryPerformanceFrequency(&now) == TRUE;
+			assert(freqFound);
 			return static_cast<Tick>(now.QuadPart);
 		}
 	}

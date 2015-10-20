@@ -7,7 +7,7 @@ namespace
 	bool IsVirtualKeyPressed(const int i_virtualKeyCode);
 }
 
-namespace Engine
+namespace System
 {
 	namespace UserInput
 	{
