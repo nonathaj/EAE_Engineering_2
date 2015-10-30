@@ -1,0 +1,5 @@
+return
+{
+	vertex = "vertex.shader",
+	fragment = "fragment.shader",
+}
