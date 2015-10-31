@@ -34,7 +34,7 @@ namespace
 
 namespace Lame
 {
-	Effect* Effect::Create(std::shared_ptr<Context> i_context, std::string i_vertex_path, std::string i_fragment_path)
+	Effect* Effect::Create(std::shared_ptr<Context> i_context, const char* i_vertex_path, const char* i_fragment_path)
 	{
 		// A vertex shader is a program that operates on vertices.
 		// Its input comes from a C/C++ "draw call" and is:
@@ -418,11 +418,9 @@ namespace
 			}
 			// Set the source code into the shader
 			{
-				const GLsizei shaderSourceCount = 3;
+				const GLsizei shaderSourceCount = 1;
 				const GLchar* shaderSources[] =
 				{
-					"#version 330\n", //version number must come first
-					"#define EAE6320_PLATFORM_GL\n",
 					reinterpret_cast<GLchar*>(shaderSource)
 				};
 				const GLint* sourcesAreNullTerminated = NULL;
@@ -616,11 +614,9 @@ namespace
 			}
 			// Set the source code into the shader
 			{
-				const GLsizei shaderSourceCount = 3;
+				const GLsizei shaderSourceCount = 1;
 				const GLchar* shaderSources[] =
 				{
-					"#version 330\n", //version number must come first
-					"#define EAE6320_PLATFORM_GL\n",
 					reinterpret_cast<GLchar*>(shaderSource)
 				};
 				const GLint* sourcesAreNullTerminated = NULL;

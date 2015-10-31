@@ -40,6 +40,11 @@ namespace Lame
 		std::shared_ptr<Context> context_;
 		std::vector<std::shared_ptr<RenderableComponent>> renderables_;
 	};
+
+	namespace Shader
+	{
+		enum Type { Unknown, Vertex, Fragment, };
+	}
 }
 
 #endif	// EAE6320_GRAPHICS_H

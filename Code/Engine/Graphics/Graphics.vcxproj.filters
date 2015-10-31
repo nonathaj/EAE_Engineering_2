@@ -41,5 +41,6 @@
     <ClInclude Include="Effect.h" />
     <ClInclude Include="Context.h" />
     <ClInclude Include="RenderableComponent.h" />
+    <ClInclude Include="Includes.h" />
   </ItemGroup>
 </Project>

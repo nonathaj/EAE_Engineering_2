@@ -42,7 +42,7 @@ end
 
 --EAE6320_TODO: I have shown the simplest parameters to BuildAsset() that are possible.
 --You should definitely feel free to change these
-local function BuildAsset( i_builderFileName, i_sourceRelativePath, i_destinationRelativePath )
+local function BuildAsset( i_builderFileName, i_sourceRelativePath, i_destinationRelativePath, i_optionalArguments )
 	-- Get the absolute paths to the source and target
 	--EAE6320_TODO: I am assuming that the relative path of the source and target is the same,
 	--but if this isn't true for you (i.e. you use different extensions)
@@ -106,9 +106,10 @@ local function BuildAsset( i_builderFileName, i_sourceRelativePath, i_destinatio
 			local command = "\"" .. path_builder .. "\""
 			-- The source and target path must always be passed in
 			local arguments = "\"" .. path_source .. "\" \"" .. path_target .. "\""
-			-- If you create a mechanism so that some asset types could include extra arguments
-			-- you would concatenate them here, something like:
-			-- arguments = arguments .. " " .. i_optionalArguments
+            -- The optional arguments
+            if i_optionalArguments ~= nil then
+                arguments = arguments .. " " .. i_optionalArguments
+            end
 			-- IMPORTANT NOTE:
 			-- If you need to debug a builder you can put print statements here to
 			-- find out what the exact command line should be.
@@ -163,7 +164,7 @@ local function BuildAssets( i_assetsToBuild )
 	for i, assetBuildTable in ipairs( i_assetsToBuild ) do
 		local tool = assetBuildTable.tool
 		for fileNum, fileData in ipairs(assetBuildTable.files) do
-			if not BuildAsset(tool, fileData.source, fileData.target) then
+			if not BuildAsset(tool, fileData.source, fileData.target, fileData.arguments) then
 				-- If there's an error then the asset build should fail,
 				-- but we can still try to build any remaining assets
 				wereThereErrors = true

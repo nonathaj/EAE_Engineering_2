@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="Console.h" />
     <ClInclude Include="eae6320\Time.h" />
+    <ClInclude Include="FileLoader.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="UserInput.h" />
     <ClInclude Include="UserOutput.h" />
@@ -28,6 +29,7 @@
   <ItemGroup>
     <ClCompile Include="Console.Win32.cpp" />
     <ClCompile Include="eae6320\Time.cpp" />
+    <ClCompile Include="FileLoader.cpp" />
     <ClCompile Include="Time.Win32.cpp" />
     <ClCompile Include="UserInput.cpp" />
     <ClCompile Include="UserOutput.cpp" />

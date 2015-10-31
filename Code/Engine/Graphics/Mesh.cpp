@@ -9,6 +9,7 @@
 #include "Mesh.h"
 #include "../System/UserOutput.h"
 #include "../System/Console.h"
+#include "../System/FileLoader.h"
 
 #include "Vertex.h"
 
@@ -24,34 +25,8 @@ namespace Lame
 	{
 		std::string errorHeader = "Mesh loading error";
 
-		//Open the file
-		std::ifstream in(i_mesh_path, std::ifstream::binary);
-		if (!in)
-		{
-			std::stringstream error;
-			error << "Failed to open " << i_mesh_path << " mesh file";
-			System::UserOutput::Display(error.str(), errorHeader);
-			return nullptr;
-		}
-
-		//find the file length
-		in.seekg(0, in.end);
-		size_t fileLength = static_cast<size_t>(in.tellg());
-		in.seekg(0, in.beg);
-		
-		//Create a buffer for the data
-		char *fileData = new char[fileLength];
-		if (!fileData)
-		{
-			System::UserOutput::Display("Failed to create temporary buffer for mesh", errorHeader);
-			return nullptr;
-		}
-
-		//read the data from the file
-		in.read(fileData, fileLength);
-
-		//close the file
-		in.close();
+		size_t fileLength;
+		char *fileData = System::File::LoadBinary(i_mesh_path, &fileLength);
 
 		//find the actual location of our data
 		uint32_t *vertex_count = reinterpret_cast<uint32_t*>(fileData);

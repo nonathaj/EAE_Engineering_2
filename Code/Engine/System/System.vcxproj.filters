@@ -8,6 +8,7 @@
     <ClInclude Include="eae6320\Time.h">
       <Filter>eae6320</Filter>
     </ClInclude>
+    <ClInclude Include="FileLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Console.Win32.cpp" />
@@ -17,6 +18,7 @@
     <ClCompile Include="eae6320\Time.cpp">
       <Filter>eae6320</Filter>
     </ClCompile>
+    <ClCompile Include="FileLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Time.inl" />

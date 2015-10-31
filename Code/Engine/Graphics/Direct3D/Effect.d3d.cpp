@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <string>
 #include <sstream>
+#include "../../System/FileLoader.h"
 
 #include "../Context.h"
 #include "../../System/UserOutput.h"
@@ -23,7 +24,7 @@ namespace
 
 namespace Lame
 {
-	Effect* Effect::Create(std::shared_ptr<Context> i_context, std::string i_vertex_path, std::string i_fragment_path)
+	Effect* Effect::Create(std::shared_ptr<Context> i_context, const char* i_vertex_path, const char* i_fragment_path)
 	{
 		// The vertex shader is a program that operates on vertices.
 		// Its input comes from a C/C++ "draw call" and is:
@@ -167,117 +168,66 @@ namespace
 {
 	bool LoadFragmentShader(const Lame::Context *i_context, std::string i_path, IDirect3DPixelShader9*& o_fragmentShader, ID3DXConstantTable** o_fragmentConstantTable)
 	{
-		// Load the source code from file and compile it
-		ID3DXBuffer* compiledShader;
-		{
-			const D3DXMACRO defines[] =
-			{
-				{ "EAE6320_PLATFORM_D3D", "1" },
-				{ NULL, NULL }
-			};
-			ID3DXInclude* noIncludes = NULL;
-			const char* entryPoint = "main";
-			const char* profile = "ps_3_0";
-			const DWORD noFlags = 0;
-			ID3DXBuffer* errorMessages = NULL;
-			HRESULT result = D3DXCompileShaderFromFile(i_path.c_str(), defines, noIncludes, entryPoint, profile, noFlags,
-				&compiledShader, &errorMessages, o_fragmentConstantTable);
-			if (SUCCEEDED(result))
-			{
-				if (errorMessages)
-				{
-					errorMessages->Release();
-				}
-			}
-			else
-			{
-				if (errorMessages)
-				{
-					std::stringstream errorMessage;
-					errorMessage << "Direct3D failed to compile the fragment shader from the file " << i_path
-						<< ":\n" << reinterpret_cast<char*>(errorMessages->GetBufferPointer());
-					System::UserOutput::Display(errorMessage.str());
-					errorMessages->Release();
-				}
-				else
-				{
-					std::stringstream errorMessage;
-					errorMessage << "Direct3D failed to compile the fragment shader from the file " << i_path;
-					System::UserOutput::Display(errorMessage.str());
-				}
-				return false;
-			}
-		}
-		// Create the fragment shader object
+		char const * const errorHeader = "Fragment Shader Loading Error";
 		bool wereThereErrors = false;
+
+		// Load the source code from file and compile it
+		char* compiledShader = System::File::LoadBinary(i_path);
+		if (!compiledShader)
+			wereThereErrors = true;
+		else
 		{
-			HRESULT result = i_context->get_direct3dDevice()->CreatePixelShader(reinterpret_cast<DWORD*>(compiledShader->GetBufferPointer()),
+			// Create the fragment shader object
+			HRESULT result = i_context->get_direct3dDevice()->CreatePixelShader(reinterpret_cast<DWORD*>(compiledShader),
 				&o_fragmentShader);
 			if (FAILED(result))
 			{
-				System::UserOutput::Display("Direct3D failed to create the fragment shader");
+				System::UserOutput::Display("Direct3D failed to create the fragment shader", errorHeader);
 				wereThereErrors = true;
 			}
-			compiledShader->Release();
+
+			//get the constant table
+			result = D3DXGetShaderConstantTable(reinterpret_cast<const DWORD*>(compiledShader), o_fragmentConstantTable);
+			if (FAILED(result))
+			{
+				System::UserOutput::Display("Direct3D failed to load the Fragment Constant Table", errorHeader);
+				wereThereErrors = true;
+			}
 		}
+		delete[] compiledShader;
 		return !wereThereErrors;
 	}
 
 	bool LoadVertexShader(const Lame::Context *i_context, std::string i_path, IDirect3DVertexShader9*& o_vertexShader, ID3DXConstantTable** o_vertexConstantTable)
 	{
-		// Load the source code from file and compile it
-		ID3DXBuffer* compiledShader;
-		{
-			const D3DXMACRO defines[] =
-			{
-				{ "EAE6320_PLATFORM_D3D", "1" },
-				{ NULL, NULL }
-			};
-			ID3DXInclude* noIncludes = NULL;
-			const char* entryPoint = "main";
-			const char* profile = "vs_3_0";
-			const DWORD noFlags = 0;
-			ID3DXBuffer* errorMessages = NULL;
-			HRESULT result = D3DXCompileShaderFromFile(i_path.c_str(), defines, noIncludes, entryPoint, profile, noFlags,
-				&compiledShader, &errorMessages, o_vertexConstantTable);
-			if (SUCCEEDED(result))
-			{
-				if (errorMessages)
-				{
-					errorMessages->Release();
-				}
-			}
-			else
-			{
-				if (errorMessages)
-				{
-					std::stringstream errorMessage;
-					errorMessage << "Direct3D failed to compile the vertex shader from the file " << i_path
-						<< ":\n" << reinterpret_cast<char*>(errorMessages->GetBufferPointer());
-					System::UserOutput::Display(errorMessage.str());
-					errorMessages->Release();
-				}
-				else
-				{
-					std::stringstream errorMessage;
-					errorMessage << "Direct3D failed to compile the vertex shader from the file " << i_path;
-					System::UserOutput::Display(errorMessage.str());
-				}
-				return false;
-			}
-		}
-		// Create the vertex shader object
+		char const * const errorHeader = "Vertex Shader Loading Error";
 		bool wereThereErrors = false;
+
+		// Load the source code from file and compile it
+		char* compiledShader = System::File::LoadBinary(i_path);
+		if (!compiledShader)
+			wereThereErrors = true;
+		else
 		{
-			HRESULT result = i_context->get_direct3dDevice()->CreateVertexShader(reinterpret_cast<DWORD*>(compiledShader->GetBufferPointer()),
+			// Create the vertex shader object
+			HRESULT result = i_context->get_direct3dDevice()->CreateVertexShader(reinterpret_cast<DWORD*>(compiledShader),
 				&o_vertexShader);
 			if (FAILED(result))
 			{
-				System::UserOutput::Display("Direct3D failed to create the vertex shader");
+				System::UserOutput::Display("Direct3D failed to create the vertex shader", errorHeader);
 				wereThereErrors = true;
 			}
-			compiledShader->Release();
+
+			//get the constant table
+			result = D3DXGetShaderConstantTable(reinterpret_cast<const DWORD*>(compiledShader), o_vertexConstantTable);
+			if (FAILED(result))
+			{
+				System::UserOutput::Display("Direct3D failed to load the Vertex Constant Table", errorHeader);
+				wereThereErrors = true;
+			}
 		}
+
+		delete[] compiledShader;
 		return !wereThereErrors;
 	}
 }

@@ -54,7 +54,7 @@ namespace Gameplay
 		}
 
 		//load the effect we are going to use for everything in the game
-		effect = std::shared_ptr<Lame::Effect>(Lame::Effect::Create(graphics->context(), "data/vertex.shader", "data/fragment.shader"));
+		effect = std::shared_ptr<Lame::Effect>(Lame::Effect::Create(graphics->context(), "data/effect.effect.bin"));
 		if (!effect)
 			return nullptr;
 

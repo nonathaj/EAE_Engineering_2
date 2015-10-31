@@ -24,7 +24,8 @@ namespace Lame
 	class Effect
 	{
 	public:
-		static Effect* Create(std::shared_ptr<Context> i_context, std::string i_vertex_path, std::string i_fragment_path);
+		static Effect* Create(std::shared_ptr<Context> i_context, const std::string& i_effect_path);
+		static Effect* Create(std::shared_ptr<Context> i_context, const char* i_vertex_path, const char* i_fragment_path);
 		~Effect();
 
 		bool Bind();
