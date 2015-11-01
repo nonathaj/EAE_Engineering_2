@@ -6,11 +6,6 @@
 
 #if defined( EAE6320_PLATFORM_D3D )
 
-// Translate GLSL variable types to HLSL
-#define vec2 float2
-#define vec3 float3
-#define vec4 float4
-
 #elif defined( EAE6320_PLATFORM_GL )
 
 // The version of GLSL to use must come first
@@ -18,5 +13,10 @@
 
 // This extension is required in order to specify explicit locations for shader inputs and outputs
 #extension GL_ARB_separate_shader_objects : require
+
+// Translate GLSL variable types to HLSL
+#define float2 vec2
+#define float3 vec3
+#define float4 vec4
 
 #endif

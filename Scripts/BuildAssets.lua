@@ -87,11 +87,17 @@ local function BuildAsset( i_builderFileName, i_dependencies, i_sourceRelativePa
 			shouldTargetBeBuilt = lastWriteTime_source > lastWriteTime_target
 			if not shouldTargetBeBuilt then
 				-- Even if the target was built from the current source
-				-- then one of the depencies may have changed which could cause different output
-                for index, file in ipairs(i_dependencies) do
-				    local lastWriteTime_dependency = GetLastWriteTime( s_AuthoredAssetDir .. file )
-				    shouldTargetBeBuilt = lastWriteTime_dependency > lastWriteTime_target
-                    if shouldTargetBeBuild then break end
+				-- then the builder may have changed which could cause different output
+				local lastWriteTime_builder = GetLastWriteTime( path_builder )
+				shouldTargetBeBuilt = lastWriteTime_builder > lastWriteTime_target
+			    if not shouldTargetBeBuilt then
+				    -- Even if the target was built from the current source
+				    -- then one of the depencies may have changed which could cause different output
+                    for index, file in ipairs(i_dependencies) do
+				        local lastWriteTime_dependency = GetLastWriteTime( s_AuthoredAssetDir .. file )
+				        shouldTargetBeBuilt = lastWriteTime_dependency > lastWriteTime_target
+                        if shouldTargetBeBuild then break end
+                    end
                 end
 			end
 		else
@@ -170,7 +176,6 @@ local function BuildAssets( i_assetsToBuild )
         if dependencies == nil then
             dependencies = {}
         end
-        table.insert(dependencies, tool)
 		for fileNum, fileData in ipairs(assetBuildTable.files) do
 			if not BuildAsset(tool, dependencies, fileData.source, fileData.target, fileData.arguments) then
 				-- If there's an error then the asset build should fail,
