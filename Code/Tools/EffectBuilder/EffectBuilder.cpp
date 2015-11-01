@@ -24,7 +24,14 @@ bool EffectBuilder::Build(const std::vector<std::string>& )
 	if (LoadEffectAssetTableFromLua(m_path_source, vertex, fragment))
 	{
 		//Add the relative folder location of these built assets
-		std::string relativeFolder = "data/";
+		std::string relativeFolder, outError;
+		if (!eae6320::GetEnvironmentVariableA("GameDataDir", relativeFolder, &outError))
+		{
+			std::stringstream error;
+			error << "Failed to load GameDataDir environment variable. " << outError;
+			eae6320::OutputErrorMessage(error.str().c_str());
+			return false;
+		}
 		vertex = relativeFolder + vertex;
 		fragment = relativeFolder + fragment;
 
