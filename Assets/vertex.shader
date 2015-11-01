@@ -86,10 +86,11 @@ void main()
 		// will be different than the position that is input to it from C code,
 		// but for now the "out" position is set directly from the "in" position:
 #if defined( EAE6320_PLATFORM_GL )
-		gl_Position = vec4( i_position + position_offset, 0.0, 1.0 );
+		gl_Position
 #elif defined( EAE6320_PLATFORM_D3D )
-		o_position = float4( i_position + position_offset, 0.0, 1.0 );		
+		o_position
 #endif
+ 			= float4( i_position + position_offset, 0.0, 1.0 );
 	}
 	// Pass the input color to the fragment shader unchanged:
 	{
