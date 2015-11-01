@@ -4,6 +4,7 @@ return
 		tool = "GenericBuilder.exe",
 		files = 
 		{
+            { source = "shaders.inc", target = "shaders.inc" },
 		}
 	},
 	{
@@ -23,6 +24,7 @@ return
     },
 	{
 		tool = "ShaderBuilder.exe",
+        dependencies = { "shaders.inc" },
 		files = 
 		{
 			{ source = "vertex.shader", target = "vertex.shader.bin", arguments = "vertex" },

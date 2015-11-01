@@ -63,28 +63,24 @@ namespace Lame
 		renderingWindow = nullptr;
 	}
 
+	bool Context::ClearScreen()
+	{
+		const D3DRECT* subRectanglesToClear = NULL;
+		const DWORD subRectangleCount = 0;
+		const DWORD clearTheRenderTarget = D3DCLEAR_TARGET;
+		D3DCOLOR clearColor;
+		{
+			// Black is usually used:
+			clearColor = D3DCOLOR_XRGB(0, 0, 0);
+		}
+		const float noZBuffer = 0.0f;
+		const DWORD noStencilBuffer = 0;
+		HRESULT result = direct3dDevice->Clear(subRectangleCount, subRectanglesToClear, clearTheRenderTarget, clearColor, noZBuffer, noStencilBuffer);
+		return SUCCEEDED(result);
+	}
 
 	bool Context::BeginFrame()
 	{
-		// Every frame an entirely new image will be created.
-		// Before drawing anything, then, the previous image will be erased
-		// by "clearing" the image buffer (filling it with a solid color)
-		{
-			const D3DRECT* subRectanglesToClear = NULL;
-			const DWORD subRectangleCount = 0;
-			const DWORD clearTheRenderTarget = D3DCLEAR_TARGET;
-			D3DCOLOR clearColor;
-			{
-				// Black is usually used:
-				clearColor = D3DCOLOR_XRGB(0, 0, 0);
-			}
-			const float noZBuffer = 0.0f;
-			const DWORD noStencilBuffer = 0;
-			HRESULT result = direct3dDevice->Clear(subRectangleCount, subRectanglesToClear,
-				clearTheRenderTarget, clearColor, noZBuffer, noStencilBuffer);
-			assert(SUCCEEDED(result));
-		}
-
 		HRESULT result = direct3dDevice->BeginScene();
 		return SUCCEEDED(result);
 	}

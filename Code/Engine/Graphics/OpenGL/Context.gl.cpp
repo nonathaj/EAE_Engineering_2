@@ -56,22 +56,22 @@ namespace Lame
 		CleanupContextData(renderingWindow, deviceContext, openGlRenderingContext);
 	}
 
+	bool Context::ClearScreen()
+	{
+		// Black is usually used
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		bool success = glGetError() == GL_NO_ERROR;
+		// In addition to the color, "depth" and "stencil" can also be cleared,
+		// but for now we only care about color
+		const GLbitfield clearColor = GL_COLOR_BUFFER_BIT;
+		glClear(clearColor);
+		success = success && glGetError() == GL_NO_ERROR;
+
+		return success;
+	}
 
 	bool Context::BeginFrame()
 	{
-		// Every frame an entirely new image will be created.
-		// Before drawing anything, then, the previous image will be erased
-		// by "clearing" the image buffer (filling it with a solid color)
-		{
-			// Black is usually used
-			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-			assert(glGetError() == GL_NO_ERROR);
-			// In addition to the color, "depth" and "stencil" can also be cleared,
-			// but for now we only care about color
-			const GLbitfield clearColor = GL_COLOR_BUFFER_BIT;
-			glClear(clearColor);
-			assert(glGetError() == GL_NO_ERROR);
-		}
 		return true;
 	}
 

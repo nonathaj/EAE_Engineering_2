@@ -21,6 +21,8 @@ namespace Lame
 		//Create a mesh with right-handed indices
 		static Context* Create(const HWND i_renderingWindow);
 
+		bool ClearScreen();
+
 		bool BeginFrame();
 		bool EndFrame();
 

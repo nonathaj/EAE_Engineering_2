@@ -14,7 +14,7 @@ namespace Lame
 
 	bool Graphics::Render()
 	{
-		bool success = context()->BeginFrame();
+		bool success = context()->ClearScreen() && context()->BeginFrame();
 		if (!success)
 			return false;
 		for (size_t x = 0; x < renderables_.size(); x++)

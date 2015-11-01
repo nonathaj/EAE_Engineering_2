@@ -42,7 +42,7 @@ end
 
 --EAE6320_TODO: I have shown the simplest parameters to BuildAsset() that are possible.
 --You should definitely feel free to change these
-local function BuildAsset( i_builderFileName, i_sourceRelativePath, i_destinationRelativePath, i_optionalArguments )
+local function BuildAsset( i_builderFileName, i_dependencies, i_sourceRelativePath, i_destinationRelativePath, i_optionalArguments )
 	-- Get the absolute paths to the source and target
 	--EAE6320_TODO: I am assuming that the relative path of the source and target is the same,
 	--but if this isn't true for you (i.e. you use different extensions)
@@ -87,9 +87,12 @@ local function BuildAsset( i_builderFileName, i_sourceRelativePath, i_destinatio
 			shouldTargetBeBuilt = lastWriteTime_source > lastWriteTime_target
 			if not shouldTargetBeBuilt then
 				-- Even if the target was built from the current source
-				-- the builder may have changed which could cause different output
-				local lastWriteTime_builder = GetLastWriteTime( path_builder )
-				shouldTargetBeBuilt = lastWriteTime_builder > lastWriteTime_target
+				-- then one of the depencies may have changed which could cause different output
+                for index, file in ipairs(i_dependencies) do
+				    local lastWriteTime_dependency = GetLastWriteTime( s_AuthoredAssetDir .. file )
+				    shouldTargetBeBuilt = lastWriteTime_dependency > lastWriteTime_target
+                    if shouldTargetBeBuild then break end
+                end
 			end
 		else
 			shouldTargetBeBuilt = true;
@@ -163,8 +166,13 @@ local function BuildAssets( i_assetsToBuild )
 
 	for i, assetBuildTable in ipairs( i_assetsToBuild ) do
 		local tool = assetBuildTable.tool
+        local dependencies = assetBuildTable.dependencies
+        if dependencies == nil then
+            dependencies = {}
+        end
+        table.insert(dependencies, tool)
 		for fileNum, fileData in ipairs(assetBuildTable.files) do
-			if not BuildAsset(tool, fileData.source, fileData.target, fileData.arguments) then
+			if not BuildAsset(tool, dependencies, fileData.source, fileData.target, fileData.arguments) then
 				-- If there's an error then the asset build should fail,
 				-- but we can still try to build any remaining assets
 				wereThereErrors = true

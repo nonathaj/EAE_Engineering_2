@@ -2,11 +2,13 @@
 	This is an example of a vertex shader
 */
 
+#include "shaders.inc"
+
+uniform float2 position_offset;
+
 ////////////////////////////////////////////////////////////////////////////////////////
 #if defined( EAE6320_PLATFORM_D3D )
 ////////////////////////////////////////////////////////////////////////////////////////
-
-uniform float2 position_offset;
 
 // Entry Point
 //============
@@ -40,34 +42,10 @@ void main(
 	out float4 o_color : COLOR
 
 	)
-{
-	// Calculate the position of this vertex on screen
-	{
-		// When we move to 3D graphics the screen position that the vertex shader outputs
-		// will be different than the position that is input to it from C code,
-		// but for now the "out" position is set directly from the "in" position:
-		o_position = float4( i_position + position_offset, 0.0, 1.0 );
-	}
-	// Pass the input color to the fragment shader unchanged:
-	{
-		o_color = i_color;
-	}
-}
-
+	
 ////////////////////////////////////////////////////////////////////////////////////////
 #elif defined( EAE6320_PLATFORM_GL )
 ////////////////////////////////////////////////////////////////////////////////////////
-
-// The version of GLSL to use must come first
-#version 330
-
-// This extension is required in order to specify explicit locations for shader inputs and outputs
-#extension GL_ARB_separate_shader_objects : require
-
-// Input
-//======
-
-uniform vec2 position_offset;
 
 // The locations assigned are arbitrary
 // but must match the C calls to glVertexAttribPointer()
@@ -96,20 +74,25 @@ layout( location = 0 ) out vec4 o_color;
 //============
 
 void main()
+
+////////////////////////////////////////////////////////////////////////////////////////
+#endif
+////////////////////////////////////////////////////////////////////////////////////////
+
 {
 	// Calculate position
 	{
 		// When we move to 3D graphics the screen position that the vertex shader outputs
 		// will be different than the position that is input to it from C code,
 		// but for now the "out" position is set directly from the "in" position:
+#if defined( EAE6320_PLATFORM_GL )
 		gl_Position = vec4( i_position + position_offset, 0.0, 1.0 );
+#elif defined( EAE6320_PLATFORM_D3D )
+		o_position = float4( i_position + position_offset, 0.0, 1.0 );		
+#endif
 	}
 	// Pass the input color to the fragment shader unchanged:
 	{
 		o_color = i_color;
 	}
 }
-
-////////////////////////////////////////////////////////////////////////////////////////
-#endif
-////////////////////////////////////////////////////////////////////////////////////////
