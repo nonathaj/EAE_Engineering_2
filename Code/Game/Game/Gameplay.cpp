@@ -24,9 +24,7 @@ namespace
 
 	//gameobject
 	std::shared_ptr<Engine::GameObject> box;
-	std::shared_ptr<Engine::GameObject> square;
-	std::shared_ptr<Engine::GameObject> triangle1;
-	std::shared_ptr<Engine::GameObject> triangle2;
+	std::shared_ptr<Engine::GameObject> floorObject;
 
 	//effect
 	std::shared_ptr<Lame::Effect> effect;
@@ -61,16 +59,13 @@ namespace Gameplay
 
 		//Create our renderables
 		box = CreateObject("data/box.mesh.bin");
-		//square = CreateObject("data/square.mesh.bin");
-		//triangle1 = CreateObject("data/triangle.mesh.bin");
-		//triangle2 = CreateObject("data/triangle.mesh.bin");
-		if (!box)//|| !square || !triangle1 || !triangle2)
+		floorObject = CreateObject("data/floor.mesh.bin");
+		if (!box || !floorObject)
 		{
 			Shutdown();
 			return false;
 		}
-		//triangle1->position(eae6320::Math::cVector(-0.5f, -0.5f));
-		//triangle2->position(eae6320::Math::cVector(0.2f, 0.2f));
+		floorObject->position(eae6320::Math::cVector(0.0f, -1.0f, 0.0f));
 		
 		std::string error;
 		if (!eae6320::Time::Initialize(&error))
@@ -96,9 +91,7 @@ namespace Gameplay
 	bool Shutdown()
 	{
 		box.reset();
-		square.reset();
-		triangle1.reset();
-		triangle2.reset();
+		floorObject.reset();
 
 		effect.reset();
 
