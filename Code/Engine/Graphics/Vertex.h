@@ -10,9 +10,10 @@ namespace Lame
 	struct Vertex
 	{
 	public:
-		// POSITION, 2 floats == 8 bytes, Offset = 0
-		float x, y;
-		// COLOR0, 4 uint8_ts == 4 bytes, Offset = 8
+		// POSITION, 3 floats == 12 bytes, Offset = 0
+		float x, y, z;
+
+		// COLOR0, 4 uint8_ts == 4 bytes, Offset = 12
 #if EAE6320_PLATFORM_D3D
 		uint8_t b, g, r, a;	// Direct3D expects the byte layout of a color to be different from what you might expect
 #elif EAE6320_PLATFORM_GL

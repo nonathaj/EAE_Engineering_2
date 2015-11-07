@@ -148,9 +148,9 @@ namespace Lame
 
 		D3DXHANDLE handle = itr->second;
 		float floatArray[] = { i_val.x, i_val.y, i_val.z };
-		HRESULT result = vertexConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, floatArray, 2);
+		HRESULT result = vertexConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, floatArray, 3);
 		if (!SUCCEEDED(result))
-			result = fragmentConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, floatArray, 2);
+			result = fragmentConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, floatArray, 3);
 
 		if (!SUCCEEDED(result))
 		{

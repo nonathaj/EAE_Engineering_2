@@ -27,7 +27,7 @@ namespace
 	bool LoadColor(lua_State* io_luaStateFrom, double& o_r, double& o_g, double& o_b, double& o_a);
 
 	//Loads a position from the top of the stack
-	bool LoadPosition(lua_State* io_luaStateFrom, double& o_x, double& o_y);
+	bool LoadPosition(lua_State* io_luaStateFrom, double& o_x, double& o_y, double& o_z);
 
 	//Loads a vertex from the top of the stack
 	bool LoadVertex(lua_State* io_luaStateFrom, Lame::Vertex& o_vertex);
@@ -330,8 +330,8 @@ namespace
 			//load the position
 			lua_pushstring(io_luaStateFrom, "pos");
 			lua_gettable(io_luaStateFrom, -2);
-			double x, y;
-			if (!LoadPosition(io_luaStateFrom, x, y))
+			double x, y, z;
+			if (!LoadPosition(io_luaStateFrom, x, y, z))
 			{
 				eae6320::OutputErrorMessage("Invalid vertex position data");
 				return false;
@@ -339,6 +339,7 @@ namespace
 			lua_pop(io_luaStateFrom, 1);
 			o_vertex.x = static_cast<float>(x);
 			o_vertex.y = static_cast<float>(y);
+			o_vertex.z = static_cast<float>(z);
 
 			//Load the color
 			double r, g, b, a;
@@ -382,7 +383,7 @@ namespace
 		return value;
 	}
 
-	bool LoadPosition(lua_State* io_luaStateFrom, double& o_x, double& o_y)
+	bool LoadPosition(lua_State* io_luaStateFrom, double& o_x, double& o_y, double& o_z)
 	{
 		if (!lua_istable(io_luaStateFrom, -1))
 		{
@@ -392,11 +393,12 @@ namespace
 
 		o_x = GetDoubleFromTable(io_luaStateFrom, 1);
 		o_y = GetDoubleFromTable(io_luaStateFrom, 2);
+		o_z = GetDoubleFromTable(io_luaStateFrom, 3);
 
 		if (std::isnan(o_x) || std::isnan(o_y))
 		{
 			std::stringstream decoratedErrorMessage;
-			decoratedErrorMessage << "Invalid numbers in position (" << o_x << ", " << o_y << ")";
+			decoratedErrorMessage << "Invalid numbers in position (" << o_x << ", " << o_y << ", " << o_z << ")";
 			eae6320::OutputErrorMessage(decoratedErrorMessage.str().c_str());
 			return false;
 		}
