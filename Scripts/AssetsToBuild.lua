@@ -4,7 +4,6 @@ return
 		tool = "GenericBuilder.exe",
 		files = 
 		{
-            { source = "shaders.inc", target = "shaders.inc" },
 		}
 	},
 	{
