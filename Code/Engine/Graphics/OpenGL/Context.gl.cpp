@@ -154,6 +154,16 @@ namespace
 			}
 		}
 
+		//enable face culling
+		glEnable(GL_CULL_FACE);
+		const GLenum errorCode = glGetError();
+		if (errorCode != GL_NO_ERROR)
+		{
+			std::stringstream errorMessage;
+			errorMessage << "OpenGL failed to delete the vertex array: " << reinterpret_cast<const char*>(gluErrorString(errorCode));
+			System::UserOutput::Display(errorMessage.str());
+		}
+
 		return true;
 	}
 
