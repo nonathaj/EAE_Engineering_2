@@ -62,10 +62,12 @@ namespace Lame
 		{
 			effect->programId = programId;
 
-			//find the position offset uniform handle
-			if (!effect->CacheConstant(PositionUniformName))
+			//find the uniform handles
+			if (!effect->CacheConstant(LocalToWorldUniformName) ||
+				!effect->CacheConstant(WorldToViewUniformName) ||
+				!effect->CacheConstant(ViewToScreenUniformName))
 			{
-				System::UserOutput::Display("Failed to find Position uniform constant");
+				System::UserOutput::Display("OpenGL failed to find all required uniform constants for effect.");
 				delete effect;
 				return nullptr;
 			}
@@ -125,8 +127,30 @@ namespace Lame
 			return false;
 
 		GLint handle = itr->second;
-		float floatArray[] = { i_val.x, i_val.y, i_val.z };
-		glUniform3fv(handle, 1, floatArray);
+		glUniform3fv(handle, 1, reinterpret_cast<const float*>(&i_val));
+
+		const GLenum errorCode = glGetError();
+		if (errorCode != GL_NO_ERROR)
+		{
+			std::stringstream errorMessage;
+			errorMessage << "OpenGL failed to set a constant uniform value: " << reinterpret_cast<const char*>(gluErrorString(errorCode));
+			System::UserOutput::Display(errorMessage.str());
+			return false;
+		}
+		return true;
+	}
+
+
+	bool Effect::SetConstant(const Engine::HashedString &i_constant, const eae6320::Math::cMatrix_transformation &i_val)
+	{
+		auto itr = constants.find(i_constant);
+		if (itr == constants.end())					//fail if we don't have a cache'd version of this constant
+			return false;
+
+		GLint handle = itr->second;
+		const GLboolean shouldTranspose = false; // Matrices are already in the correct format
+		const GLsizei uniformCountToSet = 1;
+		glUniformMatrix4fv(handle, uniformCountToSet, shouldTranspose, reinterpret_cast<const GLfloat*>(&i_val));
 
 		const GLenum errorCode = glGetError();
 		if (errorCode != GL_NO_ERROR)

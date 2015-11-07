@@ -299,8 +299,8 @@ namespace Lame
 			const UINT indexOfFirstIndexToUse = 0;
 			const UINT primitiveCountToRender = static_cast<UINT>(index_count_ / 3);	// How many triangles will be drawn?
 			result = context->get_direct3dDevice()->DrawIndexedPrimitive(primitiveType,
-				indexOfFirstVertexToRender, indexOfFirstVertexToRender, 4,
-				indexOfFirstIndexToUse, 2);
+				indexOfFirstVertexToRender, indexOfFirstVertexToRender, static_cast<UINT>(vertex_count_),
+				indexOfFirstIndexToUse, primitiveCountToRender);
 			return SUCCEEDED(result);
 		}
 	}

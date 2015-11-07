@@ -4,7 +4,9 @@
 
 #include "shaders.inc"
 
-uniform float3 position_offset;
+uniform float4x4 local_to_world;
+uniform float4x4 world_to_view;
+uniform float4x4 view_to_screen;
 
 ////////////////////////////////////////////////////////////////////////////////////////
 #if defined( EAE6320_PLATFORM_D3D )
@@ -47,6 +49,8 @@ void main(
 #elif defined( EAE6320_PLATFORM_GL )
 ////////////////////////////////////////////////////////////////////////////////////////
 
+#define o_position gl_Position
+
 // The locations assigned are arbitrary
 // but must match the C calls to glVertexAttribPointer()
 
@@ -80,18 +84,27 @@ void main()
 ////////////////////////////////////////////////////////////////////////////////////////
 
 {
-	// Calculate position
+	// Calculate the position of this vertex on screen
 	{
-		// When we move to 3D graphics the screen position that the vertex shader outputs
-		// will be different than the position that is input to it from C code,
-		// but for now the "out" position is set directly from the "in" position:
-#if defined( EAE6320_PLATFORM_GL )
-		gl_Position
-#elif defined( EAE6320_PLATFORM_D3D )
-		o_position
-#endif
- 			= float4( i_position + position_offset, 1.0 );
+	    // The position stored in the vertex is in "local space",
+	    // meaning that it is relative to the center (or "origin", or "pivot")
+	    // of the mesh.
+	    // The graphics hardware needs the position of the vertex
+	    // in normalized device coordinates,
+	    // meaning where the position of the vertex should be drawn
+	    // on the screen.
+	    // This position that we need to output, then,
+	    // is the result of taking the original vertex in local space
+	    // and transforming it into "screen space".
+
+	    // Any matrix transformations that include translation
+	    // will operate on a float4 position,
+	    // which _must_ have 1 for the w value
+	    float4 position_world = Transform( float4( i_position, 1.0 ), local_to_world );
+	    float4 position_view = Transform( position_world, world_to_view );
+	    o_position = Transform( position_view, view_to_screen );
 	}
+
 	// Pass the input color to the fragment shader unchanged:
 	{
 		o_color = i_color;

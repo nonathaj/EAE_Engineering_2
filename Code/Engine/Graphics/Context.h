@@ -26,6 +26,9 @@ namespace Lame
 		bool BeginFrame();
 		bool EndFrame();
 
+		uint32_t screen_width();
+		uint32_t screen_height();
+
 #if EAE6320_PLATFORM_D3D
 		IDirect3D9* get_direct3dInterface() const { return direct3dInterface; }
 		IDirect3DDevice9* get_direct3dDevice() const { return direct3dDevice; }

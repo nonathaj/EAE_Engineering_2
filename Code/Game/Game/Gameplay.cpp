@@ -23,6 +23,7 @@ namespace
 	std::unique_ptr<Lame::Graphics> graphics;
 
 	//gameobject
+	std::shared_ptr<Engine::GameObject> box;
 	std::shared_ptr<Engine::GameObject> square;
 	std::shared_ptr<Engine::GameObject> triangle1;
 	std::shared_ptr<Engine::GameObject> triangle2;
@@ -59,16 +60,17 @@ namespace Gameplay
 			return nullptr;
 
 		//Create our renderables
-		square = CreateObject("data/square.mesh");
-		triangle1 = CreateObject("data/triangle.mesh");
-		triangle2 = CreateObject("data/triangle.mesh");
-		if (!square || !triangle1 || !triangle2)
+		box = CreateObject("data/box.mesh.bin");
+		//square = CreateObject("data/square.mesh.bin");
+		//triangle1 = CreateObject("data/triangle.mesh.bin");
+		//triangle2 = CreateObject("data/triangle.mesh.bin");
+		if (!box)//|| !square || !triangle1 || !triangle2)
 		{
 			Shutdown();
 			return false;
 		}
-		triangle1->position(eae6320::Math::cVector(-0.5f, -0.5f));
-		triangle2->position(eae6320::Math::cVector(0.2f, 0.2f));
+		//triangle1->position(eae6320::Math::cVector(-0.5f, -0.5f));
+		//triangle2->position(eae6320::Math::cVector(0.2f, 0.2f));
 		
 		std::string error;
 		if (!eae6320::Time::Initialize(&error))
@@ -93,6 +95,7 @@ namespace Gameplay
 
 	bool Shutdown()
 	{
+		box.reset();
 		square.reset();
 		triangle1.reset();
 		triangle2.reset();
@@ -110,16 +113,16 @@ namespace
 	{
 		using namespace System::UserInput;
 
-		float movementAmount = 0.5f * deltaTime;
+		float movementAmount = 3.0f * deltaTime;
 
 		if (KeyPressed('W') || KeyPressed('w'))								//up
-			square->Move(eae6320::Math::cVector(0.0f, movementAmount));
+			box->Move(eae6320::Math::cVector(0.0f, movementAmount));
 		else if(KeyPressed('S') || KeyPressed('s'))							//down
-			square->Move(eae6320::Math::cVector(0.0f, -movementAmount));
+			box->Move(eae6320::Math::cVector(0.0f, -movementAmount));
 		else if (KeyPressed('D') || KeyPressed('d'))						//right
-			square->Move(eae6320::Math::cVector(movementAmount, 0.0f));
+			box->Move(eae6320::Math::cVector(movementAmount, 0.0f));
 		else if (KeyPressed('A') || KeyPressed('a'))						//left
-			square->Move(eae6320::Math::cVector(-movementAmount, 0.0f));
+			box->Move(eae6320::Math::cVector(-movementAmount, 0.0f));
 	}
 
 	std::shared_ptr<Engine::GameObject> CreateObject(std::string i_mesh)

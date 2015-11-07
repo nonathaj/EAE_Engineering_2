@@ -9,12 +9,28 @@
 
 namespace Lame
 {
-	char const * const Effect::PositionUniformName = "position_offset";
-	const Engine::HashedString Effect::PositionUniformId(Effect::PositionUniformName);
+	char const * const Effect::LocalToWorldUniformName = "local_to_world";
+	const Engine::HashedString Effect::LocalToWorldUniformId(Effect::LocalToWorldUniformName);
 
-	bool Effect::SetPosition(eae6320::Math::cVector i_position)
+	char const * const Effect::WorldToViewUniformName = "world_to_view";
+	const Engine::HashedString Effect::WorldToViewUniformId(Effect::WorldToViewUniformName);
+
+	char const * const Effect::ViewToScreenUniformName = "view_to_screen";
+	const Engine::HashedString Effect::ViewToScreenUniformId(Effect::ViewToScreenUniformName);
+
+	bool Effect::SetLocalToWorld(eae6320::Math::cMatrix_transformation i_matrix)
 	{
-		return SetConstant(PositionUniformId, i_position);
+		return SetConstant(LocalToWorldUniformId, i_matrix);
+	}
+
+	bool Effect::SetWorldToView(eae6320::Math::cMatrix_transformation i_matrix)
+	{
+		return SetConstant(WorldToViewUniformId, i_matrix);
+	}
+
+	bool Effect::SetViewToScreen(eae6320::Math::cMatrix_transformation i_matrix)
+	{
+		return SetConstant(ViewToScreenUniformId, i_matrix);
 	}
 
 	Effect* Effect::Create(std::shared_ptr<Context> i_context, const std::string& i_effect_path)

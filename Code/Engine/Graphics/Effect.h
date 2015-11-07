@@ -7,6 +7,7 @@
 #include <memory>
 
 #include "../Core/eae6320/cVector.h"
+#include "../Core/eae6320/cMatrix_transformation.h"
 #include "../Core/HashedString.h"
 
 #if EAE6320_PLATFORM_D3D
@@ -29,13 +30,17 @@ namespace Lame
 		~Effect();
 
 		bool Bind();
-		bool SetPosition(eae6320::Math::cVector i_position);
+
+		bool SetLocalToWorld(eae6320::Math::cMatrix_transformation i_matrix);
+		bool SetWorldToView(eae6320::Math::cMatrix_transformation i_matrix);
+		bool SetViewToScreen(eae6320::Math::cMatrix_transformation i_matrix);
 
 		//Cache a constant for dynamic setting
 		bool CacheConstant(const std::string &i_constant, Engine::HashedString* o_constantId = nullptr);
 
 		//sets the value of a cache'd constant
 		bool SetConstant(const Engine::HashedString &i_constant, const eae6320::Math::cVector &i_val);
+		bool SetConstant(const Engine::HashedString &i_constant, const eae6320::Math::cMatrix_transformation &i_val);
 
 		std::shared_ptr<Context> get_context() { return context; }
 
@@ -69,8 +74,14 @@ namespace Lame
 #endif
 		std::unordered_map<Engine::HashedString, ConstantHandle> constants;
 
-		static char const * const PositionUniformName;
-		static const Engine::HashedString PositionUniformId;
+		static char const * const LocalToWorldUniformName;
+		static const Engine::HashedString LocalToWorldUniformId;
+
+		static char const * const WorldToViewUniformName;
+		static const Engine::HashedString WorldToViewUniformId;
+
+		static char const * const ViewToScreenUniformName;
+		static const Engine::HashedString ViewToScreenUniformId;
 	};
 }
 

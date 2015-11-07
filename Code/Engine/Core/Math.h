@@ -8,10 +8,10 @@ namespace Engine
 	namespace Math
 	{
 		template<typename T>
-		inline T ToDegrees(T i_radians);
+		inline double ToDegrees(T i_radians);
 
 		template<typename T>
-		inline T ToRadians(T i_degrees);
+		inline double ToRadians(T i_degrees);
 
 		//Check if a signed (or floating point) number is negative
 		template<typename T>

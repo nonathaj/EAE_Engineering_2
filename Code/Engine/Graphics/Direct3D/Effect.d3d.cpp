@@ -60,9 +60,11 @@ namespace Lame
 			effect->vertexConstantTable = vertexConstantTable;
 			effect->fragmentConstantTable = fragmentConstantTable;
 
-			if (!effect->CacheConstant(PositionUniformName))
+			if (!effect->CacheConstant(LocalToWorldUniformName) || 
+				!effect->CacheConstant(WorldToViewUniformName) ||
+				!effect->CacheConstant(ViewToScreenUniformName) )
 			{
-				System::UserOutput::Display("Failed to find Position uniform constant");
+				System::UserOutput::Display("DirectX failed to find all required uniform constants for effect.");
 				delete effect;
 				return nullptr;
 			}
@@ -147,10 +149,31 @@ namespace Lame
 			return false;
 
 		D3DXHANDLE handle = itr->second;
-		float floatArray[] = { i_val.x, i_val.y, i_val.z };
-		HRESULT result = vertexConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, floatArray, 3);
+		HRESULT result = vertexConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, reinterpret_cast<const float*>(&i_val), 3);
 		if (!SUCCEEDED(result))
-			result = fragmentConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, floatArray, 3);
+			result = fragmentConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, reinterpret_cast<const float*>(&i_val), 3);
+
+		if (!SUCCEEDED(result))
+		{
+			System::UserOutput::Display("DirectX failed to set a constant uniform value.");
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
+
+	bool Effect::SetConstant(const Engine::HashedString &i_constant, const eae6320::Math::cMatrix_transformation &i_val)
+	{
+		auto itr = constants.find(i_constant);
+		if (itr == constants.end())					//fail if we don't have a cache'd version of this constant
+			return false;
+
+		D3DXHANDLE handle = itr->second;
+		HRESULT result = vertexConstantTable->SetMatrixTranspose(context->get_direct3dDevice(), handle, reinterpret_cast<const D3DXMATRIX*>(&i_val));
+		if(!SUCCEEDED(result))
+			result = fragmentConstantTable->SetMatrixTranspose(context->get_direct3dDevice(), handle, reinterpret_cast<const D3DXMATRIX*>(&i_val));
 
 		if (!SUCCEEDED(result))
 		{

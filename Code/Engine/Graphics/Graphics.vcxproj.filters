@@ -32,6 +32,7 @@
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="RenderableComponent.cpp" />
+    <ClCompile Include="Context.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics.h" />

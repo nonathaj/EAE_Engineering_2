@@ -11,15 +11,15 @@ namespace Engine
 	namespace Math
 	{
 		template<typename T>
-		inline T ToDegrees(T i_radians)
+		inline double ToDegrees(T i_radians)
 		{
-			return static_cast<T>(i_radians * (180.0 / M_PI));
+			return i_radians * 180.0 / M_PI;
 		}
 
 		template<typename T>
-		inline T ToRadians(T i_degrees)
+		inline double ToRadians(T i_degrees)
 		{
-			return static_cast<T>(i_degrees * (M_PI / 180.0));
+			return i_degrees * M_PI / 180.0;
 		}
 
 		template<typename T>

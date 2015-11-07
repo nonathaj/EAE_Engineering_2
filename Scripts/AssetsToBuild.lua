@@ -10,8 +10,9 @@ return
 		tool = "MeshBuilder.exe",
 		files = 
 		{
-			{ source = "square.mesh", target = "square.mesh" },
-			{ source = "triangle.mesh", target = "triangle.mesh" },
+			{ source = "box.mesh", target = "box.mesh.bin" },
+			{ source = "square.mesh", target = "square.mesh.bin" },
+			{ source = "triangle.mesh", target = "triangle.mesh.bin" },
 		}
 	},
     {

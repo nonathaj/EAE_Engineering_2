@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "../Core/eae6320/cVector.h"
+#include "../Core/eae6320/cQuaternion.h"
 
 namespace Engine
 {
@@ -20,6 +21,9 @@ namespace Engine
 		inline eae6320::Math::cVector position() const { return position_; }
 		inline void position(const eae6320::Math::cVector& i_pos) { position_ = i_pos; }
 
+		eae6320::Math::cQuaternion rotation() { return rotation_; }
+		void rotation(const eae6320::Math::cQuaternion& i_rotation) { rotation_ = i_rotation; }
+
 		inline std::string name() const { return name_; }
 		inline void name(const std::string& i_name) { name_ = i_name; }
 		
@@ -28,6 +32,7 @@ namespace Engine
 
 	private:
 		eae6320::Math::cVector position_;
+		eae6320::Math::cQuaternion rotation_;
 		std::string name_;
 
 		bool enabled_;
