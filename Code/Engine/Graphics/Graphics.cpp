@@ -14,8 +14,7 @@ namespace Lame
 
 	bool Graphics::Render()
 	{
-		//TODO clear the buffers again.
-		bool success = /*context()->Clear(LameBufferScreen) && */context()->BeginFrame();
+		bool success = context()->Clear(true, true, false) && context()->BeginFrame();
 		if (!success)
 			return false;
 		for (size_t x = 0; x < renderables_.size(); x++)

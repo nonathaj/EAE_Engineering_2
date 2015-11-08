@@ -56,26 +56,19 @@ namespace Lame
 		CleanupContextData(renderingWindow, deviceContext, openGlRenderingContext);
 	}
 
-	bool Context::Clear(unsigned int toClear)
+	bool Context::Clear(bool screen, bool depth, bool stencil)
 	{
 		bool success = glGetError() == GL_NO_ERROR;
-		GLbitfield buffersToClear = 0;
-		if ((toClear & LameBufferScreen) != 0)
-		{
-			glClearColor(screen_clear_color.r(), screen_clear_color.g(), screen_clear_color.b(), screen_clear_color.a());
-			buffersToClear |= GL_COLOR_BUFFER_BIT;
-		}
-		else if ((toClear & LameBufferDepth) != 0)
-		{
-			glClearDepth(1.0f);
-			buffersToClear |= GL_DEPTH_BUFFER_BIT;
-		}
-		else if ((toClear & LameBufferStencil) != 0)
-			buffersToClear |= GL_STENCIL_BUFFER_BIT;
+		const GLbitfield buffersToClear = (screen ? GL_COLOR_BUFFER_BIT : 0x0) | (depth ? GL_DEPTH_BUFFER_BIT : 0x0) | (stencil ? GL_STENCIL_BUFFER_BIT : 0x0);
 		glClear(buffersToClear);
 		success = success && glGetError() == GL_NO_ERROR;
-
 		return success;
+	}
+
+	void Context::set_screen_clear_color(const Color& i_screen_clear_color)
+	{
+		screen_clear_color = i_screen_clear_color;
+		glClearColor(screen_clear_color.r(), screen_clear_color.g(), screen_clear_color.b(), screen_clear_color.a());
 	}
 
 	bool Context::BeginFrame()
@@ -202,6 +195,9 @@ namespace
 			System::UserOutput::Display(errorMessage.str());
 			return false;
 		}
+
+		//set the depth clear value to be 1
+		glClearDepth(1.0f);
 
 		return true;
 	}

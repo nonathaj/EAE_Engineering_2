@@ -4,7 +4,6 @@
 #include <cassert>
 #include <d3dx9shader.h>
 #include <d3d9types.h>
-#include <d3d9types.h>
 
 #include "../../System/UserOutput.h"
 
@@ -66,23 +65,21 @@ namespace Lame
 		renderingWindow = nullptr;
 	}
 
-	bool Context::Clear(unsigned int toClear)
+	bool Context::Clear(bool screen, bool depth, bool stencil)
 	{
-		const D3DRECT* subRectanglesToClear = NULL;
+		const D3DRECT* subRectanglesToClear = nullptr;
 		const DWORD subRectangleCount = 0;
-		DWORD buffersToClear = 0;
-		if ((toClear & LameBufferScreen) != 0)
-			buffersToClear |= D3DCLEAR_TARGET;
-		else if ((toClear & LameBufferDepth) != 0)
-			buffersToClear |= D3DCLEAR_ZBUFFER;
-		else if ((toClear & LameBufferStencil) != 0)
-			buffersToClear |= D3DCLEAR_STENCIL;
-		Color32 clearColor32 = (Color32)screen_clear_color;
-		D3DCOLOR clearColor = D3DCOLOR_ARGB(clearColor32.a(), clearColor32.r(), clearColor32.g(), clearColor32.b());
+		const DWORD buffersToClear = (screen ? D3DCLEAR_TARGET : 0x0) | (depth ? D3DCLEAR_ZBUFFER : 0x0) | (stencil ? D3DCLEAR_STENCIL : 0x0);
+		const D3DCOLOR clearColor = D3DCOLOR_COLORVALUE(screen_clear_color.r(), screen_clear_color.g(), screen_clear_color.b(), screen_clear_color.a());
 		const float depthBuffer = 1.0f;
-		const DWORD noStencilBuffer = 0;
-		HRESULT result = direct3dDevice->Clear(subRectangleCount, subRectanglesToClear, buffersToClear, clearColor, depthBuffer, noStencilBuffer);
+		const DWORD stencilBuffer = 0;
+		HRESULT result = direct3dDevice->Clear(subRectangleCount, subRectanglesToClear, buffersToClear, clearColor, depthBuffer, stencilBuffer);
 		return SUCCEEDED(result);
+	}
+
+	void Context::set_screen_clear_color(const Color& i_screen_clear_color)
+	{
+		screen_clear_color = i_screen_clear_color;
 	}
 
 	bool Context::BeginFrame()
@@ -100,10 +97,10 @@ namespace Lame
 		// In order to display it, the contents of the back buffer must be "presented"
 		// (to the front buffer)
 		{
-			const RECT* noSourceRectangle = NULL;
-			const RECT* noDestinationRectangle = NULL;
-			const HWND useDefaultWindow = NULL;
-			const RGNDATA* noDirtyRegion = NULL;
+			const RECT* noSourceRectangle = nullptr;
+			const RECT* noDestinationRectangle = nullptr;
+			const HWND useDefaultWindow = nullptr;
+			const RGNDATA* noDirtyRegion = nullptr;
 			HRESULT result = direct3dDevice->Present(noSourceRectangle, noDestinationRectangle, useDefaultWindow, noDirtyRegion);
 			success = success && SUCCEEDED(result);
 		}

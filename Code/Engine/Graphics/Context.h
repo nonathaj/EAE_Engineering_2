@@ -12,11 +12,7 @@
 #include "../../Engine/Windows/Includes.h"
 #include <gl/GL.h>
 #endif
-
-#define LameBufferScreen 1u
-#define LameBufferDepth 2u
-#define LameBufferStencil 4u
-
+enum test {hi, hi2, hi23};
 namespace Lame
 {
 	class Context
@@ -27,7 +23,7 @@ namespace Lame
 		//Create a mesh with right-handed indices
 		static Context* Create(const HWND i_renderingWindow);
 
-		bool Clear(unsigned int toClear);
+		bool Clear(bool screen, bool depth, bool stencil);
 
 		bool BeginFrame();
 		bool EndFrame();
@@ -36,7 +32,7 @@ namespace Lame
 		uint32_t screen_height();
 
 		Color get_screen_clear_color() { return screen_clear_color; }
-		void set_screen_clear_color(const Color& i_screen_clear_color) { screen_clear_color = i_screen_clear_color; }
+		void set_screen_clear_color(const Color& i_screen_clear_color);
 
 #if EAE6320_PLATFORM_D3D
 		IDirect3D9* get_direct3dInterface() const { return direct3dInterface; }
