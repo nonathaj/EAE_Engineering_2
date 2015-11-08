@@ -3,6 +3,8 @@
 
 #include <cassert>
 #include <d3dx9shader.h>
+#include <d3d9types.h>
+#include <d3d9types.h>
 
 #include "../../System/UserOutput.h"
 
@@ -19,7 +21,8 @@ namespace Lame
 		IDirect3D9* direct3dInterface = nullptr;
 		IDirect3DDevice9* direct3dDevice = nullptr;
 
-		if (!CreateInterface(direct3dInterface) || !CreateDevice(direct3dInterface, i_renderingWindow, direct3dDevice))
+		if (!CreateInterface(direct3dInterface) || 
+			!CreateDevice(direct3dInterface, i_renderingWindow, direct3dDevice) )
 			goto OnError;
 
 		Context *context = new Context(i_renderingWindow);
@@ -63,19 +66,22 @@ namespace Lame
 		renderingWindow = nullptr;
 	}
 
-	bool Context::ClearScreen()
+	bool Context::Clear(unsigned int toClear)
 	{
 		const D3DRECT* subRectanglesToClear = NULL;
 		const DWORD subRectangleCount = 0;
-		const DWORD clearTheRenderTarget = D3DCLEAR_TARGET;
-		D3DCOLOR clearColor;
-		{
-			// Black is usually used:
-			clearColor = D3DCOLOR_XRGB(0, 0, 0);
-		}
-		const float noZBuffer = 0.0f;
+		DWORD buffersToClear = 0;
+		if ((toClear & LameBufferScreen) != 0)
+			buffersToClear |= D3DCLEAR_TARGET;
+		else if ((toClear & LameBufferDepth) != 0)
+			buffersToClear |= D3DCLEAR_ZBUFFER;
+		else if ((toClear & LameBufferStencil) != 0)
+			buffersToClear |= D3DCLEAR_STENCIL;
+		Color32 clearColor32 = (Color32)screen_clear_color;
+		D3DCOLOR clearColor = D3DCOLOR_ARGB(clearColor32.a(), clearColor32.r(), clearColor32.g(), clearColor32.b());
+		const float depthBuffer = 1.0f;
 		const DWORD noStencilBuffer = 0;
-		HRESULT result = direct3dDevice->Clear(subRectangleCount, subRectanglesToClear, clearTheRenderTarget, clearColor, noZBuffer, noStencilBuffer);
+		HRESULT result = direct3dDevice->Clear(subRectangleCount, subRectanglesToClear, buffersToClear, clearColor, depthBuffer, noStencilBuffer);
 		return SUCCEEDED(result);
 	}
 
@@ -125,14 +131,26 @@ namespace
 			presentationParameters.SwapEffect = D3DSWAPEFFECT_DISCARD;
 			presentationParameters.hDeviceWindow = i_renderingWindow;
 			presentationParameters.Windowed = TRUE;
-			presentationParameters.EnableAutoDepthStencil = FALSE;
+			presentationParameters.EnableAutoDepthStencil = TRUE;
 			presentationParameters.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
+			presentationParameters.AutoDepthStencilFormat = D3DFORMAT::D3DFMT_D16;
 		}
 		HRESULT result = i_direct3dInterface->CreateDevice(useDefaultDevice, useHardwareRendering,
 			i_renderingWindow, useHardwareVertexProcessing, &presentationParameters, &o_direct3dDevice);
 		if (SUCCEEDED(result))
 		{
-			return true;
+			//last second setup
+			if (SUCCEEDED(o_direct3dDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE)) &&
+				SUCCEEDED(o_direct3dDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE)) &&
+				SUCCEEDED(o_direct3dDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL)))
+			{
+				return true;
+			}
+			else
+			{
+				System::UserOutput::Display("Direct3D failed to set the initial render state");
+				return false;
+			}
 		}
 		else
 		{

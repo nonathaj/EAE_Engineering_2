@@ -4,12 +4,18 @@
 #include <cstdint>
 #include <string>
 
+#include "Color.h"
+
 #if EAE6320_PLATFORM_D3D
 #include <d3d9.h>
 #elif EAE6320_PLATFORM_GL
 #include "../../Engine/Windows/Includes.h"
 #include <gl/GL.h>
 #endif
+
+#define LameBufferScreen 1u
+#define LameBufferDepth 2u
+#define LameBufferStencil 4u
 
 namespace Lame
 {
@@ -21,13 +27,16 @@ namespace Lame
 		//Create a mesh with right-handed indices
 		static Context* Create(const HWND i_renderingWindow);
 
-		bool ClearScreen();
+		bool Clear(unsigned int toClear);
 
 		bool BeginFrame();
 		bool EndFrame();
 
 		uint32_t screen_width();
 		uint32_t screen_height();
+
+		Color get_screen_clear_color() { return screen_clear_color; }
+		void set_screen_clear_color(const Color& i_screen_clear_color) { screen_clear_color = i_screen_clear_color; }
 
 #if EAE6320_PLATFORM_D3D
 		IDirect3D9* get_direct3dInterface() const { return direct3dInterface; }
@@ -39,13 +48,14 @@ namespace Lame
 
 	private:
 
-		Context(HWND i_renderingWindow) { renderingWindow = i_renderingWindow; }
+		Context(HWND i_renderingWindow);
 
 		//Do not allow Contexts to be managed without pointers
 		Context();
 		Context(const Context &i_mesh);
 		Context& operator=(const Context &i_mesh);
 
+		Color screen_clear_color;
 		HWND renderingWindow = nullptr;
 
 #if EAE6320_PLATFORM_D3D

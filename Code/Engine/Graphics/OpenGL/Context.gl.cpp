@@ -56,15 +56,23 @@ namespace Lame
 		CleanupContextData(renderingWindow, deviceContext, openGlRenderingContext);
 	}
 
-	bool Context::ClearScreen()
+	bool Context::Clear(unsigned int toClear)
 	{
-		// Black is usually used
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		bool success = glGetError() == GL_NO_ERROR;
-		// In addition to the color, "depth" and "stencil" can also be cleared,
-		// but for now we only care about color
-		const GLbitfield clearColor = GL_COLOR_BUFFER_BIT;
-		glClear(clearColor);
+		GLbitfield buffersToClear = 0;
+		if ((toClear & LameBufferScreen) != 0)
+		{
+			glClearColor(screen_clear_color.r(), screen_clear_color.g(), screen_clear_color.b(), screen_clear_color.a());
+			buffersToClear |= GL_COLOR_BUFFER_BIT;
+		}
+		else if ((toClear & LameBufferDepth) != 0)
+		{
+			glClearDepth(1.0f);
+			buffersToClear |= GL_DEPTH_BUFFER_BIT;
+		}
+		else if ((toClear & LameBufferStencil) != 0)
+			buffersToClear |= GL_STENCIL_BUFFER_BIT;
+		glClear(buffersToClear);
 		success = success && glGetError() == GL_NO_ERROR;
 
 		return success;
@@ -113,6 +121,7 @@ namespace
 					desiredPixelFormat.iPixelType = PFD_TYPE_RGBA;
 					desiredPixelFormat.cColorBits = 32;
 					desiredPixelFormat.iLayerType = PFD_MAIN_PLANE;
+					desiredPixelFormat.cDepthBits = 16;
 				}
 				// Get the ID of the desired pixel format
 				int pixelFormatId;
@@ -156,12 +165,42 @@ namespace
 
 		//enable face culling
 		glEnable(GL_CULL_FACE);
-		const GLenum errorCode = glGetError();
+		GLenum errorCode = glGetError();
 		if (errorCode != GL_NO_ERROR)
 		{
 			std::stringstream errorMessage;
-			errorMessage << "OpenGL failed to delete the vertex array: " << reinterpret_cast<const char*>(gluErrorString(errorCode));
+			errorMessage << "OpenGL failed to face culling: " << reinterpret_cast<const char*>(gluErrorString(errorCode));
 			System::UserOutput::Display(errorMessage.str());
+			return false;
+		}
+		
+		//enable depth testing
+		glEnable(GL_DEPTH_TEST);
+		errorCode = glGetError();
+		if (errorCode != GL_NO_ERROR)
+		{
+			std::stringstream errorMessage;
+			errorMessage << "OpenGL failed to enable depth tesing: " << reinterpret_cast<const char*>(gluErrorString(errorCode));
+			System::UserOutput::Display(errorMessage.str());
+			return false;
+		}
+		glDepthMask(GL_TRUE);
+		errorCode = glGetError();
+		if (errorCode != GL_NO_ERROR)
+		{
+			std::stringstream errorMessage;
+			errorMessage << "OpenGL failed to enable depth mask: " << reinterpret_cast<const char*>(gluErrorString(errorCode));
+			System::UserOutput::Display(errorMessage.str());
+			return false;
+		}
+		glDepthFunc(GL_LEQUAL);
+		errorCode = glGetError();
+		if (errorCode != GL_NO_ERROR)
+		{
+			std::stringstream errorMessage;
+			errorMessage << "OpenGL failed to set the depth function: " << reinterpret_cast<const char*>(gluErrorString(errorCode));
+			System::UserOutput::Display(errorMessage.str());
+			return false;
 		}
 
 		return true;
