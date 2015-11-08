@@ -12,8 +12,6 @@ return
 		{
 			{ source = "box.mesh", target = "box.mesh.bin" },
 			{ source = "floor.mesh", target = "floor.mesh.bin" },
-			{ source = "square.mesh", target = "square.mesh.bin" },
-			{ source = "triangle.mesh", target = "triangle.mesh.bin" },
 		}
 	},
     {

@@ -33,6 +33,7 @@
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="RenderableComponent.cpp" />
     <ClCompile Include="Context.cpp" />
+    <ClCompile Include="CameraComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics.h" />
@@ -43,5 +44,6 @@
     <ClInclude Include="Context.h" />
     <ClInclude Include="RenderableComponent.h" />
     <ClInclude Include="Includes.h" />
+    <ClInclude Include="CameraComponent.h" />
   </ItemGroup>
 </Project>

@@ -6,6 +6,7 @@
 
 #include "../Core/eae6320/cVector.h"
 #include "../Core/eae6320/cQuaternion.h"
+#include "../Core/eae6320/cMatrix_transformation.h"
 
 namespace Engine
 {
@@ -21,7 +22,7 @@ namespace Engine
 		inline eae6320::Math::cVector position() const { return position_; }
 		inline void position(const eae6320::Math::cVector& i_pos) { position_ = i_pos; }
 
-		eae6320::Math::cQuaternion rotation() { return rotation_; }
+		eae6320::Math::cQuaternion rotation() const { return rotation_; }
 		void rotation(const eae6320::Math::cQuaternion& i_rotation) { rotation_ = i_rotation; }
 
 		inline std::string name() const { return name_; }
@@ -29,6 +30,8 @@ namespace Engine
 		
 		inline bool enabled() const { return enabled_; }
 		inline void enabled(const bool& i_enabled) { enabled_ = i_enabled; }
+
+		inline eae6320::Math::cMatrix_transformation LocalToWorld() const { return eae6320::Math::cMatrix_transformation(rotation(), position()); }
 
 	private:
 		eae6320::Math::cVector position_;

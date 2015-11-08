@@ -28,10 +28,10 @@ namespace Lame
 		bool BeginFrame();
 		bool EndFrame();
 
-		uint32_t screen_width();
-		uint32_t screen_height();
+		uint32_t screen_width() const;
+		uint32_t screen_height() const;
 
-		Color get_screen_clear_color() { return screen_clear_color; }
+		Color get_screen_clear_color() const { return screen_clear_color; }
 		void set_screen_clear_color(const Color& i_screen_clear_color);
 
 #if EAE6320_PLATFORM_D3D
@@ -48,8 +48,8 @@ namespace Lame
 
 		//Do not allow Contexts to be managed without pointers
 		Context();
-		Context(const Context &i_mesh);
-		Context& operator=(const Context &i_mesh);
+		Context(const Context &i_other);
+		Context& operator=(const Context &i_other);
 
 		Color screen_clear_color;
 		HWND renderingWindow = nullptr;

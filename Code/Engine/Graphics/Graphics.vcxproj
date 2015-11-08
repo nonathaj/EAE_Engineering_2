@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="Context.cpp" />
     <ClCompile Include="Direct3D\Context.d3d.cpp">
@@ -51,6 +52,7 @@
     <ClCompile Include="RenderableComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Context.h" />
     <ClInclude Include="Effect.h" />

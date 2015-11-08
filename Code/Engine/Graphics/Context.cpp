@@ -9,7 +9,7 @@ namespace Lame
 		screen_clear_color(0.0f, 0.0f, 0.0f, 1.0f)
 	{ }
 
-	uint32_t Context::screen_width()
+	uint32_t Context::screen_width() const
 	{
 		RECT rect;
 		if (GetWindowRect(renderingWindow, &rect))
@@ -17,7 +17,7 @@ namespace Lame
 		return 0;
 	}
 
-	uint32_t Context::screen_height()
+	uint32_t Context::screen_height() const
 	{
 		RECT rect;
 		if (GetWindowRect(renderingWindow, &rect))

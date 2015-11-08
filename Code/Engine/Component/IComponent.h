@@ -16,9 +16,9 @@ namespace Engine
 		inline virtual ~IComponent() {}
 
 		//if the gameObject for this component is still valid, returns it, otherwise returns an empty shared pointer
-		inline std::shared_ptr<GameObject> gameObject() { return gameObject_.expired() ? nullptr : gameObject_.lock(); }
+		inline std::shared_ptr<GameObject> gameObject() const { return gameObject_.expired() ? nullptr : gameObject_.lock(); }
 
-		inline bool enabled() { return !gameObject_.expired() && enabled_; }
+		inline bool enabled() const { return !gameObject_.expired() && enabled_; }
 		inline void enabled(bool i_enabled) { enabled_ = i_enabled; }
 
 	protected:

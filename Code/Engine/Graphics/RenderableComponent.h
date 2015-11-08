@@ -14,10 +14,10 @@ namespace Lame
 	public:
 		RenderableComponent(std::weak_ptr<Engine::GameObject> go, std::shared_ptr<Mesh> i_mesh, std::shared_ptr<Effect> i_effect);
 
-		bool Render();
+		bool Render(const eae6320::Math::cMatrix_transformation& i_worldToView, const eae6320::Math::cMatrix_transformation& i_viewToScreen) const;
 
-		inline std::shared_ptr<Mesh> mesh() { return mesh_; }
-		inline std::shared_ptr<Effect> effect() { return effect_; }
+		inline std::shared_ptr<Mesh> mesh() const { return mesh_; }
+		inline std::shared_ptr<Effect> effect() const { return effect_; }
 	private:
 		RenderableComponent();
 

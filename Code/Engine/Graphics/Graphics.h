@@ -8,9 +8,11 @@
 // Header Files
 //=============
 
-#include "../../Engine/Windows/Includes.h"
 #include <memory>
 #include <vector>
+
+#include "../../Engine/Windows/Includes.h"
+#include "CameraComponent.h"
 
 // Interface
 //==========
@@ -22,8 +24,7 @@ namespace Lame
 	class Graphics
 	{
 	public:
-		Graphics() :context_(nullptr), renderables_() {}
-		Graphics(std::shared_ptr<Context> i_context);
+		static Graphics* Create(std::shared_ptr<Context> i_context);
 
 		bool Render();
 
@@ -36,7 +37,19 @@ namespace Lame
 		inline std::shared_ptr<Context> context() const { return context_; }
 		inline void context(std::shared_ptr<Context> i_context) { context_ = i_context; }
 
+		inline std::shared_ptr<CameraComponent> camera() const { return camera_; }
+
 	private:
+		Graphics(std::shared_ptr<Context> i_context, std::shared_ptr<CameraComponent> i_camera, std::shared_ptr<Engine::GameObject> i_camera_gamebject);
+
+		//Do not allow Graphics to be managed without pointers
+		Graphics();
+		Graphics(const Graphics &i_other);
+		Graphics& operator=(const Graphics &i_other);
+
+		//store the camera's gameobject, so it lives for the duration of this graphics
+		std::shared_ptr<Engine::GameObject> camera_gamebject_;
+		std::shared_ptr<CameraComponent> camera_;
 		std::shared_ptr<Context> context_;
 		std::vector<std::shared_ptr<RenderableComponent>> renderables_;
 	};

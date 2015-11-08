@@ -39,18 +39,21 @@ namespace Gameplay
 		//generate a new graphics object
 		{
 			std::shared_ptr<Lame::Context> context(Lame::Context::Create(i_window));
-			if (!context)
+			if (!context)	//if we failed to generate a context, shutdown the game
 			{
 				Shutdown();
 				return false;
 			}
-			graphics = std::unique_ptr<Lame::Graphics>(new Lame::Graphics(context));
+			graphics = std::unique_ptr<Lame::Graphics>(Lame::Graphics::Create(context));
+			if (!graphics) //if we failed to generate a graphics object, shutdown the game
+			{
+				Shutdown();
+				return false;
+			}
 		}
-		if (!graphics->context()) //if we failed to generate a graphics context, shutdown the game
-		{
-			Shutdown();
-			return false;
-		}
+
+		//initial camera position
+		graphics->camera()->gameObject()->position(eae6320::Math::cVector(0, 0, 10));
 
 		//load the effect we are going to use for everything in the game
 		effect = std::shared_ptr<Lame::Effect>(Lame::Effect::Create(graphics->context(), "data/effect.effect.bin"));
@@ -108,14 +111,26 @@ namespace
 
 		float movementAmount = 3.0f * deltaTime;
 
-		if (KeyPressed('W') || KeyPressed('w'))								//up
-			box->Move(eae6320::Math::cVector(0.0f, movementAmount));
-		else if(KeyPressed('S') || KeyPressed('s'))							//down
-			box->Move(eae6320::Math::cVector(0.0f, -movementAmount));
-		else if (KeyPressed('D') || KeyPressed('d'))						//right
-			box->Move(eae6320::Math::cVector(movementAmount, 0.0f));
-		else if (KeyPressed('A') || KeyPressed('a'))						//left
-			box->Move(eae6320::Math::cVector(-movementAmount, 0.0f));
+		std::shared_ptr<Engine::GameObject> movableObject = graphics->camera()->gameObject();
+		if (KeyPressed('W') || KeyPressed('w'))						//forward
+			movableObject->Move(eae6320::Math::cVector(0.0f, 0.0f, -movementAmount));
+		if(KeyPressed('S') || KeyPressed('s'))						//backward
+			movableObject->Move(eae6320::Math::cVector(0.0f, 0.0f, movementAmount));
+		if (KeyPressed('D') || KeyPressed('d'))						//right
+			movableObject->Move(eae6320::Math::cVector(movementAmount, 0.0f, 0.0f));
+		if (KeyPressed('A') || KeyPressed('a'))						//left
+			movableObject->Move(eae6320::Math::cVector(-movementAmount, 0.0f, 0.0f));
+
+
+		movableObject = box;
+		if (KeyPressed('I') || KeyPressed('i'))						//up
+			movableObject->Move(eae6320::Math::cVector(0.0f, movementAmount));
+		if (KeyPressed('K') || KeyPressed('k'))						//down
+			movableObject->Move(eae6320::Math::cVector(0.0f, -movementAmount));
+		if (KeyPressed('L') || KeyPressed('l'))						//right
+			movableObject->Move(eae6320::Math::cVector(movementAmount, 0.0f));
+		if (KeyPressed('J') || KeyPressed('j'))						//left
+			movableObject->Move(eae6320::Math::cVector(-movementAmount, 0.0f));
 	}
 
 	std::shared_ptr<Engine::GameObject> CreateObject(std::string i_mesh)
