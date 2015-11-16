@@ -1,0 +1,47 @@
+return
+{
+	vertex =
+	{
+		{ -- Vertex 0
+			pos = { -2.5, -5.55112e-16, 2.5 },
+			color = { 1, 0.9931, 0, 1 },
+			normal = { 0, 1, 2.22045e-16 },
+			tangent = { 1, -0, 0 },
+			bitangent = { 0, 2.22045e-16, -1 },
+			texcoord = { 0, 0 },
+			shading_group = 0,
+		},
+		{ -- Vertex 1
+			pos = { 2.5, -5.55112e-16, 2.5 },
+			color = { 0, 0.0334, 1, 1 },
+			normal = { 0, 1, 2.22045e-16 },
+			tangent = { 1, -0, 0 },
+			bitangent = { 0, 2.22045e-16, -1 },
+			texcoord = { 1, 0 },
+			shading_group = 0,
+		},
+		{ -- Vertex 2
+			pos = { -2.5, 5.55112e-16, -2.5 },
+			color = { 0.0218, 1, 0, 1 },
+			normal = { 0, 1, 2.22045e-16 },
+			tangent = { 1, -0, 0 },
+			bitangent = { 0, 2.22045e-16, -1 },
+			texcoord = { 0, 1 },
+			shading_group = 0,
+		},
+		{ -- Vertex 3
+			pos = { 2.5, 5.55112e-16, -2.5 },
+			color = { 1, 0, 0.1421, 1 },
+			normal = { 0, 1, 2.22045e-16 },
+			tangent = { 1, -0, 0 },
+			bitangent = { 0, 2.22045e-16, -1 },
+			texcoord = { 1, 1 },
+			shading_group = 0,
+		},
+	},
+	index =
+	{
+		{ 0, 1, 2 }, 
+		{ 2, 1, 3 }, 
+	},
+}

@@ -23,8 +23,9 @@ namespace
 	std::unique_ptr<Lame::Graphics> graphics;
 
 	//gameobject
-	std::shared_ptr<Engine::GameObject> transparent_box;
-	std::shared_ptr<Engine::GameObject> box;
+	std::shared_ptr<Engine::GameObject> transparent_box_foreground;
+	std::shared_ptr<Engine::GameObject> transparent_box_background;
+	std::shared_ptr<Engine::GameObject> movable;
 	std::shared_ptr<Engine::GameObject> floorObject;
 
 	//effects
@@ -64,15 +65,18 @@ namespace Gameplay
 			return nullptr;
 
 		//Create our renderables
-		transparent_box = CreateObject("data/box.mesh.bin", transparent_effect);
-		box = CreateObject("data/box.mesh.bin", opaque_effect);
-		floorObject = CreateObject("data/floor.mesh.bin", opaque_effect);
-		if (!transparent_box || !box || !floorObject)
+		transparent_box_foreground = CreateObject("data/box.mesh.bin", transparent_effect);
+		transparent_box_background = CreateObject("data/box.mesh.bin", transparent_effect);
+		movable = CreateObject("data/triangle_prism.mesh.bin", opaque_effect);
+		floorObject = CreateObject("data/color_floor.mesh.bin", opaque_effect);
+		if (!transparent_box_foreground || !transparent_box_background || !movable || !floorObject)
 		{
 			Shutdown();
 			return false;
 		}
 		floorObject->position(eae6320::Math::cVector(0.0f, -1.0f, 0.0f));
+		transparent_box_foreground->position(eae6320::Math::cVector(3.0f, 0.0f, 3.0f));
+		transparent_box_background->position(eae6320::Math::cVector(-3.0f, 0.0f, -3.0f));
 		
 		std::string error;
 		if (!eae6320::Time::Initialize(&error))
@@ -97,8 +101,9 @@ namespace Gameplay
 
 	bool Shutdown()
 	{
-		transparent_box.reset();
-		box.reset();
+		transparent_box_foreground.reset();
+		transparent_box_background.reset();
+		movable.reset();
 		floorObject.reset();
 
 		transparent_effect.reset();
@@ -128,7 +133,7 @@ namespace
 			movableObject->Move(eae6320::Math::cVector(-movementAmount, 0.0f, 0.0f));
 
 
-		movableObject = box;
+		movableObject = movable;
 		if (KeyPressed('I') || KeyPressed('i'))						//up
 			movableObject->Move(eae6320::Math::cVector(0.0f, movementAmount));
 		if (KeyPressed('K') || KeyPressed('k'))						//down

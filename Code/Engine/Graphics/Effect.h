@@ -55,9 +55,16 @@ namespace Lame
 		RenderMask render_mask() { return renderMask; }
 
 		bool has_transparency() { return (renderMask & RenderState::Transparency) > 0; }
+		void has_transparency(const bool& i_val) { i_val ? renderMask |= RenderState::Transparency : renderMask &= ~RenderState::Transparency; }
+
 		bool has_depth_test() { return (renderMask & RenderState::DepthTest) > 0; }
+		void has_depth_test(const bool& i_val) { i_val ? renderMask |= RenderState::DepthTest : renderMask &= ~RenderState::DepthTest; }
+		
 		bool has_depth_write() { return (renderMask & RenderState::DepthWrite) > 0; }
+		void has_depth_write(const bool& i_val) { i_val ? renderMask |= RenderState::DepthWrite : renderMask &= ~RenderState::DepthWrite; }
+		
 		bool has_face_cull() { return (renderMask & RenderState::FaceCull) > 0; }
+		void has_face_cull(const bool& i_val) { i_val ? renderMask |= RenderState::FaceCull : renderMask &= ~RenderState::FaceCull; }
 
 	private:
 		Effect(std::shared_ptr<Context> i_context, RenderMask i_renderMask) : context(i_context), renderMask(i_renderMask), constants() {}

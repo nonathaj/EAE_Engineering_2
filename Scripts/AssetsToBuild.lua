@@ -11,7 +11,8 @@ return
 		files = 
 		{
 			{ source = "box.mesh", target = "box.mesh.bin" },
-			{ source = "floor.mesh", target = "floor.mesh.bin" },
+			{ source = "color_floor.mesh", target = "color_floor.mesh.bin" },
+			{ source = "triangle_prism.mesh", target = "triangle_prism.mesh.bin" },
 		}
 	},
     {

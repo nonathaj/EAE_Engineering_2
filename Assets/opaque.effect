@@ -5,5 +5,5 @@ return
 	transparency = false,
 	depth_test = true,
 	depth_write = true,
-	face_cull = false,
+	face_cull = true,
 }
