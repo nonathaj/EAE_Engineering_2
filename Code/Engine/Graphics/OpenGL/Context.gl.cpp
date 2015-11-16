@@ -59,6 +59,11 @@ namespace Lame
 	bool Context::Clear(bool screen, bool depth, bool stencil)
 	{
 		bool success = glGetError() == GL_NO_ERROR;
+		if (depth)
+		{
+			glDepthMask(GL_TRUE);
+			success = success && glGetError() == GL_NO_ERROR;
+		}
 		const GLbitfield buffersToClear = (screen ? GL_COLOR_BUFFER_BIT : 0x0) | (depth ? GL_DEPTH_BUFFER_BIT : 0x0) | (stencil ? GL_STENCIL_BUFFER_BIT : 0x0);
 		glClear(buffersToClear);
 		success = success && glGetError() == GL_NO_ERROR;
@@ -154,46 +159,6 @@ namespace
 				System::UserOutput::Display(errorMessage.str());
 				return false;
 			}
-		}
-
-		//enable face culling
-		glEnable(GL_CULL_FACE);
-		GLenum errorCode = glGetError();
-		if (errorCode != GL_NO_ERROR)
-		{
-			std::stringstream errorMessage;
-			errorMessage << "OpenGL failed to face culling: " << reinterpret_cast<const char*>(gluErrorString(errorCode));
-			System::UserOutput::Display(errorMessage.str());
-			return false;
-		}
-		
-		//enable depth testing
-		glEnable(GL_DEPTH_TEST);
-		errorCode = glGetError();
-		if (errorCode != GL_NO_ERROR)
-		{
-			std::stringstream errorMessage;
-			errorMessage << "OpenGL failed to enable depth tesing: " << reinterpret_cast<const char*>(gluErrorString(errorCode));
-			System::UserOutput::Display(errorMessage.str());
-			return false;
-		}
-		glDepthMask(GL_TRUE);
-		errorCode = glGetError();
-		if (errorCode != GL_NO_ERROR)
-		{
-			std::stringstream errorMessage;
-			errorMessage << "OpenGL failed to enable depth mask: " << reinterpret_cast<const char*>(gluErrorString(errorCode));
-			System::UserOutput::Display(errorMessage.str());
-			return false;
-		}
-		glDepthFunc(GL_LEQUAL);
-		errorCode = glGetError();
-		if (errorCode != GL_NO_ERROR)
-		{
-			std::stringstream errorMessage;
-			errorMessage << "OpenGL failed to set the depth function: " << reinterpret_cast<const char*>(gluErrorString(errorCode));
-			System::UserOutput::Display(errorMessage.str());
-			return false;
 		}
 
 		//set the depth clear value to be 1

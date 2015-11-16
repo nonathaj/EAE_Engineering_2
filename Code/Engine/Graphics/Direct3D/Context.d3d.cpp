@@ -136,18 +136,7 @@ namespace
 			i_renderingWindow, useHardwareVertexProcessing, &presentationParameters, &o_direct3dDevice);
 		if (SUCCEEDED(result))
 		{
-			//last second setup
-			if (SUCCEEDED(o_direct3dDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE)) &&
-				SUCCEEDED(o_direct3dDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE)) &&
-				SUCCEEDED(o_direct3dDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL)))
-			{
-				return true;
-			}
-			else
-			{
-				System::UserOutput::Display("Direct3D failed to set the initial render state");
-				return false;
-			}
+			return true;
 		}
 		else
 		{

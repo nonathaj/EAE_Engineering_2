@@ -12,16 +12,18 @@
 
 namespace
 {
-	bool LoadEffectAssetTableFromLua(const std::string &i_path, std::string& o_vertex, std::string& o_fragment);
-	bool LoadEffect(lua_State* io_luaStateFrom, std::string& o_vertex, std::string& o_fragment);
-	bool LoadStringFromTable(lua_State* io_luaStateFrom, const std::string& i_key, std::string& o_value);
+	bool LoadEffectAssetTableFromLua(const std::string &i_path, std::string& o_vertex, std::string& o_fragment, bool& transparency, bool& depthTesting, bool& depthWriting, bool& faceCulling);
+	bool LoadEffect(lua_State* io_luaStateFrom, std::string& o_vertex, std::string& o_fragment, bool& transparency, bool& depthTesting, bool& depthWriting, bool& faceCulling);
+	bool LoadFromTable(lua_State* io_luaStateFrom, const std::string& i_key, std::string& o_value);
+	bool LoadFromTable(lua_State* io_luaStateFrom, const std::string& i_key, bool& o_value);
 }
 
 bool EffectBuilder::Build(const std::vector<std::string>& )
 {
 	std::string vertex, fragment;
+	bool transparency, depthTesting, depthWriting, faceCulling;
 
-	if (LoadEffectAssetTableFromLua(m_path_source, vertex, fragment))
+	if (LoadEffectAssetTableFromLua(m_path_source, vertex, fragment, transparency, depthTesting, depthWriting, faceCulling))
 	{
 		//Add the relative folder location of these built assets
 		std::string relativeFolder, outError;
@@ -48,11 +50,18 @@ bool EffectBuilder::Build(const std::vector<std::string>& )
 			return false;
 		}
 
+		Lame::RenderMask renderMask = 0;
+		if (transparency) renderMask |= Lame::RenderState::Transparency;
+		if (depthTesting) renderMask |= Lame::RenderState::DepthTest;
+		if (depthWriting) renderMask |= Lame::RenderState::DepthWrite;
+		if (faceCulling) renderMask |= Lame::RenderState::FaceCull;
+
 		std::ofstream out(m_path_target, std::ofstream::binary);
 
 		if (out)
 		{
 			//write the data
+			out.write(reinterpret_cast<char*>(&renderMask), sizeof(renderMask));
 			out.write(reinterpret_cast<const char *>(&vertexStringLength), sizeof(vertexStringLength));
 			out.write(vertex.c_str(), vertexStringLength + 1);
 			out.write(fragment.c_str(), fragment.length() + 1);
@@ -73,7 +82,7 @@ bool EffectBuilder::Build(const std::vector<std::string>& )
 
 namespace
 {
-	bool LoadStringFromTable(lua_State* io_luaStateFrom, const std::string& i_key, std::string& o_value)
+	bool LoadFromTable(lua_State* io_luaStateFrom, const std::string& i_key, std::string& o_value)
 	{
 		lua_pushstring(io_luaStateFrom, i_key.c_str());
 		lua_gettable(io_luaStateFrom, -2);
@@ -91,12 +100,41 @@ namespace
 		return true;
 	}
 
-	bool LoadEffect(lua_State* io_luaStateFrom, std::string& o_vertex, std::string& o_fragment)
+	bool LoadFromTable(lua_State* io_luaStateFrom, const std::string& i_key, bool& o_value)
 	{
-		return LoadStringFromTable(io_luaStateFrom, "vertex", o_vertex) && LoadStringFromTable(io_luaStateFrom, "fragment", o_fragment);
+		lua_pushstring(io_luaStateFrom, i_key.c_str());
+		lua_gettable(io_luaStateFrom, -2);
+		if (!lua_isboolean(io_luaStateFrom, -1))
+		{
+			std::stringstream decoratedErrorMessage;
+			decoratedErrorMessage << "The value at \"" << i_key << "\" must be a boolean instead of a " << luaL_typename(io_luaStateFrom, -1);
+			eae6320::OutputErrorMessage(decoratedErrorMessage.str().c_str());
+			lua_pop(io_luaStateFrom, 1);
+			return false;
+		}
+
+		o_value = lua_toboolean(io_luaStateFrom, -1) != 0;
+		lua_pop(io_luaStateFrom, 1);
+		return true;
 	}
 
-	bool LoadEffectAssetTableFromLua(const std::string &i_path, std::string& o_vertex, std::string& o_fragment)
+	bool LoadEffect(lua_State* io_luaStateFrom, std::string& o_vertex, std::string& o_fragment, bool& transparency, bool& depthTesting, bool& depthWriting, bool& faceCulling)
+	{
+		//optional parameters
+		if (!LoadFromTable(io_luaStateFrom, "transparency", transparency))
+			transparency = false;
+		if (!LoadFromTable(io_luaStateFrom, "depth_test", depthTesting))
+			depthTesting = true;
+		if (!LoadFromTable(io_luaStateFrom, "depth_write", depthWriting))
+			depthWriting = true;
+		if (!LoadFromTable(io_luaStateFrom, "face_cull", faceCulling))
+			faceCulling = true;
+
+		//not optional parameters
+		return LoadFromTable(io_luaStateFrom, "vertex", o_vertex) && LoadFromTable(io_luaStateFrom, "fragment", o_fragment);
+	}
+
+	bool LoadEffectAssetTableFromLua(const std::string &i_path, std::string& o_vertex, std::string& o_fragment, bool& transparency, bool& depthTesting, bool& depthWriting, bool& faceCulling)
 	{
 		bool wereThereErrors = false;
 
@@ -168,7 +206,7 @@ namespace
 		}
 
 		// If this code is reached the asset file was loaded successfully, and its table is now at index -1
-		if (!LoadEffect(luaState, o_vertex, o_fragment))
+		if (!LoadEffect(luaState, o_vertex, o_fragment, transparency, depthTesting, depthWriting, faceCulling))
 		{
 			eae6320::OutputErrorMessage("Failed to load the effect");
 			wereThereErrors = true;

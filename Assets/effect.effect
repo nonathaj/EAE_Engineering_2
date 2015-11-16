@@ -1,5 +1,0 @@
-return
-{
-	vertex = "vertex.shader.bin",
-	fragment = "fragment.shader.bin",
-}

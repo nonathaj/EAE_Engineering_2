@@ -18,16 +18,18 @@
 
 namespace
 {
-	std::shared_ptr<Engine::GameObject> CreateObject(std::string i_mesh);
+	std::shared_ptr<Engine::GameObject> CreateObject(std::string i_mesh, std::shared_ptr<Lame::Effect> i_effect);
 
 	std::unique_ptr<Lame::Graphics> graphics;
 
 	//gameobject
+	std::shared_ptr<Engine::GameObject> transparent_box;
 	std::shared_ptr<Engine::GameObject> box;
 	std::shared_ptr<Engine::GameObject> floorObject;
 
-	//effect
-	std::shared_ptr<Lame::Effect> effect;
+	//effects
+	std::shared_ptr<Lame::Effect> opaque_effect;
+	std::shared_ptr<Lame::Effect> transparent_effect;
 
 	void HandleInput(float deltaTime);
 }
@@ -56,14 +58,16 @@ namespace Gameplay
 		graphics->camera()->gameObject()->position(eae6320::Math::cVector(0, 0, 10));
 
 		//load the effect we are going to use for everything in the game
-		effect = std::shared_ptr<Lame::Effect>(Lame::Effect::Create(graphics->context(), "data/effect.effect.bin"));
-		if (!effect)
+		opaque_effect = std::shared_ptr<Lame::Effect>(Lame::Effect::Create(graphics->context(), "data/opaque.effect.bin"));
+		transparent_effect = std::shared_ptr<Lame::Effect>(Lame::Effect::Create(graphics->context(), "data/transparent.effect.bin"));
+		if (!opaque_effect || !transparent_effect)
 			return nullptr;
 
 		//Create our renderables
-		box = CreateObject("data/box.mesh.bin");
-		floorObject = CreateObject("data/floor.mesh.bin");
-		if (!box || !floorObject)
+		transparent_box = CreateObject("data/box.mesh.bin", transparent_effect);
+		box = CreateObject("data/box.mesh.bin", opaque_effect);
+		floorObject = CreateObject("data/floor.mesh.bin", opaque_effect);
+		if (!transparent_box || !box || !floorObject)
 		{
 			Shutdown();
 			return false;
@@ -93,10 +97,12 @@ namespace Gameplay
 
 	bool Shutdown()
 	{
+		transparent_box.reset();
 		box.reset();
 		floorObject.reset();
 
-		effect.reset();
+		transparent_effect.reset();
+		opaque_effect.reset();
 
 		graphics.reset();
 		return true;
@@ -133,7 +139,7 @@ namespace
 			movableObject->Move(eae6320::Math::cVector(-movementAmount, 0.0f));
 	}
 
-	std::shared_ptr<Engine::GameObject> CreateObject(std::string i_mesh)
+	std::shared_ptr<Engine::GameObject> CreateObject(std::string i_mesh, std::shared_ptr<Lame::Effect> i_effect)
 	{
 		std::shared_ptr<Lame::Mesh> mesh(Lame::Mesh::Create(graphics->context(), i_mesh));
 		if (!mesh)
@@ -145,7 +151,7 @@ namespace
 			return nullptr;
 
 		//create the renderable
-		std::shared_ptr<Lame::RenderableComponent> renderable(new Lame::RenderableComponent(go, mesh, effect));
+		std::shared_ptr<Lame::RenderableComponent> renderable(new Lame::RenderableComponent(go, mesh, i_effect));
 		if (!renderable)
 			return nullptr;
 

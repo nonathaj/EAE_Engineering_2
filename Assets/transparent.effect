@@ -1,0 +1,9 @@
+return
+{
+	vertex = "vertex.shader.bin",
+	fragment = "transparent_fragment.shader.bin",
+	transparency = true,
+	depth_test = true,
+	depth_write = false,
+	face_cull = false,
+}

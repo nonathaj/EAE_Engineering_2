@@ -22,11 +22,20 @@ namespace Lame
 {
 	class Context;
 
+	typedef uint8_t RenderMask;
+	enum RenderState
+	{
+		Transparency	= 1 << 0,
+		DepthTest		= 1 << 1,
+		DepthWrite		= 1 << 2,
+		FaceCull		= 1 << 3,
+	};
+
 	class Effect
 	{
 	public:
 		static Effect* Create(std::shared_ptr<Context> i_context, const std::string& i_effect_path);
-		static Effect* Create(std::shared_ptr<Context> i_context, const char* i_vertex_path, const char* i_fragment_path);
+		static Effect* Create(std::shared_ptr<Context> i_context, const char* i_vertex_path, const char* i_fragment_path, RenderMask i_renderMask);
 		~Effect();
 
 		bool Bind();
@@ -43,9 +52,15 @@ namespace Lame
 		bool SetConstant(const Engine::HashedString &i_constant, const eae6320::Math::cMatrix_transformation &i_val);
 
 		std::shared_ptr<Context> get_context() { return context; }
+		RenderMask render_mask() { return renderMask; }
+
+		bool has_transparency() { return (renderMask & RenderState::Transparency) > 0; }
+		bool has_depth_test() { return (renderMask & RenderState::DepthTest) > 0; }
+		bool has_depth_write() { return (renderMask & RenderState::DepthWrite) > 0; }
+		bool has_face_cull() { return (renderMask & RenderState::FaceCull) > 0; }
 
 	private:
-		Effect(std::shared_ptr<Context> i_context) : context(i_context), constants() {}
+		Effect(std::shared_ptr<Context> i_context, RenderMask i_renderMask) : context(i_context), renderMask(i_renderMask), constants() {}
 
 		//Do not allow Effects to be managed without pointers
 		Effect();
@@ -53,6 +68,7 @@ namespace Lame
 		Effect& operator=(const Effect &i_mesh);
 
 		std::shared_ptr<Context> context;
+		RenderMask renderMask;
 #if EAE6320_PLATFORM_D3D
 		IDirect3DVertexShader9 *vertexShader;
 		IDirect3DPixelShader9 *fragmentShader;

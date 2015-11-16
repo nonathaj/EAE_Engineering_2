@@ -39,8 +39,9 @@ namespace Lame
 		char *fileData = System::File::LoadBinary(i_effect_path, &fileLength);
 
 		//find the actual location of our data
-		uint8_t vertexStringLength = *reinterpret_cast<uint8_t*>(fileData);
-		const char* vertex = reinterpret_cast<const char *>(fileData + sizeof(vertexStringLength));
+		RenderMask renderMask = *reinterpret_cast<RenderMask*>(fileData);
+		uint8_t vertexStringLength = *reinterpret_cast<uint8_t*>(fileData + sizeof(RenderMask));
+		const char* vertex = reinterpret_cast<const char *>(fileData + sizeof(RenderMask) + sizeof(vertexStringLength));
 		const char* fragment = reinterpret_cast<const char *>(vertex + vertexStringLength + 1);
 
 		if (fragment >= fileData + fileLength)
@@ -53,7 +54,7 @@ namespace Lame
 		}
 
 		//create the effect and cleanup the temporary buffer
-		Effect *effect = Create(i_context, vertex, fragment);
+		Effect *effect = Create(i_context, vertex, fragment, renderMask);
 		delete[] fileData;
 		return effect;
 	}

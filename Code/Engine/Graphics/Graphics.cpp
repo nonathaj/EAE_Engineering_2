@@ -39,10 +39,24 @@ namespace Lame
 			return false;
 		eae6320::Math::cMatrix_transformation worldToView = camera()->WorldToView();
 		eae6320::Math::cMatrix_transformation viewToScreen = camera()->ViewToScreen();
+
+		std::vector<std::shared_ptr<RenderableComponent>> transparent;
+
+		//iterate all the renderables, rendering the opaque ones first.
 		for (size_t x = 0; x < renderables_.size(); x++)
+		{
+			if (renderables_[x]->effect()->has_transparency())
+				transparent.push_back(renderables_[x]);
+			else
+				success = renderables_[x]->Render(worldToView, viewToScreen) && success;
+		}
+
+		//render all the transparent objects on top of the opaque ones
+		for (size_t x = 0; x < transparent.size(); x++)
 		{
 			success = renderables_[x]->Render(worldToView, viewToScreen) && success;
 		}
+
 		success = context()->EndFrame() && success;
 		return success;
 	}

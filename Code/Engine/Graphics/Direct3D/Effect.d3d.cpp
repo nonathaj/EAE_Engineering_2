@@ -24,7 +24,7 @@ namespace
 
 namespace Lame
 {
-	Effect* Effect::Create(std::shared_ptr<Context> i_context, const char* i_vertex_path, const char* i_fragment_path)
+	Effect* Effect::Create(std::shared_ptr<Context> i_context, const char* i_vertex_path, const char* i_fragment_path, RenderMask i_renderMask)
 	{
 		// The vertex shader is a program that operates on vertices.
 		// Its input comes from a C/C++ "draw call" and is:
@@ -52,7 +52,7 @@ namespace Lame
 			!LoadVertexShader(i_context.get(), i_vertex_path, vertexShader, &vertexConstantTable))
 			return nullptr;
 
-		Effect *effect = new Effect(i_context);
+		Effect *effect = new Effect(i_context, i_renderMask);
 		if (effect)
 		{
 			effect->vertexShader = vertexShader;
@@ -84,12 +84,51 @@ namespace Lame
 			return false;
 		}
 
+		bool success = true;
+
+		// Set the vertex and fragment shaders
 		HRESULT result = context->get_direct3dDevice()->SetVertexShader(vertexShader);
-		bool success = SUCCEEDED(result);
-		assert(success);
+		success = success && SUCCEEDED(result);
 		result = context->get_direct3dDevice()->SetPixelShader(fragmentShader);
 		success = success && SUCCEEDED(result);
-		assert(success);
+
+		//alpha transparency
+		if (has_transparency())
+		{
+			result = context->get_direct3dDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+			success = success && SUCCEEDED(result);
+			result = context->get_direct3dDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+			success = success && SUCCEEDED(result);
+			result = context->get_direct3dDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+		}
+		else
+			result = context->get_direct3dDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+		success = success && SUCCEEDED(result);
+
+		//face culling
+		if (has_face_cull())
+			result = context->get_direct3dDevice()->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+		else
+			result = context->get_direct3dDevice()->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+		success = success && SUCCEEDED(result);
+
+		//depth testing
+		if (has_depth_test())
+		{
+			result = context->get_direct3dDevice()->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
+			result = context->get_direct3dDevice()->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
+		}
+		else
+			result = context->get_direct3dDevice()->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
+		success = success && SUCCEEDED(result);
+
+		//depth writing
+		if (has_depth_write())
+			result = context->get_direct3dDevice()->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+		else
+			result = context->get_direct3dDevice()->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+		success = success && SUCCEEDED(result);
+
 		return success;
 	}
 

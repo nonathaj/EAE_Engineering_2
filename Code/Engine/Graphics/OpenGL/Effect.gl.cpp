@@ -34,7 +34,7 @@ namespace
 
 namespace Lame
 {
-	Effect* Effect::Create(std::shared_ptr<Context> i_context, const char* i_vertex_path, const char* i_fragment_path)
+	Effect* Effect::Create(std::shared_ptr<Context> i_context, const char* i_vertex_path, const char* i_fragment_path, RenderMask i_renderMask)
 	{
 		// A vertex shader is a program that operates on vertices.
 		// Its input comes from a C/C++ "draw call" and is:
@@ -57,7 +57,7 @@ namespace Lame
 		if (!CreateProgram(programId, i_vertex_path, i_fragment_path))
 			return nullptr;
 		
-		Effect *effect = new Effect(i_context);
+		Effect *effect = new Effect(i_context, i_renderMask);
 		if (effect)
 		{
 			effect->programId = programId;
@@ -81,10 +81,49 @@ namespace Lame
 
 	bool Effect::Bind()
 	{
+		bool success = true;
+
 		// Set the vertex and fragment shaders
 		glUseProgram(programId);
-		assert(glGetError() == GL_NO_ERROR);
-		return true;
+		success = success && glGetError() == GL_NO_ERROR;
+
+		//alpha transparency
+		if (has_transparency())
+		{
+			glEnable(GL_BLEND);
+			success = success && glGetError() == GL_NO_ERROR;
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		}
+		else
+			glDisable(GL_BLEND);
+		success = success && glGetError() == GL_NO_ERROR;
+		
+		//face culling
+		if (has_face_cull())
+		{
+			glEnable(GL_CULL_FACE);
+			success = success && glGetError() == GL_NO_ERROR;
+			glFrontFace(GL_CCW);
+		}
+		else
+			glDisable(GL_CULL_FACE);
+		success = success && glGetError() == GL_NO_ERROR;
+
+		//depth testing
+		if (has_depth_test())
+		{
+			glEnable(GL_DEPTH_TEST);
+			glDepthFunc(GL_LEQUAL);
+		}
+		else
+			glDisable(GL_DEPTH_TEST);
+		success = success && glGetError() == GL_NO_ERROR;
+
+		//depth writing
+		glDepthMask(has_depth_write() ? GL_TRUE : GL_FALSE);
+		success = success && glGetError() == GL_NO_ERROR;
+
+		return success;
 	}
 
 	Effect::~Effect()

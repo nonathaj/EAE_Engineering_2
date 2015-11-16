@@ -745,7 +745,7 @@ namespace
 					{
 						sVertex_maya v = i_vertexBuffer[x];
 						fout <<
-							"\t\t{ " <<
+							"\t\t{ -- Vertex " << x << "\n"  <<
 							"\t\t\tpos = { " << v.x << ", " << v.y << ", " << v.z << " },\n" <<
 							"\t\t\tcolor = { " << v.r << ", " << v.g << ", " << v.b << ", " << v.a << " },\n" <<
 							"\t\t\tnormal = { " << v.nx << ", " << v.ny << ", " << v.nz << " },\n" <<

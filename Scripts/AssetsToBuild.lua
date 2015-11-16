@@ -18,7 +18,8 @@ return
         tool = "EffectBuilder.exe",
         files = 
         {
-            { source = "effect.effect", target = "effect.effect.bin" },
+            { source = "opaque.effect", target = "opaque.effect.bin" },
+            { source = "transparent.effect", target = "transparent.effect.bin" },
         }
     },
 	{
@@ -27,7 +28,8 @@ return
 		files = 
 		{
 			{ source = "vertex.shader", target = "vertex.shader.bin", arguments = "vertex" },
-			{ source = "fragment.shader", target = "fragment.shader.bin", arguments = "fragment" },
+			{ source = "opaque_fragment.shader", target = "opaque_fragment.shader.bin", arguments = "fragment" },
+			{ source = "transparent_fragment.shader", target = "transparent_fragment.shader.bin", arguments = "fragment" },
 		}
 	},
 }

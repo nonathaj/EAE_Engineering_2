@@ -86,22 +86,22 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <TargetName>eae6320_ownby_johnpaul_DEBUG</TargetName>
+    <TargetName>eae6320_kenkel_jon_DEBUG</TargetName>
     <TargetExt>.mll</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <TargetName>eae6320_ownby_johnpaul_DEBUG</TargetName>
+    <TargetName>eae6320_kenkel_jon_DEBUG</TargetName>
     <TargetExt>.mll</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <TargetName>eae6320_ownby_johnpaul</TargetName>
+    <TargetName>eae6320_kenkel_jon</TargetName>
     <TargetExt>.mll</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <TargetName>eae6320_ownby_johnpaul</TargetName>
+    <TargetName>eae6320_kenkel_jon</TargetName>
     <TargetExt>.mll</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -120,13 +120,13 @@
       <AdditionalDependencies>Foundation.lib;OpenMaya.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <CustomBuildStep>
-      <Command>copy "$(TargetPath)" "$(MAYA_PLUG_IN_PATH)/$(TargetFileName)" /y</Command>
+      <Command>copy "$(TargetPath)" "$(MAYA_PLUG_IN_PATH)\$(TargetFileName)" /y</Command>
     </CustomBuildStep>
     <CustomBuildStep>
       <Message>Copying Maya Exporter</Message>
     </CustomBuildStep>
     <CustomBuildStep>
-      <Outputs>$(MAYA_PLUG_IN_PATH)/$(TargetFileName)</Outputs>
+      <Outputs>$(MAYA_PLUG_IN_PATH)\$(TargetFileName)</Outputs>
     </CustomBuildStep>
     <CustomBuildStep>
       <Inputs>$(TargetPath)</Inputs>
@@ -148,13 +148,13 @@
       <AdditionalDependencies>Foundation.lib;OpenMaya.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <CustomBuildStep>
-      <Command>copy "$(TargetPath)" "$(MAYA_PLUG_IN_PATH)/$(TargetFileName)" /y</Command>
+      <Command>copy "$(TargetPath)" "$(MAYA_PLUG_IN_PATH)\$(TargetFileName)" /y</Command>
     </CustomBuildStep>
     <CustomBuildStep>
       <Message>Copying Maya Exporter</Message>
     </CustomBuildStep>
     <CustomBuildStep>
-      <Outputs>$(MAYA_PLUG_IN_PATH)/$(TargetFileName)</Outputs>
+      <Outputs>$(MAYA_PLUG_IN_PATH)\$(TargetFileName)</Outputs>
     </CustomBuildStep>
     <CustomBuildStep>
       <Inputs>$(TargetPath)</Inputs>
@@ -180,13 +180,13 @@
       <AdditionalDependencies>Foundation.lib;OpenMaya.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <CustomBuildStep>
-      <Command>copy "$(TargetPath)" "$(MAYA_PLUG_IN_PATH)/$(TargetFileName)" /y</Command>
+      <Command>copy "$(TargetPath)" "$(MAYA_PLUG_IN_PATH)\$(TargetFileName)" /y</Command>
     </CustomBuildStep>
     <CustomBuildStep>
       <Message>Copying Maya Exporter</Message>
     </CustomBuildStep>
     <CustomBuildStep>
-      <Outputs>$(MAYA_PLUG_IN_PATH)/$(TargetFileName)</Outputs>
+      <Outputs>$(MAYA_PLUG_IN_PATH)\$(TargetFileName)</Outputs>
     </CustomBuildStep>
     <CustomBuildStep>
       <Inputs>$(TargetPath)</Inputs>
@@ -212,13 +212,13 @@
       <AdditionalDependencies>Foundation.lib;OpenMaya.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <CustomBuildStep>
-      <Command>copy "$(TargetPath)" "$(MAYA_PLUG_IN_PATH)/$(TargetFileName)" /y</Command>
+      <Command>copy "$(TargetPath)" "$(MAYA_PLUG_IN_PATH)\$(TargetFileName)" /y</Command>
     </CustomBuildStep>
     <CustomBuildStep>
       <Message>Copying Maya Exporter</Message>
     </CustomBuildStep>
     <CustomBuildStep>
-      <Outputs>$(MAYA_PLUG_IN_PATH)/$(TargetFileName)</Outputs>
+      <Outputs>$(MAYA_PLUG_IN_PATH)\$(TargetFileName)</Outputs>
     </CustomBuildStep>
     <CustomBuildStep>
       <Inputs>$(TargetPath)</Inputs>
