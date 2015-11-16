@@ -24,7 +24,9 @@ namespace
 
 	//gameobject
 	std::shared_ptr<Engine::GameObject> transparent_box_foreground;
-	std::shared_ptr<Engine::GameObject> transparent_box_background;
+	std::shared_ptr<Engine::GameObject> transparent_box_main;
+	std::shared_ptr<Engine::GameObject> box_background;
+	std::shared_ptr<Engine::GameObject> box_foreground;
 	std::shared_ptr<Engine::GameObject> movable;
 	std::shared_ptr<Engine::GameObject> floorObject;
 
@@ -66,17 +68,24 @@ namespace Gameplay
 
 		//Create our renderables
 		transparent_box_foreground = CreateObject("data/box.mesh.bin", transparent_effect);
-		transparent_box_background = CreateObject("data/box.mesh.bin", transparent_effect);
+		transparent_box_main = CreateObject("data/box.mesh.bin", transparent_effect);
+		box_foreground = CreateObject("data/box.mesh.bin", opaque_effect);
+		box_background = CreateObject("data/box.mesh.bin", opaque_effect);
+
 		movable = CreateObject("data/triangle_prism.mesh.bin", opaque_effect);
 		floorObject = CreateObject("data/color_floor.mesh.bin", opaque_effect);
-		if (!transparent_box_foreground || !transparent_box_background || !movable || !floorObject)
+
+		if (!transparent_box_foreground || !transparent_box_main || 
+			!box_foreground  || !box_background|| !movable || !floorObject)
 		{
 			Shutdown();
 			return false;
 		}
 		floorObject->position(eae6320::Math::cVector(0.0f, -1.0f, 0.0f));
-		transparent_box_foreground->position(eae6320::Math::cVector(3.0f, 0.0f, 3.0f));
-		transparent_box_background->position(eae6320::Math::cVector(-3.0f, 0.0f, -3.0f));
+		transparent_box_foreground->position(eae6320::Math::cVector(3.0f, 0.0f, 0.0f));
+		box_foreground->position(eae6320::Math::cVector(3.0f, -1.0f, -3.0f));
+		box_background->position(eae6320::Math::cVector(3.0f, 1.0f, 3.0f));
+		transparent_box_main->position(eae6320::Math::cVector(-3.0f, 0.0f, -3.0f));
 		
 		std::string error;
 		if (!eae6320::Time::Initialize(&error))
@@ -102,7 +111,9 @@ namespace Gameplay
 	bool Shutdown()
 	{
 		transparent_box_foreground.reset();
-		transparent_box_background.reset();
+		transparent_box_main.reset();
+		box_background.reset();
+		box_foreground.reset();
 		movable.reset();
 		floorObject.reset();
 

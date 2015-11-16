@@ -752,7 +752,7 @@ namespace
 							"\t\t\ttangent = { " << v.tx << ", " << v.ty << ", " << v.tz << " },\n" <<
 							"\t\t\tbitangent = { " << v.btx << ", " << v.bty << ", " << v.btz << " },\n" <<
 							"\t\t\ttexcoord = { " << v.u << ", " << v.v << " },\n" <<
-							"\t\t\tshading_group = " << v.shadingGroup << ",\n"
+							"\t\t\tshading_group = " << v.shadingGroup << ",\n" <<
 						"\t\t},\n";
 					}
 				}

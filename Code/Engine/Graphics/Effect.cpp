@@ -40,8 +40,8 @@ namespace Lame
 
 		//find the actual location of our data
 		RenderMask renderMask = *reinterpret_cast<RenderMask*>(fileData);
-		uint8_t vertexStringLength = *reinterpret_cast<uint8_t*>(fileData + sizeof(RenderMask));
-		const char* vertex = reinterpret_cast<const char *>(fileData + sizeof(RenderMask) + sizeof(vertexStringLength));
+		uint8_t vertexStringLength = *reinterpret_cast<uint8_t*>(fileData + sizeof(renderMask));
+		const char* vertex = reinterpret_cast<const char *>(fileData + sizeof(renderMask) + sizeof(vertexStringLength));
 		const char* fragment = reinterpret_cast<const char *>(vertex + vertexStringLength + 1);
 
 		if (fragment >= fileData + fileLength)

@@ -128,7 +128,7 @@ namespace
 		if (!LoadFromTable(io_luaStateFrom, "depth_write", depthWriting))
 			depthWriting = true;
 		if (!LoadFromTable(io_luaStateFrom, "face_cull", faceCulling))
-			faceCulling = true;
+			faceCulling = false;
 
 		//not optional parameters
 		return LoadFromTable(io_luaStateFrom, "vertex", o_vertex) && LoadFromTable(io_luaStateFrom, "fragment", o_fragment);
