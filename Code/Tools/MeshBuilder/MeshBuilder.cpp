@@ -12,6 +12,8 @@
 #include "../../External/Lua/Includes.h"
 #include "../../Engine/Graphics/Vertex.h"
 
+#include "../../External/Lua/LuaHelper.h"
+
 // Interface
 //==========
 
@@ -36,6 +38,9 @@ namespace
 	double GetDoubleFromTable(lua_State& io_luaStateFrom, size_t i_indexInTable);
 
 	bool SwapTriangleIndexOrder(uint32_t*& i_indices, size_t i_num_indices);
+
+	//load using helper
+	bool LoadMesh(const std::string &i_path, Lame::Vertex*& o_vertices, size_t& o_vertex_count, uint32_t*& o_indices, size_t& o_index_count);
 }
 
 // Build
@@ -50,7 +55,7 @@ bool eae6320::MeshBuilder::Build( const std::vector<std::string>& )
 	size_t vertexCount;
 	uint32_t *indices = nullptr;
 	size_t indexCount;
-	if (LoadMeshAssetTableFromLua(m_path_source, vertices, vertexCount, indices, indexCount))
+	if (LoadMesh(m_path_source, vertices, vertexCount, indices, indexCount))
 	{
 		//loaded indices are right-handed
 		
@@ -110,6 +115,157 @@ namespace
 		}
 
 		return true;
+	}
+
+
+	bool LoadMesh(const std::string &i_path, Lame::Vertex*& o_vertices, size_t& o_vertex_count, uint32_t*& o_indices, size_t& o_index_count)
+	{
+		using namespace LuaHelper;
+		bool success = true;
+		o_vertices = nullptr;
+		o_indices = nullptr;
+		lua_State *state = LoadAssetTable(i_path);
+		if (state)
+		{
+			//vertices
+			Push(state, "vertex");
+			if (SwapTableKey(state) && IsTable(state))
+			{
+				o_vertex_count = TableLength(state);
+				o_vertices = new Lame::Vertex[o_vertex_count];
+				for (size_t x = 0; x < o_vertex_count; x++)
+				{
+					Lame::Vertex& v = o_vertices[x];
+					//push the vertex index
+					Push(state, x + 1);
+					if (SwapTableKey(state) && IsTable(state))
+					{
+						//get the position of the vertex
+						std::vector<double> position;
+						Push(state, "pos");
+						if (SwapTableKey(state) && IsTable(state))
+						{
+							if (PopArray(state, position) && position.size() >= 3)
+							{
+								v.x = position[0];
+								v.y = position[1];
+								v.z = position[2];
+							}
+							else
+							{
+								success = false;
+								break;
+							}
+						}
+						else
+						{
+							Pop(state);			//position
+							Pop(state);			//vertex
+							success = false;
+							break;
+						}
+
+						//get the color of the vertex
+						std::vector<double> color;
+						Push(state, "color");
+						if (SwapTableKey(state) && IsTable(state))
+						{
+							if (PopArray(state, color) && color.size() >= 4)
+							{
+								v.r = color[0] * 255.0;
+								v.g = color[1] * 255.0;
+								v.b = color[2] * 255.0;
+								v.a = color[3] * 255.0;
+							}
+						}
+						else
+						{
+							Pop(state);			//color
+							Pop(state);			//vertex
+							success = false;
+							break;
+						}
+						Pop(state);
+					}
+					else
+					{
+						Pop(state);			//vertex
+						success = false;
+						break;
+					}
+
+					//pop the vertex
+					Pop(state);
+				}
+			}
+			else
+				success = false;
+			Pop(state);
+
+			//indices
+			if (success)
+			{
+				Push(state, "index");
+				if (SwapTableKey(state) && IsTable(state))
+				{
+					size_t triangleCount = TableLength(state);
+					o_index_count = triangleCount * 3;
+					o_indices = new uint32_t[o_index_count];
+					for (size_t x = 0; x < triangleCount; x++)
+					{
+						Push(state, x + 1);
+
+						if (SwapTableKey(state) && IsTable(state))
+						{
+							std::vector<uint32_t> triangleIndices;
+							if (PopArray(state, triangleIndices))
+							{
+								o_indices[x * 3] = triangleIndices[0];
+								o_indices[x * 3 + 1] = triangleIndices[1];
+								o_indices[x * 3 + 2] = triangleIndices[2];
+							}
+							else
+							{
+								success = false;
+								Pop(state);
+								break;
+							}
+						}
+						else
+						{
+							Pop(state);
+							success = false;
+							break;
+						}
+
+						Pop(state);
+					}
+				}
+				else
+					success = false;
+				Pop(state);
+			}
+		}
+		else
+			return false;
+
+		if (!success)
+		{
+			if (o_vertices)
+			{
+				delete[] o_vertices;
+				o_vertices = nullptr;
+			}
+
+			if (o_indices)
+			{
+				delete[] o_indices;
+				o_indices = nullptr;
+			}
+		}
+
+		Close(state);
+		return success;
 	}
 
 	bool LoadMesh(lua_State* io_luaStateFrom, Lame::Vertex*& o_vertices, size_t& o_vertex_count, uint32_t*& o_indices, size_t& o_index_count)
