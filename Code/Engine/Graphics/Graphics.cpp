@@ -45,7 +45,7 @@ namespace Lame
 		//iterate all the renderables, rendering the opaque ones first.
 		for (size_t x = 0; x < renderables_.size(); x++)
 		{
-			if (renderables_[x]->effect()->has_transparency())
+			if (renderables_[x]->material()->effect()->has_transparency())
 				transparent.push_back(renderables_[x]);
 			else
 				success = renderables_[x]->Render(worldToView, viewToScreen) && success;
@@ -69,10 +69,10 @@ namespace Lame
 
 		//check the mesh or effect for a context
 		std::shared_ptr<Context> ct;
-		if (i_renderable->effect())
-			ct = i_renderable->effect()->get_context();
-		else if (i_renderable->mesh())
+		if (i_renderable->mesh())
 			ct = i_renderable->mesh()->get_context();
+		else if (i_renderable->material() && i_renderable->material()->effect())
+			ct = i_renderable->material()->effect()->get_context();
 		else
 			return false;
 

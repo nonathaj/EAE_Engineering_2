@@ -33,4 +33,11 @@ return
 			{ source = "transparent_fragment.shader", target = "transparent_fragment.shader.bin", arguments = "fragment" },
 		}
 	},
+    {
+        tool = "MaterialBuilder.exe",
+        files = 
+        {
+            { source = "initial.material", target = "initial.material.bin" },
+        }
+    },
 }

@@ -4,7 +4,7 @@
 #include "../Component/IComponent.h"
 #include "../Component/GameObject.h"
 #include "Mesh.h"
-#include "Effect.h"
+#include "Material.h"
 
 namespace Lame
 {
@@ -12,17 +12,17 @@ namespace Lame
 	{
 		ADD_TYPEID()
 	public:
-		RenderableComponent(std::weak_ptr<Engine::GameObject> go, std::shared_ptr<Mesh> i_mesh, std::shared_ptr<Effect> i_effect);
+		RenderableComponent(std::weak_ptr<Engine::GameObject> go, std::shared_ptr<Mesh> i_mesh, std::shared_ptr<Material> i_material);
 
 		bool Render(const eae6320::Math::cMatrix_transformation& i_worldToView, const eae6320::Math::cMatrix_transformation& i_viewToScreen) const;
 
 		inline std::shared_ptr<Mesh> mesh() const { return mesh_; }
-		inline std::shared_ptr<Effect> effect() const { return effect_; }
+		inline std::shared_ptr<Material> material() const { return material_; }
 	private:
 		RenderableComponent();
 
 		std::shared_ptr<Mesh> mesh_;
-		std::shared_ptr<Effect> effect_;
+		std::shared_ptr<Material> material_;
 	};
 }
 

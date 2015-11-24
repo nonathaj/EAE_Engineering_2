@@ -6,8 +6,8 @@
 
 namespace Lame
 {
-	RenderableComponent::RenderableComponent(std::weak_ptr<Engine::GameObject> go, std::shared_ptr<Mesh> i_mesh, std::shared_ptr<Effect> i_effect)
-		:IComponent(go), mesh_(i_mesh), effect_(i_effect)
+	RenderableComponent::RenderableComponent(std::weak_ptr<Engine::GameObject> go, std::shared_ptr<Mesh> i_mesh, std::shared_ptr<Material> i_material)
+		:IComponent(go), mesh_(i_mesh), material_(i_material)
 	{
 	}
 
@@ -22,10 +22,10 @@ namespace Lame
 			if (!go->enabled() || !enabled())
 				return true;
 
-			return effect()->Bind() &&							// try to bind the effect
-				effect()->SetLocalToWorld(go->LocalToWorld()) &&
-				effect()->SetWorldToView(i_worldToView) &&
-				effect()->SetViewToScreen(i_viewToScreen) &&
+			return material()->Bind() &&							// try to bind the effect
+				material()->effect()->SetLocalToWorld(go->LocalToWorld()) &&
+				material()->effect()->SetWorldToView(i_worldToView) &&
+				material()->effect()->SetViewToScreen(i_viewToScreen) &&
 				mesh()->Draw();									// try to draw the mesh
 		}
 		else

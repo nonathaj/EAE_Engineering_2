@@ -201,6 +201,86 @@ namespace Lame
 		}
 		return true;
 	}
+
+	bool Effect::SetConstant(const Engine::HashedString &i_constant, const float &i_val)
+	{
+		auto itr = constants.find(i_constant);
+		if (itr == constants.end())					//fail if we don't have a cache'd version of this constant
+			return false;
+
+		GLint handle = itr->second;
+		glUniform1fv(handle, 1, &i_val);
+
+		const GLenum errorCode = glGetError();
+		if (errorCode != GL_NO_ERROR)
+		{
+			std::stringstream errorMessage;
+			errorMessage << "OpenGL failed to set a constant uniform value: " << reinterpret_cast<const char*>(gluErrorString(errorCode));
+			System::UserOutput::Display(errorMessage.str());
+			return false;
+		}
+		return true;
+	}
+
+	bool Effect::SetConstant(const Engine::HashedString &i_constant, const float (&i_val)[2])
+	{
+		auto itr = constants.find(i_constant);
+		if (itr == constants.end())					//fail if we don't have a cache'd version of this constant
+			return false;
+
+		GLint handle = itr->second;
+		glUniform2fv(handle, 1, i_val);
+
+		const GLenum errorCode = glGetError();
+		if (errorCode != GL_NO_ERROR)
+		{
+			std::stringstream errorMessage;
+			errorMessage << "OpenGL failed to set a constant uniform value: " << reinterpret_cast<const char*>(gluErrorString(errorCode));
+			System::UserOutput::Display(errorMessage.str());
+			return false;
+		}
+		return true;
+	}
+
+	bool Effect::SetConstant(const Engine::HashedString &i_constant, const float (&i_val)[3])
+	{
+		auto itr = constants.find(i_constant);
+		if (itr == constants.end())					//fail if we don't have a cache'd version of this constant
+			return false;
+
+		GLint handle = itr->second;
+		glUniform3fv(handle, 1, i_val);
+
+		const GLenum errorCode = glGetError();
+		if (errorCode != GL_NO_ERROR)
+		{
+			std::stringstream errorMessage;
+			errorMessage << "OpenGL failed to set a constant uniform value: " << reinterpret_cast<const char*>(gluErrorString(errorCode));
+			System::UserOutput::Display(errorMessage.str());
+			return false;
+		}
+		return true;
+	}
+
+	bool Effect::SetConstant(const Engine::HashedString &i_constant, const float (&i_val)[4])
+	{
+		auto itr = constants.find(i_constant);
+		if (itr == constants.end())					//fail if we don't have a cache'd version of this constant
+			return false;
+
+		GLint handle = itr->second;
+		glUniform4fv(handle, 1, i_val);
+
+		const GLenum errorCode = glGetError();
+		if (errorCode != GL_NO_ERROR)
+		{
+			std::stringstream errorMessage;
+			errorMessage << "OpenGL failed to set a constant uniform value: " << reinterpret_cast<const char*>(gluErrorString(errorCode));
+			System::UserOutput::Display(errorMessage.str());
+			return false;
+		}
+		return true;
+	}
 }
 
 namespace
