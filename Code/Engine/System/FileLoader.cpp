@@ -34,6 +34,7 @@ namespace System
 				std::stringstream error;
 				error << "Failed to create temporary buffer for " << i_file_name;
 				System::UserOutput::Display(error.str());
+				return nullptr;
 			}
 
 			//read the data from the file

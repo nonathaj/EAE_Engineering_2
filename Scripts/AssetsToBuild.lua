@@ -11,8 +11,8 @@ return
 		files = 
 		{
 			{ source = "box.mesh", target = "box.mesh.bin" },
-			{ source = "color_floor.mesh", target = "color_floor.mesh.bin" },
-			{ source = "triangle_prism.mesh", target = "triangle_prism.mesh.bin" },
+			{ source = "white_floor.mesh", target = "white_floor.mesh.bin" },
+			{ source = "white_triangle_prism.mesh", target = "white_triangle_prism.mesh.bin" },
 		}
 	},
     {
@@ -33,4 +33,14 @@ return
 			{ source = "transparent_fragment.shader", target = "transparent_fragment.shader.bin", arguments = "fragment" },
 		}
 	},
+    {
+        tool = "MaterialBuilder.exe",
+        files = 
+        {
+            { source = "red_opaque.material", target = "red_opaque.material.bin" },
+            { source = "green_opaque.material", target = "green_opaque.material.bin" },
+            { source = "green_transparent.material", target = "green_transparent.material.bin" },
+            { source = "blue_transparent.material", target = "blue_transparent.material.bin" },
+        }
+    },
 }

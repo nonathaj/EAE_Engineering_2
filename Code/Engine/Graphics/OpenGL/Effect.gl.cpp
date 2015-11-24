@@ -63,9 +63,9 @@ namespace Lame
 			effect->programId = programId;
 
 			//find the uniform handles
-			if (!effect->CacheConstant(LocalToWorldUniformName) ||
-				!effect->CacheConstant(WorldToViewUniformName) ||
-				!effect->CacheConstant(ViewToScreenUniformName))
+			if (!effect->CacheConstant(Shader::Vertex, LocalToWorldUniformName, effect->localToWorldUniformId) ||
+				!effect->CacheConstant(Shader::Vertex, WorldToViewUniformName, effect->worldToViewUniformId) ||
+				!effect->CacheConstant(Shader::Vertex, ViewToScreenUniformName, effect->viewToScreenUniformId))
 			{
 				System::UserOutput::Display("OpenGL failed to find all required uniform constants for effect.");
 				delete effect;
@@ -143,30 +143,16 @@ namespace Lame
 		}
 	}
 
-	bool Effect::CacheConstant(const std::string &i_constant, Engine::HashedString* o_constantId)
+	bool Effect::CacheConstant(const Shader &i_shader, const std::string &i_constant, ConstantHandle &o_constantId)
 	{
-		Engine::HashedString hashed(i_constant.c_str());
-		if (o_constantId)
-			*o_constantId = hashed;
-
-		//if we already have this constant cached, we already successfully cached it
-		if (constants.find(hashed) != constants.end())
-			return true;
-
-		GLint location = glGetUniformLocation(programId, i_constant.c_str());
-		if (location >= 0)
-			constants[hashed] = location;
-		return location >= 0;
+		o_constantId = glGetUniformLocation(programId, i_constant.c_str());
+		return o_constantId >= 0;
 	}
 
-	bool Effect::SetConstant(const Engine::HashedString &i_constant, const eae6320::Math::cVector &i_val)
+	bool Effect::SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const eae6320::Math::cMatrix_transformation &i_val)
 	{
-		auto itr = constants.find(i_constant);
-		if (itr == constants.end())					//fail if we don't have a cache'd version of this constant
-			return false;
-
-		GLint handle = itr->second;
-		glUniform3fv(handle, 1, reinterpret_cast<const float*>(&i_val));
+		const GLboolean shouldTranspose = false; // Matrices are already in the correct format
+		glUniformMatrix4fv(i_constant, 1, shouldTranspose, reinterpret_cast<const GLfloat*>(&i_val));
 
 		const GLenum errorCode = glGetError();
 		if (errorCode != GL_NO_ERROR)
@@ -179,17 +165,27 @@ namespace Lame
 		return true;
 	}
 
-
-	bool Effect::SetConstant(const Engine::HashedString &i_constant, const eae6320::Math::cMatrix_transformation &i_val)
+	bool Effect::SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const float *i_val, const size_t &i_val_count)
 	{
-		auto itr = constants.find(i_constant);
-		if (itr == constants.end())					//fail if we don't have a cache'd version of this constant
-			return false;
-
-		GLint handle = itr->second;
-		const GLboolean shouldTranspose = false; // Matrices are already in the correct format
-		const GLsizei uniformCountToSet = 1;
-		glUniformMatrix4fv(handle, uniformCountToSet, shouldTranspose, reinterpret_cast<const GLfloat*>(&i_val));
+		switch (i_val_count)
+		{
+		case 0:
+			return true;
+		case 1:
+			glUniform1fv(i_constant, 1, i_val);
+			break;
+		case 2:
+			glUniform2fv(i_constant, 1, i_val);
+			break;
+		case 3:
+			glUniform3fv(i_constant, 1, i_val);
+			break;
+		case 4:
+			glUniform4fv(i_constant, 1, i_val);
+			break;
+		default:
+			glUniform1fv(i_constant, i_val_count, i_val);
+		}
 
 		const GLenum errorCode = glGetError();
 		if (errorCode != GL_NO_ERROR)

@@ -1,8 +1,7 @@
-/*
-	This is an example of a fragment shader
-*/
 
 #include "shaders.inc"
+
+uniform float3 color_value;
 
 ////////////////////////////////////////////////////////////////////////////////////////
 #if defined( EAE6320_PLATFORM_D3D )
@@ -58,9 +57,6 @@ void main()
 #endif
 ////////////////////////////////////////////////////////////////////////////////////////
 {
-	// Set the fragment to the interpolated color that originated as per-vertex data
-	// (where color is represented by 4 floats representing "RGBA" == "Red/Green/Blue/Alpha")
-	{
-		o_color = i_color;
-	}
+	o_color = i_color;
+	o_color.rgb *= color_value;
 }

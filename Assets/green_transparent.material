@@ -1,0 +1,9 @@
+return
+{
+	effect = "transparent.effect.bin",
+	uniforms = 
+	{
+		{ name = "color_value", value = { 0.0, 1.0, 0.0 }, shader = "fragment" },
+		{ name = "alpha_value", value = { 0.2 }, shader = "fragment" },
+	},
+}

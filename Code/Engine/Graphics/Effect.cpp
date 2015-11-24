@@ -10,33 +10,35 @@
 namespace Lame
 {
 	char const * const Effect::LocalToWorldUniformName = "local_to_world";
-	const Engine::HashedString Effect::LocalToWorldUniformId(Effect::LocalToWorldUniformName);
-
 	char const * const Effect::WorldToViewUniformName = "world_to_view";
-	const Engine::HashedString Effect::WorldToViewUniformId(Effect::WorldToViewUniformName);
-
 	char const * const Effect::ViewToScreenUniformName = "view_to_screen";
-	const Engine::HashedString Effect::ViewToScreenUniformId(Effect::ViewToScreenUniformName);
 
 	bool Effect::SetLocalToWorld(eae6320::Math::cMatrix_transformation i_matrix)
 	{
-		return SetConstant(LocalToWorldUniformId, i_matrix);
+		return SetConstant(Shader::Vertex, localToWorldUniformId, i_matrix);
 	}
 
 	bool Effect::SetWorldToView(eae6320::Math::cMatrix_transformation i_matrix)
 	{
-		return SetConstant(WorldToViewUniformId, i_matrix);
+		return SetConstant(Shader::Vertex, worldToViewUniformId, i_matrix);
 	}
 
 	bool Effect::SetViewToScreen(eae6320::Math::cMatrix_transformation i_matrix)
 	{
-		return SetConstant(ViewToScreenUniformId, i_matrix);
+		return SetConstant(Shader::Vertex, viewToScreenUniformId, i_matrix);
+	}
+
+	bool Effect::SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const eae6320::Math::cVector &i_val)
+	{
+		return SetConstant(i_shader, i_constant, reinterpret_cast<const float*>(&i_val), 3);
 	}
 
 	Effect* Effect::Create(std::shared_ptr<Context> i_context, const std::string& i_effect_path)
 	{
 		size_t fileLength;
 		char *fileData = System::File::LoadBinary(i_effect_path, &fileLength);
+		if (!fileData)
+			return nullptr;
 
 		//find the actual location of our data
 		RenderMask renderMask = *reinterpret_cast<RenderMask*>(fileData);
