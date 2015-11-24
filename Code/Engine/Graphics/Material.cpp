@@ -6,8 +6,6 @@
 #include "../System/FileLoader.h"
 #include "../System/UserOutput.h"
 
-#include "../System/Console.h"
-
 namespace Lame
 {
 	Material* Material::Create(std::shared_ptr<Lame::Context> i_context, std::string i_path)
@@ -85,7 +83,6 @@ namespace Lame
 				parameters_[x].value, 
 				parameters_[x].valueCount
 				);
-			DEBUG_PRINT("%d updating (%f, %f, %f, %f)", x, parameters_[x].value[0], parameters_[x].value[1], parameters_[x].value[2], parameters_[x].value[3]);
 		}
 
 		return success;
