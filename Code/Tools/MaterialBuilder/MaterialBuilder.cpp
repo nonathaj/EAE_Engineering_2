@@ -12,6 +12,7 @@
 #include "../../External/Lua/Includes.h"
 
 #include "../../Engine/Graphics/Material.h"
+#include "../../Engine/System/Console.h"
 
 namespace
 {
@@ -25,6 +26,17 @@ namespace
 
 bool MaterialBuilder::Build(const std::vector<std::string>&)
 {
+	//Add the relative folder location of the built assets for the effect location
+	std::string relativeFolder, outError;
+	if (!eae6320::GetEnvironmentVariableA("GameDataDir", relativeFolder, &outError))
+	{
+		std::stringstream error;
+		error << "Failed to load GameDataDir environment variable. " << outError;
+		eae6320::OutputErrorMessage(error.str().c_str());
+		return false;
+	}
+
+	//open the lua file
 	lua_State *luaState = LoadAssetTable(m_path_source);
 	if (!luaState)
 	{
@@ -43,6 +55,7 @@ bool MaterialBuilder::Build(const std::vector<std::string>&)
 		lua_close(luaState);
 		return false;
 	}
+	effectLocation = relativeFolder + effectLocation;
 
 	//uniform table
 	lua_pushstring(luaState, "uniforms");
@@ -206,7 +219,7 @@ namespace
 
 		o_value.valueCount = static_cast<uint8_t>(luaL_len(io_luaStateFrom, -1));
 		for (size_t x = 0; x < o_value.valueCount; x++)
-			o_value.value[x] = static_cast<float>(GetDoubleFromTable(io_luaStateFrom, x));
+			o_value.value[x] = static_cast<float>(GetDoubleFromTable(io_luaStateFrom, x + 1));
 
 		//pop values table
 		lua_pop(io_luaStateFrom, 1);

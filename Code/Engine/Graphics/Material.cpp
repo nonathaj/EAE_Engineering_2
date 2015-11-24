@@ -6,6 +6,8 @@
 #include "../System/FileLoader.h"
 #include "../System/UserOutput.h"
 
+#include "../System/Console.h"
+
 namespace Lame
 {
 	Material* Material::Create(std::shared_ptr<Lame::Context> i_context, std::string i_path)
@@ -13,12 +15,7 @@ namespace Lame
 		size_t fileLength;
 		char *fileData = System::File::LoadBinary(i_path, &fileLength);
 		if (!fileData)
-		{
-			std::stringstream error;
-			error << "Failed to open Material file " << i_path << " is invalid";
-			System::UserOutput::Display(error.str(), "Material loading error");
 			return nullptr;
-		}
 
 		//load the effect
 		uint8_t *effectStringLength = reinterpret_cast<uint8_t*>(fileData);
@@ -31,7 +28,7 @@ namespace Lame
 		}
 
 		//setup the parameters
-		uint8_t *parameterCount = reinterpret_cast<uint8_t*>(effectLocation + *effectStringLength);
+		uint8_t *parameterCount = reinterpret_cast<uint8_t*>(effectLocation + *effectStringLength + 1);
 		Material::Parameter *params = nullptr;
 		uint8_t *currentParamNameLen = nullptr;
 		char *currentParamName = nullptr;
@@ -46,7 +43,7 @@ namespace Lame
 			{
 				effect->CacheConstant(params[x].shader_type, currentParamName, params[x].handle);
 
-				currentParamNameLen = reinterpret_cast<uint8_t*>(currentParamName + *currentParamNameLen);
+				currentParamNameLen = reinterpret_cast<uint8_t*>(currentParamName + *currentParamNameLen + 1);
 				currentParamName = reinterpret_cast<char*>(currentParamNameLen + 1);
 			}
 		}
@@ -62,12 +59,34 @@ namespace Lame
 			return nullptr;
 		}
 
-		//TODO FINISH
+		Material *material = new Material(effect);
+		if (!material)
+		{
+			System::UserOutput::Display("Insufficient memory when creating Material", "Material creation error");
+			delete[] fileData;
+			return nullptr;
+		}
+
+		material->parameters_.assign(params, params + *parameterCount);
+
+		delete[] fileData;
+		return material;
 	}
 
 	bool Material::Bind() const
 	{
 		bool success = effect()->Bind();
+
+		for (size_t x = 0; x < parameters_.size(); x++)
+		{
+			success = success && effect()->SetConstant(
+				parameters_[x].shader_type, 
+				parameters_[x].handle, 
+				parameters_[x].value, 
+				parameters_[x].valueCount
+				);
+			DEBUG_PRINT("%d updating (%f, %f, %f, %f)", x, parameters_[x].value[0], parameters_[x].value[1], parameters_[x].value[2], parameters_[x].value[3]);
+		}
 
 		return success;
 	}

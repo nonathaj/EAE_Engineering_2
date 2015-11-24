@@ -1,0 +1,8 @@
+return
+{
+	effect = "opaque.effect.bin",
+	uniforms = 
+	{
+		{ name = "color_value", value = { 1.0, 0.0, 0.0 }, shader = "fragment" },
+	},
+}

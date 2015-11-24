@@ -13,18 +13,18 @@ namespace Lame
 	public:
 		struct Parameter
 		{
-			Effect::ConstantHandle handle;
-			Effect::Shader shader_type;
 			float value[4];
+			Effect::ConstantHandle handle;
 			uint8_t valueCount;				//number of values to set
+			Effect::Shader shader_type;
 		};
 
+		Material(const std::shared_ptr<Effect>& i_effect_) :effect_(i_effect_) {}
 		static Material* Create(std::shared_ptr<Lame::Context> i_context, std::string i_path);
 
 		bool Bind() const;
 
 		std::shared_ptr<Effect> effect() const { return effect_; }
-		void effect(const std::shared_ptr<Effect>& i_effect_) { effect_ = i_effect_; }
 
 	private:
 		std::shared_ptr<Effect> effect_;

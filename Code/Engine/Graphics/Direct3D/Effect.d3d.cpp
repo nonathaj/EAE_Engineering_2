@@ -181,7 +181,7 @@ namespace Lame
 
 	bool Effect::SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const float *i_val, const size_t &i_val_count)
 	{
-		HRESULT result = get_constant_table(i_shader)->SetFloatArray(context->get_direct3dDevice(), i_constant, i_val, i_val_count);
+		HRESULT result = get_constant_table(i_shader)->SetFloatArray(context->get_direct3dDevice(), i_constant, i_val, static_cast<UINT>(i_val_count));
 		if (!SUCCEEDED(result))
 		{
 			System::UserOutput::Display("DirectX failed to set a constant uniform value.");

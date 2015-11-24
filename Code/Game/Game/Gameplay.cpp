@@ -18,7 +18,8 @@
 
 namespace
 {
-	std::shared_ptr<Engine::GameObject> CreateObject(std::string i_mesh, std::shared_ptr<Lame::Effect> i_effect);
+	std::shared_ptr<Lame::Material> CreateMaterial(std::string i_material);
+	std::shared_ptr<Engine::GameObject> CreateObject(std::string i_mesh, std::shared_ptr<Lame::Material> i_material);
 
 	std::unique_ptr<Lame::Graphics> graphics;
 
@@ -31,8 +32,10 @@ namespace
 	std::shared_ptr<Engine::GameObject> floorObject;
 
 	//effects
-	std::shared_ptr<Lame::Effect> opaque_effect;
-	std::shared_ptr<Lame::Effect> transparent_effect;
+	std::shared_ptr<Lame::Material> green_transparent;
+	std::shared_ptr<Lame::Material> blue_transparent;
+	std::shared_ptr<Lame::Material> red_opaque;
+	std::shared_ptr<Lame::Material> green_opaque;
 
 	void HandleInput(float deltaTime);
 }
@@ -41,15 +44,17 @@ namespace Gameplay
 {
 	bool Initialize(HWND i_window)
 	{
+		using namespace Lame;
+
 		//generate a new graphics object
 		{
-			std::shared_ptr<Lame::Context> context(Lame::Context::Create(i_window));
+			std::shared_ptr<Context> context(Context::Create(i_window));
 			if (!context)	//if we failed to generate a context, shutdown the game
 			{
 				Shutdown();
 				return false;
 			}
-			graphics = std::unique_ptr<Lame::Graphics>(Lame::Graphics::Create(context));
+			graphics = std::unique_ptr<Graphics>(Graphics::Create(context));
 			if (!graphics) //if we failed to generate a graphics object, shutdown the game
 			{
 				Shutdown();
@@ -58,22 +63,27 @@ namespace Gameplay
 		}
 
 		//initial camera position
-		graphics->camera()->gameObject()->position(eae6320::Math::cVector(0, 0, 10));
+		graphics->camera()->gameObject()->position(eae6320::Math::cVector(0, 0, 5));
 
 		//load the effect we are going to use for everything in the game
-		opaque_effect = std::shared_ptr<Lame::Effect>(Lame::Effect::Create(graphics->context(), "data/opaque.effect.bin"));
-		transparent_effect = std::shared_ptr<Lame::Effect>(Lame::Effect::Create(graphics->context(), "data/transparent.effect.bin"));
-		if (!opaque_effect || !transparent_effect)
-			return nullptr;
+		green_transparent = CreateMaterial("data/green_transparent.material.bin");
+		blue_transparent = CreateMaterial("data/blue_transparent.material.bin");
+		red_opaque = CreateMaterial("data/red_opaque.material.bin");
+		green_opaque = CreateMaterial("data/green_opaque.material.bin");
+		if (!green_transparent || !blue_transparent || !red_opaque || !green_opaque)
+		{
+			Shutdown();
+			return false;
+		}
 
 		//Create our renderables
-		transparent_box_foreground = CreateObject("data/box.mesh.bin", transparent_effect);
-		transparent_box_main = CreateObject("data/box.mesh.bin", transparent_effect);
-		box_foreground = CreateObject("data/box.mesh.bin", opaque_effect);
-		box_background = CreateObject("data/box.mesh.bin", opaque_effect);
+		transparent_box_foreground = CreateObject("data/box.mesh.bin", green_transparent);
+		transparent_box_main = CreateObject("data/box.mesh.bin", blue_transparent);
+		box_foreground = CreateObject("data/box.mesh.bin", red_opaque);
+		box_background = CreateObject("data/box.mesh.bin", green_opaque);
 
-		movable = CreateObject("data/triangle_prism.mesh.bin", opaque_effect);
-		floorObject = CreateObject("data/color_floor.mesh.bin", opaque_effect);
+		movable = CreateObject("data/white_triangle_prism.mesh.bin", green_opaque);
+		floorObject = CreateObject("data/white_floor.mesh.bin", red_opaque);
 
 		if (!transparent_box_foreground || !transparent_box_main || 
 			!box_foreground  || !box_background|| !movable || !floorObject)
@@ -81,16 +91,17 @@ namespace Gameplay
 			Shutdown();
 			return false;
 		}
-		floorObject->position(eae6320::Math::cVector(0.0f, -1.0f, 0.0f));
-		transparent_box_foreground->position(eae6320::Math::cVector(3.0f, 0.0f, 0.0f));
-		box_foreground->position(eae6320::Math::cVector(3.0f, -1.0f, -3.0f));
-		box_background->position(eae6320::Math::cVector(3.0f, 1.0f, 3.0f));
-		transparent_box_main->position(eae6320::Math::cVector(-3.0f, 0.0f, -3.0f));
+		floorObject->position(eae6320::Math::cVector(0.0f, -0.5f, 0.0f));
+		transparent_box_foreground->position(eae6320::Math::cVector(1.5f, 0.0f, 0.0f));
+		box_foreground->position(eae6320::Math::cVector(1.5f, -0.5f, -1.5f));
+		box_background->position(eae6320::Math::cVector(1.5f, 0.5f, 1.5f));
+		transparent_box_main->position(eae6320::Math::cVector(-1.5f, 0.0f, -1.5f));
 		
 		std::string error;
 		if (!eae6320::Time::Initialize(&error))
 		{
 			System::UserOutput::Display(error, "Time initialization error");
+			Shutdown();
 			return false;
 		}
 
@@ -117,8 +128,10 @@ namespace Gameplay
 		movable.reset();
 		floorObject.reset();
 
-		transparent_effect.reset();
-		opaque_effect.reset();
+		green_transparent.reset();
+		blue_transparent.reset();
+		red_opaque.reset();
+		green_opaque.reset();
 
 		graphics.reset();
 		return true;
@@ -155,9 +168,24 @@ namespace
 			movableObject->Move(eae6320::Math::cVector(-movementAmount, 0.0f));
 	}
 
-	std::shared_ptr<Engine::GameObject> CreateObject(std::string i_mesh, std::shared_ptr<Lame::Effect> i_effect)
+	std::shared_ptr<Lame::Material> CreateMaterial(std::string i_material)
 	{
-		std::shared_ptr<Lame::Mesh> mesh(Lame::Mesh::Create(graphics->context(), i_mesh));
+		if (!graphics || !graphics->context())
+			return nullptr;
+
+		using namespace Lame;
+		return std::shared_ptr<Material>(Material::Create(graphics->context(), i_material));
+
+	}
+
+	std::shared_ptr<Engine::GameObject> CreateObject(std::string i_mesh, std::shared_ptr<Lame::Material> i_material)
+	{
+		if (!graphics || !graphics->context())
+			return nullptr;
+
+		using namespace Lame;
+
+		std::shared_ptr<Mesh> mesh(Mesh::Create(graphics->context(), i_mesh));
 		if (!mesh)
 			return nullptr;
 
@@ -167,7 +195,7 @@ namespace
 			return nullptr;
 
 		//create the renderable
-		std::shared_ptr<Lame::RenderableComponent> renderable(new Lame::RenderableComponent(go, mesh, i_effect));
+		std::shared_ptr<RenderableComponent> renderable(new RenderableComponent(go, mesh, i_material));
 		if (!renderable)
 			return nullptr;
 

@@ -38,12 +38,7 @@ namespace Lame
 		size_t fileLength;
 		char *fileData = System::File::LoadBinary(i_effect_path, &fileLength);
 		if (!fileData)
-		{
-			std::stringstream error;
-			error << "Failed to open Effect file " << i_effect_path << " is invalid";
-			System::UserOutput::Display(error.str(), "Effect loading error");
 			return nullptr;
-		}
 
 		//find the actual location of our data
 		RenderMask renderMask = *reinterpret_cast<RenderMask*>(fileData);
