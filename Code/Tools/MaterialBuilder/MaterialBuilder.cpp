@@ -64,14 +64,12 @@ bool MaterialBuilder::Build(const std::vector<std::string>&)
 		lua_gettable(luaState, -2);
 
 		//load the parameter data
-		std::string name;
-		Lame::Material::Parameter uniform;
 		if (lua_istable(luaState, -1))
 		{
-			if (!LoadFromTable(luaState, uniform, name))
+			if (!LoadFromTable(luaState, uniforms[x], uniform_names[x]))
 			{
 				std::stringstream error;
-				error << "Invalid value for uniform parameter " << name << " in material";
+				error << "Invalid value for uniform parameter " << uniform_names[x] << " in material";
 				eae6320::OutputErrorMessage(error.str().c_str(), m_path_source);
 				lua_close(luaState);
 				return false;
@@ -85,9 +83,6 @@ bool MaterialBuilder::Build(const std::vector<std::string>&)
 			lua_close(luaState);
 			return false;
 		}
-			
-		uniform_names.push_back(name);
-		uniforms.push_back(uniform);
 
 		lua_pop(luaState, 1);
 	}
@@ -157,7 +152,7 @@ bool MaterialBuilder::Build(const std::vector<std::string>&)
 			}
 
 			out.write(reinterpret_cast<char*>(&strSize), sizeof(strSize));
-			out.write(uniform_names[x].c_str(), strSize);
+			out.write(uniform_names[x].c_str(), strSize + 1);
 		}
 	}
 

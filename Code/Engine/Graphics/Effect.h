@@ -36,6 +36,16 @@ namespace Lame
 	public:
 		enum Shader { Vertex, Fragment, };
 
+#if EAE6320_PLATFORM_D3D
+		//TODO find a way to use D3DXHANDLE here instead of const char* without including more directx headers
+		// we can't forwad declare the D3DXHANDLE (because it's a typedef, not a normal type), without risking screwing it up.
+		typedef const char* ConstantHandle;
+#elif EAE6320_PLATFORM_GL
+		typedef GLint ConstantHandle;
+#else
+#error No typedef for ConstantHandle
+#endif
+
 		static Effect* Create(std::shared_ptr<Context> i_context, const std::string& i_effect_path);
 		static Effect* Create(std::shared_ptr<Context> i_context, const char* i_vertex_path, const char* i_fragment_path, RenderMask i_renderMask);
 		~Effect();
@@ -47,15 +57,12 @@ namespace Lame
 		bool SetViewToScreen(eae6320::Math::cMatrix_transformation i_matrix);
 
 		//Cache a constant for dynamic setting
-		bool CacheConstant(const std::string &i_constant, Engine::HashedString* o_constantId = nullptr);
+		bool CacheConstant(const Shader &i_shader, const std::string &i_constant, ConstantHandle &o_constantId);
 
 		//sets the value of a cache'd constant
-		bool SetConstant(const Engine::HashedString &i_constant, const eae6320::Math::cVector &i_val);
-		bool SetConstant(const Engine::HashedString &i_constant, const eae6320::Math::cMatrix_transformation &i_val);
-		bool SetConstant(const Engine::HashedString &i_constant, const float &i_val);
-		bool SetConstant(const Engine::HashedString &i_constant, const float (&i_val)[2]);
-		bool SetConstant(const Engine::HashedString &i_constant, const float (&i_val)[3]);
-		bool SetConstant(const Engine::HashedString &i_constant, const float (&i_val)[4]);
+		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const eae6320::Math::cVector &i_val);
+		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const eae6320::Math::cMatrix_transformation &i_val);
+		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const float *i_val, const size_t &i_val_count);
 
 		std::shared_ptr<Context> get_context() { return context; }
 		RenderMask render_mask() { return renderMask; }
@@ -72,19 +79,8 @@ namespace Lame
 		bool has_face_cull() { return (renderMask & RenderState::FaceCull) > 0; }
 		void has_face_cull(const bool& i_val) { i_val ? renderMask |= RenderState::FaceCull : renderMask &= ~RenderState::FaceCull; }
 
-
-#if EAE6320_PLATFORM_D3D
-		//TODO find a way to use D3DXHANDLE here instead of const char* without including more directx headers
-		// we can't forwad declare the D3DXHANDLE (because it's a typedef, not a normal type), without risking screwing it up.
-		typedef const char* ConstantHandle;
-#elif EAE6320_PLATFORM_GL
-		typedef GLint ConstantHandle;
-#else
-#error No typedef for ConstantHandle
-#endif
-
 	private:
-		Effect(std::shared_ptr<Context> i_context, RenderMask i_renderMask) : context(i_context), renderMask(i_renderMask), constants() {}
+		Effect(std::shared_ptr<Context> i_context, RenderMask i_renderMask) : context(i_context), renderMask(i_renderMask) {}
 
 		//Do not allow Effects to be managed without pointers
 		Effect();
@@ -99,21 +95,20 @@ namespace Lame
 
 		ID3DXConstantTable *vertexConstantTable;
 		ID3DXConstantTable *fragmentConstantTable;
+
+		ID3DXConstantTable* get_constant_table(const Shader &i_shader) { return i_shader == Shader::Vertex ? vertexConstantTable : fragmentConstantTable; }
 #elif EAE6320_PLATFORM_GL
 		// OpenGL encapsulates a matching vertex shader and fragment shader into what it calls a "program".
 		GLuint programId;
 		GLint positionHandle;
 #endif
-		std::unordered_map<Engine::HashedString, ConstantHandle> constants;
+		ConstantHandle localToWorldUniformId;
+		ConstantHandle worldToViewUniformId;
+		ConstantHandle viewToScreenUniformId;
 
 		static char const * const LocalToWorldUniformName;
-		static const Engine::HashedString LocalToWorldUniformId;
-
 		static char const * const WorldToViewUniformName;
-		static const Engine::HashedString WorldToViewUniformId;
-
 		static char const * const ViewToScreenUniformName;
-		static const Engine::HashedString ViewToScreenUniformId;
 	};
 }
 

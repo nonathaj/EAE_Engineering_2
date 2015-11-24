@@ -60,9 +60,9 @@ namespace Lame
 			effect->vertexConstantTable = vertexConstantTable;
 			effect->fragmentConstantTable = fragmentConstantTable;
 
-			if (!effect->CacheConstant(LocalToWorldUniformName) || 
-				!effect->CacheConstant(WorldToViewUniformName) ||
-				!effect->CacheConstant(ViewToScreenUniformName) )
+			if (!effect->CacheConstant(Shader::Vertex, LocalToWorldUniformName, effect->localToWorldUniformId) ||
+				!effect->CacheConstant(Shader::Vertex, WorldToViewUniformName, effect->worldToViewUniformId) ||
+				!effect->CacheConstant(Shader::Vertex, ViewToScreenUniformName, effect->viewToScreenUniformId))
 			{
 				System::UserOutput::Display("DirectX failed to find all required uniform constants for effect.");
 				delete effect;
@@ -162,36 +162,15 @@ namespace Lame
 		}
 	}
 
-	bool Effect::CacheConstant(const std::string &i_constant, Engine::HashedString* o_constantId)
+	bool Effect::CacheConstant(const Shader &i_shader, const std::string &i_constant, ConstantHandle &o_constantId)
 	{
-		Engine::HashedString hashed(i_constant.c_str());
-		if (o_constantId)
-			*o_constantId = hashed;
-
-		//if we already have this constant cached, we already successfully cached it
-		if (constants.find(hashed) != constants.end())
-			return true;
-
-		D3DXHANDLE handle = vertexConstantTable->GetConstantByName(nullptr, i_constant.c_str());
-		if (!handle)
-			handle = fragmentConstantTable->GetConstantByName(nullptr, i_constant.c_str());
-
-		if (handle)
-			constants[hashed] = handle;
-		return handle != nullptr;
+		o_constantId = get_constant_table(i_shader)->GetConstantByName(nullptr, i_constant.c_str());
+		return o_constantId != nullptr;
 	}
 
-	bool Effect::SetConstant(const Engine::HashedString &i_constant, const eae6320::Math::cVector &i_val)
+	bool Effect::SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const eae6320::Math::cMatrix_transformation &i_val)
 	{
-		auto itr = constants.find(i_constant);
-		if (itr == constants.end())					//fail if we don't have a cache'd version of this constant
-			return false;
-
-		D3DXHANDLE handle = itr->second;
-		HRESULT result = vertexConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, reinterpret_cast<const float*>(&i_val), 3);
-		if (!SUCCEEDED(result))
-			result = fragmentConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, reinterpret_cast<const float*>(&i_val), 3);
-
+		HRESULT result = get_constant_table(i_shader)->SetMatrixTranspose(context->get_direct3dDevice(), i_constant, reinterpret_cast<const D3DXMATRIX*>(&i_val));
 		if (!SUCCEEDED(result))
 		{
 			System::UserOutput::Display("DirectX failed to set a constant uniform value.");
@@ -200,93 +179,9 @@ namespace Lame
 		return true;
 	}
 
-	bool Effect::SetConstant(const Engine::HashedString &i_constant, const eae6320::Math::cMatrix_transformation &i_val)
+	bool Effect::SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const float *i_val, const size_t &i_val_count)
 	{
-		auto itr = constants.find(i_constant);
-		if (itr == constants.end())					//fail if we don't have a cache'd version of this constant
-			return false;
-
-		D3DXHANDLE handle = itr->second;
-		HRESULT result = vertexConstantTable->SetMatrixTranspose(context->get_direct3dDevice(), handle, reinterpret_cast<const D3DXMATRIX*>(&i_val));
-		if(!SUCCEEDED(result))
-			result = fragmentConstantTable->SetMatrixTranspose(context->get_direct3dDevice(), handle, reinterpret_cast<const D3DXMATRIX*>(&i_val));
-
-		if (!SUCCEEDED(result))
-		{
-			System::UserOutput::Display("DirectX failed to set a constant uniform value.");
-			return false;
-		}
-		return true;
-	}
-
-	bool Effect::SetConstant(const Engine::HashedString &i_constant, const float &i_val)
-	{
-		auto itr = constants.find(i_constant);
-		if (itr == constants.end())					//fail if we don't have a cache'd version of this constant
-			return false;
-
-		D3DXHANDLE handle = itr->second;
-		HRESULT result = vertexConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, &i_val, 1);
-		if (!SUCCEEDED(result))
-			result = fragmentConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, &i_val, 1);
-
-		if (!SUCCEEDED(result))
-		{
-			System::UserOutput::Display("DirectX failed to set a constant uniform value.");
-			return false;
-		}
-		return true;
-	}
-
-	bool Effect::SetConstant(const Engine::HashedString &i_constant, const float (&i_val)[2])
-	{
-		auto itr = constants.find(i_constant);
-		if (itr == constants.end())					//fail if we don't have a cache'd version of this constant
-			return false;
-
-		D3DXHANDLE handle = itr->second;
-		HRESULT result = vertexConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, i_val, 2);
-		if (!SUCCEEDED(result))
-			result = fragmentConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, i_val, 2);
-
-		if (!SUCCEEDED(result))
-		{
-			System::UserOutput::Display("DirectX failed to set a constant uniform value.");
-			return false;
-		}
-		return true;
-	}
-
-	bool Effect::SetConstant(const Engine::HashedString &i_constant, const float (&i_val)[3])
-	{
-		auto itr = constants.find(i_constant);
-		if (itr == constants.end())					//fail if we don't have a cache'd version of this constant
-			return false;
-
-		D3DXHANDLE handle = itr->second;
-		HRESULT result = vertexConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, i_val, 3);
-		if (!SUCCEEDED(result))
-			result = fragmentConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, i_val, 3);
-
-		if (!SUCCEEDED(result))
-		{
-			System::UserOutput::Display("DirectX failed to set a constant uniform value.");
-			return false;
-		}
-		return true;
-	}
-
-	bool Effect::SetConstant(const Engine::HashedString &i_constant, const float (&i_val)[4])
-	{
-		auto itr = constants.find(i_constant);
-		if (itr == constants.end())					//fail if we don't have a cache'd version of this constant
-			return false;
-
-		D3DXHANDLE handle = itr->second;
-		HRESULT result = vertexConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, i_val, 4);
-		if (!SUCCEEDED(result))
-			result = fragmentConstantTable->SetFloatArray(context->get_direct3dDevice(), handle, i_val, 4);
-
+		HRESULT result = get_constant_table(i_shader)->SetFloatArray(context->get_direct3dDevice(), i_constant, i_val, i_val_count);
 		if (!SUCCEEDED(result))
 		{
 			System::UserOutput::Display("DirectX failed to set a constant uniform value.");

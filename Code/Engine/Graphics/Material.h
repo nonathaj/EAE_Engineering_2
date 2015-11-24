@@ -19,6 +19,8 @@ namespace Lame
 			uint8_t valueCount;				//number of values to set
 		};
 
+		static Material* Create(std::shared_ptr<Lame::Context> i_context, std::string i_path);
+
 		bool Bind() const;
 
 		std::shared_ptr<Effect> effect() const { return effect_; }
