@@ -24,7 +24,6 @@ namespace System
 
 		void SetCursorVisible(bool visible);
 		bool IsCursorVisible();
-		bool CursorPosition(float& o_x, float& o_y);
 	}
 }
 

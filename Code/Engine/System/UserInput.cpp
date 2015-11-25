@@ -95,22 +95,6 @@ namespace System
 			else
 				return true;
 		}
-
-		bool CursorPosition(float& o_x, float& o_y)
-		{
-			POINT p;
-			if (GetCursorPos(&p))
-			{
-				o_x = p.x;
-				o_y = p.y;
-				return true;
-			}
-			else
-				return true;
-
-			//https://msdn.microsoft.com/en-us/library/ms648389(v=vs.85).aspx
-			//TODO https://msdn.microsoft.com/en-us/library/dd162952%28VS.85%29.aspx
-		}
 	}
 }
 

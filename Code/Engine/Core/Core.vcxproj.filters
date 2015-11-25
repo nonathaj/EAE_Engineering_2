@@ -19,6 +19,7 @@
     <ClInclude Include="eae6320\cVector.h">
       <Filter>eae6320</Filter>
     </ClInclude>
+    <ClInclude Include="EnumMask.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FloatMath.inl" />

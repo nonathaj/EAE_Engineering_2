@@ -17,7 +17,7 @@ bool EffectBuilder::Build(const std::vector<std::string>&)
 	//Data we need
 	////////////////////////////////////////////
 	std::string vertex, fragment;
-	bool transparency, depthTesting, depthWriting, faceCulling;
+	Engine::EnumMask<Lame::RenderState> renderMask;
 
 	////////////////////////////////////////////
 	//Load data from Lua
@@ -43,10 +43,10 @@ bool EffectBuilder::Build(const std::vector<std::string>&)
 
 		vertex = strs["vertex"];
 		fragment = strs["fragment"];
-		transparency = flags["transparency"];
-		depthTesting = flags["depth_test"];
-		depthWriting = flags["depth_write"];
-		faceCulling = flags["face_cull"];
+		renderMask.set(Lame::RenderState::Transparency, flags["transparency"]);
+		renderMask.set(Lame::RenderState::DepthTest, flags["depth_test"]);
+		renderMask.set(Lame::RenderState::DepthWrite, flags["depth_write"]);
+		renderMask.set(Lame::RenderState::FaceCull, flags["face_cull"]);
 	}
 
 	////////////////////////////////////////////
@@ -82,12 +82,6 @@ bool EffectBuilder::Build(const std::vector<std::string>&)
 			eae6320::OutputErrorMessage(error.str().c_str(), m_path_source);
 			return false;
 		}
-
-		Lame::RenderMask renderMask = 0;
-		if (transparency) renderMask |= Lame::RenderState::Transparency;
-		if (depthTesting) renderMask |= Lame::RenderState::DepthTest;
-		if (depthWriting) renderMask |= Lame::RenderState::DepthWrite;
-		if (faceCulling) renderMask |= Lame::RenderState::FaceCull;
 
 		std::ofstream out(m_path_target, std::ofstream::binary);
 		if(!out)

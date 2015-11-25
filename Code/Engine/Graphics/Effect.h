@@ -9,6 +9,7 @@
 #include "../Core/eae6320/cVector.h"
 #include "../Core/eae6320/cMatrix_transformation.h"
 #include "../Core/HashedString.h"
+#include "../Core/EnumMask.h"
 
 #if EAE6320_PLATFORM_D3D
 #include <d3d9.h>
@@ -22,13 +23,13 @@ namespace Lame
 {
 	class Context;
 
-	typedef uint8_t RenderMask;
 	enum RenderState
 	{
-		Transparency	= 1 << 0,
-		DepthTest		= 1 << 1,
-		DepthWrite		= 1 << 2,
-		FaceCull		= 1 << 3,
+		Transparency,
+		DepthTest,
+		DepthWrite,
+		FaceCull,
+		Count
 	};
 
 	class Effect
@@ -47,7 +48,7 @@ namespace Lame
 #endif
 
 		static Effect* Create(std::shared_ptr<Context> i_context, const std::string& i_effect_path);
-		static Effect* Create(std::shared_ptr<Context> i_context, const char* i_vertex_path, const char* i_fragment_path, RenderMask i_renderMask);
+		static Effect* Create(std::shared_ptr<Context> i_context, const char* i_vertex_path, const char* i_fragment_path, Engine::EnumMask<RenderState> i_renderMask);
 		~Effect();
 
 		bool Bind();
@@ -65,22 +66,22 @@ namespace Lame
 		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const float *i_val, const size_t &i_val_count);
 
 		std::shared_ptr<Context> get_context() { return context; }
-		RenderMask render_mask() { return renderMask; }
+		Engine::EnumMask<RenderState> render_mask() { return renderMask; }
 
-		bool has_transparency() { return (renderMask & RenderState::Transparency) > 0; }
-		void has_transparency(const bool& i_val) { i_val ? renderMask |= RenderState::Transparency : renderMask &= ~RenderState::Transparency; }
+		bool has_transparency() { return renderMask.test(RenderState::Transparency); }
+		void has_transparency(const bool& i_val) { renderMask.set(RenderState::Transparency, i_val); }
 
-		bool has_depth_test() { return (renderMask & RenderState::DepthTest) > 0; }
-		void has_depth_test(const bool& i_val) { i_val ? renderMask |= RenderState::DepthTest : renderMask &= ~RenderState::DepthTest; }
+		bool has_depth_test() { return renderMask.test(RenderState::DepthTest); }
+		void has_depth_test(const bool& i_val) { renderMask.set(RenderState::DepthTest, i_val); }
 		
-		bool has_depth_write() { return (renderMask & RenderState::DepthWrite) > 0; }
-		void has_depth_write(const bool& i_val) { i_val ? renderMask |= RenderState::DepthWrite : renderMask &= ~RenderState::DepthWrite; }
+		bool has_depth_write() { return renderMask.test(RenderState::DepthWrite); }
+		void has_depth_write(const bool& i_val) { renderMask.set(RenderState::DepthWrite, i_val); }
 		
-		bool has_face_cull() { return (renderMask & RenderState::FaceCull) > 0; }
-		void has_face_cull(const bool& i_val) { i_val ? renderMask |= RenderState::FaceCull : renderMask &= ~RenderState::FaceCull; }
+		bool has_face_cull() { return renderMask.test(RenderState::FaceCull); }
+		void has_face_cull(const bool& i_val) { renderMask.set(RenderState::FaceCull, i_val); }
 
 	private:
-		Effect(std::shared_ptr<Context> i_context, RenderMask i_renderMask) : context(i_context), renderMask(i_renderMask) {}
+		Effect(std::shared_ptr<Context> i_context, Engine::EnumMask<RenderState> i_renderMask) : context(i_context), renderMask(i_renderMask) {}
 
 		//Do not allow Effects to be managed without pointers
 		Effect();
@@ -88,7 +89,7 @@ namespace Lame
 		Effect& operator=(const Effect &i_mesh);
 
 		std::shared_ptr<Context> context;
-		RenderMask renderMask;
+		Engine::EnumMask<RenderState> renderMask;
 #if EAE6320_PLATFORM_D3D
 		IDirect3DVertexShader9 *vertexShader;
 		IDirect3DPixelShader9 *fragmentShader;

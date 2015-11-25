@@ -22,6 +22,7 @@
     <ClInclude Include="eae6320\cMatrix_transformation.h" />
     <ClInclude Include="eae6320\cQuaternion.h" />
     <ClInclude Include="eae6320\cVector.h" />
+    <ClInclude Include="EnumMask.h" />
     <ClInclude Include="FloatMath.h" />
     <ClInclude Include="HashedString.h" />
     <ClInclude Include="Math.h" />
