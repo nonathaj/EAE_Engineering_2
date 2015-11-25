@@ -4,63 +4,248 @@
 
 #include "LuaHelper.h"
 
+namespace
+{
+	template<typename T>
+	bool TryPeekArray(LuaHelper::LuaStack *stack, std::vector<T>& o_val, int i_index);
+
+	template<typename K, typename V>
+	bool TryPeekDictionary(LuaHelper::LuaStack *stack, std::map<K, V>& o_val, int i_index);
+}
+
 namespace LuaHelper
 {
+	LuaStack* LuaStack::Create(const std::string &i_data_path)
+	{
+		lua_State *state = LoadAssetTable(i_data_path);
+		if (!state)
+			return nullptr;
+		return new LuaStack(state);		
+	}
+
 	//Is there a table at the top of the stack?
-	bool IsTable(lua_State* io_luaStateFrom, int i_index)
+	bool LuaStack::IsTable(int i_index)
 	{
-		return lua_istable(io_luaStateFrom, i_index);
+		return lua_istable(state, i_index);
 	}
 
-	size_t TableLength(lua_State* io_luaState, int i_index)
+	bool LuaStack::IsNumber(int i_index)
 	{
-		return luaL_len(io_luaState, i_index);
+		return lua_isnumber(state, i_index) != 0;
 	}
 
-	size_t DictionaryLength(lua_State* io_luaState, int i_index)
+	bool LuaStack::IsNil(int i_index)
 	{
-		bool success = IsTable(io_luaState);
+		return lua_isnil(state, i_index);
+	}
+
+	bool LuaStack::IsString(int i_index)
+	{
+		return lua_isstring(state, i_index) != 0;
+	}
+
+	bool LuaStack::IsBoolean(int i_index)
+	{
+		return lua_isboolean(state, i_index);
+	}
+
+	size_t LuaStack::TableLength(int i_index)
+	{
+		return luaL_len(state, i_index);
+	}
+
+	size_t LuaStack::DictionaryLength(int i_index)
+	{
+		//TODO this does NOT work
+		bool success = IsTable();
 		if (success)
 		{
 			size_t count = 0;
 			std::string key;
-			Push(io_luaState, nullptr);
-			while (lua_next(io_luaState, -2))	//pushes key, then value on the stack
+			Push(nullptr);
+			while (lua_next(state, -2))	//pushes key, then value on the stack
 			{
-				Pop(io_luaState);		//pop the value
+				Pop();		//pop the value
 				count++;
 			}
+			Pop();	//pop the key
 			return count;
 		}
 		return success;
 	}
 
-	void Pop(lua_State* io_luaState, int i_amount)
+	void LuaStack::Pop(int i_amount)
 	{
-		lua_pop(io_luaState, i_amount);
+		lua_pop(state, i_amount);
 	}
 
-	bool Close(lua_State*& io_luaState)
+	LuaStack::~LuaStack()
 	{
-		if (!io_luaState)
-			return false;
-
-		assert(lua_gettop(io_luaState) == 0);
-
-		lua_close(io_luaState);
-		io_luaState = nullptr;
-		return true;
-	}
-
-	bool SwapTableKey(lua_State* io_luaState)
-	{
-		if (IsTable(io_luaState, -2))
+		if (state)
 		{
-			lua_gettable(io_luaState, -2);
+			lua_close(state);
+			state = nullptr;
+		}
+	}
+
+	bool LuaStack::SwapTableKey(int i_table_index)
+	{
+		if (IsTable(i_table_index))
+		{
+			lua_gettable(state, i_table_index);
 			return true;
 		}
 		return false;
 	}
+
+	////////////////////////////////////
+	// Push Functions
+	////////////////////////////////////
+	void LuaStack::Push(lua_Integer const& i_val)
+	{
+		lua_pushinteger(state, i_val);
+	}
+
+	void LuaStack::Push(const char* i_val)
+	{
+		lua_pushstring(state, i_val);
+	}
+
+	void LuaStack::Push(nullptr_t const& i_val)
+	{
+		lua_pushnil(state);
+	}
+
+	void LuaStack::Push(lua_Number const& i_val)
+	{
+		lua_pushnumber(state, i_val);
+	}
+
+	void LuaStack::Push(lua_Unsigned const& i_val)
+	{
+		lua_pushunsigned(state, i_val);
+	}
+
+	void LuaStack::Push(bool const& i_val)
+	{
+		lua_pushboolean(state, i_val);
+	}
+	////////////////////////////////////
+	////////////////////////////////////
+
+	////////////////////////////////////
+	// Peek Functions
+	////////////////////////////////////
+	bool LuaStack::Peek(lua_Number& o_val, int i_index)
+	{
+		if (IsNumber(i_index))
+		{
+			o_val = lua_tonumber(state, i_index);
+			return true;
+		}
+		return false;
+	}
+
+	bool LuaStack::Peek(std::string& o_val, int i_index)
+	{
+		if (IsString(i_index))
+		{
+			o_val = lua_tostring(state, i_index);
+			return true;
+		}
+		return false;
+	}
+
+	bool LuaStack::Peek(bool& o_val, int i_index)
+	{
+		if (IsBoolean(i_index))
+		{
+			o_val = lua_toboolean(state, i_index) != 0;
+			return true;
+		}
+		return false;
+	}
+
+	bool LuaStack::Peek(lua_Integer& o_val, int i_index)
+	{
+		if (IsNumber(i_index))
+		{
+			o_val = lua_tointeger(state, i_index);
+			return true;
+		}
+		return false;
+	}
+
+	bool LuaStack::Peek(lua_Unsigned & o_val, int i_index)
+	{
+		if (IsNumber(i_index))
+		{
+			o_val = lua_tounsigned(state, i_index);
+			return true;
+		}
+		return false;
+	}
+
+	////////////////////////////////////
+	////////////////////////////////////
+
+	////////////////////////////////////
+	// Pop Array Functions
+	////////////////////////////////////
+
+	bool LuaStack::PeekArray(std::vector<lua_Integer>& o_val, int i_index)
+	{
+		return TryPeekArray(this, o_val, i_index);
+	}
+
+	bool LuaStack::PeekArray(std::vector<std::string>& o_val, int i_index)
+	{
+		return TryPeekArray(this, o_val, i_index);
+	}
+
+	bool LuaStack::PeekArray(std::vector<lua_Number>& o_val, int i_index)
+	{
+		return TryPeekArray(this, o_val, i_index);
+	}
+
+	bool LuaStack::PeekArray(std::vector<lua_Unsigned>& o_val, int i_index)
+	{
+		return TryPeekArray(this, o_val, i_index);
+	}
+
+	////////////////////////////////////
+	////////////////////////////////////
+
+	////////////////////////////////////
+	// Pop Dictionary Functions
+	////////////////////////////////////
+	bool LuaStack::PeekDictionary(std::map<std::string, lua_Integer>& o_val, int i_index)
+	{
+		return TryPeekDictionary(this, o_val, i_index);
+	}
+
+	bool LuaStack::PeekDictionary(std::map<std::string, std::string>& o_val, int i_index)
+	{
+		return TryPeekDictionary(this, o_val, i_index);
+	}
+
+	bool LuaStack::PeekDictionary(std::map<std::string, lua_Number>& o_val, int i_index)
+	{
+		return TryPeekDictionary(this, o_val, i_index);
+	}
+
+	bool LuaStack::PeekDictionary(std::map<std::string, lua_Unsigned>& o_val, int i_index)
+	{
+		return TryPeekDictionary(this, o_val, i_index);
+	}
+
+	bool LuaStack::PeekDictionary(std::map<std::string, bool>& o_val, int i_index)
+	{
+		return TryPeekDictionary(this, o_val, i_index);
+	}
+
+	////////////////////////////////////
+	////////////////////////////////////
 
 	//Loads the lua table file, and generates a lua_State with the return'd table at the top of the stack
 	lua_State* LoadAssetTable(const std::string &i_path, std::function<void(std::string)> error)
@@ -71,8 +256,8 @@ namespace LuaHelper
 		lua_State* luaState = luaL_newstate();
 		if (!luaState)
 		{
-			if(error)
-				error("Failed to create a new Lua state\n");
+			if (error)
+				error("Failed to create a new Lua state");
 			return nullptr;
 		}
 
@@ -83,7 +268,7 @@ namespace LuaHelper
 			if (luaResult != LUA_OK)
 			{
 				wereThereErrors = true;
-				if(error)
+				if (error)
 					error(lua_tostring(luaState, -1));
 				// Pop the error message
 				lua_pop(luaState, 1);
@@ -144,11 +329,11 @@ namespace LuaHelper
 		}
 
 		// If this code is reached the asset file was loaded successfully, and its table is now at index -1
-		if (IsTable(luaState))
+		if (lua_istable(luaState, -1))
 			return luaState;
 
 		// Pop the table
-		//lua_pop(luaState, 1);
+		lua_pop(luaState, 1);
 
 	OnExit:
 
@@ -165,320 +350,41 @@ namespace LuaHelper
 		return nullptr;
 	}
 
-	////////////////////////////////////
-	// Push Functions
-	////////////////////////////////////
-	void Push(lua_State* io_luaState, lua_Integer const& i_val)
+}
+
+namespace
+{
+	template<typename T>
+	bool TryPeekArray(LuaHelper::LuaStack *stack, std::vector<T>& o_val, int i_index)
 	{
-		lua_pushinteger(io_luaState, i_val);
-	}
-
-	void Push(lua_State* io_luaState, std::string const& i_val)
-	{
-		lua_pushstring(io_luaState, i_val.c_str());
-	}
-
-	void Push(lua_State* io_luaState, nullptr_t const& i_val)
-	{
-		lua_pushnil(io_luaState);
-	}
-
-	void Push(lua_State* io_luaState, lua_Number const& i_val)
-	{
-		lua_pushnumber(io_luaState, i_val);
-	}
-
-	void Push(lua_State* io_luaState, lua_Unsigned const& i_val)
-	{
-		lua_pushunsigned(io_luaState, i_val);
-	}
-
-	void Push(lua_State* io_luaState, bool const& i_val)
-	{
-		lua_pushboolean(io_luaState, i_val);
-	}
-	////////////////////////////////////
-	////////////////////////////////////
-
-	////////////////////////////////////
-	// Peek Functions
-	////////////////////////////////////
-	bool Peek(lua_State* io_luaState, lua_Number& o_val)
-	{
-		if (lua_isnumber(io_luaState, -1))
-		{
-			o_val = lua_tonumber(io_luaState, -1);
-			return true;
-		}
-		return false;
-	}
-
-	bool Peek(lua_State* io_luaState, std::string& o_val)
-	{
-		if (lua_isstring(io_luaState, -1))
-		{
-			o_val = lua_tostring(io_luaState, -1);
-			return true;
-		}
-		return false;
-	}
-
-	bool Peek(lua_State* io_luaState, bool& o_val)
-	{
-		if (lua_isboolean(io_luaState, -1))
-		{
-			o_val = lua_toboolean(io_luaState, -1) != 0;
-			return true;
-		}
-		return false;
-	}
-
-	bool Peek(lua_State* io_luaState, lua_Integer& o_val)
-	{
-		if (lua_isnumber(io_luaState, -1))
-		{
-			o_val = lua_tointeger(io_luaState, -1);
-			return true;
-		}
-		return false;
-	}
-
-	bool Peek(lua_State* io_luaState, lua_Unsigned & o_val)
-	{
-		if (lua_isnumber(io_luaState, -1))
-		{
-			o_val = lua_tounsigned(io_luaState, -1);
-			return true;
-		}
-		return false;
-	}
-
-	bool Peek(lua_State* io_luaState, nullptr_t const& i_val)
-	{
-		return lua_isnil(io_luaState, -1);
-	}
-
-	////////////////////////////////////
-	////////////////////////////////////
-
-	////////////////////////////////////
-	// Pop Array Functions
-	////////////////////////////////////
-
-	bool PopArray(lua_State* io_luaState, std::vector<lua_Integer>& o_val)
-	{
-		if (!IsTable(io_luaState))
-		{
-			Pop(io_luaState);
+		if (!stack->IsTable(i_index))
 			return false;
-		}
 
-		lua_Integer item;
-		size_t value_count = TableLength(io_luaState);
-		o_val.reserve(value_count);
+		T item;
+		size_t value_count = stack->TableLength(i_index);
 		for (size_t x = 1; x <= value_count; x++)
 		{
-			Push(io_luaState, static_cast<lua_Unsigned>(x));					//push the key
-			bool found = SwapTableKey(io_luaState) && Peek(io_luaState, item);	//swap for value, and try to get it
-			Pop(io_luaState);													//pop the key
-			if (found)
+			stack->Push(static_cast<lua_Unsigned>(x));					//push the key
+			if(stack->SwapTableKey(i_index - 1) && stack->Peek(item))	//swap for value, and try to get it
 				o_val.push_back(item);
-			else
-				return false;
+			stack->Pop();												//pop the key				
 		}
-		Pop(io_luaState);	//pop the table off the top of the stack
 		return true;
 	}
 
-	bool PopArray(lua_State* io_luaState, std::vector<std::string>& o_val)
+	template<typename K, typename V>
+	bool TryPeekDictionary(LuaHelper::LuaStack *stack, std::map<K, V>& o_val, int i_index)
 	{
-		if (!IsTable(io_luaState))
-		{
-			Pop(io_luaState);
+		if (!stack->IsTable(i_index))
 			return false;
-		}
 
-		std::string item;
-		size_t value_count = TableLength(io_luaState);
-		o_val.reserve(value_count);
-		for (size_t x = 1; x <= value_count; x++)
+		K key;
+		V val;
+		for (stack->Push(nullptr); lua_next(stack->State(), i_index - 1); stack->Pop())
 		{
-			Push(io_luaState, static_cast<lua_Unsigned>(x));					//push the key
-			bool found = SwapTableKey(io_luaState) && Peek(io_luaState, item);	//swap for value, and try to get it
-			Pop(io_luaState);													//pop the key
-			if (found)
-				o_val.push_back(item);
-			else
-				return false;
+			if (stack->Peek(val, -1) && stack->Peek(key, -2))
+				o_val[key] = val;
 		}
-		Pop(io_luaState);	//pop the table off the top of the stack
 		return true;
 	}
-
-	bool PopArray(lua_State* io_luaState, std::vector<lua_Number>& o_val)
-	{
-		if (!IsTable(io_luaState))
-		{
-			Pop(io_luaState);
-			return false;
-		}
-
-		lua_Number item;
-		size_t value_count = TableLength(io_luaState);
-		o_val.reserve(value_count);
-		for (size_t x = 1; x <= value_count; x++)
-		{
-			Push(io_luaState, static_cast<lua_Unsigned>(x));					//push the key
-			bool found = SwapTableKey(io_luaState) && Peek(io_luaState, item);	//swap for value, and try to get it
-			Pop(io_luaState);													//pop the key
-			if (found)
-				o_val.push_back(item);
-			else
-				return false;
-		}
-		Pop(io_luaState);	//pop the table off the top of the stack
-		return true;
-	}
-
-	bool PopArray(lua_State* io_luaState, std::vector<lua_Unsigned>& o_val)
-	{
-		if (!IsTable(io_luaState))
-		{
-			Pop(io_luaState);
-			return false;
-		}
-
-		lua_Unsigned item;
-		size_t value_count = TableLength(io_luaState);
-		o_val.reserve(value_count);
-		for (size_t x = 1; x <= value_count; x++)
-		{
-			Push(io_luaState, static_cast<lua_Unsigned>(x));					//push the key
-			bool found = SwapTableKey(io_luaState) && Peek(io_luaState, item);	//swap for value, and try to get it
-			Pop(io_luaState);													//pop the key
-			if (found)
-				o_val.push_back(item);
-			else
-				return false;
-		}
-		Pop(io_luaState);	//pop the table off the top of the stack
-		return true;
-	}
-
-	////////////////////////////////////
-	////////////////////////////////////
-
-	////////////////////////////////////
-	// Pop Dictionary Functions
-	////////////////////////////////////
-	bool PopDictionary(lua_State* io_luaState, std::map<std::string, lua_Integer>& o_val)
-	{
-		bool success = IsTable(io_luaState);
-		if (success)
-		{
-			std::string key;
-			lua_Integer val;
-			Push(io_luaState, nullptr);
-			while (lua_next(io_luaState, -2))	//pushes key, then value on the stack
-			{
-				bool poppedSuccessfully = Peek(io_luaState, val);
-				Pop(io_luaState);		//pop the value
-				poppedSuccessfully = poppedSuccessfully && Peek(io_luaState, key);
-				Pop(io_luaState);		//pop the key
-				if (poppedSuccessfully)
-					o_val[key] = val;
-				else
-				{
-					success = false;
-					break;
-				}
-			}
-		}
-		Pop(io_luaState);
-		return success;
-	}
-
-	bool PopDictionary(lua_State* io_luaState, std::map<std::string, std::string>& o_val)
-	{
-		bool success = IsTable(io_luaState);
-		if (success)
-		{
-			std::string key;
-			std::string val;
-			Push(io_luaState, nullptr);
-			while (lua_next(io_luaState, -2))	//pushes key, then value on the stack
-			{
-				bool poppedSuccessfully = Peek(io_luaState, val);
-				Pop(io_luaState);		//pop the value
-				poppedSuccessfully = poppedSuccessfully && Peek(io_luaState, key);
-				Pop(io_luaState);		//pop the key
-				if (poppedSuccessfully)
-					o_val[key] = val;
-				else
-				{
-					success = false;
-					break;
-				}
-			}
-		}
-		Pop(io_luaState);
-		return success;
-	}
-
-	bool PopDictionary(lua_State* io_luaState, std::map<std::string, lua_Number>& o_val)
-	{
-		bool success = IsTable(io_luaState);
-		if (success)
-		{
-			std::string key;
-			lua_Number val;
-			Push(io_luaState, nullptr);
-			while (lua_next(io_luaState, -2))	//pushes key, then value on the stack
-			{
-				bool poppedSuccessfully = Peek(io_luaState, val);
-				Pop(io_luaState);		//pop the value
-				poppedSuccessfully = poppedSuccessfully && Peek(io_luaState, key);
-				Pop(io_luaState);		//pop the key
-				if (poppedSuccessfully)
-					o_val[key] = val;
-				else
-				{
-					success = false;
-					break;
-				}
-			}
-		}
-		Pop(io_luaState);
-		return success;
-	}
-
-	bool PopDictionary(lua_State* io_luaState, std::map<std::string, lua_Unsigned>& o_val)
-	{
-		bool success = IsTable(io_luaState);
-		if (success)
-		{
-			std::string key;
-			lua_Unsigned val;
-			Push(io_luaState, nullptr);
-			while (lua_next(io_luaState, -2))	//pushes key, then value on the stack
-			{
-				bool poppedSuccessfully = Peek(io_luaState, val);
-				Pop(io_luaState);		//pop the value
-				poppedSuccessfully = poppedSuccessfully && Peek(io_luaState, key);
-				Pop(io_luaState);		//pop the key
-				if (poppedSuccessfully)
-					o_val[key] = val;
-				else
-				{
-					success = false;
-					break;
-				}
-			}
-		}
-		Pop(io_luaState);
-		return success;
-	}
-
-	////////////////////////////////////
-	////////////////////////////////////
 }
