@@ -171,9 +171,6 @@ namespace Lame
 		{
 		case 0:
 			return true;
-		case 1:
-			glUniform1fv(i_constant, 1, i_val);
-			break;
 		case 2:
 			glUniform2fv(i_constant, 1, i_val);
 			break;
@@ -183,6 +180,7 @@ namespace Lame
 		case 4:
 			glUniform4fv(i_constant, 1, i_val);
 			break;
+		case 1: 
 		default:
 			glUniform1fv(i_constant, i_val_count, i_val);
 		}
@@ -191,7 +189,7 @@ namespace Lame
 		if (errorCode != GL_NO_ERROR)
 		{
 			std::stringstream errorMessage;
-			errorMessage << "OpenGL failed to set a constant uniform value: " << reinterpret_cast<const char*>(gluErrorString(errorCode));
+			errorMessage << "OpenGL failed to set a constant uniform value: " << reinterpret_cast<const char*>(gluErrorString(errorCode)) << " (" << i_constant << ")";
 			System::UserOutput::Display(errorMessage.str());
 			return false;
 		}

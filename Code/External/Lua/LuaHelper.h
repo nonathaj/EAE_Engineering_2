@@ -30,7 +30,6 @@ namespace LuaHelper
 
 		//Gets the array length of the table at the top of the stack
 		size_t TableLength(int i_index = -1);
-		size_t DictionaryLength(int i_index = -1);
 
 		//Pushes a value on top of the lua stack
 		void Push(lua_Integer const& i_val);
@@ -52,13 +51,13 @@ namespace LuaHelper
 		//Swaps a key at the top of the stack with it's value in the table on the stack
 		bool SwapTableKey(int i_table_index = -2);
 
-		//Gets the values in an array on the stack, fails if the index is not a table
+		//Gets the values from an array on the stack, fails if the index is not a table
 		bool PeekArray(std::vector<lua_Integer>& o_val, int i_index = -1);
 		bool PeekArray(std::vector<std::string>& o_val, int i_index = -1);
 		bool PeekArray(std::vector<lua_Number>& o_val, int i_index = -1);
 		bool PeekArray(std::vector<lua_Unsigned>& o_val, int i_index = -1);
 
-		//Gets a dictionary from the top of the stack, with the given index key, and pops it off (item is ALWAYS popped off, even if failure)
+		//Gets the values from a dictionary on the stack, fails if the index is not a table
 		bool PeekDictionary(std::map<std::string, lua_Integer>& o_val, int i_index = -1);
 		bool PeekDictionary(std::map<std::string, std::string>& o_val, int i_index = -1);
 		bool PeekDictionary(std::map<std::string, lua_Number>& o_val, int i_index = -1);

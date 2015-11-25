@@ -37,6 +37,7 @@ bool EffectBuilder::Build(const std::vector<std::string>&)
 		if (!dataReadInSuccessfully)
 		{
 			eae6320::OutputErrorMessage("Failed to read lua data from file.", m_path_source);
+			delete[] stack;
 			return false;
 		}
 

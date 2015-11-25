@@ -39,7 +39,15 @@ namespace Lame
 			//cache each parameter
 			for (size_t x = 0; x < *parameterCount; x++)
 			{
-				effect->CacheConstant(params[x].shader_type, currentParamName, params[x].handle);
+				if (!effect->CacheConstant(params[x].shader_type, currentParamName, params[x].handle))
+				{
+					std::stringstream error;
+					error << "Failed to cache uniform constant handle \"" << currentParamName << "\" in material "
+						<< i_path;
+					System::UserOutput::Display(error.str(), "Material loading error");
+					delete[] fileData;
+					return nullptr;
+				}
 
 				currentParamNameLen = reinterpret_cast<uint8_t*>(currentParamName + *currentParamNameLen + 1);
 				currentParamName = reinterpret_cast<char*>(currentParamNameLen + 1);

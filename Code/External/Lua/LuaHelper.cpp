@@ -54,26 +54,6 @@ namespace LuaHelper
 		return luaL_len(state, i_index);
 	}
 
-	size_t LuaStack::DictionaryLength(int i_index)
-	{
-		//TODO this does NOT work
-		bool success = IsTable();
-		if (success)
-		{
-			size_t count = 0;
-			std::string key;
-			Push(nullptr);
-			while (lua_next(state, -2))	//pushes key, then value on the stack
-			{
-				Pop();		//pop the value
-				count++;
-			}
-			Pop();	//pop the key
-			return count;
-		}
-		return success;
-	}
-
 	void LuaStack::Pop(int i_amount)
 	{
 		lua_pop(state, i_amount);
