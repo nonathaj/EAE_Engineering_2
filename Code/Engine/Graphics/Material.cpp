@@ -28,17 +28,23 @@ namespace Lame
 		//setup the parameters
 		uint8_t *parameterCount = reinterpret_cast<uint8_t*>(effectLocation + *effectStringLength + 1);
 		Material::Parameter *params = nullptr;
-		uint8_t *currentParamNameLen = nullptr;
 		char *currentParamName = nullptr;
+		size_t uniform_name_length = 0;
 		if (*parameterCount > 0)
 		{
 			params = reinterpret_cast<Material::Parameter*>(parameterCount + 1);
-			currentParamNameLen = reinterpret_cast<uint8_t*>(params + *parameterCount);
-			currentParamName = reinterpret_cast<char*>(currentParamNameLen + 1);
+			currentParamName = reinterpret_cast<char*>(params + *parameterCount);
 
 			//cache each parameter
 			for (size_t x = 0; x < *parameterCount; x++)
 			{
+#if EAE6320_PLATFORM_D3D
+				uniform_name_length = static_cast<size_t>(reinterpret_cast<uintptr_t>(params[x].handle));
+#elif EAE6320_PLATFORM_GL
+				uniform_name_length = static_cast<size_t>(params[x].handle);
+#else
+#error Platform must define a conversion from params[x].handle to uniform_name_length
+#endif
 				if (!effect->CacheConstant(params[x].shader_type, currentParamName, params[x].handle))
 				{
 					std::stringstream error;
@@ -49,14 +55,13 @@ namespace Lame
 					return nullptr;
 				}
 
-				currentParamNameLen = reinterpret_cast<uint8_t*>(currentParamName + *currentParamNameLen + 1);
-				currentParamName = reinterpret_cast<char*>(currentParamNameLen + 1);
+				currentParamName = reinterpret_cast<char*>(currentParamName + uniform_name_length + 1);
 			}
 		}
 
 		//if our data extends beyond the size of the file, fail
 		if (reinterpret_cast<void*>(parameterCount) > fileData + fileLength || 
-			reinterpret_cast<void*>(currentParamNameLen) > fileData + fileLength)
+			reinterpret_cast<void*>(currentParamName) > fileData + fileLength)
 		{
 			std::stringstream error;
 			error << "Loaded data for material " << i_path << " is invalid";

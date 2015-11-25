@@ -208,27 +208,45 @@ bool MaterialBuilder::Build(const std::vector<std::string>&)
 
 		if (uniforms.size() > 0)
 		{
+			for (size_t x = 0; x < uniforms.size(); x++)
+			{
+#if EAE6320_PLATFORM_D3D
+				uniforms[x].handle = reinterpret_cast<char*>(static_cast<uintptr_t>(uniform_names[x].size()));
+
+				//warn about parameter name string length being too long
+				if (uniform_names[x].size() > std::numeric_limits<uintptr_t>::max())
+				{
+					std::stringstream error;
+					error << "Length of parameter name (" << uniform_names[x] << ") for material "
+						<< m_path_source << " is greater than " << std::numeric_limits<uintptr_t>::max() << " (actual value="
+						<< uniform_names[x].size() << ")";
+					eae6320::OutputErrorMessage(error.str().c_str(), m_path_source);
+					return false;
+				}
+#elif EAE6320_PLATFORM_GL
+				uniforms[x].handle = static_cast<Lame::Effect::ConstantHandle>(uniform_names[x].size());
+
+				//warn about parameter name string length being too long
+				if (uniform_names[x].size() > std::numeric_limits<Lame::Effect::ConstantHandle>::max())
+				{
+					std::stringstream error;
+					error << "Length of parameter name (" << uniform_names[x] << ") for material "
+						<< m_path_source << " is greater than " << std::numeric_limits<Lame::Effect::ConstantHandle>::max() << " (actual value="
+						<< uniform_names[x].size() << ")";
+					eae6320::OutputErrorMessage(error.str().c_str(), m_path_source);
+					return false;
+				}
+#else
+#error Platform undefined for setting the uniform handle size
+#endif
+			}
+
 			//parameter values
 			out.write(reinterpret_cast<char*>(uniforms.data()), sizeof(uniforms.data()[0]) * uniforms.size());
 
 			//parameter names
 			for (size_t x = 0; x < uniforms.size(); x++)
-			{
-				uint8_t strSize = static_cast<uint8_t>(uniform_names[x].size());
-				//warn about parameter name string length being too long
-				if (effectLocation.length() > std::numeric_limits<uint8_t>::max())
-				{
-					std::stringstream error;
-					error << "Length of parameter name (" << uniform_names[x] << ") for material "
-						<< m_path_source << " is greater than " << sizeof(strSize) << " (actual value="
-						<< uniform_names[x].size() << ")";
-					eae6320::OutputErrorMessage(error.str().c_str(), m_path_source);
-					return false;
-				}
-
-				out.write(reinterpret_cast<char*>(&strSize), sizeof(strSize));
-				out.write(uniform_names[x].c_str(), strSize + 1);
-			}
+				out.write(uniform_names[x].c_str(), uniform_names[x].size() + 1);
 		}
 
 		out.close();
