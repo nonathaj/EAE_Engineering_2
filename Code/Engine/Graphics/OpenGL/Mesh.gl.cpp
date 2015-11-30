@@ -11,6 +11,8 @@
 #include "../../System/UserOutput.h"
 #include "../../../External/OpenGlExtensions/OpenGlExtensions.h"
 
+#include "../../System/Console.h"
+
 namespace Lame
 {
 	Mesh::Mesh(size_t i_vertex_count, size_t i_index_count, std::shared_ptr<Context> i_context) :
@@ -159,7 +161,7 @@ namespace Lame
 					const GLenum errorCode = glGetError();
 					if (errorCode == GL_NO_ERROR)
 					{
-						offset = reinterpret_cast<GLvoid*>(reinterpret_cast<uint8_t*>(offset) + (elementCount * sizeof(float)));
+						offset = reinterpret_cast<GLvoid*>(reinterpret_cast<float*>(offset) + elementCount);
 					}
 					else
 					{
@@ -196,7 +198,7 @@ namespace Lame
 					const GLenum errorCode = glGetError();
 					if (errorCode == GL_NO_ERROR)
 					{
-						offset = reinterpret_cast<GLvoid*>(reinterpret_cast<float*>(offset) + (elementCount * sizeof(float)));
+						offset = reinterpret_cast<GLvoid*>(reinterpret_cast<float*>(offset) + elementCount);
 					}
 					else
 					{
@@ -238,7 +240,7 @@ namespace Lame
 					const GLenum errorCode = glGetError();
 					if (errorCode == GL_NO_ERROR)
 					{
-						offset = reinterpret_cast<GLvoid*>(reinterpret_cast<uint8_t*>(offset) + (elementCount * sizeof(uint8_t)));
+						offset = reinterpret_cast<GLvoid*>(reinterpret_cast<uint8_t*>(offset) + elementCount);
 					}
 					else
 					{

@@ -229,7 +229,7 @@ namespace Lame
 		if (errorCode != GL_NO_ERROR)
 		{
 			std::stringstream errorMessage;
-			errorMessage << "OpenGL texture unit " << i_index << " to sampler uniform: " <<
+			errorMessage << "OpenGL failed to assign texture unit " << i_index << " to sampler uniform: " <<
 				reinterpret_cast<const char*>(gluErrorString(errorCode));
 			System::UserOutput::Display(errorMessage.str());
 			return false;
