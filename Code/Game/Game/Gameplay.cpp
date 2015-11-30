@@ -19,7 +19,8 @@
 namespace
 {
 	std::shared_ptr<Lame::Material> CreateMaterial(std::string i_material);
-	std::shared_ptr<Engine::GameObject> CreateObject(std::string i_mesh, std::shared_ptr<Lame::Material> i_material);
+	std::shared_ptr<Lame::Mesh> CreateMesh(std::string i_mesh);
+	std::shared_ptr<Engine::GameObject> CreateRenderableObject(std::shared_ptr<Lame::Mesh> i_mesh, std::shared_ptr<Lame::Material> i_material);
 
 	std::unique_ptr<Lame::Graphics> graphics;
 
@@ -38,7 +39,7 @@ namespace
 	std::shared_ptr<Engine::GameObject> box4;
 	std::shared_ptr<Engine::GameObject> box5;
 
-	//effects
+	//materials
 	std::shared_ptr<Lame::Material> green_transparent;
 	std::shared_ptr<Lame::Material> red_opaque;
 	std::shared_ptr<Lame::Material> green_opaque;
@@ -46,6 +47,12 @@ namespace
 	std::shared_ptr<Lame::Material> eae6320Mat;
 	std::shared_ptr<Lame::Material> alphaMat;
 	std::shared_ptr<Lame::Material> notalphaMat;
+
+	//meshes
+	std::shared_ptr<Lame::Mesh> box;
+	std::shared_ptr<Lame::Mesh> square;
+	std::shared_ptr<Lame::Mesh> triangularPrism;
+	std::shared_ptr<Lame::Mesh> floorMesh;
 
 	void HandleInput(float deltaTime);
 }
@@ -75,7 +82,7 @@ namespace Gameplay
 		//initial camera position
 		graphics->camera()->gameObject()->position(eae6320::Math::cVector(0, 0, 5));
 
-		//load the effect we are going to use for everything in the game
+		//Create our Materials
 		green_transparent = CreateMaterial("data/green_transparent.material.bin");
 		red_opaque = CreateMaterial("data/red_opaque.material.bin");
 		green_opaque = CreateMaterial("data/green_opaque.material.bin");
@@ -88,24 +95,35 @@ namespace Gameplay
 			return false;
 		}
 
+		//Create our Meshes
+		box = CreateMesh("data/box.mesh.bin");
+		square = CreateMesh("data/square.mesh.bin");
+		triangularPrism = CreateMesh("data/white_triangle_prism.mesh.bin");
+		floorMesh = CreateMesh("data/white_floor.mesh.bin");
+		if (!box || !square || !triangularPrism || !floorMesh)
+		{
+			Shutdown();
+			return false;
+		}
+
 		//Create our renderables
-		logo1 = CreateObject("data/square.mesh.bin", green_transparent);
-		box1 = CreateObject("data/box.mesh.bin", green_transparent);
+		logo1 = CreateRenderableObject(square, green_transparent);
+		box1 = CreateRenderableObject(box, green_transparent);
 
-		logo2 = CreateObject("data/square.mesh.bin", green_opaque);
-		box2 = CreateObject("data/box.mesh.bin", green_opaque);
+		logo2 = CreateRenderableObject(square, green_opaque);
+		box2 = CreateRenderableObject(box, green_opaque);
 
-		logo3 = CreateObject("data/square.mesh.bin", eae6320Mat);
-		box3 = CreateObject("data/box.mesh.bin", eae6320Mat);
+		logo3 = CreateRenderableObject(square, eae6320Mat);
+		box3 = CreateRenderableObject(box, eae6320Mat);
 
-		logo4 = CreateObject("data/square.mesh.bin", notalphaMat);
-		box4 = CreateObject("data/box.mesh.bin", notalphaMat);
+		logo4 = CreateRenderableObject(square, notalphaMat);
+		box4 = CreateRenderableObject(box, notalphaMat);
 
-		logo5 = CreateObject("data/square.mesh.bin", eae6320Mat);
-		box5 = CreateObject("data/box.mesh.bin", eae6320Mat);
+		logo5 = CreateRenderableObject(square, green_transparent);
+		box5 = CreateRenderableObject(box, green_transparent);
 
-		movable = CreateObject("data/white_triangle_prism.mesh.bin", green_opaque);
-		floorObject = CreateObject("data/white_floor.mesh.bin", red_opaque);
+		movable = CreateRenderableObject(triangularPrism, green_opaque);
+		floorObject = CreateRenderableObject(floorMesh, red_opaque);
 
 		if (!movable || !floorObject ||
 			!logo1 || !logo2 || !logo3 || !logo4 || !logo5 ||
@@ -128,8 +146,8 @@ namespace Gameplay
 		logo4->position(eae6320::Math::cVector(1.0f, 0.5f, 1.5f));
 		box4->position(eae6320::Math::cVector(1.0f, -0.5f, 1.5f));
 
-		logo5->position(eae6320::Math::cVector(15.0f, 1.5f, 0.5f));
-		box5->position(eae6320::Math::cVector(15.0f, -1.5f, 0.5f));
+		logo5->position(eae6320::Math::cVector(2.0f, 0.5f, 1.5f));
+		box5->position(eae6320::Math::cVector(2.0f, -0.5f, 1.5f));
 
 		std::string error;
 		if (!eae6320::Time::Initialize(&error))
@@ -175,6 +193,11 @@ namespace Gameplay
 		eae6320Mat.reset();
 		alphaMat.reset();
 
+		box.reset();
+		square.reset();
+		triangularPrism.reset();
+		floorMesh.reset();
+
 		graphics.reset();
 		return true;
 	}
@@ -219,19 +242,23 @@ namespace
 
 		using namespace Lame;
 		return std::shared_ptr<Material>(Material::Create(graphics->context(), i_material));
-
 	}
 
-	std::shared_ptr<Engine::GameObject> CreateObject(std::string i_mesh, std::shared_ptr<Lame::Material> i_material)
+	std::shared_ptr<Lame::Mesh> CreateMesh(std::string i_mesh)
 	{
 		if (!graphics || !graphics->context())
 			return nullptr;
 
 		using namespace Lame;
+		return std::shared_ptr<Mesh>(Mesh::Create(graphics->context(), i_mesh));
+	}
 
-		std::shared_ptr<Mesh> mesh(Mesh::Create(graphics->context(), i_mesh));
-		if (!mesh)
+	std::shared_ptr<Engine::GameObject> CreateRenderableObject(std::shared_ptr<Lame::Mesh> i_mesh, std::shared_ptr<Lame::Material> i_material)
+	{
+		if (!graphics || !graphics->context() || !i_mesh || !i_material)
 			return nullptr;
+
+		using namespace Lame;
 
 		//create the gameObject
 		std::shared_ptr<Engine::GameObject> go(new Engine::GameObject());
@@ -239,7 +266,7 @@ namespace
 			return nullptr;
 
 		//create the renderable
-		std::shared_ptr<RenderableComponent> renderable(new RenderableComponent(go, mesh, i_material));
+		std::shared_ptr<RenderableComponent> renderable(new RenderableComponent(go, i_mesh, i_material));
 		if (!renderable)
 			return nullptr;
 
