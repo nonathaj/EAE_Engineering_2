@@ -119,8 +119,8 @@ namespace Gameplay
 		logo4 = CreateRenderableObject(square, notalphaMat);
 		box4 = CreateRenderableObject(box, notalphaMat);
 
-		logo5 = CreateRenderableObject(square, green_transparent);
-		box5 = CreateRenderableObject(box, green_transparent);
+		logo5 = CreateRenderableObject(square, alphaMat);
+		box5 = CreateRenderableObject(box, alphaMat);
 
 		movable = CreateRenderableObject(triangularPrism, green_opaque);
 		floorObject = CreateRenderableObject(floorMesh, red_opaque);

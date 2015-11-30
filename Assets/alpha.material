@@ -3,8 +3,8 @@ return
 	effect = "transparent.effect.bin",
 	uniforms = 
 	{
-		{ name = "base_texture", texture = "rock.DDS", shader = "fragment" },
-		{ name = "color_value", value = { 0, 1, 0 }, shader = "fragment" },
-		{ name = "alpha_value", value = { 0.2 }, shader = "fragment" },
+		{ name = "base_texture", texture = "alpha.DDS", shader = "fragment" },
+		{ name = "color_value", value = { 1, 1, 1 }, shader = "fragment" },
+		{ name = "alpha_value", value = { 1 }, shader = "fragment" },
 	},
 }

@@ -53,9 +53,7 @@ namespace Lame
 
 		//render all the transparent objects on top of the opaque ones
 		for (size_t x = 0; x < transparent.size(); x++)
-		{
-			success = renderables_[x]->Render(worldToView, viewToScreen) && success;
-		}
+			success = transparent[x]->Render(worldToView, viewToScreen) && success;
 
 		success = context()->EndFrame() && success;
 		return success;
