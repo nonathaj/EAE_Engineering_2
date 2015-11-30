@@ -82,7 +82,7 @@ namespace
 				{
 					std::string windowsErrorMessage(GetLastWindowsError());
 					std::stringstream errorMessage;
-					errorMessage << "Windows failed to open the texture file: " << windowsErrorMessage;
+					errorMessage << "Windows failed to open the texture file \"" << i_path << "\": " << windowsErrorMessage;
 					*o_errorMessage = errorMessage.str();
 				}
 				goto OnExit;
@@ -104,7 +104,7 @@ namespace
 				{
 					std::string windowsErrorMessage(GetLastWindowsError());
 					std::stringstream errorMessage;
-					errorMessage << "Windows failed to get the size of the texture file: " << windowsErrorMessage;
+					errorMessage << "Windows failed to get the size of the texture file \"" << i_path << "\": " << windowsErrorMessage;
 					*o_errorMessage = errorMessage.str();
 				}
 				goto OnExit;
@@ -125,7 +125,7 @@ namespace
 				{
 					std::string windowsErrorMessage(GetLastWindowsError());
 					std::stringstream errorMessage;
-					errorMessage << "Windows failed to read the contents of the texture file: " << windowsErrorMessage;
+					errorMessage << "Windows failed to read the contents of the texture file \"" << i_path << "\": " << windowsErrorMessage;
 					*o_errorMessage = errorMessage.str();
 				}
 				goto OnExit;

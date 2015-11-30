@@ -24,18 +24,28 @@ namespace
 	std::unique_ptr<Lame::Graphics> graphics;
 
 	//gameobject
-	std::shared_ptr<Engine::GameObject> transparent_box_foreground;
-	std::shared_ptr<Engine::GameObject> transparent_box_main;
-	std::shared_ptr<Engine::GameObject> box_background;
-	std::shared_ptr<Engine::GameObject> box_foreground;
 	std::shared_ptr<Engine::GameObject> movable;
 	std::shared_ptr<Engine::GameObject> floorObject;
 
+	std::shared_ptr<Engine::GameObject> logo1;
+	std::shared_ptr<Engine::GameObject> logo2;
+	std::shared_ptr<Engine::GameObject> logo3;
+	std::shared_ptr<Engine::GameObject> logo4;
+	std::shared_ptr<Engine::GameObject> logo5;
+	std::shared_ptr<Engine::GameObject> box1;
+	std::shared_ptr<Engine::GameObject> box2;
+	std::shared_ptr<Engine::GameObject> box3;
+	std::shared_ptr<Engine::GameObject> box4;
+	std::shared_ptr<Engine::GameObject> box5;
+
 	//effects
 	std::shared_ptr<Lame::Material> green_transparent;
-	std::shared_ptr<Lame::Material> blue_transparent;
 	std::shared_ptr<Lame::Material> red_opaque;
 	std::shared_ptr<Lame::Material> green_opaque;
+
+	std::shared_ptr<Lame::Material> eae6320Mat;
+	std::shared_ptr<Lame::Material> alphaMat;
+	std::shared_ptr<Lame::Material> notalphaMat;
 
 	void HandleInput(float deltaTime);
 }
@@ -67,36 +77,60 @@ namespace Gameplay
 
 		//load the effect we are going to use for everything in the game
 		green_transparent = CreateMaterial("data/green_transparent.material.bin");
-		blue_transparent = CreateMaterial("data/blue_transparent.material.bin");
 		red_opaque = CreateMaterial("data/red_opaque.material.bin");
 		green_opaque = CreateMaterial("data/green_opaque.material.bin");
-		if (!green_transparent || !blue_transparent || !red_opaque || !green_opaque)
+		eae6320Mat = CreateMaterial("data/eae6320.material.bin");
+		alphaMat = CreateMaterial("data/alpha.material.bin");
+		notalphaMat = CreateMaterial("data/notalpha.material.bin");
+		if (!green_transparent || !red_opaque || !green_opaque || !eae6320Mat || !alphaMat || !notalphaMat)
 		{
 			Shutdown();
 			return false;
 		}
 
 		//Create our renderables
-		transparent_box_foreground = CreateObject("data/box.mesh.bin", green_transparent);
-		transparent_box_main = CreateObject("data/box.mesh.bin", blue_transparent);
-		box_foreground = CreateObject("data/box.mesh.bin", red_opaque);
-		box_background = CreateObject("data/box.mesh.bin", green_opaque);
+		logo1 = CreateObject("data/square.mesh.bin", green_transparent);
+		box1 = CreateObject("data/box.mesh.bin", green_transparent);
+
+		logo2 = CreateObject("data/square.mesh.bin", green_opaque);
+		box2 = CreateObject("data/box.mesh.bin", green_opaque);
+
+		logo3 = CreateObject("data/square.mesh.bin", eae6320Mat);
+		box3 = CreateObject("data/box.mesh.bin", eae6320Mat);
+
+		logo4 = CreateObject("data/square.mesh.bin", notalphaMat);
+		box4 = CreateObject("data/box.mesh.bin", notalphaMat);
+
+		logo5 = CreateObject("data/square.mesh.bin", eae6320Mat);
+		box5 = CreateObject("data/box.mesh.bin", eae6320Mat);
 
 		movable = CreateObject("data/white_triangle_prism.mesh.bin", green_opaque);
 		floorObject = CreateObject("data/white_floor.mesh.bin", red_opaque);
 
-		if (!transparent_box_foreground || !transparent_box_main || 
-			!box_foreground  || !box_background|| !movable || !floorObject)
+		if (!movable || !floorObject ||
+			!logo1 || !logo2 || !logo3 || !logo4 || !logo5 ||
+			!box1 || !box2 || !box3 || !box4 || !box5 )
 		{
 			Shutdown();
 			return false;
 		}
-		floorObject->position(eae6320::Math::cVector(0.0f, -0.5f, 0.0f));
-		transparent_box_foreground->position(eae6320::Math::cVector(1.5f, 0.0f, 0.0f));
-		box_foreground->position(eae6320::Math::cVector(1.5f, -0.5f, -1.5f));
-		box_background->position(eae6320::Math::cVector(1.5f, 0.5f, 1.5f));
-		transparent_box_main->position(eae6320::Math::cVector(-1.5f, 0.0f, -1.5f));
-		
+		floorObject->position(eae6320::Math::cVector(0.0f, -1.0f, 0.0f));
+
+		logo1->position(eae6320::Math::cVector(-2.0f, 0.5f, 1.5f));
+		box1->position(eae6320::Math::cVector(-2.0f, -0.5f, 1.5f));
+
+		logo2->position(eae6320::Math::cVector(-1.0f, 0.5f, 1.5f));
+		box2->position(eae6320::Math::cVector(-1.0f, -0.5f, 1.5f));
+
+		logo3->position(eae6320::Math::cVector(0.0f, 0.5f, 1.5f));
+		box3->position(eae6320::Math::cVector(0.0f, -0.5f, 1.5f));
+
+		logo4->position(eae6320::Math::cVector(1.0f, 0.5f, 1.5f));
+		box4->position(eae6320::Math::cVector(1.0f, -0.5f, 1.5f));
+
+		logo5->position(eae6320::Math::cVector(15.0f, 1.5f, 0.5f));
+		box5->position(eae6320::Math::cVector(15.0f, -1.5f, 0.5f));
+
 		std::string error;
 		if (!eae6320::Time::Initialize(&error))
 		{
@@ -121,17 +155,25 @@ namespace Gameplay
 
 	bool Shutdown()
 	{
-		transparent_box_foreground.reset();
-		transparent_box_main.reset();
-		box_background.reset();
-		box_foreground.reset();
+		logo1.reset();
+		logo2.reset();
+		logo3.reset();
+		logo4.reset();
+		logo5.reset();
+		box1.reset();
+		box2.reset();
+		box3.reset();
+		box4.reset();
+		box5.reset();
+
 		movable.reset();
 		floorObject.reset();
 
 		green_transparent.reset();
-		blue_transparent.reset();
 		red_opaque.reset();
 		green_opaque.reset();
+		eae6320Mat.reset();
+		alphaMat.reset();
 
 		graphics.reset();
 		return true;
@@ -145,8 +187,10 @@ namespace
 		using namespace System::UserInput;
 
 		float movementAmount = 3.0f * deltaTime;
-
-		std::shared_ptr<Engine::GameObject> movableObject = graphics->camera()->gameObject();
+		std::shared_ptr<Engine::GameObject> movableObject;
+		
+		//move the camera
+		movableObject = graphics->camera()->gameObject();
 		if (Keyboard::Pressed(Keyboard::W))						//forward
 			movableObject->Move(eae6320::Math::cVector(0.0f, 0.0f, -movementAmount));
 		if (Keyboard::Pressed(Keyboard::S))						//backward
@@ -156,7 +200,7 @@ namespace
 		if (Keyboard::Pressed(Keyboard::A))						//left
 			movableObject->Move(eae6320::Math::cVector(-movementAmount, 0.0f, 0.0f));
 
-
+		//move the object
 		movableObject = movable;
 		if (Keyboard::Pressed(Keyboard::I))						//up
 			movableObject->Move(eae6320::Math::cVector(0.0f, movementAmount));

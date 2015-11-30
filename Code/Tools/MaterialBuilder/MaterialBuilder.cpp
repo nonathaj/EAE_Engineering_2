@@ -211,10 +211,17 @@ bool MaterialBuilder::Build(const std::vector<std::string>&)
 		for (size_t x = 0; x < uniforms.size(); x++)
 		{
 			//append the relative built assets folder
-			uniform_texture_names[x] = relativeFolder + uniform_texture_names[x];
+			if (uniform_texture_names[x].size() > 0)
+			{
+				uniform_texture_names[x] = relativeFolder + uniform_texture_names[x];
 
-			//fill the texture slot with the texture name length
-			uniforms[x].texture = reinterpret_cast<Lame::Texture*>(static_cast<uintptr_t>(uniform_texture_names[x].size()));
+				//fill the texture slot with the texture name length
+				uniforms[x].texture = reinterpret_cast<Lame::Texture*>(static_cast<uintptr_t>(uniform_texture_names[x].size()));
+			}
+			else
+			{
+				uniforms[x].texture = nullptr;
+			}
 
 			//fill the handle slot with the parameter name length
 #if EAE6320_PLATFORM_D3D
@@ -285,7 +292,7 @@ bool MaterialBuilder::Build(const std::vector<std::string>&)
 			{
 				out.write(uniform_names[x].c_str(), uniform_names[x].size() + 1);
 				if (uniforms[x].texture)
-					out.write(uniform_texture_names[x].c_str(), uniform_texture_names.size() + 1);
+					out.write(uniform_texture_names[x].c_str(), uniform_texture_names[x].size() + 1);
 			}
 		}
 

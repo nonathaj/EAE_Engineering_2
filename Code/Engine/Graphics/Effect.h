@@ -15,6 +15,7 @@
 #include <d3d9.h>
 struct ID3DXConstantTable;		//forward declare the directX constant table
 #elif EAE6320_PLATFORM_GL
+#define LAME_EFFECT_TEXTURE_INDEX_REQUIRED_TO_SET_TEXTURE
 #include "../../Engine/Windows/Includes.h"
 #include <gl/GL.h>
 #endif
@@ -65,7 +66,11 @@ namespace Lame
 		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const eae6320::Math::cVector &i_val);
 		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const eae6320::Math::cMatrix_transformation &i_val);
 		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const float *i_val, const size_t &i_val_count);
-		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Lame::Texture *i_val);
+		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Lame::Texture *i_val
+#if defined( LAME_EFFECT_TEXTURE_INDEX_REQUIRED_TO_SET_TEXTURE )
+			, size_t i_index
+#endif
+			);
 
 		std::shared_ptr<Context> get_context() { return context; }
 		Engine::EnumMask<RenderState> render_mask() { return renderMask; }

@@ -1,6 +1,7 @@
 #ifndef _ENGINE_LAME_MATERIAL_H
 #define _ENGINE_LAME_MATERIAL_H
 
+#include <vector>
 #include <memory>
 
 #include "../Core/HashedString.h"
@@ -23,6 +24,8 @@ namespace Lame
 
 		Material(const std::shared_ptr<Effect>& i_effect_) :effect_(i_effect_) {}
 		static Material* Create(std::shared_ptr<Lame::Context> i_context, std::string i_path);
+
+		~Material();
 
 		bool Bind() const;
 

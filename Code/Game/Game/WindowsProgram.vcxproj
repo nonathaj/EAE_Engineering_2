@@ -116,7 +116,7 @@
     <CustomBuildStep>
       <Command>copy "$(TargetPath)" "$(GameDir)" /y</Command>
       <Message>Copying the final executable of the game to the Game directory</Message>
-      <Outputs>$(GameDir)$(TargetFileName)</Outputs>
+      <Outputs>$(GameDir)$(TargetFileName).THISFILEDOESNOTEXIST</Outputs>
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -133,7 +133,7 @@
     <CustomBuildStep>
       <Command>copy "$(TargetPath)" "$(GameDir)" /y</Command>
       <Message>Copying the final executable of the game to the Game directory</Message>
-      <Outputs>$(GameDir)$(TargetFileName)</Outputs>
+      <Outputs>$(GameDir)$(TargetFileName).THISFILEDOESNOTEXIST</Outputs>
     </CustomBuildStep>
     <PostBuildEvent>
       <Command>
@@ -166,7 +166,7 @@
     <CustomBuildStep>
       <Command>copy "$(TargetPath)" "$(GameDir)" /y</Command>
       <Message>Copying the final executable of the game to the Game directory</Message>
-      <Outputs>$(GameDir)$(TargetFileName)</Outputs>
+      <Outputs>$(GameDir)$(TargetFileName).THISFILEDOESNOTEXIST</Outputs>
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -187,7 +187,7 @@
     <CustomBuildStep>
       <Command>copy "$(TargetPath)" "$(GameDir)" /y</Command>
       <Message>Copying the final executable of the game to the Game directory</Message>
-      <Outputs>$(GameDir)$(TargetFileName)</Outputs>
+      <Outputs>$(GameDir)$(TargetFileName).THISFILEDOESNOTEXIST</Outputs>
     </CustomBuildStep>
     <PostBuildEvent>
       <Command>

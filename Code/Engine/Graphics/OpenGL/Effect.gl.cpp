@@ -12,6 +12,7 @@
 #include <string>
 #include <sstream>
 
+#include "../Texture.h"
 #include "../../System/UserOutput.h"
 #include "../../../External/OpenGlExtensions/OpenGlExtensions.h"
 
@@ -196,9 +197,45 @@ namespace Lame
 		return true;
 	}
 
-	bool Effect::SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Lame::Texture *i_val)
+	bool Effect::SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Lame::Texture *i_val, size_t i_index)
 	{
+		//enable the texture unit
+		glActiveTexture(GL_TEXTURE0 + i_index);
+		GLenum errorCode = glGetError();
+		if (errorCode != GL_NO_ERROR)
+		{
+			std::stringstream errorMessage;
+			errorMessage << "OpenGL failed to get activate texture unit " << i_index << ": " <<
+				reinterpret_cast<const char*>(gluErrorString(errorCode));
+			System::UserOutput::Display(errorMessage.str());
+			return false;
+		}
 
+		//Bind the texture to the unit that is active
+		glBindTexture(GL_TEXTURE_2D, i_val->texture_id());
+		errorCode = glGetError();
+		if (errorCode != GL_NO_ERROR)
+		{
+			std::stringstream errorMessage;
+			errorMessage << "OpenGL failed to bind texture to texture unit " << i_index << ": " <<
+				reinterpret_cast<const char*>(gluErrorString(errorCode));
+			System::UserOutput::Display(errorMessage.str());
+			return false;
+		}
+
+		//Assign texture unit to sampler uniform
+		glUniform1i(i_constant, i_index);
+		errorCode = glGetError();
+		if (errorCode != GL_NO_ERROR)
+		{
+			std::stringstream errorMessage;
+			errorMessage << "OpenGL texture unit " << i_index << " to sampler uniform: " <<
+				reinterpret_cast<const char*>(gluErrorString(errorCode));
+			System::UserOutput::Display(errorMessage.str());
+			return false;
+		}
+
+		return true;
 	}
 }
 

@@ -23,9 +23,9 @@ namespace Lame
 		~Texture();
 
 #if EAE6320_PLATFORM_D3D
-		IDirect3DTexture9* texture() { return texture_; }
+		IDirect3DTexture9* texture() const { return texture_; }
 #elif EAE6320_PLATFORM_GL
-		GLuint texture_id() { return texture_id_; }
+		GLuint texture_id() const { return texture_id_; }
 #endif
 	private:
 		//Do not allow Textures to be managed without pointers

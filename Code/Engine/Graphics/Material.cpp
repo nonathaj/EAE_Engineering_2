@@ -6,6 +6,8 @@
 #include "../System/FileLoader.h"
 #include "../System/UserOutput.h"
 
+#include "../System/Console.h"
+
 namespace Lame
 {
 	Material* Material::Create(std::shared_ptr<Lame::Context> i_context, std::string i_path)
@@ -39,7 +41,7 @@ namespace Lame
 			for (size_t x = 0; x < *parameterCount; x++)
 			{
 #if EAE6320_PLATFORM_D3D
-				uniform_name_length = static_cast<size_t>(reinterpret_cast<uintptr_t>(params[x].handle));
+				uniform_name_length = static_cast<size_t>(reinterpret_cast<uintptr_t>(std::get<0>(params[x].handle)));
 #elif EAE6320_PLATFORM_GL
 				uniform_name_length = static_cast<size_t>(params[x].handle);
 #else
@@ -100,24 +102,37 @@ namespace Lame
 		return material;
 	}
 
+	Material::~Material()
+	{
+		for (size_t x = 0; x < parameters_.size(); x++)
+		{
+			if (parameters_[x].texture != nullptr)
+			{
+				delete parameters_[x].texture;
+				parameters_[x].texture = nullptr;
+			}
+		}
+	}
+
 	bool Material::Bind() const
 	{
 		bool success = effect()->Bind();
 
 		for (size_t x = 0; x < parameters_.size(); x++)
 		{
-			if (parameters_[x].texture == nullptr)
+			if (parameters_[x].texture != nullptr)
 			{
-				success = success && effect()->SetConstant(
-					parameters_[x].shader_type,
-					parameters_[x].handle,
-					parameters_[x].value,
-					parameters_[x].valueCount
+				success = success && effect()->SetConstant(parameters_[x].shader_type,
+					parameters_[x].handle, parameters_[x].texture
+#if defined( LAME_EFFECT_TEXTURE_INDEX_REQUIRED_TO_SET_TEXTURE )
+					, x
+#endif
 					);
 			}
 			else
 			{
-
+				success = success && effect()->SetConstant(parameters_[x].shader_type,
+					parameters_[x].handle, parameters_[x].value, parameters_[x].valueCount);
 			}
 		}
 
