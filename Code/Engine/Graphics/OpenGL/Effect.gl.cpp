@@ -195,6 +195,11 @@ namespace Lame
 		}
 		return true;
 	}
+
+	bool Effect::SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Lame::Texture *i_val)
+	{
+
+	}
 }
 
 namespace

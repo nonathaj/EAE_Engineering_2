@@ -46,43 +46,67 @@ bool eae6320::MeshBuilder::Build( const std::vector<std::string>& )
 				if (stack->SwapTableKey() && stack->IsTable())
 				{
 					//vertex position
-					std::vector<double> position;
-					stack->Push("pos");
-					if (stack->SwapTableKey() && stack->PeekArray(position) && position.size() == 3)
 					{
-						vert.x = static_cast<float>(position[0]);
-						vert.y = static_cast<float>(position[1]);
-						vert.z = static_cast<float>(position[2]);
+						std::vector<double> position;
+						stack->Push("pos");
+						if (stack->SwapTableKey() && stack->PeekArray(position) && position.size() == 3)
+						{
+							vert.x = static_cast<float>(position[0]);
+							vert.y = static_cast<float>(position[1]);
+							vert.z = static_cast<float>(position[2]);
+						}
+						else
+						{
+							std::stringstream error;
+							error << "Invalid position table in vertex " << x;
+							eae6320::OutputErrorMessage(error.str().c_str(), m_path_source);
+							delete stack;
+							return false;
+						}
+						stack->Pop();
 					}
-					else
+
+					//vertex texture coordinates
 					{
-						std::stringstream error;
-						error << "Invalid position table in vertex " << x;
-						eae6320::OutputErrorMessage(error.str().c_str(), m_path_source);
-						delete stack;
-						return false;
+						std::vector<double> texcoords;
+						stack->Push("texcoord");
+						if (stack->SwapTableKey() && stack->PeekArray(texcoords) && texcoords.size() == 2)
+						{
+							vert.u = static_cast<float>(texcoords[0]);
+							vert.v = 1.0f - static_cast<float>(texcoords[1]);
+						}
+						else
+						{
+							std::stringstream error;
+							error << "Invalid texcoord table in vertex " << x;
+							eae6320::OutputErrorMessage(error.str().c_str(), m_path_source);
+							delete stack;
+							return false;
+						}
+						stack->Pop();
 					}
-					stack->Pop();
 
 					//vertex color
-					std::vector<double> color;
-					stack->Push("color");
-					if (stack->SwapTableKey() && stack->PeekArray(color) && color.size() == 4)
 					{
-						vert.r = static_cast<uint8_t>(color[0] * 255.0);
-						vert.g = static_cast<uint8_t>(color[1] * 255.0);
-						vert.b = static_cast<uint8_t>(color[2] * 255.0);
-						vert.a = static_cast<uint8_t>(color[3] * 255.0);
+						std::vector<double> color;
+						stack->Push("color");
+						if (stack->SwapTableKey() && stack->PeekArray(color) && color.size() == 4)
+						{
+							vert.r = static_cast<uint8_t>(color[0] * 255.0);
+							vert.g = static_cast<uint8_t>(color[1] * 255.0);
+							vert.b = static_cast<uint8_t>(color[2] * 255.0);
+							vert.a = static_cast<uint8_t>(color[3] * 255.0);
+						}
+						else
+						{
+							std::stringstream error;
+							error << "Invalid color table in vertex " << x;
+							eae6320::OutputErrorMessage(error.str().c_str(), m_path_source);
+							delete stack;
+							return false;
+						}
+						stack->Pop();
 					}
-					else
-					{
-						std::stringstream error;
-						error << "Invalid color table in vertex " << x;
-						eae6320::OutputErrorMessage(error.str().c_str(), m_path_source);
-						delete stack;
-						return false;
-					}
-					stack->Pop();
 				}
 				else
 				{

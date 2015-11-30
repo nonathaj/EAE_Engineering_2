@@ -164,13 +164,20 @@ namespace Lame
 
 	bool Effect::CacheConstant(const Shader &i_shader, const std::string &i_constant, ConstantHandle &o_constantId)
 	{
-		o_constantId = get_constant_table(i_shader)->GetConstantByName(nullptr, i_constant.c_str());
-		return o_constantId != nullptr;
+		ID3DXConstantTable *constantTable = get_constant_table(i_shader);
+		D3DXHANDLE handle = constantTable->GetConstantByName(nullptr, i_constant.c_str());
+		if (handle != nullptr)
+		{
+			o_constantId = std::make_tuple(handle, constantTable->GetSamplerIndex(handle));
+			return true;
+		}
+		else
+			return false;
 	}
 
 	bool Effect::SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const eae6320::Math::cMatrix_transformation &i_val)
 	{
-		HRESULT result = get_constant_table(i_shader)->SetMatrixTranspose(context->get_direct3dDevice(), i_constant, reinterpret_cast<const D3DXMATRIX*>(&i_val));
+		HRESULT result = get_constant_table(i_shader)->SetMatrixTranspose(context->get_direct3dDevice(), std::get<0>(i_constant), reinterpret_cast<const D3DXMATRIX*>(&i_val));
 		if (!SUCCEEDED(result))
 		{
 			System::UserOutput::Display("DirectX failed to set a constant uniform value.");
@@ -181,7 +188,7 @@ namespace Lame
 
 	bool Effect::SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const float *i_val, const size_t &i_val_count)
 	{
-		HRESULT result = get_constant_table(i_shader)->SetFloatArray(context->get_direct3dDevice(), i_constant, i_val, static_cast<UINT>(i_val_count));
+		HRESULT result = get_constant_table(i_shader)->SetFloatArray(context->get_direct3dDevice(), std::get<0>(i_constant), i_val, static_cast<UINT>(i_val_count));
 		if (!SUCCEEDED(result))
 		{
 			System::UserOutput::Display("DirectX failed to set a constant uniform value.");

@@ -7,6 +7,9 @@
 namespace
 {
 	template<typename T>
+	bool CheckHasValue(LuaHelper::LuaStack *stack, T i_key, int i_table_index);
+
+	template<typename T>
 	bool TryPeekArray(LuaHelper::LuaStack *stack, std::vector<T>& o_val, int i_index);
 
 	template<typename K, typename V>
@@ -164,6 +167,30 @@ namespace LuaHelper
 			return true;
 		}
 		return false;
+	}
+
+	////////////////////////////////////
+	// HasValue Functions
+	////////////////////////////////////
+
+	bool LuaStack::HasValue(const char* i_key, int i_table_index)
+	{
+		return CheckHasValue(this, i_key, i_table_index);
+	}
+
+	bool LuaStack::HasValue(lua_Number const& i_key, int i_table_index)
+	{
+		return CheckHasValue(this, i_key, i_table_index);
+	}
+
+	bool LuaStack::HasValue(lua_Integer const& i_key, int i_table_index)
+	{
+		return CheckHasValue(this, i_key, i_table_index);
+	}
+
+	bool LuaStack::HasValue(lua_Unsigned const& i_key, int i_table_index)
+	{
+		return CheckHasValue(this, i_key, i_table_index);
 	}
 
 	////////////////////////////////////
@@ -334,6 +361,18 @@ namespace LuaHelper
 
 namespace
 {
+	template<typename T>
+	bool CheckHasValue(LuaHelper::LuaStack *stack, T i_key, int i_table_index)
+	{
+		if (!stack->IsTable(i_table_index))
+			return false;
+
+		stack->Push(i_key);
+		bool hasValue = stack->SwapTableKey(i_table_index - 1) && !stack->IsNil();
+		stack->Pop();
+		return hasValue;
+	}
+
 	template<typename T>
 	bool TryPeekArray(LuaHelper::LuaStack *stack, std::vector<T>& o_val, int i_index)
 	{

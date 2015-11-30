@@ -7,8 +7,16 @@ namespace System
 {
 	namespace UserInput
 	{
-		namespace Mouse { enum Mouse { Left, Right, Middle }; }
-		namespace Key
+		namespace Mouse 
+		{ 
+			enum Button { Left, Right, Middle };
+			bool Pressed(const Button i_mouse_button);
+
+			void SetCursorVisible(bool visible);
+			bool IsCursorVisible();
+		}
+
+		namespace Keyboard
 		{
 			enum Key
 			{
@@ -17,13 +25,8 @@ namespace System
 				Space, Esc, Tab, Enter, Shift, Control,
 				Up, Down, Left, Right,
 			};
+			bool Pressed(const Key i_key);
 		}
-		
-		bool KeyPressed(const Key::Key i_key);
-		bool MouseButtonPressed(const Mouse::Mouse i_mouse_button);
-
-		void SetCursorVisible(bool visible);
-		bool IsCursorVisible();
 	}
 }
 

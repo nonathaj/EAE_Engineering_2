@@ -48,6 +48,12 @@ namespace LuaHelper
 
 		void Pop(int i_amount = 1);				//Pops items off the top of the stack
 
+		//Does a table have a value for the given key?
+		bool HasValue(const char* i_key, int i_table_index = -1);
+		bool HasValue(lua_Number const& i_key, int i_table_index = -1);
+		bool HasValue(lua_Integer const& i_key, int i_table_index = -1);
+		bool HasValue(lua_Unsigned const& i_key, int i_table_index = -1);
+
 		//Swaps a key at the top of the stack with it's value in the table on the stack
 		bool SwapTableKey(int i_table_index = -2);
 

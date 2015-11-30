@@ -56,6 +56,22 @@ namespace Lame
 				}
 
 				currentParamName = reinterpret_cast<char*>(currentParamName + uniform_name_length + 1);
+
+				//if we have a texture, then currentParamName now points to the texture name.
+				if (params[x].texture)
+				{
+					uniform_name_length = static_cast<size_t>(reinterpret_cast<uintptr_t>(params[x].texture));
+
+					params[x].texture = Texture::Create(i_context, currentParamName);
+					if (!params[x].texture)
+					{
+						delete[] fileData;
+						return nullptr;
+					}
+
+					//point at the next parameter name
+					currentParamName = reinterpret_cast<char*>(currentParamName + uniform_name_length + 1);
+				}
 			}
 		}
 
@@ -90,12 +106,19 @@ namespace Lame
 
 		for (size_t x = 0; x < parameters_.size(); x++)
 		{
-			success = success && effect()->SetConstant(
-				parameters_[x].shader_type, 
-				parameters_[x].handle, 
-				parameters_[x].value, 
-				parameters_[x].valueCount
-				);
+			if (parameters_[x].texture == nullptr)
+			{
+				success = success && effect()->SetConstant(
+					parameters_[x].shader_type,
+					parameters_[x].handle,
+					parameters_[x].value,
+					parameters_[x].valueCount
+					);
+			}
+			else
+			{
+
+			}
 		}
 
 		return success;

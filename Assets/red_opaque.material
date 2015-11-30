@@ -3,6 +3,7 @@ return
 	effect = "opaque.effect.bin",
 	uniforms = 
 	{
+		{ name = "base_texture", texture = "rock.DSS", shader = "fragment" },
 		{ name = "color_value", value = { 1.0, 0.0, 0.0 }, shader = "fragment" },
 	},
 }

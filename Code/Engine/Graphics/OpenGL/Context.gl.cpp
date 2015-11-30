@@ -1,13 +1,14 @@
 
 #include "../Context.h"
 
+#include "../../Windows/Functions.h"
+
 #include <cassert>
 #include <sstream>
 #include <gl/GL.h>
 #include <gl/GLU.h>
 
 #include "../../System/UserOutput.h"
-#include "../../Windows/Functions.h"
 #include "../../../External/OpenGlExtensions/OpenGlExtensions.h"
 
 

@@ -26,6 +26,7 @@ void main(
 	// These values come from one of the sVertex that we filled the vertex buffer with in C code
 	in const float3 i_position : POSITION,
 	in const float4 i_color : COLOR,
+	in const float2 i_texcoords : TEXCOORD0,
 
 	// Output
 	//=======
@@ -41,7 +42,9 @@ void main(
 	// The "semantics" are used to match the vertex shader outputs
 	// with the fragment shader inputs
 	// (note that OpenGL uses arbitrarily assignable number IDs to do the same thing).
-	out float4 o_color : COLOR
+	out float4 o_color : COLOR,
+
+	out float2 o_texcoords : TEXCOORD0
 
 	)
 	
@@ -55,8 +58,9 @@ void main(
 // but must match the C calls to glVertexAttribPointer()
 
 // These values come from one of the sVertex that we filled the vertex buffer with in C code
-layout( location = 0 ) in vec3 i_position;
-layout( location = 1 ) in vec4 i_color;
+layout( location = 0 ) in float3 i_position;
+layout( location = 1 ) in float2 i_texcoords;
+layout( location = 2 ) in float4 i_color;
 
 // Output
 //=======
@@ -72,7 +76,9 @@ layout( location = 1 ) in vec4 i_color;
 // The locations are used to match the vertex shader outputs
 // with the fragment shader inputs
 // (note that Direct3D uses arbitrarily assignable "semantics").
-layout( location = 0 ) out vec4 o_color;
+layout( location = 0 ) out float4 o_color;
+
+layout( location = 1 ) out float2 o_texcoords;
 
 // Entry Point
 //============
@@ -105,8 +111,9 @@ void main()
 	    o_position = Transform( position_view, view_to_screen );
 	}
 
-	// Pass the input color to the fragment shader unchanged:
+	// Pass the input color and texture coordinates to the fragment shader unchanged:
 	{
 		o_color = i_color;
+		o_texcoords = i_texcoords;
 	}
 }

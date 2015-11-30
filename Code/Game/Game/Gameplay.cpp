@@ -147,24 +147,24 @@ namespace
 		float movementAmount = 3.0f * deltaTime;
 
 		std::shared_ptr<Engine::GameObject> movableObject = graphics->camera()->gameObject();
-		if (KeyPressed(Key::W))						//forward
+		if (Keyboard::Pressed(Keyboard::W))						//forward
 			movableObject->Move(eae6320::Math::cVector(0.0f, 0.0f, -movementAmount));
-		if(KeyPressed(Key::S))						//backward
+		if (Keyboard::Pressed(Keyboard::S))						//backward
 			movableObject->Move(eae6320::Math::cVector(0.0f, 0.0f, movementAmount));
-		if (KeyPressed(Key::D))						//right
+		if (Keyboard::Pressed(Keyboard::D))						//right
 			movableObject->Move(eae6320::Math::cVector(movementAmount, 0.0f, 0.0f));
-		if (KeyPressed(Key::A))						//left
+		if (Keyboard::Pressed(Keyboard::A))						//left
 			movableObject->Move(eae6320::Math::cVector(-movementAmount, 0.0f, 0.0f));
 
 
 		movableObject = movable;
-		if (KeyPressed(Key::I))						//up
+		if (Keyboard::Pressed(Keyboard::I))						//up
 			movableObject->Move(eae6320::Math::cVector(0.0f, movementAmount));
-		if (KeyPressed(Key::K))						//down
+		if (Keyboard::Pressed(Keyboard::K))						//down
 			movableObject->Move(eae6320::Math::cVector(0.0f, -movementAmount));
-		if (KeyPressed(Key::L))						//right
+		if (Keyboard::Pressed(Keyboard::L))						//right
 			movableObject->Move(eae6320::Math::cVector(movementAmount, 0.0f));
-		if (KeyPressed(Key::J))						//left
+		if (Keyboard::Pressed(Keyboard::J))						//left
 			movableObject->Move(eae6320::Math::cVector(-movementAmount, 0.0f));
 	}
 

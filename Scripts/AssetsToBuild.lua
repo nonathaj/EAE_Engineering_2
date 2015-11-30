@@ -43,4 +43,12 @@ return
             { source = "blue_transparent.material", target = "blue_transparent.material.bin" },
         }
     },
+    {
+        tool = "TextureBuilder.exe",
+        files = 
+        {
+            { source = "rock.JPG", target = "rock.DDS" },
+            { source = "leather.JPG", target = "leather.DDS" },
+        }
+    },
 }

@@ -3,7 +3,7 @@
 
 #include <cstdint>
 #include <string>
-#include <unordered_map>
+#include <tuple>
 #include <memory>
 
 #include "../Core/eae6320/cVector.h"
@@ -22,6 +22,7 @@ struct ID3DXConstantTable;		//forward declare the directX constant table
 namespace Lame
 {
 	class Context;
+	class Texture;
 
 	enum RenderState
 	{
@@ -40,7 +41,7 @@ namespace Lame
 #if EAE6320_PLATFORM_D3D
 		//TODO find a way to use D3DXHANDLE here instead of const char* without including more directx headers
 		// we can't forwad declare the D3DXHANDLE (because it's a typedef, not a normal type), without risking screwing it up.
-		typedef const char* ConstantHandle;
+		typedef std::tuple<const char*, DWORD> ConstantHandle;
 #elif EAE6320_PLATFORM_GL
 		typedef GLint ConstantHandle;
 #else
@@ -64,6 +65,7 @@ namespace Lame
 		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const eae6320::Math::cVector &i_val);
 		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const eae6320::Math::cMatrix_transformation &i_val);
 		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const float *i_val, const size_t &i_val_count);
+		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Lame::Texture *i_val);
 
 		std::shared_ptr<Context> get_context() { return context; }
 		Engine::EnumMask<RenderState> render_mask() { return renderMask; }

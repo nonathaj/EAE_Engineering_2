@@ -150,8 +150,8 @@ namespace Lame
 			{
 				const GLuint vertexElementLocation = 0;
 				const GLint elementCount = 3;
-				const GLboolean notNormalized = GL_FALSE;	// The given floats should be used as-is
-				glVertexAttribPointer(vertexElementLocation, elementCount, GL_FLOAT, notNormalized, stride, offset);
+				const GLboolean normalized = GL_FALSE;	// The given floats should be used as-is
+				glVertexAttribPointer(vertexElementLocation, elementCount, GL_FLOAT, normalized, stride, offset);
 				const GLenum errorCode = glGetError();
 				if (errorCode == GL_NO_ERROR)
 				{
@@ -181,11 +181,48 @@ namespace Lame
 					goto OnExit;
 				}
 			}
-			// Color (1)
-			// 4 uint8_ts == 4 bytes
+			// Texcoord (1)
+			// 2 floats == 8 bytes
 			// Offset = 12
 			{
 				const GLuint vertexElementLocation = 1;
+				const GLint elementCount = 2;
+				const GLboolean normalized = GL_FALSE;
+				glVertexAttribPointer(vertexElementLocation, elementCount, GL_FLOAT, normalized, stride, offset);
+				const GLenum errorCode = glGetError();
+				if (errorCode == GL_NO_ERROR)
+				{
+					glEnableVertexAttribArray(vertexElementLocation);
+					const GLenum errorCode = glGetError();
+					if (errorCode == GL_NO_ERROR)
+					{
+						offset = reinterpret_cast<GLvoid*>(reinterpret_cast<float*>(offset) + (elementCount * sizeof(float)));
+					}
+					else
+					{
+						wereThereErrors = true;
+						std::stringstream errorMessage;
+						errorMessage << "OpenGL failed to enable the TEXCOORD0 vertex attribute: " <<
+							reinterpret_cast<const char*>(gluErrorString(errorCode));
+						System::UserOutput::Display(errorMessage.str());
+						goto OnExit;
+					}
+				}
+				else
+				{
+					wereThereErrors = true;
+					std::stringstream errorMessage;
+					errorMessage << "OpenGL failed to set the TEXCOORD0 vertex attribute: " <<
+						reinterpret_cast<const char*>(gluErrorString(errorCode));
+					System::UserOutput::Display(errorMessage.str());
+					goto OnExit;
+				}
+			}
+			// Color (2)
+			// 4 uint8_ts == 4 bytes
+			// Offset = 20
+			{
+				const GLuint vertexElementLocation = 2;
 				const GLint elementCount = 4;
 				// Each element will be sent to the GPU as an unsigned byte in the range [0,255]
 				// but these values should be understood as representing [0,1] values

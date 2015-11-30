@@ -1,10 +1,11 @@
-#ifndef _LAME_MATERIAL_H
-#define _LAME_MATERIAL_H
+#ifndef _ENGINE_LAME_MATERIAL_H
+#define _ENGINE_LAME_MATERIAL_H
 
 #include <memory>
 
 #include "../Core/HashedString.h"
 #include "Effect.h"
+#include "Texture.h"
 
 namespace Lame
 {
@@ -13,10 +14,11 @@ namespace Lame
 	public:
 		struct Parameter
 		{
-			float value[4];
+			Texture *texture;
 			Effect::ConstantHandle handle;
-			uint8_t valueCount;				//number of values to set
+			float value[4];
 			Effect::Shader shader_type;
+			uint8_t valueCount;				//number of values to set
 		};
 
 		Material(const std::shared_ptr<Effect>& i_effect_) :effect_(i_effect_) {}
@@ -32,4 +34,4 @@ namespace Lame
 	};
 }
 
-#endif //_LAME_MATERIAL_H
+#endif //_ENGINE_LAME_MATERIAL_H
