@@ -10,6 +10,7 @@
 #include "../../Engine/Graphics/Graphics.h"
 #include "../../Engine/Core/Singleton.h"
 #include "../../Engine/System/eae6320/Time.h"
+#include "../../Engine/Component/World.h"
 #include "../../Engine/Component/GameObject.h"
 #include "../../Engine/Graphics/RenderableComponent.h"
 #include "../../Engine/System/UserInput.h"
@@ -23,6 +24,7 @@ namespace
 	std::shared_ptr<Engine::GameObject> CreateRenderableObject(std::shared_ptr<Lame::Mesh> i_mesh, std::shared_ptr<Lame::Material> i_material);
 
 	std::unique_ptr<Lame::Graphics> graphics;
+	std::unique_ptr<Engine::World> world;
 
 	//gameobject
 	std::shared_ptr<Engine::GameObject> movable;
@@ -63,8 +65,15 @@ namespace Gameplay
 	{
 		using namespace Lame;
 
-		//generate a new graphics object
+		//generate container/manager objects
 		{
+			world = std::unique_ptr<Engine::World>(new Engine::World());
+			if (!world)
+			{
+				Shutdown();
+				return false;
+			}
+
 			std::shared_ptr<Context> context(Context::Create(i_window));
 			if (!context)	//if we failed to generate a context, shutdown the game
 			{
@@ -167,6 +176,7 @@ namespace Gameplay
 
 		HandleInput(deltaTime);
 
+		world->Update(deltaTime);
 		bool renderSuccess = graphics->Render();
 		return renderSuccess;
 	}
@@ -199,6 +209,7 @@ namespace Gameplay
 		floorMesh.reset();
 
 		graphics.reset();
+		world.reset();
 		return true;
 	}
 }
@@ -255,7 +266,7 @@ namespace
 
 	std::shared_ptr<Engine::GameObject> CreateRenderableObject(std::shared_ptr<Lame::Mesh> i_mesh, std::shared_ptr<Lame::Material> i_material)
 	{
-		if (!graphics || !graphics->context() || !i_mesh || !i_material)
+		if (!world || !graphics || !graphics->context() || !i_mesh || !i_material)
 			return nullptr;
 
 		using namespace Lame;
@@ -263,6 +274,10 @@ namespace
 		//create the gameObject
 		std::shared_ptr<Engine::GameObject> go(new Engine::GameObject());
 		if (!go)
+			return nullptr;
+
+		//add the object to the world
+		if (!world->Add(go))
 			return nullptr;
 
 		//create the renderable

@@ -1,8 +1,9 @@
 #ifndef _ENGINE_TYPEHANDLING_H
 #define _ENGINE_TYPEHANDLING_H
 
-#include <stdint.h>
-#include <stdio.h>
+#include <cstdint>
+#include <cstdio>
+#include <memory>
 
 ///
 /// Replacement for built-in dynamic_cast, which requires runtime type information (RTTI)
@@ -43,6 +44,12 @@ inline To * attempt_cast(From * i_pFrom);
 
 template<typename To, typename From>
 inline const To * attempt_cast(const From * i_pFrom);
+
+template<typename To, typename From>
+inline std::shared_ptr<To> attempt_pointer_cast(const std::shared_ptr<From>& i_from);
+
+template<typename To, typename From>
+inline std::weak_ptr<To> attempt_pointer_cast(const std::weak_ptr<From>& i_from);
 
 #include "TypeHandling.inl"
 

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "../Core/eae6320/cVector.h"
 #include "../Core/eae6320/cQuaternion.h"
@@ -19,6 +20,8 @@ namespace Engine
 
 		void Move(const eae6320::Math::cVector& i_movement);
 
+		void Update(float deltaTime);
+		
 		inline eae6320::Math::cVector position() const { return position_; }
 		inline void position(const eae6320::Math::cVector& i_pos) { position_ = i_pos; }
 
@@ -40,7 +43,9 @@ namespace Engine
 
 		bool enabled_;
 
-		std::vector<IComponent> components_;
+		std::vector<IComponent*> components_;
+
+		friend class IComponent;
 	};
 }
 

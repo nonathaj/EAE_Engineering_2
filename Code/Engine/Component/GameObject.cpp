@@ -16,4 +16,10 @@ namespace Engine
 	{
 		position_ += i_movement;
 	}
+
+	void GameObject::Update(float deltaTime)
+	{
+		for (size_t x = 0; x < components_.size(); x++)
+			components_[x]->Update(deltaTime);
+	}
 }
