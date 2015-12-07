@@ -4,14 +4,14 @@
 #include "cMatrix_transformation.h"
 
 #include <cmath>
-#include "cQuaternion.h"
-#include "cVector.h"
+#include "../Quaternion.h"
+#include "../Vector3.h"
 
 // Interface
 //==========
 
 eae6320::Math::cMatrix_transformation eae6320::Math::cMatrix_transformation::CreateWorldToViewTransform(
-	const cQuaternion& i_cameraOrientation, const cVector& i_cameraPosition )
+	const Engine::Quaternion& i_cameraOrientation, const Engine::Vector3& i_cameraPosition )
 {
 	cMatrix_transformation transform_viewToWorld( i_cameraOrientation, i_cameraPosition );
 	// A camera can only ever have rotation and translation
@@ -62,23 +62,23 @@ eae6320::Math::cMatrix_transformation::cMatrix_transformation()
 
 }
 
-eae6320::Math::cMatrix_transformation::cMatrix_transformation( const cQuaternion& i_rotation, const cVector& i_translation )
+eae6320::Math::cMatrix_transformation::cMatrix_transformation( const Engine::Quaternion& i_rotation, const Engine::Vector3& i_translation )
 	:
-	m_30( i_translation.x ), m_31( i_translation.y ), m_32( i_translation.z ),
+	m_30( i_translation.x() ), m_31( i_translation.y()), m_32( i_translation.z()),
 	m_03( 0.0f ), m_13( 0.0f ), m_23( 0.0f ), m_33( 1.0f )
 {
-	const float _2x = i_rotation.m_x + i_rotation.m_x;
-	const float _2y = i_rotation.m_y + i_rotation.m_y;
-	const float _2z = i_rotation.m_z + i_rotation.m_z;
-	const float _2xx = i_rotation.m_x * _2x;
-	const float _2xy = _2x * i_rotation.m_y;
-	const float _2xz = _2x * i_rotation.m_z;
-	const float _2xw = _2x * i_rotation.m_w;
-	const float _2yy = _2y * i_rotation.m_y;
-	const float _2yz = _2y * i_rotation.m_z;
-	const float _2yw = _2y * i_rotation.m_w;
-	const float _2zz = _2z * i_rotation.m_z;
-	const float _2zw = _2z * i_rotation.m_w;
+	const float _2x = i_rotation.x() + i_rotation.x();
+	const float _2y = i_rotation.y() + i_rotation.y();
+	const float _2z = i_rotation.z() + i_rotation.z();
+	const float _2xx = i_rotation.x() * _2x;
+	const float _2xy = _2x * i_rotation.y();
+	const float _2xz = _2x * i_rotation.z();
+	const float _2xw = _2x * i_rotation.w();
+	const float _2yy = _2y * i_rotation.y();
+	const float _2yz = _2y * i_rotation.z();
+	const float _2yw = _2y * i_rotation.w();
+	const float _2zz = _2z * i_rotation.z();
+	const float _2zw = _2z * i_rotation.w();
 
 	m_00 = 1.0f - _2yy - _2zz;
 	m_10 = _2xy + _2zw;

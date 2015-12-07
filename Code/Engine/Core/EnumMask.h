@@ -83,7 +83,7 @@ namespace Engine
 
 } //namespace Engine
 
-#define ENUM_FLAGS(Enum_Type) \
+#define ENUM_FLAGS_OPERATORS(Enum_Type) \
 inline Enum_Type operator|(Enum_Type a, Enum_Type b) { return static_cast<Enum_Type>(a | b); } \
 inline Enum_Type& operator|=(Enum_Type& a, Enum_Type b) { return a = a | b; } \
 inline Enum_Type operator&(Enum_Type a, Enum_Type b) { return static_cast<Enum_Type>(a & b); } \

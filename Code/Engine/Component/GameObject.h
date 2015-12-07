@@ -5,8 +5,8 @@
 #include <vector>
 #include <memory>
 
-#include "../Core/eae6320/cVector.h"
-#include "../Core/eae6320/cQuaternion.h"
+#include "../Core/Vector3.h"
+#include "../Core/Quaternion.h"
 #include "../Core/eae6320/cMatrix_transformation.h"
 
 namespace Engine
@@ -18,15 +18,16 @@ namespace Engine
 	public:
 		GameObject();
 
-		void Move(const eae6320::Math::cVector& i_movement);
+		void Move(const Engine::Vector3& i_movement);
+		void Rotate(const Engine::Quaternion& i_rotation);
 
 		void Update(float deltaTime);
 		
-		inline eae6320::Math::cVector position() const { return position_; }
-		inline void position(const eae6320::Math::cVector& i_pos) { position_ = i_pos; }
+		inline Engine::Vector3 position() const { return position_; }
+		inline void position(const Engine::Vector3& i_pos) { position_ = i_pos; }
 
-		eae6320::Math::cQuaternion rotation() const { return rotation_; }
-		void rotation(const eae6320::Math::cQuaternion& i_rotation) { rotation_ = i_rotation; }
+		Engine::Quaternion rotation() const { return rotation_; }
+		void rotation(const Engine::Quaternion& i_rotation) { rotation_ = i_rotation; }
 
 		inline std::string name() const { return name_; }
 		inline void name(const std::string& i_name) { name_ = i_name; }
@@ -37,8 +38,8 @@ namespace Engine
 		inline eae6320::Math::cMatrix_transformation LocalToWorld() const { return eae6320::Math::cMatrix_transformation(rotation(), position()); }
 
 	private:
-		eae6320::Math::cVector position_;
-		eae6320::Math::cQuaternion rotation_;
+		Engine::Vector3 position_;
+		Engine::Quaternion rotation_;
 		std::string name_;
 
 		bool enabled_;

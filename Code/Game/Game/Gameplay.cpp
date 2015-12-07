@@ -16,45 +16,30 @@
 #include "../../Engine/System/UserInput.h"
 #include "../../Engine/System/Console.h"
 #include "../../Engine/System/UserOutput.h"
+#include "../../Engine/Core/Math.h"
+
+#include "BulletComponent.h"
 
 namespace
 {
 	std::shared_ptr<Lame::Material> CreateMaterial(std::string i_material);
 	std::shared_ptr<Lame::Mesh> CreateMesh(std::string i_mesh);
-	std::shared_ptr<Engine::GameObject> CreateRenderableObject(std::shared_ptr<Lame::Mesh> i_mesh, std::shared_ptr<Lame::Material> i_material);
+	std::shared_ptr<Lame::RenderableComponent> CreateRenderableObject(std::shared_ptr<Lame::Mesh> i_mesh, std::shared_ptr<Lame::Material> i_material);
+
+	std::shared_ptr<BulletComponent> CreateBullet();
 
 	std::unique_ptr<Lame::Graphics> graphics;
 	std::unique_ptr<Engine::World> world;
 
-	//gameobject
-	std::shared_ptr<Engine::GameObject> movable;
-	std::shared_ptr<Engine::GameObject> floorObject;
-
-	std::shared_ptr<Engine::GameObject> logo1;
-	std::shared_ptr<Engine::GameObject> logo2;
-	std::shared_ptr<Engine::GameObject> logo3;
-	std::shared_ptr<Engine::GameObject> logo4;
-	std::shared_ptr<Engine::GameObject> logo5;
-	std::shared_ptr<Engine::GameObject> box1;
-	std::shared_ptr<Engine::GameObject> box2;
-	std::shared_ptr<Engine::GameObject> box3;
-	std::shared_ptr<Engine::GameObject> box4;
-	std::shared_ptr<Engine::GameObject> box5;
+	//gameobjects
+	std::shared_ptr<Engine::GameObject> asteroid;
+	std::vector<std::shared_ptr<BulletComponent>> bullets;
 
 	//materials
-	std::shared_ptr<Lame::Material> green_transparent;
-	std::shared_ptr<Lame::Material> red_opaque;
-	std::shared_ptr<Lame::Material> green_opaque;
-
-	std::shared_ptr<Lame::Material> eae6320Mat;
-	std::shared_ptr<Lame::Material> alphaMat;
-	std::shared_ptr<Lame::Material> notalphaMat;
+	std::shared_ptr<Lame::Material> bulletMat;
 
 	//meshes
-	std::shared_ptr<Lame::Mesh> box;
-	std::shared_ptr<Lame::Mesh> square;
-	std::shared_ptr<Lame::Mesh> triangularPrism;
-	std::shared_ptr<Lame::Mesh> floorMesh;
+	std::shared_ptr<Lame::Mesh> bulletMesh;
 
 	void HandleInput(float deltaTime);
 }
@@ -86,82 +71,30 @@ namespace Gameplay
 				Shutdown();
 				return false;
 			}
+
+			std::string error;
+			if (!eae6320::Time::Initialize(&error))
+			{
+				System::UserOutput::Display(error, "Time initialization error");
+				Shutdown();
+				return false;
+			}
 		}
 
 		//initial camera position
-		graphics->camera()->gameObject()->position(eae6320::Math::cVector(0, 0, 5));
+		graphics->camera()->gameObject()->position(Engine::Vector3(0, 0, 15));
 
 		//Create our Materials
-		green_transparent = CreateMaterial("data/green_transparent.material.bin");
-		red_opaque = CreateMaterial("data/red_opaque.material.bin");
-		green_opaque = CreateMaterial("data/green_opaque.material.bin");
-		eae6320Mat = CreateMaterial("data/eae6320.material.bin");
-		alphaMat = CreateMaterial("data/alpha.material.bin");
-		notalphaMat = CreateMaterial("data/notalpha.material.bin");
-		if (!green_transparent || !red_opaque || !green_opaque || !eae6320Mat || !alphaMat || !notalphaMat)
-		{
-			Shutdown();
-			return false;
-		}
+
 
 		//Create our Meshes
-		box = CreateMesh("data/box.mesh.bin");
-		square = CreateMesh("data/square.mesh.bin");
-		triangularPrism = CreateMesh("data/white_triangle_prism.mesh.bin");
-		floorMesh = CreateMesh("data/white_floor.mesh.bin");
-		if (!box || !square || !triangularPrism || !floorMesh)
-		{
-			Shutdown();
-			return false;
-		}
+
 
 		//Create our renderables
-		logo1 = CreateRenderableObject(square, green_transparent);
-		box1 = CreateRenderableObject(box, green_transparent);
+		asteroid = CreateRenderableObject(CreateMesh("data/asteroid.mesh.bin"), CreateMaterial("data/asteroid.material.bin"))->gameObject();
 
-		logo2 = CreateRenderableObject(square, green_opaque);
-		box2 = CreateRenderableObject(box, green_opaque);
-
-		logo3 = CreateRenderableObject(square, eae6320Mat);
-		box3 = CreateRenderableObject(box, eae6320Mat);
-
-		logo4 = CreateRenderableObject(square, notalphaMat);
-		box4 = CreateRenderableObject(box, notalphaMat);
-
-		logo5 = CreateRenderableObject(square, alphaMat);
-		box5 = CreateRenderableObject(box, alphaMat);
-
-		movable = CreateRenderableObject(triangularPrism, green_opaque);
-		floorObject = CreateRenderableObject(floorMesh, red_opaque);
-
-		if (!movable || !floorObject ||
-			!logo1 || !logo2 || !logo3 || !logo4 || !logo5 ||
-			!box1 || !box2 || !box3 || !box4 || !box5 )
+		if (!asteroid)
 		{
-			Shutdown();
-			return false;
-		}
-		floorObject->position(eae6320::Math::cVector(0.0f, -1.0f, 0.0f));
-
-		logo1->position(eae6320::Math::cVector(-2.0f, 0.5f, 1.5f));
-		box1->position(eae6320::Math::cVector(-2.0f, -0.5f, 1.5f));
-
-		logo2->position(eae6320::Math::cVector(-1.0f, 0.5f, 1.5f));
-		box2->position(eae6320::Math::cVector(-1.0f, -0.5f, 1.5f));
-
-		logo3->position(eae6320::Math::cVector(0.0f, 0.5f, 1.5f));
-		box3->position(eae6320::Math::cVector(0.0f, -0.5f, 1.5f));
-
-		logo4->position(eae6320::Math::cVector(1.0f, 0.5f, 1.5f));
-		box4->position(eae6320::Math::cVector(1.0f, -0.5f, 1.5f));
-
-		logo5->position(eae6320::Math::cVector(2.0f, 0.5f, 1.5f));
-		box5->position(eae6320::Math::cVector(2.0f, -0.5f, 1.5f));
-
-		std::string error;
-		if (!eae6320::Time::Initialize(&error))
-		{
-			System::UserOutput::Display(error, "Time initialization error");
 			Shutdown();
 			return false;
 		}
@@ -183,33 +116,14 @@ namespace Gameplay
 
 	bool Shutdown()
 	{
-		logo1.reset();
-		logo2.reset();
-		logo3.reset();
-		logo4.reset();
-		logo5.reset();
-		box1.reset();
-		box2.reset();
-		box3.reset();
-		box4.reset();
-		box5.reset();
+		asteroid.reset();
 
-		movable.reset();
-		floorObject.reset();
+		bulletMat.reset();
+		bulletMesh.reset();
+		bullets.clear();
 
-		green_transparent.reset();
-		red_opaque.reset();
-		green_opaque.reset();
-		eae6320Mat.reset();
-		alphaMat.reset();
-
-		box.reset();
-		square.reset();
-		triangularPrism.reset();
-		floorMesh.reset();
-
-		graphics.reset();
 		world.reset();
+		graphics.reset();
 		return true;
 	}
 }
@@ -219,31 +133,54 @@ namespace
 	void HandleInput(float deltaTime)
 	{
 		using namespace System::UserInput;
+		using namespace Engine;
 
-		float movementAmount = 3.0f * deltaTime;
-		std::shared_ptr<Engine::GameObject> movableObject;
-		
-		//move the camera
-		movableObject = graphics->camera()->gameObject();
-		if (Keyboard::Pressed(Keyboard::W))						//forward
-			movableObject->Move(eae6320::Math::cVector(0.0f, 0.0f, -movementAmount));
-		if (Keyboard::Pressed(Keyboard::S))						//backward
-			movableObject->Move(eae6320::Math::cVector(0.0f, 0.0f, movementAmount));
-		if (Keyboard::Pressed(Keyboard::D))						//right
-			movableObject->Move(eae6320::Math::cVector(movementAmount, 0.0f, 0.0f));
-		if (Keyboard::Pressed(Keyboard::A))						//left
-			movableObject->Move(eae6320::Math::cVector(-movementAmount, 0.0f, 0.0f));
+		//Rotate asteroid
+		const float rotationSpeed = static_cast<float>(Engine::Math::ToRadians(20.0f * deltaTime));
+		Vector3 rotationAxis(0.0f, 0.0f, 1.0f);
+		if (Keyboard::Pressed(Keyboard::A))
+			asteroid->Rotate(Quaternion(-rotationSpeed, rotationAxis));
+		else if (Keyboard::Pressed(Keyboard::D))
+			asteroid->Rotate(Quaternion(rotationSpeed, rotationAxis));
 
-		//move the object
-		movableObject = movable;
-		if (Keyboard::Pressed(Keyboard::I))						//up
-			movableObject->Move(eae6320::Math::cVector(0.0f, movementAmount));
-		if (Keyboard::Pressed(Keyboard::K))						//down
-			movableObject->Move(eae6320::Math::cVector(0.0f, -movementAmount));
-		if (Keyboard::Pressed(Keyboard::L))						//right
-			movableObject->Move(eae6320::Math::cVector(movementAmount, 0.0f));
-		if (Keyboard::Pressed(Keyboard::J))						//left
-			movableObject->Move(eae6320::Math::cVector(-movementAmount, 0.0f));
+		//fire bullet
+		if (Keyboard::Pressed(Keyboard::Space))
+		{
+			const Vector3 spawnPosition = asteroid->position() + asteroid->rotation() * Vector3(2.5f, 0.0f, 0.0f);
+			std::shared_ptr<BulletComponent> bullet = CreateBullet();
+			bullet->gameObject()->position(spawnPosition);
+			bullet->gameObject()->rotation(asteroid->rotation());
+		}
+	}
+
+	std::shared_ptr<BulletComponent> CreateBullet()
+	{
+		if (!bulletMat)
+		{
+			bulletMat = CreateMaterial("bullet.material.bin");
+			if (!bulletMat)
+				return nullptr;
+		}
+
+		if (!bulletMesh)
+		{
+			bulletMesh = CreateMesh("bullet.mesh.bin");
+			if (!bulletMesh)
+				return nullptr;
+		}
+
+		std::shared_ptr<Lame::RenderableComponent> renderable = CreateRenderableObject(bulletMesh, bulletMat);
+		if (!renderable)
+			return nullptr;
+
+		std::shared_ptr<BulletComponent> bullet = std::shared_ptr<BulletComponent>(new BulletComponent(renderable));
+		if (!bullet)
+		{
+			return nullptr;
+		}
+		bullet->gameObject()->enabled(false);
+		bullets.push_back(bullet);
+		return bullet;
 	}
 
 	std::shared_ptr<Lame::Material> CreateMaterial(std::string i_material)
@@ -264,7 +201,7 @@ namespace
 		return std::shared_ptr<Mesh>(Mesh::Create(graphics->context(), i_mesh));
 	}
 
-	std::shared_ptr<Engine::GameObject> CreateRenderableObject(std::shared_ptr<Lame::Mesh> i_mesh, std::shared_ptr<Lame::Material> i_material)
+	std::shared_ptr<Lame::RenderableComponent> CreateRenderableObject(std::shared_ptr<Lame::Mesh> i_mesh, std::shared_ptr<Lame::Material> i_material)
 	{
 		if (!world || !graphics || !graphics->context() || !i_mesh || !i_material)
 			return nullptr;
@@ -283,12 +220,18 @@ namespace
 		//create the renderable
 		std::shared_ptr<RenderableComponent> renderable(new RenderableComponent(go, i_mesh, i_material));
 		if (!renderable)
+		{
+			world->Remove(go);
 			return nullptr;
+		}
 
 		//add the renderable to the graphics system
 		if (!graphics->Add(renderable))
+		{
+			world->Remove(go);
 			return nullptr;
+		}
 
-		return go;
+		return renderable;
 	}
 }

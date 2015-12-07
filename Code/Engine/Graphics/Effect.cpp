@@ -28,7 +28,7 @@ namespace Lame
 		return SetConstant(Shader::Vertex, viewToScreenUniformId, i_matrix);
 	}
 
-	bool Effect::SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const eae6320::Math::cVector &i_val)
+	bool Effect::SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Engine::Vector3 &i_val)
 	{
 		return SetConstant(i_shader, i_constant, reinterpret_cast<const float*>(&i_val), 3);
 	}

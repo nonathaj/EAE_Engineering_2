@@ -37,7 +37,6 @@ namespace Engine
 		inline float magnitude(void) const;						//returns the magnitude of the vector
 		inline float sq_magnitude(void) const;					//returns the squared magnitude of the vectors
 		inline Vector3 normalized(void) const;					//returns a normalized version of the vector (length 1)
-		
 		inline Vector3& normalize(void);						//normalizes this vector
 
 		//setters

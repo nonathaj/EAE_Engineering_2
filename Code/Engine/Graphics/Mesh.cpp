@@ -27,6 +27,8 @@ namespace Lame
 
 		size_t fileLength;
 		char *fileData = System::File::LoadBinary(i_mesh_path, &fileLength);
+		if (!fileData)
+			return nullptr;
 
 		//find the actual location of our data
 		uint32_t *vertex_count = reinterpret_cast<uint32_t*>(fileData);

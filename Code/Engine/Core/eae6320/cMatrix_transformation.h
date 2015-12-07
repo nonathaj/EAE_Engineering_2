@@ -23,13 +23,10 @@
 // Forward Declarations
 //=====================
 
-namespace eae6320
+namespace Engine
 {
-	namespace Math
-	{
-		class cVector;
-		class cQuaternion;
-	}
+	class Vector3;
+	class Quaternion;
 }
 
 // Class Declaration
@@ -47,7 +44,7 @@ namespace eae6320
 		public:
 
 			static cMatrix_transformation CreateWorldToViewTransform(
-				const cQuaternion& i_cameraOrientation, const cVector& i_cameraPosition );
+				const Engine::Quaternion& i_cameraOrientation, const Engine::Vector3& i_cameraPosition );
 			static cMatrix_transformation CreateViewToScreenTransform(
 				const float i_fieldOfView_y, const float i_aspectRatio,
 				const float i_z_nearPlane, const float i_z_farPlane );
@@ -56,7 +53,7 @@ namespace eae6320
 			//---------------------------
 
 			cMatrix_transformation();	// Identity
-			cMatrix_transformation( const cQuaternion& i_rotation, const cVector& i_translation );
+			cMatrix_transformation( const Engine::Quaternion& i_rotation, const Engine::Vector3& i_translation );
 
 			// Data
 			//=====

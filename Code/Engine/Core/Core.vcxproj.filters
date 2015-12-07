@@ -13,13 +13,8 @@
     <ClInclude Include="eae6320\cMatrix_transformation.h">
       <Filter>eae6320</Filter>
     </ClInclude>
-    <ClInclude Include="eae6320\cQuaternion.h">
-      <Filter>eae6320</Filter>
-    </ClInclude>
-    <ClInclude Include="eae6320\cVector.h">
-      <Filter>eae6320</Filter>
-    </ClInclude>
     <ClInclude Include="EnumMask.h" />
+    <ClInclude Include="Quaternion.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FloatMath.inl" />
@@ -38,12 +33,7 @@
     <ClCompile Include="eae6320\cMatrix_transformation.cpp">
       <Filter>eae6320</Filter>
     </ClCompile>
-    <ClCompile Include="eae6320\cQuaternion.cpp">
-      <Filter>eae6320</Filter>
-    </ClCompile>
-    <ClCompile Include="eae6320\cVector.cpp">
-      <Filter>eae6320</Filter>
-    </ClCompile>
+    <ClCompile Include="Quaternion.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="eae6320">
