@@ -35,12 +35,12 @@ namespace Engine
 			static_cast<float>(Engine::Math::ToRadians(i_euler_angles.z()))
 		);
 
-		const float c1 = cos(euler_radians.z() * 0.5f);
-		const float c2 = cos(euler_radians.y() * 0.5f);
-		const float c3 = cos(euler_radians.x() * 0.5f);
-		const float s1 = sin(euler_radians.z() * 0.5f);
-		const float s2 = sin(euler_radians.y() * 0.5f);
-		const float s3 = sin(euler_radians.x() * 0.5f);
+		const float c1 = std::cos(euler_radians.z() * 0.5f);
+		const float c2 = std::cos(euler_radians.y() * 0.5f);
+		const float c3 = std::cos(euler_radians.x() * 0.5f);
+		const float s1 = std::sin(euler_radians.z() * 0.5f);
+		const float s2 = std::sin(euler_radians.y() * 0.5f);
+		const float s3 = std::sin(euler_radians.x() * 0.5f);
 
 		m_x = c1 * c2 * s3 - s1 * s2 * c3;
 		m_y = c1 * s2 * c3 + s1 * c2 * s3;
@@ -110,14 +110,14 @@ namespace Engine
 		const float sqy = y() * y();
 		const float sqz = z() * z();
 
-		euler.y( asin(2.0f * (w() * y() - x() * z())) );
+		euler.y( std::asin(2.0f * (w() * y() - x() * z())) );
 		if ((M_PI / 2) - fabs(euler.y()) > std::numeric_limits<float>::epsilon()) {
-			euler.z( atan2(2.0f * (x() * y() + w() * z()), sqx - sqy - sqz + sqw) );
-			euler.x( atan2(2.0f * (w() * x() + y() * z()), sqw - sqx - sqy + sqz) );
+			euler.z( std::atan2(2.0f * (x() * y() + w() * z()), sqx - sqy - sqz + sqw) );
+			euler.x( std::atan2(2.0f * (w() * x() + y() * z()), sqw - sqx - sqy + sqz) );
 		}
 		else {
 			// compute heading from local 'down' vector
-			euler.z( atan2(2 * y() * z() - 2 * x() * w(), 2 * x() * z() + 2 * y() * w()) );
+			euler.z( std::atan2(2 * y() * z() - 2 * x() * w(), 2 * x() * z() + 2 * y() * w()) );
 			euler.x(0.0f);
 
 			// If facing down, reverse yaw

@@ -20,8 +20,8 @@ namespace Engine
 		static const Vector3 down;		//(0, -1, 0)
 		static const Vector3 left;		//(-1, 0, 0)
 		static const Vector3 right;		//(1, 0, 0)
-		static const Vector3 forward;	//(0, 0, 1)
-		static const Vector3 back;		//(0, 0, -1)
+		static const Vector3 forward;	//(0, 0, -1)
+		static const Vector3 back;		//(0, 0, 1)
 
 		inline Vector3();
 		Vector3(const Vector2 &i_vec, float i_z = 0.0f);
@@ -34,10 +34,10 @@ namespace Engine
 		inline Vector3 cross(const Vector3 &rhs) const;			//returns the cross product of the 2 vectors
 		inline float distance(const Vector3 &rhs) const;		//returns the distance between the 2 vector positions
 
-		inline float magnitude(void) const;						//returns the magnitude of the vector
-		inline float sq_magnitude(void) const;					//returns the squared magnitude of the vectors
-		inline Vector3 normalized(void) const;					//returns a normalized version of the vector (length 1)
-		inline Vector3& normalize(void);						//normalizes this vector
+		inline float magnitude() const;							//returns the magnitude of the vector
+		inline float sq_magnitude() const;						//returns the squared magnitude of the vectors
+		inline Vector3 normalized() const;						//returns a normalized version of the vector (length 1)
+		inline Vector3& normalize();							//normalizes this vector
 
 		//setters
 		inline void set(float i_x, float i_y, float i_z);
@@ -46,9 +46,9 @@ namespace Engine
 		inline void z(float i_z) { m_z = i_z; }
 
 		//getters
-		inline float x(void) const { return m_x; }
-		inline float y(void) const { return m_y; }
-		inline float z(void) const { return m_z; }
+		inline float x() const { return m_x; }
+		inline float y() const { return m_y; }
+		inline float z() const { return m_z; }
 
 		//operators that alter the state of the class
 		inline Vector3& operator+=(const Vector3& rhs);

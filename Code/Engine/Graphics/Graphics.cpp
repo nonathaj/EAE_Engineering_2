@@ -80,7 +80,7 @@ namespace Lame
 
 	bool Graphics::Add(std::shared_ptr<RenderableComponent> i_renderable)
 	{
-		if (!MatchesContext(i_renderable))
+		if (!i_renderable || !MatchesContext(i_renderable))
 			return false;
 
 		auto itr = std::find(renderables_.begin(), renderables_.end(), i_renderable);

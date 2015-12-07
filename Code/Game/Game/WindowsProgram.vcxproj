@@ -206,6 +206,7 @@
   <ItemGroup>
     <ClInclude Include="BulletComponent.h" />
     <ClInclude Include="Gameplay.h" />
+    <ClInclude Include="PlanetComponent.h" />
     <ClInclude Include="Resources\Resource.h" />
     <ClInclude Include="Resources\targetver.h" />
     <ClInclude Include="WindowsProgram.h" />
@@ -214,6 +215,7 @@
     <ClCompile Include="BulletComponent.cpp" />
     <ClCompile Include="EntryPoint.cpp" />
     <ClCompile Include="Gameplay.cpp" />
+    <ClCompile Include="PlanetComponent.cpp" />
     <ClCompile Include="WindowsProgram.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

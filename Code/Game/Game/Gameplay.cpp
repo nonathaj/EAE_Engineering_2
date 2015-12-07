@@ -19,6 +19,7 @@
 #include "../../Engine/Core/Math.h"
 
 #include "BulletComponent.h"
+#include "PlanetComponent.h"
 
 namespace
 {
@@ -31,8 +32,9 @@ namespace
 	std::unique_ptr<Lame::Graphics> graphics;
 	std::unique_ptr<Engine::World> world;
 
+	std::shared_ptr<PlanetComponent> asteroid;
+
 	//gameobjects
-	std::shared_ptr<Engine::GameObject> asteroid;
 	std::vector<std::shared_ptr<BulletComponent>> bullets;
 
 	//materials
@@ -48,8 +50,6 @@ namespace Gameplay
 {
 	bool Initialize(HWND i_window)
 	{
-		using namespace Lame;
-
 		//generate container/manager objects
 		{
 			world = std::unique_ptr<Engine::World>(new Engine::World());
@@ -59,13 +59,13 @@ namespace Gameplay
 				return false;
 			}
 
-			std::shared_ptr<Context> context(Context::Create(i_window));
+			std::shared_ptr<Lame::Context> context(Lame::Context::Create(i_window));
 			if (!context)	//if we failed to generate a context, shutdown the game
 			{
 				Shutdown();
 				return false;
 			}
-			graphics = std::unique_ptr<Graphics>(Graphics::Create(context));
+			graphics = std::unique_ptr<Lame::Graphics>(Lame::Graphics::Create(context));
 			if (!graphics) //if we failed to generate a graphics object, shutdown the game
 			{
 				Shutdown();
@@ -84,20 +84,17 @@ namespace Gameplay
 		//initial camera position
 		graphics->camera()->gameObject()->position(Engine::Vector3(0, 0, 15));
 
-		//Create our Materials
-
-
-		//Create our Meshes
-
-
-		//Create our renderables
-		asteroid = CreateRenderableObject(CreateMesh("data/asteroid.mesh.bin"), CreateMaterial("data/asteroid.material.bin"))->gameObject();
-
-		if (!asteroid)
+		//create the player's object
+		asteroid = std::shared_ptr<PlanetComponent>(PlanetComponent::Create(graphics->context()));
+		if (!asteroid || !graphics->Add(asteroid->renderable()) || !world->Add(asteroid->gameObject()))
 		{
 			Shutdown();
 			return false;
 		}
+
+		//Create our Materials
+		//Create our Meshes
+		//Create our renderables
 
 		return true;
 	}
@@ -135,21 +132,15 @@ namespace
 		using namespace System::UserInput;
 		using namespace Engine;
 
-		//Rotate asteroid
-		const float rotationSpeed = static_cast<float>(Engine::Math::ToRadians(20.0f * deltaTime));
-		Vector3 rotationAxis(0.0f, 0.0f, 1.0f);
-		if (Keyboard::Pressed(Keyboard::A))
-			asteroid->Rotate(Quaternion(-rotationSpeed, rotationAxis));
-		else if (Keyboard::Pressed(Keyboard::D))
-			asteroid->Rotate(Quaternion(rotationSpeed, rotationAxis));
-
 		//fire bullet
 		if (Keyboard::Pressed(Keyboard::Space))
 		{
+			/*
 			const Vector3 spawnPosition = asteroid->position() + asteroid->rotation() * Vector3(2.5f, 0.0f, 0.0f);
 			std::shared_ptr<BulletComponent> bullet = CreateBullet();
 			bullet->gameObject()->position(spawnPosition);
 			bullet->gameObject()->rotation(asteroid->rotation());
+			*/
 		}
 	}
 
