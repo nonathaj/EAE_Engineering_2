@@ -5,7 +5,6 @@
 namespace Engine
 {
 	class Vector3;
-	const Vector3 Vector3::up;
 
 	class Quaternion
 	{
@@ -18,7 +17,7 @@ namespace Engine
 		Quaternion(const float i_angleInRadians, const Vector3& i_axisOfRotation_normalized);
 
 		static Quaternion Euler(const Vector3& i_euler_angles);
-		static Quaternion LookRotation(const Vector3& i_forward_direction, const Vector3& i_up_direction = Vector3::up);
+		static Quaternion LookRotation(const Vector3& i_forward_direction, const Vector3& i_up_direction);
 		
 		void invert();
 		Quaternion inverse() const;
@@ -38,10 +37,10 @@ namespace Engine
 		inline float z() const { return m_z; }
 		inline float w() const { return m_w; }
 
-		inline float x(float i_x) { m_x = i_x; }
-		inline float y(float i_y) { m_y = i_y; }
-		inline float z(float i_z) { m_z = i_z; }
-		inline float w(float i_w) { m_w = i_w; }
+		inline void x(float i_x) { m_x = i_x; }
+		inline void y(float i_y) { m_y = i_y; }
+		inline void z(float i_z) { m_z = i_z; }
+		inline void w(float i_w) { m_w = i_w; }
 
 	private:
 		float m_w, m_x, m_y, m_z;

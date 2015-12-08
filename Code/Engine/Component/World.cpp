@@ -16,8 +16,18 @@ namespace Engine
 
 	void World::Update(float deltaTime)
 	{
-		for (size_t x = 0; x < gameObjects_.size(); x++)
-			gameObjects_[x]->Update(deltaTime);
+		for (auto itr = gameObjects_.begin(); itr != gameObjects_.end(); /**/)
+		{
+			if ((*itr)->IsDestroying())
+			{
+				itr = gameObjects_.erase(itr);
+			}
+			else
+			{
+				(*itr)->Update(deltaTime);
+				++itr;
+			}
+		}
 	}
 
 	bool World::Add(std::shared_ptr<GameObject> i_gameObject)

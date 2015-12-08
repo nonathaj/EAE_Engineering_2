@@ -48,12 +48,22 @@ namespace Lame
 		std::vector<std::shared_ptr<RenderableComponent>> transparent;
 
 		//iterate all the renderables, rendering the opaque ones first.
-		for (size_t x = 0; x < renderables_.size(); x++)
+		for (auto itr = renderables_.begin(); itr != renderables_.end(); /**/)
 		{
-			if (renderables_[x]->material()->effect()->has_transparency())
-				transparent.push_back(renderables_[x]);
+			std::shared_ptr<Engine::GameObject> go = (*itr)->gameObject();
+			if (go && !go->IsDestroying())
+			{
+				std::shared_ptr<RenderableComponent> renderable = renderables_[x];
+				if (renderables_[x]->material()->effect()->has_transparency())
+					transparent.push_back(renderables_[x]);
+				else
+					success = renderables_[x]->Render(worldToView, viewToScreen) && success;
+				++itr;
+			}
 			else
-				success = renderables_[x]->Render(worldToView, viewToScreen) && success;
+			{
+				itr = renderables_.erase(itr);
+			}
 		}
 
 		//render all the transparent objects on top of the opaque ones

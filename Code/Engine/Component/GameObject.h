@@ -23,10 +23,10 @@ namespace Engine
 
 		void Update(float deltaTime);
 		
-		inline Engine::Vector3 position() const { return position_; }
+		inline Vector3 position() const { return position_; }
 		inline void position(const Engine::Vector3& i_pos) { position_ = i_pos; }
 
-		Engine::Quaternion rotation() const { return rotation_; }
+		Quaternion rotation() const { return rotation_; }
 		void rotation(const Engine::Quaternion& i_rotation) { rotation_ = i_rotation; }
 
 		inline std::string name() const { return name_; }
@@ -37,12 +37,16 @@ namespace Engine
 
 		inline eae6320::Math::cMatrix_transformation LocalToWorld() const { return eae6320::Math::cMatrix_transformation(rotation(), position()); }
 
+		inline void Destroy() { destroying_ = true; }
+		inline bool IsDestroying() { return destroying_; }
+
 	private:
-		Engine::Vector3 position_;
-		Engine::Quaternion rotation_;
+		Vector3 position_;
+		Quaternion rotation_;
 		std::string name_;
 
 		bool enabled_;
+		bool destroying_;
 
 		std::vector<IComponent*> components_;
 

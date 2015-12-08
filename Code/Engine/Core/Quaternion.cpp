@@ -66,11 +66,11 @@ namespace Engine
 		const Vector3 right = i_forward_direction.cross(i_up_direction);
 
 		Quaternion ret;
-		ret.w = sqrtf(1.0f + right.x() + up.y() + forward.z()) * 0.5f;
-		float w4_recip = 1.0f / (4.0f * ret.w);
-		ret.x = (up.z() - forward.y()) * w4_recip;
-		ret.y = (forward.x() - right.z()) * w4_recip;
-		ret.z = (right.y() - up.x()) * w4_recip;
+		ret.w(sqrtf(1.0f + right.x() + up.y() + forward.z()) * 0.5f);
+		float w4_recip = 1.0f / (4.0f * ret.w());
+		ret.x((up.z() - forward.y()) * w4_recip);
+		ret.y((forward.x() - right.z()) * w4_recip);
+		ret.z((right.y() - up.x()) * w4_recip);
 		return ret;
 	}
 
