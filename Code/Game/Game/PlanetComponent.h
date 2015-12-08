@@ -3,11 +3,12 @@
 
 #include "../../Engine/Component/IComponent.h"
 #include "../../Engine/Graphics/RenderableComponent.h"
+#include "../../Engine/Component/World.h"
 
 class PlanetComponent : public Engine::IComponent
 {
 public:
-	static PlanetComponent* Create(std::shared_ptr<Lame::Context> i_graphics_context);
+	static PlanetComponent* Create(std::shared_ptr<Lame::Context> i_graphics_context, Engine::World *i_world);
 	~PlanetComponent();
 
 	void Update(float deltaTime);
@@ -16,7 +17,6 @@ public:
 private:
 	PlanetComponent(std::weak_ptr<Engine::GameObject> i_gameObject);
 	std::shared_ptr<Lame::RenderableComponent> renderable_;
-	std::shared_ptr<Engine::GameObject> go_;
 };
 
 #endif //_GAME_PLANETCOMPONENT_H

@@ -38,6 +38,7 @@ return
         files = 
         {
             { source = "asteroid.material", target = "asteroid.material.bin" },
+            { source = "bullet.material", target = "bullet.material.bin" },
         }
     },
     {

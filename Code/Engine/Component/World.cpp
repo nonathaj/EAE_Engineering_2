@@ -45,4 +45,16 @@ namespace Engine
 		}
 		return false;
 	}
+
+	std::shared_ptr<GameObject> World::AddNewGameObject()
+	{
+		std::shared_ptr<GameObject> go(new GameObject());
+		if (!go)
+			return nullptr;
+
+		if (!Add(go))
+			return nullptr;
+
+		return go;
+	}
 }

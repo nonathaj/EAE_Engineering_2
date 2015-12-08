@@ -12,7 +12,7 @@
 #include "../../Engine/Windows/Includes.h"
 #include <gl/GL.h>
 #endif
-enum test {hi, hi2, hi23};
+
 namespace Lame
 {
 	class Context

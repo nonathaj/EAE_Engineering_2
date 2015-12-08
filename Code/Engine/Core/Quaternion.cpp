@@ -27,27 +27,6 @@ namespace Engine
 	{
 	}
 
-	Quaternion::Quaternion(const Vector3& i_euler_angles)
-	{
-		Vector3 euler_radians = Vector3(
-			static_cast<float>(Engine::Math::ToRadians(i_euler_angles.x())),
-			static_cast<float>(Engine::Math::ToRadians(i_euler_angles.y())),
-			static_cast<float>(Engine::Math::ToRadians(i_euler_angles.z()))
-		);
-
-		const float c1 = std::cos(euler_radians.z() * 0.5f);
-		const float c2 = std::cos(euler_radians.y() * 0.5f);
-		const float c3 = std::cos(euler_radians.x() * 0.5f);
-		const float s1 = std::sin(euler_radians.z() * 0.5f);
-		const float s2 = std::sin(euler_radians.y() * 0.5f);
-		const float s3 = std::sin(euler_radians.x() * 0.5f);
-
-		m_x = c1 * c2 * s3 - s1 * s2 * c3;
-		m_y = c1 * s2 * c3 + s1 * c2 * s3;
-		m_z = s1 * c2 * c3 - c1 * s2 * s3;
-		m_w = c1 * c2 * c3 + s1 * s2 * s3;
-	}
-
 	Quaternion::Quaternion(const float i_angleInRadians, const Vector3& i_axisOfRotation_normalized)
 	{
 		const float theta_half = i_angleInRadians * 0.5f;
@@ -56,6 +35,43 @@ namespace Engine
 		m_x = i_axisOfRotation_normalized.x() * sin_theta_half;
 		m_y = i_axisOfRotation_normalized.y() * sin_theta_half;
 		m_z = i_axisOfRotation_normalized.z() * sin_theta_half;
+	}
+
+	Quaternion Quaternion::Euler(const Vector3& i_euler_angles)
+	{
+		Vector3 euler_radians = Vector3(
+			static_cast<float>(Engine::Math::ToRadians(i_euler_angles.x())),
+			static_cast<float>(Engine::Math::ToRadians(i_euler_angles.y())),
+			static_cast<float>(Engine::Math::ToRadians(i_euler_angles.z()))
+			);
+
+		const float c1 = std::cos(euler_radians.z() * 0.5f);
+		const float c2 = std::cos(euler_radians.y() * 0.5f);
+		const float c3 = std::cos(euler_radians.x() * 0.5f);
+		const float s1 = std::sin(euler_radians.z() * 0.5f);
+		const float s2 = std::sin(euler_radians.y() * 0.5f);
+		const float s3 = std::sin(euler_radians.x() * 0.5f);
+
+		return Quaternion(
+			c1 * c2 * s3 - s1 * s2 * c3,
+			c1 * s2 * c3 + s1 * c2 * s3,
+			s1 * c2 * c3 - c1 * s2 * s3,
+			c1 * c2 * c3 + s1 * s2 * s3);
+	}
+
+	Quaternion Quaternion::LookRotation(const Vector3& i_forward_direction, const Vector3& i_up_direction)
+	{
+		const Vector3& forward = i_forward_direction;
+		const Vector3& up = i_up_direction;
+		const Vector3 right = i_forward_direction.cross(i_up_direction);
+
+		Quaternion ret;
+		ret.w = sqrtf(1.0f + right.x() + up.y() + forward.z()) * 0.5f;
+		float w4_recip = 1.0f / (4.0f * ret.w);
+		ret.x = (up.z() - forward.y()) * w4_recip;
+		ret.y = (forward.x() - right.z()) * w4_recip;
+		ret.z = (right.y() - up.x()) * w4_recip;
+		return ret;
 	}
 
 	void Quaternion::invert()

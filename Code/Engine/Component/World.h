@@ -20,6 +20,8 @@ namespace Engine
 		bool Has(std::shared_ptr<GameObject> i_gameObject);
 		bool Remove(std::shared_ptr<GameObject> i_gameObject);
 
+		std::shared_ptr<GameObject> AddNewGameObject();			//returns a new gameobject inside this world
+
 	private:
 		std::vector<std::shared_ptr<GameObject>> gameObjects_;
 	};

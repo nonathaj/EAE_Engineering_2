@@ -24,6 +24,7 @@ namespace Lame
 	class Graphics
 	{
 	public:
+		static Graphics* Create(const HWND i_renderingWindow);
 		static Graphics* Create(std::shared_ptr<Context> i_context);
 
 		bool Render();
@@ -35,8 +36,6 @@ namespace Lame
 		bool MatchesContext(std::shared_ptr<RenderableComponent> i_renderable);
 
 		inline std::shared_ptr<Context> context() const { return context_; }
-		inline void context(std::shared_ptr<Context> i_context) { context_ = i_context; }
-
 		inline std::shared_ptr<CameraComponent> camera() const { return camera_; }
 
 	private:
@@ -47,11 +46,12 @@ namespace Lame
 		Graphics(const Graphics &i_other);
 		Graphics& operator=(const Graphics &i_other);
 
+		std::shared_ptr<Context> context_;
+		std::vector<std::shared_ptr<RenderableComponent>> renderables_;
+
 		//store the camera's gameobject, so it lives for the duration of this graphics
 		std::shared_ptr<Engine::GameObject> camera_gamebject_;
 		std::shared_ptr<CameraComponent> camera_;
-		std::shared_ptr<Context> context_;
-		std::vector<std::shared_ptr<RenderableComponent>> renderables_;
 	};
 
 	namespace Shader

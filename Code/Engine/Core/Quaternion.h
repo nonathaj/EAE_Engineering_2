@@ -5,6 +5,7 @@
 namespace Engine
 {
 	class Vector3;
+	const Vector3 Vector3::up;
 
 	class Quaternion
 	{
@@ -12,10 +13,12 @@ namespace Engine
 		static const Quaternion identity;
 
 		Quaternion();
-		Quaternion(const Vector3& i_euler_angles);
 		Quaternion(const Vector3& i_complex, const float i_real);
 		Quaternion(const float i_w, const float i_x, const float i_y, const float i_z);
 		Quaternion(const float i_angleInRadians, const Vector3& i_axisOfRotation_normalized);
+
+		static Quaternion Euler(const Vector3& i_euler_angles);
+		static Quaternion LookRotation(const Vector3& i_forward_direction, const Vector3& i_up_direction = Vector3::up);
 		
 		void invert();
 		Quaternion inverse() const;

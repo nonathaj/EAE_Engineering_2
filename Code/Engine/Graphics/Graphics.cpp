@@ -9,6 +9,11 @@
 
 namespace Lame
 {
+	Graphics* Graphics::Create(const HWND i_renderingWindow)
+	{
+		return Create(std::shared_ptr<Context>(Lame::Context::Create(i_renderingWindow)));
+	}
+
 	Graphics* Graphics::Create(std::shared_ptr<Context> i_context)
 	{
 		if (!i_context)

@@ -29,18 +29,14 @@ namespace
 
 	std::shared_ptr<BulletComponent> CreateBullet();
 
-	std::unique_ptr<Lame::Graphics> graphics;
-	std::unique_ptr<Engine::World> world;
+	Lame::Graphics *graphics = nullptr;
+	Engine::World *world = nullptr;
 
 	std::shared_ptr<PlanetComponent> asteroid;
 
-	//gameobjects
 	std::vector<std::shared_ptr<BulletComponent>> bullets;
 
-	//materials
 	std::shared_ptr<Lame::Material> bulletMat;
-
-	//meshes
 	std::shared_ptr<Lame::Mesh> bulletMesh;
 
 	void HandleInput(float deltaTime);
@@ -52,20 +48,14 @@ namespace Gameplay
 	{
 		//generate container/manager objects
 		{
-			world = std::unique_ptr<Engine::World>(new Engine::World());
+			world = new Engine::World();
 			if (!world)
 			{
 				Shutdown();
 				return false;
 			}
 
-			std::shared_ptr<Lame::Context> context(Lame::Context::Create(i_window));
-			if (!context)	//if we failed to generate a context, shutdown the game
-			{
-				Shutdown();
-				return false;
-			}
-			graphics = std::unique_ptr<Lame::Graphics>(Lame::Graphics::Create(context));
+			graphics = Lame::Graphics::Create(i_window);
 			if (!graphics) //if we failed to generate a graphics object, shutdown the game
 			{
 				Shutdown();
@@ -85,8 +75,8 @@ namespace Gameplay
 		graphics->camera()->gameObject()->position(Engine::Vector3(0, 0, 15));
 
 		//create the player's object
-		asteroid = std::shared_ptr<PlanetComponent>(PlanetComponent::Create(graphics->context()));
-		if (!asteroid || !graphics->Add(asteroid->renderable()) || !world->Add(asteroid->gameObject()))
+		asteroid = std::shared_ptr<PlanetComponent>(PlanetComponent::Create(graphics->context(), world));
+		if ( !asteroid || !graphics->Add(asteroid->renderable()) )
 		{
 			Shutdown();
 			return false;
@@ -102,9 +92,25 @@ namespace Gameplay
 	bool RunFrame()
 	{
 		eae6320::Time::OnNewFrame();
-		float deltaTime = eae6320::Time::GetSecondsElapsedThisFrame();
+		const float deltaTime = eae6320::Time::GetSecondsElapsedThisFrame();
 
 		HandleInput(deltaTime);
+
+		//validate that all bullets, removing those that have expired
+		const float bulletDuration = 2.5f;
+		const float timeSinceStartup = eae6320::Time::GetTotalSecondsElapsed();
+		for (std::vector<std::shared_ptr<BulletComponent>>::iterator itr = bullets.begin(); itr != bullets.end(); /*do not iterate here*/)
+		{
+			std::shared_ptr<BulletComponent> bullet = *itr;
+			if (timeSinceStartup - bullet->get_creation_time() > bulletDuration)
+			{
+				itr = bullets.erase(itr);
+				world->Remove(bullet->gameObject());
+				graphics->Remove(bullet->renderable());
+			}
+			else
+				itr++;
+		}
 
 		world->Update(deltaTime);
 		bool renderSuccess = graphics->Render();
@@ -119,8 +125,16 @@ namespace Gameplay
 		bulletMesh.reset();
 		bullets.clear();
 
-		world.reset();
-		graphics.reset();
+		if (world)
+		{
+			delete world;
+			world = nullptr;
+		}
+		if (graphics)
+		{
+			delete graphics;
+			graphics = nullptr;
+		}
 		return true;
 	}
 }
@@ -133,29 +147,42 @@ namespace
 		using namespace Engine;
 
 		//fire bullet
+		std::shared_ptr<GameObject> go = asteroid->gameObject();
 		if (Keyboard::Pressed(Keyboard::Space))
 		{
-			/*
-			const Vector3 spawnPosition = asteroid->position() + asteroid->rotation() * Vector3(2.5f, 0.0f, 0.0f);
+			const Vector3 spawnPosition = go->position() + go->rotation().inverse() * Vector3(2.5f, 0.0f, 0.0f);
 			std::shared_ptr<BulletComponent> bullet = CreateBullet();
 			bullet->gameObject()->position(spawnPosition);
-			bullet->gameObject()->rotation(asteroid->rotation());
-			*/
+			bullet->gameObject()->rotation(go->rotation().inverse());
 		}
+
+		float movementAmount = 3.0f * deltaTime;
+		std::shared_ptr<Engine::GameObject> movableObject = graphics->camera()->gameObject();
+		if (Keyboard::Pressed(Keyboard::Up))						//forward
+			movableObject->Move(Vector3(0.0f, 0.0f, -movementAmount));
+		if (Keyboard::Pressed(Keyboard::Down))						//backward
+			movableObject->Move(Vector3(0.0f, 0.0f, movementAmount));
+		if (Keyboard::Pressed(Keyboard::Right))						//right
+			movableObject->Move(Vector3(movementAmount, 0.0f, 0.0f));
+		if (Keyboard::Pressed(Keyboard::Left))						//left
+			movableObject->Move(Vector3(-movementAmount, 0.0f, 0.0f));
 	}
 
 	std::shared_ptr<BulletComponent> CreateBullet()
 	{
+		if (!graphics || !graphics->context())
+			return nullptr;
+
 		if (!bulletMat)
 		{
-			bulletMat = CreateMaterial("bullet.material.bin");
+			bulletMat = CreateMaterial("data/bullet.material.bin");
 			if (!bulletMat)
 				return nullptr;
 		}
 
 		if (!bulletMesh)
 		{
-			bulletMesh = CreateMesh("bullet.mesh.bin");
+			bulletMesh = CreateMesh("data/bullet.mesh.bin");
 			if (!bulletMesh)
 				return nullptr;
 		}
@@ -164,12 +191,16 @@ namespace
 		if (!renderable)
 			return nullptr;
 
-		std::shared_ptr<BulletComponent> bullet = std::shared_ptr<BulletComponent>(new BulletComponent(renderable));
+		const float bulletSpeed = 10.0f;
+		const float creationTime = eae6320::Time::GetTotalSecondsElapsed();
+		std::shared_ptr<BulletComponent> bullet = std::shared_ptr<BulletComponent>(new BulletComponent(creationTime, bulletSpeed, renderable));
 		if (!bullet)
 		{
+			world->Remove(renderable->gameObject());
+			graphics->Remove(renderable);
 			return nullptr;
 		}
-		bullet->gameObject()->enabled(false);
+		//bullet->gameObject()->enabled(false);
 		bullets.push_back(bullet);
 		return bullet;
 	}
@@ -200,12 +231,8 @@ namespace
 		using namespace Lame;
 
 		//create the gameObject
-		std::shared_ptr<Engine::GameObject> go(new Engine::GameObject());
+		std::shared_ptr<Engine::GameObject> go = world->AddNewGameObject();
 		if (!go)
-			return nullptr;
-
-		//add the object to the world
-		if (!world->Add(go))
 			return nullptr;
 
 		//create the renderable
