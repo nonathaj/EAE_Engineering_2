@@ -53,11 +53,10 @@ namespace Lame
 			std::shared_ptr<Engine::GameObject> go = (*itr)->gameObject();
 			if (go && !go->IsDestroying())
 			{
-				std::shared_ptr<RenderableComponent> renderable = renderables_[x];
-				if (renderables_[x]->material()->effect()->has_transparency())
-					transparent.push_back(renderables_[x]);
+				if ((*itr)->material()->effect()->has_transparency())
+					transparent.push_back(*itr);
 				else
-					success = renderables_[x]->Render(worldToView, viewToScreen) && success;
+					success = (*itr)->Render(worldToView, viewToScreen) && success;
 				++itr;
 			}
 			else

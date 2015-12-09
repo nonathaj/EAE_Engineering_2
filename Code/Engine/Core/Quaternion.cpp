@@ -179,7 +179,7 @@ namespace Engine
 	Vector3 operator*(const Quaternion& i_lhs, const Vector3& i_rhs)
 	{
 		//https://gamedev.stackexchange.com/questions/28395/rotating-vector3-by-a-quaternion
-		Vector3 u(i_lhs.x(), i_lhs.y(), i_lhs.z());
+		Vector3 u = i_lhs.complex();
 		return 2.0f * u.dot(i_rhs) * u
 			+ (i_lhs.w() * i_lhs.w() - u.dot(u)) * i_rhs
 			+ 2.0f * i_lhs.w() * u.cross(i_rhs);

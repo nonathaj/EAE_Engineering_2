@@ -27,6 +27,7 @@
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="MatrixMath.h" />
     <ClInclude Include="Quaternion.h" />
+    <ClInclude Include="Random.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="TypeHandling.h" />
     <ClInclude Include="Vector2.h" />
@@ -46,6 +47,7 @@
     <ClCompile Include="eae6320\cMatrix_transformation.cpp" />
     <ClCompile Include="HashedString.cpp" />
     <ClCompile Include="Quaternion.cpp" />
+    <ClCompile Include="Random.cpp" />
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="Vector3.cpp" />
   </ItemGroup>

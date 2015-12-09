@@ -148,12 +148,13 @@ namespace
 
 		//fire bullet
 		std::shared_ptr<GameObject> go = asteroid->gameObject();
-		if (Keyboard::Pressed(Keyboard::Space))
+		if (asteroid->can_fire() && Keyboard::Pressed(Keyboard::Space))
 		{
 			const Vector3 spawnPosition = go->position() + go->rotation().inverse() * Vector3(2.5f, 0.0f, 0.0f);
 			std::shared_ptr<BulletComponent> bullet = CreateBullet();
 			bullet->gameObject()->position(spawnPosition);
 			bullet->gameObject()->rotation(go->rotation().inverse());
+			asteroid->OnFire();
 		}
 
 		float movementAmount = 3.0f * deltaTime;

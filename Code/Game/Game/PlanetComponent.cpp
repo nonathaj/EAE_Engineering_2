@@ -40,7 +40,7 @@ PlanetComponent* PlanetComponent::Create(std::shared_ptr<Lame::Context> i_graphi
 }
 
 PlanetComponent::PlanetComponent(std::weak_ptr<Engine::GameObject> i_gameObject) :
-	IComponent(i_gameObject)
+	IComponent(i_gameObject), can_fire_timer(0.0f), weapon_cooldown(1.0f)
 {
 }
 
@@ -53,6 +53,8 @@ void PlanetComponent::Update(float deltaTime)
 {
 	using namespace System::UserInput;
 	using namespace Engine;
+
+	can_fire_timer -= deltaTime;
 
 	const float rotationSpeed = static_cast<float>(Math::ToRadians(90.0f * deltaTime));
 	Vector3 rotationAxis(0.0f, 0.0f, 1.0f);

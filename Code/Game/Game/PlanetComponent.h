@@ -14,9 +14,17 @@ public:
 	void Update(float deltaTime);
 
 	std::shared_ptr<Lame::RenderableComponent> renderable() { return renderable_; }
+
+	float get_weapon_cooldown() { return weapon_cooldown; }
+	void set_weapon_cooldown(const float& i_weapon_cooldown) { weapon_cooldown = i_weapon_cooldown; }
+
+	bool can_fire() { return can_fire_timer < 0.0f; }
+	void OnFire() { can_fire_timer = weapon_cooldown; }
 private:
 	PlanetComponent(std::weak_ptr<Engine::GameObject> i_gameObject);
 	std::shared_ptr<Lame::RenderableComponent> renderable_;
+	float weapon_cooldown;
+	float can_fire_timer;
 };
 
 #endif //_GAME_PLANETCOMPONENT_H
