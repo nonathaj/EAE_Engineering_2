@@ -1,5 +1,5 @@
 
-#include <map>
+#include <unordered_map>
 
 #include "UserInput.h"
 #include "../Windows/Includes.h"
@@ -8,7 +8,7 @@ namespace
 {
 	bool IsVirtualKeyPressed(const int i_virtualKeyCode);
 
-	std::map<System::UserInput::Keyboard::Key, const int> keyCodes =
+	std::unordered_map<System::UserInput::Keyboard::Key, const int> keyCodes =
 	{
 		{ System::UserInput::Keyboard::A, 'A' },
 		{ System::UserInput::Keyboard::B, 'B' },
@@ -60,7 +60,7 @@ namespace
 		{ System::UserInput::Keyboard::Right, VK_RIGHT },
 	};
 
-	std::map<System::UserInput::Mouse::Button, const int> mouseButtonCodes =
+	std::unordered_map<System::UserInput::Mouse::Button, const int> mouseButtonCodes =
 	{
 		{ System::UserInput::Mouse::Left, VK_LBUTTON },
 		{ System::UserInput::Mouse::Right, VK_RBUTTON },
