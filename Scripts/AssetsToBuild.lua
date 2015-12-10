@@ -13,8 +13,8 @@ return
 			{ source = "asteroid.mesh", target = "asteroid.mesh.bin" },
 			{ source = "bullet.mesh", target = "bullet.mesh.bin" },
 			{ source = "box.mesh", target = "box.mesh.bin" },
-			{ source = "bullet.mesh", target = "enemy1.mesh.bin" },
-			{ source = "bullet.mesh", target = "enemy2.mesh.bin" },
+			{ source = "pistachio.mesh", target = "pistachio.mesh.bin" },
+			{ source = "cashew.mesh", target = "cashew.mesh.bin" },
 		}
 	},
     {
@@ -41,8 +41,8 @@ return
         {
             { source = "asteroid.material", target = "asteroid.material.bin" },
             { source = "bullet.material", target = "bullet.material.bin" },
-            { source = "bullet.material", target = "enemy1.material.bin" },
-            { source = "bullet.material", target = "enemy2.material.bin" },
+            { source = "pistachio.material", target = "pistachio.material.bin" },
+            { source = "cashew.material", target = "cashew.material.bin" },
         }
     },
     {
@@ -52,6 +52,8 @@ return
             { source = "rock.JPG", target = "rock.DDS" },
             { source = "asteroid.jpg", target = "asteroid.DDS" },
             { source = "metal.jpg", target = "bullet.DDS" },
+            { source = "pistachio.tga", target = "pistachio.DDS" },
+            { source = "cashew.png", target = "cashew.DDS" },
         }
     },
 }

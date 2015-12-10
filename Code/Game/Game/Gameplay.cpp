@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <utility>
 
 #include "../../Engine/Graphics/Context.h"
 #include "../../Engine/Graphics/Mesh.h"
@@ -43,12 +44,12 @@ namespace
 	std::shared_ptr<Lame::Material> bulletMat;
 	std::shared_ptr<Lame::Mesh> bulletMesh;
 
-	std::vector<std::shared_ptr<Lame::Material>> enemyMaterials;
-	std::vector<std::shared_ptr<Lame::Mesh>> enemyMeshes;
+	std::pair<std::shared_ptr<Lame::Mesh>, std::shared_ptr<Lame::Material>> pistachio;
+	std::pair<std::shared_ptr<Lame::Mesh>, std::shared_ptr<Lame::Material>> cashew;
 
-	const float asteroidSize = 5.0f / 2;
+	const float asteroidSize = 2;
 	const float bulletSize = 1.0f / 2;
-	const float enemySize = 1.0f / 2;
+	const float enemySize = 1.0f;
 
 	const float enemyCreationDelay = 0.75f;
 	float enemyCreationTimer = 0.0f;
@@ -103,28 +104,15 @@ namespace Gameplay
 		asteroid->set_rotation_degrees_per_second(120.0f);
 
 		{
-			//create the enemy meshes
-			for (auto path : { "data/enemy1.mesh.bin", "data/enemy2.mesh.bin" })
-			{
-				std::shared_ptr<Lame::Mesh> mesh = CreateMesh(path);
-				if (!mesh)
-				{
-					Shutdown();
-					return false;
-				}
-				enemyMeshes.push_back(mesh);
-			}
+			pistachio.first = CreateMesh("data/pistachio.mesh.bin");
+			pistachio.second = CreateMaterial("data/pistachio.material.bin");
 
-			//create the enemy materials
-			for (auto path : { "data/enemy1.material.bin", "data/enemy2.material.bin" })
+			cashew.first = CreateMesh("data/cashew.mesh.bin");			
+			cashew.second = CreateMaterial("data/cashew.material.bin");
+			if (!pistachio.first || !pistachio.second || !cashew.first || !cashew.second)
 			{
-				std::shared_ptr<Lame::Material> mat = CreateMaterial(path);
-				if (!mat)
-				{
-					Shutdown();
-					return false;
-				}
-				enemyMaterials.push_back(mat);
+				Shutdown();
+				return false;
 			}
 		}
 
@@ -220,8 +208,10 @@ namespace Gameplay
 		bulletMesh.reset();
 		bullets.clear();
 
-		enemyMaterials.clear();
-		enemyMeshes.clear();
+		pistachio.first.reset();
+		pistachio.second.reset();
+		cashew.first.reset();
+		cashew.second.reset();
 		enemies.clear();
 
 		if (world)
@@ -311,13 +301,16 @@ namespace
 
 	std::shared_ptr<EnemyComponent> CreateEnemy()
 	{
-		if (enemyMeshes.size() == 0 || enemyMaterials.size() == 0)
+		if (!pistachio.first || !pistachio.second || !cashew.first || !cashew.second)
 			return nullptr;
 
-		std::shared_ptr<Lame::Mesh> mesh = enemyMeshes[Engine::Random::Range(0, enemyMeshes.size())];
-		std::shared_ptr<Lame::Material> material = enemyMaterials[Engine::Random::Range(0, enemyMeshes.size())];
+		std::shared_ptr<Lame::RenderableComponent> renderable;
+		bool isCashew = Engine::Random::Value() > 0.5f;
+		if (isCashew)
+			renderable = CreateRenderableObject(cashew.first, cashew.second);
+		else
+			renderable = CreateRenderableObject(pistachio.first, pistachio.second);
 
-		std::shared_ptr<Lame::RenderableComponent> renderable(CreateRenderableObject(mesh, material));
 		if (!renderable)
 			return nullptr;
 
