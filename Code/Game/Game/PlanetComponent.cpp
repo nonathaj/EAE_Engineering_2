@@ -40,7 +40,7 @@ PlanetComponent* PlanetComponent::Create(std::shared_ptr<Lame::Context> i_graphi
 }
 
 PlanetComponent::PlanetComponent(std::weak_ptr<Engine::GameObject> i_gameObject) :
-	IComponent(i_gameObject), can_fire_timer(0.0f), weapon_cooldown(1.0f)
+	IComponent(i_gameObject), can_fire_timer(0.0f), weapon_cooldown(1.0f), rotation_degrees_per_second(90.0f)
 {
 }
 
@@ -56,7 +56,7 @@ void PlanetComponent::Update(float deltaTime)
 
 	can_fire_timer -= deltaTime;
 
-	const float rotationSpeed = static_cast<float>(Math::ToRadians(90.0f * deltaTime));
+	const float rotationSpeed = static_cast<float>(Math::ToRadians(rotation_degrees_per_second * deltaTime));
 	Vector3 rotationAxis(0.0f, 0.0f, 1.0f);
 	std::shared_ptr<Engine::GameObject> go = gameObject();
 	if (Keyboard::Pressed(Keyboard::A))

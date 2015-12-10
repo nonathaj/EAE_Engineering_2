@@ -20,11 +20,16 @@ public:
 
 	bool can_fire() { return can_fire_timer < 0.0f; }
 	void OnFire() { can_fire_timer = weapon_cooldown; }
+
+	float get_rotation_degrees_per_second() { return rotation_degrees_per_second; }
+	void set_rotation_degrees_per_second(const float& i_rotation_degrees_per_second) { rotation_degrees_per_second = i_rotation_degrees_per_second; }
+
 private:
 	PlanetComponent(std::weak_ptr<Engine::GameObject> i_gameObject);
 	std::shared_ptr<Lame::RenderableComponent> renderable_;
 	float weapon_cooldown;
 	float can_fire_timer;
+	float rotation_degrees_per_second;
 };
 
 #endif //_GAME_PLANETCOMPONENT_H

@@ -17,9 +17,11 @@
 #include "../../Engine/System/Console.h"
 #include "../../Engine/System/UserOutput.h"
 #include "../../Engine/Core/Math.h"
+#include "../../Engine/Core/Random.h"
 
 #include "BulletComponent.h"
 #include "PlanetComponent.h"
+#include "EnemyComponent.h"
 
 namespace
 {
@@ -28,6 +30,7 @@ namespace
 	std::shared_ptr<Lame::RenderableComponent> CreateRenderableObject(std::shared_ptr<Lame::Mesh> i_mesh, std::shared_ptr<Lame::Material> i_material);
 
 	std::shared_ptr<BulletComponent> CreateBullet();
+	std::shared_ptr<EnemyComponent> CreateEnemy();
 
 	Lame::Graphics *graphics = nullptr;
 	Engine::World *world = nullptr;
@@ -35,11 +38,26 @@ namespace
 	std::shared_ptr<PlanetComponent> asteroid;
 
 	std::vector<std::shared_ptr<BulletComponent>> bullets;
+	std::vector<std::shared_ptr<EnemyComponent>> enemies;
 
 	std::shared_ptr<Lame::Material> bulletMat;
 	std::shared_ptr<Lame::Mesh> bulletMesh;
 
+	std::vector<std::shared_ptr<Lame::Material>> enemyMaterials;
+	std::vector<std::shared_ptr<Lame::Mesh>> enemyMeshes;
+
+	const float asteroidSize = 5.0f / 2;
+	const float bulletSize = 1.0f / 2;
+	const float enemySize = 1.0f / 2;
+
+	const float enemyCreationDelay = 0.75f;
+	float enemyCreationTimer = 0.0f;
+
+	const float enemySpawnDistance = 20.0f;
+
 	void HandleInput(float deltaTime);
+
+	bool Contacting(std::shared_ptr<Engine::GameObject> go1, std::shared_ptr<Engine::GameObject> go2, const float& go1Size, const float& go2Size);
 }
 
 namespace Gameplay
@@ -81,10 +99,34 @@ namespace Gameplay
 			Shutdown();
 			return false;
 		}
+		asteroid->set_weapon_cooldown(0.25f);
+		asteroid->set_rotation_degrees_per_second(120.0f);
 
-		//Create our Materials
-		//Create our Meshes
-		//Create our renderables
+		{
+			//create the enemy meshes
+			for (auto path : { "data/enemy1.mesh.bin", "data/enemy2.mesh.bin" })
+			{
+				std::shared_ptr<Lame::Mesh> mesh = CreateMesh(path);
+				if (!mesh)
+				{
+					Shutdown();
+					return false;
+				}
+				enemyMeshes.push_back(mesh);
+			}
+
+			//create the enemy materials
+			for (auto path : { "data/enemy1.material.bin", "data/enemy2.material.bin" })
+			{
+				std::shared_ptr<Lame::Material> mat = CreateMaterial(path);
+				if (!mat)
+				{
+					Shutdown();
+					return false;
+				}
+				enemyMaterials.push_back(mat);
+			}
+		}
 
 		return true;
 	}
@@ -96,7 +138,7 @@ namespace Gameplay
 
 		HandleInput(deltaTime);
 
-		//validate that all bullets, removing those that have expired
+		//validate all bullets, removing those that have expired
 		const float bulletDuration = 2.5f;
 		const float timeSinceStartup = eae6320::Time::GetTotalSecondsElapsed();
 		for (std::vector<std::shared_ptr<BulletComponent>>::iterator itr = bullets.begin(); itr != bullets.end(); /*do not iterate here*/)
@@ -109,7 +151,60 @@ namespace Gameplay
 				graphics->Remove(bullet->renderable());
 			}
 			else
-				itr++;
+				++itr;
+		}
+
+		//validate all enemies, removing those that are close to the planet or any bullets
+		for (auto itr = enemies.begin(); itr != enemies.end(); /*  */)
+		{
+			std::shared_ptr<EnemyComponent> enemy = *itr;
+			std::shared_ptr<Engine::GameObject> go = enemy->gameObject();
+
+			bool shouldDelete = false;
+
+			//if we are hitting the planet, destroy this enemy
+			if (Contacting(go, asteroid->gameObject(), enemySize, asteroidSize))
+				shouldDelete = true;
+			else
+			{
+				//if we are contacting any bullet, destroy the bullet and this enemy
+				for (std::vector<std::shared_ptr<BulletComponent>>::iterator itr = bullets.begin(); itr != bullets.end(); /*do not iterate here*/)
+				{
+					std::shared_ptr<BulletComponent> bullet = *itr;
+					if (Contacting(go, bullet->gameObject(), enemySize, bulletSize))
+					{
+						itr = bullets.erase(itr);
+						world->Remove(bullet->gameObject());
+						graphics->Remove(bullet->renderable());
+						shouldDelete = true;
+						break;
+					}
+					else
+						++itr;
+				}
+			}
+
+			if (shouldDelete)
+			{
+				itr = enemies.erase(itr);
+				world->Remove(go);
+				graphics->Remove(enemy->renderable());
+			}
+			else
+			{
+				++itr;
+			}
+		}
+
+		//create a new enemy on a timer
+		enemyCreationTimer -= deltaTime;
+		if (enemyCreationTimer < 0.0f)
+		{
+			enemyCreationTimer = enemyCreationDelay;
+			std::shared_ptr<EnemyComponent> enemy = CreateEnemy();
+			Engine::Vector3 spawnLocation(enemySpawnDistance, 0.0f, 0.0f);
+			spawnLocation = Engine::Quaternion(Engine::Random::Range(0.0f, 2.0f * static_cast<float>(M_PI)), Engine::Vector3(0.0f, 0.0f, 1.0f)) * spawnLocation;
+			enemy->gameObject()->position(spawnLocation);
 		}
 
 		world->Update(deltaTime);
@@ -124,6 +219,10 @@ namespace Gameplay
 		bulletMat.reset();
 		bulletMesh.reset();
 		bullets.clear();
+
+		enemyMaterials.clear();
+		enemyMeshes.clear();
+		enemies.clear();
 
 		if (world)
 		{
@@ -169,9 +268,14 @@ namespace
 			movableObject->Move(Vector3(-movementAmount, 0.0f, 0.0f));
 	}
 
+	bool Contacting(std::shared_ptr<Engine::GameObject> go1, std::shared_ptr<Engine::GameObject> go2, const float& go1Size, const float& go2Size)
+	{
+		return go1->position().distance(go2->position()) <= go1Size + go2Size;
+	}
+
 	std::shared_ptr<BulletComponent> CreateBullet()
 	{
-		if (!graphics || !graphics->context())
+		if (!world || !graphics || !graphics->context())
 			return nullptr;
 
 		if (!bulletMat)
@@ -201,9 +305,32 @@ namespace
 			graphics->Remove(renderable);
 			return nullptr;
 		}
-		//bullet->gameObject()->enabled(false);
 		bullets.push_back(bullet);
 		return bullet;
+	}
+
+	std::shared_ptr<EnemyComponent> CreateEnemy()
+	{
+		if (enemyMeshes.size() == 0 || enemyMaterials.size() == 0)
+			return nullptr;
+
+		std::shared_ptr<Lame::Mesh> mesh = enemyMeshes[Engine::Random::Range(0, enemyMeshes.size())];
+		std::shared_ptr<Lame::Material> material = enemyMaterials[Engine::Random::Range(0, enemyMeshes.size())];
+
+		std::shared_ptr<Lame::RenderableComponent> renderable(CreateRenderableObject(mesh, material));
+		if (!renderable)
+			return nullptr;
+
+		std::shared_ptr<EnemyComponent> enemy(new EnemyComponent(renderable));
+		if (!enemy)
+		{
+			world->Remove(renderable->gameObject());
+			graphics->Remove(renderable);
+			return nullptr;
+		}
+
+		enemies.push_back(enemy);
+		return enemy;
 	}
 
 	std::shared_ptr<Lame::Material> CreateMaterial(std::string i_material)

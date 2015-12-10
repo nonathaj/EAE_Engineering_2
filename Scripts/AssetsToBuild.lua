@@ -13,6 +13,8 @@ return
 			{ source = "asteroid.mesh", target = "asteroid.mesh.bin" },
 			{ source = "bullet.mesh", target = "bullet.mesh.bin" },
 			{ source = "box.mesh", target = "box.mesh.bin" },
+			{ source = "bullet.mesh", target = "enemy1.mesh.bin" },
+			{ source = "bullet.mesh", target = "enemy2.mesh.bin" },
 		}
 	},
     {
@@ -39,6 +41,8 @@ return
         {
             { source = "asteroid.material", target = "asteroid.material.bin" },
             { source = "bullet.material", target = "bullet.material.bin" },
+            { source = "bullet.material", target = "enemy1.material.bin" },
+            { source = "bullet.material", target = "enemy2.material.bin" },
         }
     },
     {

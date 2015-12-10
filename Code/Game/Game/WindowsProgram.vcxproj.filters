@@ -29,6 +29,7 @@
     <ClInclude Include="Gameplay.h" />
     <ClInclude Include="BulletComponent.h" />
     <ClInclude Include="PlanetComponent.h" />
+    <ClInclude Include="EnemyComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EntryPoint.cpp" />
@@ -36,5 +37,6 @@
     <ClCompile Include="Gameplay.cpp" />
     <ClCompile Include="BulletComponent.cpp" />
     <ClCompile Include="PlanetComponent.cpp" />
+    <ClCompile Include="EnemyComponent.cpp" />
   </ItemGroup>
 </Project>
