@@ -12,13 +12,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Console.Win32.cpp" />
-    <ClCompile Include="UserOutput.cpp" />
     <ClCompile Include="Time.Win32.cpp" />
-    <ClCompile Include="UserInput.cpp" />
     <ClCompile Include="eae6320\Time.cpp">
       <Filter>eae6320</Filter>
     </ClCompile>
     <ClCompile Include="FileLoader.cpp" />
+    <ClCompile Include="UserInput.Win32.cpp" />
+    <ClCompile Include="UserOutput.Win32.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Time.inl" />

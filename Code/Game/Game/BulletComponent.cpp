@@ -1,5 +1,8 @@
+
 #include "BulletComponent.h"
 #include "../../Engine/Core/Vector3.h"
+#include "../../Engine/Core/Quaternion.h"
+#include "../../Engine/Core/Math.h"
 
 BulletComponent::BulletComponent(float i_creation_time, float i_speed, std::shared_ptr<Lame::RenderableComponent> i_renderable) :
 	IComponent(i_renderable->gameObject()), 

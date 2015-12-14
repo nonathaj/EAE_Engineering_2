@@ -29,8 +29,8 @@ bool EffectBuilder::Build(const std::vector<std::string>&)
 			eae6320::OutputErrorMessage("Failed to open the file and create lua state.", m_path_source);
 			return false;
 		}
-		std::map<std::string, std::string> strs;
-		std::map<std::string, bool> flags;
+		std::unordered_map<std::string, std::string> strs;
+		std::unordered_map<std::string, bool> flags;
 		bool dataReadInSuccessfully = stack->PeekDictionary(strs) && stack->PeekDictionary(flags);
 		delete stack;
 

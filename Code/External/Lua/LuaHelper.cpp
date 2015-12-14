@@ -13,7 +13,7 @@ namespace
 	bool TryPeekArray(LuaHelper::LuaStack *stack, std::vector<T>& o_val, int i_index);
 
 	template<typename K, typename V>
-	bool TryPeekDictionary(LuaHelper::LuaStack *stack, std::map<K, V>& o_val, int i_index);
+	bool TryPeekDictionary(LuaHelper::LuaStack *stack, std::unordered_map<K, V>& o_val, int i_index);
 }
 
 namespace LuaHelper
@@ -173,25 +173,18 @@ namespace LuaHelper
 	// HasValue Functions
 	////////////////////////////////////
 
-	bool LuaStack::HasValue(const char* i_key, int i_table_index)
-	{
-		return CheckHasValue(this, i_key, i_table_index);
+#define LUAHELPER_LUASTACK_HASVALUE_DEFINITION(KeyType) \
+	bool LuaStack::HasValue(KeyType i_key, int i_table_index) \
+	{ \
+		return CheckHasValue(this, i_key, i_table_index); \
 	}
 
-	bool LuaStack::HasValue(lua_Number const& i_key, int i_table_index)
-	{
-		return CheckHasValue(this, i_key, i_table_index);
-	}
+	LUAHELPER_LUASTACK_HASVALUE_DEFINITION(const char*);
+	LUAHELPER_LUASTACK_HASVALUE_DEFINITION(lua_Number const&);
+	LUAHELPER_LUASTACK_HASVALUE_DEFINITION(lua_Integer const&);
+	LUAHELPER_LUASTACK_HASVALUE_DEFINITION(lua_Unsigned const&);
 
-	bool LuaStack::HasValue(lua_Integer const& i_key, int i_table_index)
-	{
-		return CheckHasValue(this, i_key, i_table_index);
-	}
-
-	bool LuaStack::HasValue(lua_Unsigned const& i_key, int i_table_index)
-	{
-		return CheckHasValue(this, i_key, i_table_index);
-	}
+#undef LUAHELPER_LUASTACK_HASVALUE_DEFINITION
 
 	////////////////////////////////////
 	////////////////////////////////////
@@ -200,25 +193,18 @@ namespace LuaHelper
 	// Pop Array Functions
 	////////////////////////////////////
 
-	bool LuaStack::PeekArray(std::vector<lua_Integer>& o_val, int i_index)
-	{
-		return TryPeekArray(this, o_val, i_index);
+#define LUAHELPER_LUASTACK_PEEKARRAY_DEFINITION(StoreType) \
+	bool LuaStack::PeekArray(std::vector<StoreType>& o_val, int i_index) \
+	{ \
+		return TryPeekArray(this, o_val, i_index); \
 	}
 
-	bool LuaStack::PeekArray(std::vector<std::string>& o_val, int i_index)
-	{
-		return TryPeekArray(this, o_val, i_index);
-	}
+	LUAHELPER_LUASTACK_PEEKARRAY_DEFINITION(std::string);
+	LUAHELPER_LUASTACK_PEEKARRAY_DEFINITION(lua_Integer);
+	LUAHELPER_LUASTACK_PEEKARRAY_DEFINITION(lua_Number);
+	LUAHELPER_LUASTACK_PEEKARRAY_DEFINITION(lua_Unsigned);
 
-	bool LuaStack::PeekArray(std::vector<lua_Number>& o_val, int i_index)
-	{
-		return TryPeekArray(this, o_val, i_index);
-	}
-
-	bool LuaStack::PeekArray(std::vector<lua_Unsigned>& o_val, int i_index)
-	{
-		return TryPeekArray(this, o_val, i_index);
-	}
+#undef LUAHELPER_LUASTACK_PEEKARRAY_DEFINITION
 
 	////////////////////////////////////
 	////////////////////////////////////
@@ -226,30 +212,20 @@ namespace LuaHelper
 	////////////////////////////////////
 	// Pop Dictionary Functions
 	////////////////////////////////////
-	bool LuaStack::PeekDictionary(std::map<std::string, lua_Integer>& o_val, int i_index)
-	{
-		return TryPeekDictionary(this, o_val, i_index);
-	}
 
-	bool LuaStack::PeekDictionary(std::map<std::string, std::string>& o_val, int i_index)
-	{
-		return TryPeekDictionary(this, o_val, i_index);
-	}
+#define LUAHELPER_LUASTACK_PEEKDICTIONARY_DEFINITION(KeyType, ValueType) \
+bool LuaStack::PeekDictionary(std::unordered_map<KeyType, ValueType>& o_val, int i_index) \
+{ \
+	return TryPeekDictionary(this, o_val, i_index); \
+}
 
-	bool LuaStack::PeekDictionary(std::map<std::string, lua_Number>& o_val, int i_index)
-	{
-		return TryPeekDictionary(this, o_val, i_index);
-	}
+	LUAHELPER_LUASTACK_PEEKDICTIONARY_DEFINITION(std::string, lua_Integer);
+	LUAHELPER_LUASTACK_PEEKDICTIONARY_DEFINITION(std::string, std::string);
+	LUAHELPER_LUASTACK_PEEKDICTIONARY_DEFINITION(std::string, lua_Number);
+	LUAHELPER_LUASTACK_PEEKDICTIONARY_DEFINITION(std::string, lua_Unsigned);
+	LUAHELPER_LUASTACK_PEEKDICTIONARY_DEFINITION(std::string, bool);
 
-	bool LuaStack::PeekDictionary(std::map<std::string, lua_Unsigned>& o_val, int i_index)
-	{
-		return TryPeekDictionary(this, o_val, i_index);
-	}
-
-	bool LuaStack::PeekDictionary(std::map<std::string, bool>& o_val, int i_index)
-	{
-		return TryPeekDictionary(this, o_val, i_index);
-	}
+#undef LUAHELPER_LUASTACK_PEEKDICTIONARY_DEFINITION
 
 	////////////////////////////////////
 	////////////////////////////////////
@@ -392,7 +368,7 @@ namespace
 	}
 
 	template<typename K, typename V>
-	bool TryPeekDictionary(LuaHelper::LuaStack *stack, std::map<K, V>& o_val, int i_index)
+	bool TryPeekDictionary(LuaHelper::LuaStack *stack, std::unordered_map<K, V>& o_val, int i_index)
 	{
 		if (!stack->IsTable(i_index))
 			return false;

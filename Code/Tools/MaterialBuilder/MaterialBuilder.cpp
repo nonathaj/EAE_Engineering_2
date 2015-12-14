@@ -66,7 +66,7 @@ bool MaterialBuilder::Build(const std::vector<std::string>&)
 					//name and shader type
 					const std::string name = "name";
 					const std::string shader = "shader";
-					std::map<std::string, std::string> strs;
+					std::unordered_map<std::string, std::string> strs;
 					if (stack->PeekDictionary(strs))
 					{
 						if(strs.find(name) != strs.end())

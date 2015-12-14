@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include <functional>
 
 #include "Includes.h"
@@ -64,11 +64,11 @@ namespace LuaHelper
 		bool PeekArray(std::vector<lua_Unsigned>& o_val, int i_index = -1);
 
 		//Gets the values from a dictionary on the stack, fails if the index is not a table
-		bool PeekDictionary(std::map<std::string, lua_Integer>& o_val, int i_index = -1);
-		bool PeekDictionary(std::map<std::string, std::string>& o_val, int i_index = -1);
-		bool PeekDictionary(std::map<std::string, lua_Number>& o_val, int i_index = -1);
-		bool PeekDictionary(std::map<std::string, lua_Unsigned>& o_val, int i_index = -1);
-		bool PeekDictionary(std::map<std::string, bool>& o_val, int i_index = -1);
+		bool PeekDictionary(std::unordered_map<std::string, lua_Integer>& o_val, int i_index = -1);
+		bool PeekDictionary(std::unordered_map<std::string, std::string>& o_val, int i_index = -1);
+		bool PeekDictionary(std::unordered_map<std::string, lua_Number>& o_val, int i_index = -1);
+		bool PeekDictionary(std::unordered_map<std::string, lua_Unsigned>& o_val, int i_index = -1);
+		bool PeekDictionary(std::unordered_map<std::string, bool>& o_val, int i_index = -1);
 
 		lua_State* State() { return state; }
 

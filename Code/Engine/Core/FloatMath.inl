@@ -16,72 +16,72 @@ namespace Engine
 			}
 
 			template<typename T>
-			bool IsNaN(T i_val)
+			bool IsNaN(const T i_val)
 			{
 				volatile T v = i_val;
 				return v != v;
 			}
 
 			template<typename T>
-			bool IsInfinity(T i_val)
+			bool IsInfinity(const T i_val)
 			{
 				volatile T v = i_val;
 				return (v > 0 || v < 0) && (v / v != v / v);
 			}
 
 			template<typename T>
-			bool IsNaNOrInfinity(T i_val)
+			bool IsNaNOrInfinity(const T i_val)
 			{
 				volatile T v = i_val;
 				return (v * 0) != 0;
 			}
 
 			template<typename T>
-			bool AlmostEqual(T i_lhs, T i_rhs)
+			bool AlmostEqual(const T i_lhs, const T i_rhs)
 			{
 				return AlmostEqual(i_lhs, i_rhs, std::numeric_limits<T>::epsilon());
 			}
 
 			template<typename T>
-			bool AlmostEqual(T i_lhs, T i_rhs, T i_epsilon)
+			bool AlmostEqual(const T i_lhs, const T i_rhs, const T i_epsilon)
 			{
 				return fabs(i_lhs - i_rhs) <= i_epsilon;
 			}
 
 			template<typename T>
-			bool AlmostEqualRelative(T i_lhs, T i_rhs)
+			bool AlmostEqualRelative(const T i_lhs, const T i_rhs)
 			{
 				return AlmostEqualRelative(i_lhs, i_rhs, std::numeric_limits<T>::epsilon());
 			}
 
 			template<typename T>
-			bool AlmostEqualRelative(T i_lhs, T i_rhs, T i_maxRelDiff)
+			bool AlmostEqualRelative(const T i_lhs, const T i_rhs, const T i_maxRelDiff)
 			{
-				T diff = fabs(i_lhs - i_rhs);
+				const T diff = fabs(i_lhs - i_rhs);
 				i_lhs = fabs(i_lhs);
 				i_rhs = fabs(i_rhs);
 				return diff <= std::max(i_lhs, i_rhs) * i_maxRelDiff;
 			}
 
-			bool AlmostEqualULP(float i_lhs, float i_rhs, size_t maxULPdiff)
+			bool AlmostEqualULP(const float i_lhs, const float i_rhs, const size_t maxULPdiff)
 			{
 				//treat each float as an integer
-				int32_t left = *((int32_t*)&i_lhs);
-				int32_t right = *((int32_t*)&i_rhs);
+				const int32_t left = *reinterpret_cast<const int32_t*>(&i_lhs);
+				const int32_t right = *reinterpret_cast<const int32_t*>(&i_rhs);
 
 				//if they have different signs, they are not equal (unless both are zero)
 				if (Engine::Math::IsNegative(left) != Engine::Math::IsNegative(right))
 					return i_lhs == i_rhs;
 
 				//Compare the ULP difference to our maxULP difference allowed
-				return ((uint32_t)abs(left - right)) <= maxULPdiff;
+				return static_cast<size_t>(abs(left - right)) <= maxULPdiff;
 			}
 
-			bool AlmostEqualULP(double i_lhs, double i_rhs, size_t maxULPdiff)
+			bool AlmostEqualULP(const double i_lhs, const double i_rhs, const size_t maxULPdiff)
 			{
 				//treat each double as an integer
-				int64_t left = *((int64_t*)&i_lhs);
-				int64_t right = *((int64_t*)&i_rhs);
+				const int64_t left = *reinterpret_cast<const int64_t*>(&i_lhs);
+				const int64_t right = *reinterpret_cast<const int64_t*>(&i_rhs);
 
 				//if they have different signs, they are not equal (unless both are zero)
 				if (IsNegative(left) != IsNegative(right))

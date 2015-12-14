@@ -20,4 +20,6 @@ void EnemyComponent::Update(float deltaTime)
 
 	Vector3 hereToCenter = -gameObject()->position().normalized();
 	gameObject()->Move(hereToCenter * get_speed() * deltaTime);
+
+	gameObject()->Rotate(Engine::Quaternion(static_cast<float>(Engine::Math::ToRadians(30.0f)) * deltaTime, Engine::Vector3::forward));
 }
