@@ -12,7 +12,6 @@ return
 		{
 			{ source = "asteroid.mesh", target = "asteroid.mesh.bin" },
 			{ source = "bullet.mesh", target = "bullet.mesh.bin" },
-			{ source = "box.mesh", target = "box.mesh.bin" },
 			{ source = "pistachio.mesh", target = "pistachio.mesh.bin" },
 			{ source = "cashew.mesh", target = "cashew.mesh.bin" },
 		}
@@ -49,7 +48,6 @@ return
         tool = "TextureBuilder.exe",
         files = 
         {
-            { source = "rock.JPG", target = "rock.DDS" },
             { source = "asteroid.jpg", target = "asteroid.DDS" },
             { source = "metal.jpg", target = "bullet.DDS" },
             { source = "pistachio.tga", target = "pistachio.DDS" },

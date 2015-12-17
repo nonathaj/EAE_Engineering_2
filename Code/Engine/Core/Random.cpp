@@ -9,10 +9,9 @@
 
 namespace
 {
-	static unsigned seed = static_cast<unsigned>(std::chrono::system_clock::now().time_since_epoch().count());
-	static std::default_random_engine generator(seed);
-	static std::uniform_real_distribution<float> distribution(0.0f, 1.0f + std::numeric_limits<float>::epsilon());
-
+	unsigned default_seed = static_cast<unsigned>(std::chrono::system_clock::now().time_since_epoch().count());
+	std::default_random_engine generator(default_seed);
+	std::uniform_real_distribution<float> distribution(0.0f, 1.0f + std::numeric_limits<float>::epsilon());
 }
 
 namespace Engine
@@ -28,7 +27,8 @@ namespace Engine
 
 			return distribution(generator);
 
-			//TODO this does not use all of the available mantissa of the floats
+			//TODO this might be a more efficient way to calculate random numbers,
+			//	BUT does not use all of the available mantissa of the floats
 			//return static_cast<float>(rand()) / static_cast<float>((RAND_MAX + 1));
 		}
 
