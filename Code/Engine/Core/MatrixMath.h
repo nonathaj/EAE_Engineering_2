@@ -4,6 +4,7 @@
 #include "Vector2.h"
 #include "Vector3.h"
 #include "Matrix.h"
+#include "Matrix4x4.h"
 
 namespace Engine
 {
@@ -12,13 +13,17 @@ namespace Engine
 		namespace Matrix
 		{
 			//Mathematical Matrix Constructors
-			inline Engine::Matrix<4, 4> CreateRotationX(float i_angle_degrees);
-			inline Engine::Matrix<4, 4> CreateRotationY(float i_angle_degrees);
-			inline Engine::Matrix<4, 4> CreateRotationZ(float i_angle_degrees);
-			inline Engine::Matrix<4, 4> CreateRotation(float i_x_deg, float i_y_deg, float i_z_deg);
-			inline Engine::Matrix<4, 4> CreateRotation(const Vector3 &i_rot);
-			inline Engine::Matrix<4, 4> CreateTranslation(float i_x, float i_y, float i_z);
-			inline Engine::Matrix<4, 4> CreateTranslation(const Vector3 &i_pos);
+
+			//TODO finish converting to Matrix4x4
+			inline Matrix4x4 CreateTransformation(const Vector3& i_translation, const Quaternion& i_rotation);
+			inline Matrix4x4 CreateTranslation(const Vector3& i_translation);
+			inline Matrix4x4 CreateRotationX(const float i_x_degrees);
+			inline Matrix4x4 CreateRotationY(const float i_y_degrees);
+			inline Matrix4x4 CreateRotationZ(const float i_z_degrees);
+			inline Matrix4x4 CreateRotation(const Vector3& i_euler_angles_degrees);
+			inline Matrix4x4 CreateRotation(const Quaternion& i_rotation);
+			inline Matrix4x4 CreateWorldToView(const Vector3& i_cameraPosition, const Quaternion& i_cameraOrientation);
+			inline Matrix4x4 CreateViewToScreen(const float i_fieldOfView_y, const float i_aspectRatio, const float i_z_nearPlane, const float i_z_farPlane);
 
 			//Vector manipulation with math matrices
 			inline Engine::Matrix<4, 1> AsMatrix(const Engine::Vector3 &i_vector, float fourthVal);

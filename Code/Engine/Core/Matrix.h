@@ -446,16 +446,16 @@ namespace Engine
 		out << "{ ";
 		for (size_t x = 0; x < Rows; x++)
 		{
-		out << "{ ";
-		for (size_t y = 0; y < Columns; y++)
-		{
-			out << i_matrix.Get(x, y);
-			if (y < Columns - 1)
+			out << "{ ";
+			for (size_t y = 0; y < Columns; y++)
+			{
+				out << i_matrix.Get(x, y);
+				if (y < Columns - 1)
+					out << ", ";
+			}
+			out << " }";
+			if (x < Rows - 1)
 				out << ", ";
-		}
-		out << " }";
-		if (x < Rows - 1)
-			out << ", ";
 		}
 
 		out << " }";
