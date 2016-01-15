@@ -256,6 +256,11 @@ namespace
 			movableObject->Move(Vector3(movementAmount, 0.0f, 0.0f));
 		if (Keyboard::Pressed(Keyboard::Left))						//left
 			movableObject->Move(Vector3(-movementAmount, 0.0f, 0.0f));
+
+		if (Keyboard::Pressed(Keyboard::M))
+			graphics->camera()->vertical_fov(graphics->camera()->vertical_fov() + 4.0f * deltaTime);
+		if (Keyboard::Pressed(Keyboard::N))
+			graphics->camera()->vertical_fov(graphics->camera()->vertical_fov() - 4.0f * deltaTime);
 	}
 
 	bool Contacting(std::shared_ptr<Engine::GameObject> go1, std::shared_ptr<Engine::GameObject> go2, const float& go1Size, const float& go2Size)

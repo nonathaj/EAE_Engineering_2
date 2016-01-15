@@ -5,8 +5,6 @@
 
 #include "FloatMath.h"
 
-//Default is Column-Major matrices, to switch to row-major, use the #define ENGINE_CORE_MATRIX4X4_USE_ROW_MAJOR
-
 namespace Engine
 {
 	class Vector3;
@@ -76,31 +74,21 @@ namespace Engine
 
 namespace Engine
 {
-	float Matrix4x4::Get(const size_t i_row, const size_t i_column) const
+	inline float Matrix4x4::Get(const size_t i_row, const size_t i_column) const
 	{
 		assert(i_row >= 0 && i_row < 4);
 		assert(i_column >= 0 && i_column < 4);
-
-#if defined(ENGINE_CORE_MATRIX4X4_USE_ROW_MAJOR)
 		return data[i_row][i_column];
-#else
-		return data[i_column][i_row];
-#endif
 	}
 
-	void Matrix4x4::Set(const size_t i_row, const size_t i_column, const float i_value)
+	inline void Matrix4x4::Set(const size_t i_row, const size_t i_column, const float i_value)
 	{
 		assert(i_row >= 0 && i_row < 4);
 		assert(i_column >= 0 && i_column < 4);
-
-#if defined(ENGINE_CORE_MATRIX4X4_USE_ROW_MAJOR)
 		data[i_row][i_column] = i_value;
-#else
-		data[i_column][i_row] = i_value;
-#endif
 	}
 
-	float Matrix4x4::Trace() const
+	inline float Matrix4x4::Trace() const
 	{
 		return Get(0, 0) + Get(1, 1) + Get(2, 2) + Get(3, 3);
 	}

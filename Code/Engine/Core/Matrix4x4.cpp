@@ -32,10 +32,10 @@ const Engine::Matrix4x4 Engine::Matrix4x4::zero = Engine::Matrix4x4(
 
 namespace Engine
 {
-	Matrix4x4::Matrix4x4(const float r1c1, const float r2c1, const float r3c1, const float r4c1,
-		const float r1c2, const float r2c2, const float r3c2, const float r4c2,
-		const float r1c3, const float r2c3, const float r3c3, const float r4c3,
-		const float r1c4, const float r2c4, const float r3c4, const float r4c4)
+	Matrix4x4::Matrix4x4(const float r1c1, const float r1c2, const float r1c3, const float r1c4,
+		const float r2c1, const float r2c2, const float r2c3, const float r2c4,
+		const float r3c1, const float r3c2, const float r3c3, const float r3c4,
+		const float r4c1, const float r4c2, const float r4c3, const float r4c4)
 	{
 		Set(0, 0, r1c1);
 		Set(0, 1, r1c2);
@@ -57,15 +57,6 @@ namespace Engine
 
 	Matrix4x4 Matrix4x4::CreateTransformation(const Vector3& i_translation, const Quaternion& i_rotation)
 	{
-		Matrix4x4 matrix;
-		matrix.Set(0, 3, i_translation.x());
-		matrix.Set(1, 3, i_translation.y());
-		matrix.Set(2, 3, i_translation.z());
-		matrix.Set(3, 0, 0.0f);
-		matrix.Set(3, 1, 0.0f);
-		matrix.Set(3, 2, 0.0f);
-		matrix.Set(3, 3, 1.0f);
-
 		const float _2x = i_rotation.x() + i_rotation.x();
 		const float _2y = i_rotation.y() + i_rotation.y();
 		const float _2z = i_rotation.z() + i_rotation.z();
@@ -79,30 +70,35 @@ namespace Engine
 		const float _2zz = _2z * i_rotation.z();
 		const float _2zw = _2z * i_rotation.w();
 
-		matrix.Set(0, 0, 1.0f - _2yy - _2zz);
-		matrix.Set(0, 1, _2xy + _2zw);
-		matrix.Set(0, 2, _2xz - _2yw);
+		return Matrix4x4(
+			//Row 1
+			1.0f - _2yy - _2zz,
+			_2xy + _2zw,
+			_2xz - _2yw,
+			i_translation.x(),
 
-		matrix.Set(1, 0, _2xy - _2zw);
-		matrix.Set(1, 1, 1.0f - _2xx - _2zz);
-		matrix.Set(1, 2, _2yz + _2xw);
+			//Row 2
+			_2xy - _2zw,
+			1.0f - _2xx - _2zz,
+			_2yz + _2xw,
+			i_translation.y(),
 
-		matrix.Set(2, 0, _2xz + _2yw);
-		matrix.Set(2, 1, _2yz - _2xw);
-		matrix.Set(2, 2, 1.0f - _2xx - _2yy);
+			//Row 3
+			_2xz + _2yw,
+			_2yz - _2xw,
+			1.0f - _2xx - _2yy,
+			i_translation.z(),
 
-		return matrix;
-
-		//return CreateTranslation(i_translation) * CreateRotation(i_rotation);
+			0.0f, 0.0f, 0.0f, 1.0f );
 	}
 
 	Matrix4x4 Matrix4x4::CreateTranslation(float i_x, float i_y, float i_z)
 	{
-		Matrix4x4 matrix = Matrix4x4::identity;
-		matrix.Set(0, 3, i_x);
-		matrix.Set(1, 3, i_y);
-		matrix.Set(2, 3, i_z);
-		return matrix;
+		return Matrix4x4(
+			1, 0, 0, i_x,
+			0, 1, 0, i_y,
+			0, 0, 1, i_z,
+			0, 0, 0, 1);
 	}
 
 	Matrix4x4 Matrix4x4::CreateTranslation(const Vector3& i_translation)
@@ -113,34 +109,31 @@ namespace Engine
 	Matrix4x4 Matrix4x4::CreateRotationX(const float i_x_degrees)
 	{
 		float radians = static_cast<float>(Math::ToRadians(i_x_degrees)), v_sin = sin(radians), v_cos = cos(radians);
-		Matrix4x4 matrix = Matrix4x4::identity;
-		matrix.Set(1, 1, v_cos);
-		matrix.Set(1, 2, 0 - v_cos);
-		matrix.Set(2, 1, v_sin);
-		matrix.Set(2, 2, v_sin);
-		return matrix;
+		return Matrix4x4(
+			1, 0, 0, 0,
+			0, v_cos, -v_sin, 0,
+			0, v_sin, v_cos, 0,
+			0, 0, 0, 1 );
 	}
 
 	Matrix4x4 Matrix4x4::CreateRotationY(const float i_y_degrees)
 	{
 		float radians = static_cast<float>(Math::ToRadians(i_y_degrees)), v_sin = sin(radians), v_cos = cos(radians);
-		Matrix4x4 matrix = Matrix4x4::identity;
-		matrix.Set(0, 0, v_cos);
-		matrix.Set(0, 2, v_sin);
-		matrix.Set(2, 0, -v_sin);
-		matrix.Set(2, 2, v_cos);
-		return matrix;
+		return Matrix4x4(
+			v_cos, 0, v_sin, 0,
+			0, 1, 0, 0,
+			-v_sin, 0, v_cos, 0,
+			0, 0, 0, 1 );
 	}
 
 	Matrix4x4 Matrix4x4::CreateRotationZ(const float i_z_degrees)
 	{
 		float radians = static_cast<float>(Math::ToRadians(i_z_degrees)), v_sin = sin(radians), v_cos = cos(radians);
-		Matrix4x4 matrix = Matrix4x4::identity;
-		matrix.Set(0, 0, v_cos);
-		matrix.Set(0, 1, -v_sin);
-		matrix.Set(1, 0, v_sin);
-		matrix.Set(1, 1, v_cos);
-		return matrix;
+		return Matrix4x4(
+			v_cos, -v_sin, 0, 0,
+			v_sin, v_cos, 0, 0,
+			0, 0, 1, 0,
+			0, 0, 0, 1);
 	}
 
 	Matrix4x4 Matrix4x4::CreateRotation(float i_x_deg, float i_y_deg, float i_z_deg)
