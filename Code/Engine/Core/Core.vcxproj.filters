@@ -4,7 +4,6 @@
     <ClInclude Include="FloatMath.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Matrix.h" />
-    <ClInclude Include="MatrixMath.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="HashedString.h" />
@@ -21,7 +20,6 @@
   <ItemGroup>
     <None Include="FloatMath.inl" />
     <None Include="Math.inl" />
-    <None Include="MatrixMath.inl" />
     <None Include="Vector2.inl" />
     <None Include="Vector3.inl" />
     <None Include="HashedString.inl" />

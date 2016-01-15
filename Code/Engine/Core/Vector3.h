@@ -26,7 +26,7 @@ namespace Engine
 		inline Vector3();
 		Vector3(const Vector2 &i_vec, float i_z = 0.0f);
 		inline Vector3(const Vector3 &i_vec);
-		inline Vector3(float i_x, float i_y, float i_z);
+		inline Vector3(const float i_x, const float i_y, const float i_z);
 		inline ~Vector3();
 
 		inline float angle(const Vector3 &rhs) const;			//returns the angle between vectors, in radians
@@ -39,11 +39,14 @@ namespace Engine
 		inline Vector3 normalized() const;						//returns a normalized version of the vector (length 1)
 		inline Vector3& normalize();							//normalizes this vector
 
+		inline Vector3 Reflect(const Vector3& i_normal);
+		inline Vector3 AbsoluteValues();
+
 		//setters
-		inline void set(float i_x, float i_y, float i_z);
-		inline void x(float i_x) { m_x = i_x; }
-		inline void y(float i_y) { m_y = i_y; }
-		inline void z(float i_z) { m_z = i_z; }
+		inline void set(const float i_x, const float i_y, const float i_z);
+		inline void x(const float i_x) { m_x = i_x; }
+		inline void y(const float i_y) { m_y = i_y; }
+		inline void z(const float i_z) { m_z = i_z; }
 
 		//getters
 		inline float x() const { return m_x; }

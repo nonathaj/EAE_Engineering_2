@@ -52,6 +52,18 @@ inline Vector2 Engine::Vector2::normalized() const
 	return Vector2(x() / mag, y() / mag);
 }
 
+
+inline Vector2 Engine::Vector2::Reflect(const Vector2& i_normal)
+{
+	Vector2 norm = i_normal.normalized();		//ensure that normal is length 1
+	return *this - 2.0f * this->dot(norm) * norm;
+}
+
+inline Vector2 Engine::Vector2::AbsoluteValues()
+{
+	return Vector2(fabs(x()), fabs(y()));
+}
+
 inline Vector2 operator+(const Vector2 &i_lhs, const Vector2 &i_rhs)
 {
 	return Vector2(i_lhs.x() + i_rhs.x(), i_lhs.y() + i_rhs.y());

@@ -34,6 +34,9 @@ namespace Engine
 		inline float sq_magnitude() const;
 		inline Vector2 normalized() const;
 
+		inline Vector2 Reflect(const Vector2& i_normal);
+		inline Vector2 AbsoluteValues();
+
 		//setters
 		inline void x(float i_x) { m_x = i_x; }
 		inline void y(float i_y) { m_y = i_y; }

@@ -2,6 +2,8 @@
 #include "Matrix4x4.h"
 
 #include "FloatMath.h"
+#include "Vector3.h"
+#include "Quaternion.h"
 
 namespace
 {
@@ -61,6 +63,116 @@ namespace Engine
 		Set(3, 3, r4c4);
 	}
 
+	Matrix4x4 Matrix4x4::CreateTransformation(const Vector3& i_translation, const Quaternion& i_rotation)
+	{
+		return CreateTranslation(i_translation) * CreateRotation(i_rotation);
+	}
+
+	Matrix4x4 Matrix4x4::CreateTranslation(float i_x, float i_y, float i_z)
+	{
+		Matrix4x4 matrix = Matrix4x4::identity;
+		matrix.Set(0, 3, i_x);
+		matrix.Set(1, 3, i_y);
+		matrix.Set(2, 3, i_z);
+		return matrix;
+	}
+
+	Matrix4x4 Matrix4x4::CreateTranslation(const Vector3& i_translation)
+	{
+		return CreateTranslation(i_translation.x(), i_translation.y(), i_translation.z());
+	}
+
+	Matrix4x4 Matrix4x4::CreateRotationX(const float i_x_degrees)
+	{
+		float radians = static_cast<float>(Math::ToRadians(i_x_degrees)), v_sin = sin(radians), v_cos = cos(radians);
+		Matrix4x4 matrix = Matrix4x4::identity;
+		matrix.Set(1, 1, v_cos);
+		matrix.Set(1, 2, 0 - v_cos);
+		matrix.Set(2, 1, v_sin);
+		matrix.Set(2, 2, v_sin);
+		return matrix;
+	}
+
+	Matrix4x4 Matrix4x4::CreateRotationY(const float i_y_degrees)
+	{
+		float radians = static_cast<float>(Math::ToRadians(i_y_degrees)), v_sin = sin(radians), v_cos = cos(radians);
+		Matrix4x4 matrix = Matrix4x4::identity;
+		matrix.Set(0, 0, v_cos);
+		matrix.Set(0, 2, v_sin);
+		matrix.Set(2, 0, 0 - v_sin);
+		matrix.Set(2, 2, v_cos);
+		return matrix;
+	}
+
+	Matrix4x4 Matrix4x4::CreateRotationZ(const float i_z_degrees)
+	{
+		float radians = static_cast<float>(Math::ToRadians(i_z_degrees)), v_sin = sin(radians), v_cos = cos(radians);
+		Matrix4x4 matrix = Matrix4x4::identity;
+		matrix.Set(0, 0, v_cos);
+		matrix.Set(0, 1, 0 - v_sin);
+		matrix.Set(1, 0, v_sin);
+		matrix.Set(1, 1, v_cos);
+		return matrix;
+	}
+
+	Matrix4x4 Matrix4x4::CreateRotation(float i_x_deg, float i_y_deg, float i_z_deg)
+	{
+		Matrix4x4 matrix = Matrix4x4::identity;
+		if (i_x_deg != 0)
+			matrix *= CreateRotationX(i_x_deg);
+		if (i_y_deg != 0)
+			matrix *= CreateRotationY(i_y_deg);
+		if (i_z_deg != 0)
+			matrix *= CreateRotationZ(i_z_deg);
+		return matrix;
+	}
+
+	Matrix4x4 Matrix4x4::CreateRotation(const Vector3& i_euler_angles_degrees)
+	{
+		return CreateRotation(i_euler_angles_degrees.x(), i_euler_angles_degrees.y(), i_euler_angles_degrees.z());
+	}
+
+	Matrix4x4 Matrix4x4::CreateRotation(const Quaternion& i_rotation)
+	{
+		return CreateRotation(i_rotation.euler());
+	}
+
+	Matrix4x4 Matrix4x4::CreateWorldToView(const Vector3& i_cameraPosition, const Quaternion& i_cameraOrientation)
+	{
+		Matrix4x4 viewToWorld = CreateTransformation(i_cameraPosition, i_cameraOrientation);
+		// A camera can only ever have rotation and translation
+		// and so a lot of simplifying assumptions can be made in order to create the inverse
+		return Matrix4x4(
+			viewToWorld.Get(0, 0), viewToWorld.Get(1, 0), viewToWorld.Get(2, 0),
+			-(viewToWorld.Get(0, 3) * viewToWorld.Get(0, 0)) - (viewToWorld.Get(1, 3) * viewToWorld.Get(1, 0)) - (viewToWorld.Get(2, 3) * viewToWorld.Get(2, 0)),
+			viewToWorld.Get(0, 1), viewToWorld.Get(1, 1), viewToWorld.Get(2, 1),
+			-(viewToWorld.Get(0, 3) * viewToWorld.Get(0, 1)) - (viewToWorld.Get(1, 3) * viewToWorld.Get(1, 1)) - (viewToWorld.Get(2, 3) * viewToWorld.Get(2, 1)),
+			viewToWorld.Get(0, 2), viewToWorld.Get(1, 2), viewToWorld.Get(2, 2),
+			-(viewToWorld.Get(0, 3) * viewToWorld.Get(0, 2)) - (viewToWorld.Get(1, 3) * viewToWorld.Get(1, 2)) - (viewToWorld.Get(2, 3) * viewToWorld.Get(2, 2)),
+			0.0f, 0.0f, 0.0f, 1.0f);
+	}
+
+	Matrix4x4 Matrix4x4::CreateViewToScreen(const float i_fieldOfView_y, const float i_aspectRatio, const float i_z_nearPlane, const float i_z_farPlane)
+	{
+		const float yScale = 1.0f / std::tan(i_fieldOfView_y * 0.5f);
+		const float xScale = yScale / i_aspectRatio;
+#if defined( EAE6320_PLATFORM_D3D )
+		const float zDistanceScale = i_z_farPlane / (i_z_nearPlane - i_z_farPlane);
+		return Matrix4x4(
+			xScale, 0.0f, 0.0f, 0.0f,
+			0.0f, yScale, 0.0f, 0.0f,
+			0.0f, 0.0f, zDistanceScale, i_z_nearPlane * zDistanceScale,
+			0.0f, 0.0f, -1.0f, 0.0f);
+#elif defined( EAE6320_PLATFORM_GL )
+		const float zDistanceScale = 1.0f / (i_z_nearPlane - i_z_farPlane);
+		return Matrix4x4(
+			xScale, 0.0f, 0.0f, 0.0f,
+			0.0f, yScale, 0.0f, 0.0f,
+			0.0f, 0.0f, (i_z_nearPlane + i_z_farPlane) * zDistanceScale, (2.0f * i_z_nearPlane * i_z_farPlane) * zDistanceScale,
+			0.0f, 0.0f, -1.0f, 0.0f);
+#endif
+	}
+
 	float Matrix4x4::Determinant() const
 	{
 		return Get(0, 3) * Get(1, 2) * Get(2, 1) * Get(3, 0) - Get(0, 2) * Get(1, 3) * Get(2, 1) * Get(3, 0) -
@@ -114,7 +226,6 @@ namespace Engine
 		}
 		return determinant3x3(minor);
 	}
-
 
 	Matrix4x4 Matrix4x4::Transposed() const
 	{
@@ -184,6 +295,14 @@ namespace Engine
 			return Adjugate() * (1.0f / determinant);
 	}
 
+	Vector3 Matrix4x4::Multiply(const Vector3& i_rhs, const float i_w) const
+	{
+		return Vector3(
+			i_rhs.x() * Get(0, 0) + i_rhs.y() * Get(0, 1) + i_rhs.z() * Get(0, 2) + i_w * Get(0, 3),
+			i_rhs.x() * Get(1, 0) + i_rhs.y() * Get(1, 1) + i_rhs.z() * Get(1, 2) + i_w * Get(1, 3),
+			i_rhs.x() * Get(2, 0) + i_rhs.y() * Get(2, 1) + i_rhs.z() * Get(2, 2) + i_w * Get(2, 3) );
+	}
+
 	Matrix4x4& Matrix4x4::operator*=(const float i_rhs)
 	{
 		if (IsValid())
@@ -196,6 +315,7 @@ namespace Engine
 				}
 			}
 		}
+		return *this;
 	}
 
 	Matrix4x4& Matrix4x4::operator*=(const Matrix4x4& i_other)
@@ -243,13 +363,7 @@ namespace Engine
 
 	bool operator==(const Matrix4x4& i_left, const Matrix4x4& i_right)
 	{
-		bool leftValid = i_left.IsValid();
-		bool rightValid = i_right.IsValid();
-		if (!leftValid && !rightValid)
-		{
-			return true;
-		}
-		else if (!leftValid || !rightValid)
+		if (!i_left.IsValid() || !i_right.IsValid())
 		{
 			return false;
 		}

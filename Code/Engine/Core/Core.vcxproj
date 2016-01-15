@@ -26,7 +26,6 @@
     <ClInclude Include="Math.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Matrix4x4.h" />
-    <ClInclude Include="MatrixMath.h" />
     <ClInclude Include="Quaternion.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="Singleton.h" />
@@ -38,7 +37,6 @@
     <None Include="FloatMath.inl" />
     <None Include="HashedString.inl" />
     <None Include="Math.inl" />
-    <None Include="MatrixMath.inl" />
     <None Include="Singleton.inl" />
     <None Include="TypeHandling.inl" />
     <None Include="Vector2.inl" />

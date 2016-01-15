@@ -9,6 +9,7 @@
       <Filter>eae6320</Filter>
     </ClInclude>
     <ClInclude Include="FileLoader.h" />
+    <ClInclude Include="UnitTest.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Console.Win32.cpp" />
@@ -19,6 +20,7 @@
     <ClCompile Include="FileLoader.cpp" />
     <ClCompile Include="UserInput.Win32.cpp" />
     <ClCompile Include="UserOutput.Win32.cpp" />
+    <ClCompile Include="UnitTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Time.inl" />

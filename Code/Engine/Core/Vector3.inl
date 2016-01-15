@@ -8,7 +8,7 @@ inline Engine::Vector3::Vector3(const Vector3 &i_vec)
 {
 }
 
-inline Engine::Vector3::Vector3(float i_x, float i_y, float i_z)
+inline Engine::Vector3::Vector3(const float i_x, const float i_y, const float i_z)
 	:m_x(i_x), m_y(i_y), m_z(i_z)
 {
 }
@@ -17,7 +17,7 @@ inline Engine::Vector3::~Vector3()
 {
 }
 
-inline void Engine::Vector3::set(float i_x, float i_y, float i_z)
+inline void Engine::Vector3::set(const float i_x, const float i_y, const float i_z)
 {
 	m_x = i_x;
 	m_y = i_y;
@@ -77,6 +77,17 @@ inline Engine::Vector3& Engine::Vector3::normalize(void)
 		z(z() / mag);
 	}
 	return *this;
+}
+
+inline Engine::Vector3 Engine::Vector3::Reflect(const Vector3& i_normal)
+{
+	Vector3 norm = i_normal.normalized();		//ensure that normal is length 1
+	return *this - 2.0f * this->dot(norm) * norm;
+}
+
+inline Engine::Vector3 Engine::Vector3::AbsoluteValues()
+{
+	return Vector3(fabs(x()), fabs(y()), fabs(z()));
 }
 
 inline Engine::Vector3 Engine::operator+(const Engine::Vector3 &i_lhs, const Engine::Vector3 &i_rhs)
