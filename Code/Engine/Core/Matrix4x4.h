@@ -19,9 +19,7 @@ namespace Engine
 		static const Matrix4x4 zero;
 
 		inline Matrix4x4() { Invalidate(); }
-		inline Matrix4x4(const float(&i_data)[4][4]) : Matrix4x4(reinterpret_cast<const float(&)[16]>(i_data)) {}
-		Matrix4x4(const float(&i_data)[16]);
-		Matrix4x4(const float r1c1, const float r2c1, const float r3c1, const float r4c1,
+ 		Matrix4x4(const float r1c1, const float r2c1, const float r3c1, const float r4c1,
 			const float r1c2, const float r2c2, const float r3c2, const float r4c2,
 			const float r1c3, const float r2c3, const float r3c3, const float r4c3,
 			const float r1c4, const float r2c4, const float r3c4, const float r4c4);

@@ -63,4 +63,14 @@ void PlanetComponent::Update(float deltaTime)
 		go->Rotate(Quaternion(-rotationSpeed, rotationAxis));
 	else if (Keyboard::Pressed(Keyboard::D))
 		go->Rotate(Quaternion(rotationSpeed, rotationAxis));
+
+	float movementAmount = 3.0f * deltaTime;
+	if (Keyboard::Pressed(Keyboard::I))						//up
+		go->Move(Vector3(0.0f, movementAmount, 0.0f));
+	if (Keyboard::Pressed(Keyboard::K))						//down
+		go->Move(Vector3(0.0f, -movementAmount, 0.0f));
+	if (Keyboard::Pressed(Keyboard::L))						//right
+		go->Move(Vector3(movementAmount, 0.0f, 0.0f));
+	if (Keyboard::Pressed(Keyboard::J))						//left
+		go->Move(Vector3(-movementAmount, 0.0f, 0.0f));
 }

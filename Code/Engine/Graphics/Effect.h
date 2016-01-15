@@ -7,7 +7,7 @@
 #include <memory>
 
 #include "../Core/Vector3.h"
-#include "../Core/eae6320/cMatrix_transformation.h"
+#include "../Core/Matrix4x4.h"
 #include "../Core/HashedString.h"
 #include "../Core/EnumMask.h"
 
@@ -55,16 +55,16 @@ namespace Lame
 
 		bool Bind();
 
-		bool SetLocalToWorld(eae6320::Math::cMatrix_transformation i_matrix);
-		bool SetWorldToView(eae6320::Math::cMatrix_transformation i_matrix);
-		bool SetViewToScreen(eae6320::Math::cMatrix_transformation i_matrix);
+		bool SetLocalToWorld(const Engine::Matrix4x4& i_matrix);
+		bool SetWorldToView(const Engine::Matrix4x4& i_matrix);
+		bool SetViewToScreen(const Engine::Matrix4x4& i_matrix);
 
 		//Cache a constant for dynamic setting
 		bool CacheConstant(const Shader &i_shader, const std::string &i_constant, ConstantHandle &o_constantId);
 
 		//sets the value of a cache'd constant
 		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Engine::Vector3 &i_val);
-		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const eae6320::Math::cMatrix_transformation &i_val);
+		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Engine::Matrix4x4 &i_val);
 		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const float *i_val, const size_t &i_val_count);
 		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Lame::Texture *i_val
 #if defined( LAME_EFFECT_TEXTURE_INDEX_REQUIRED_TO_SET_TEXTURE )

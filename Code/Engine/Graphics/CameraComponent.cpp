@@ -14,14 +14,15 @@ namespace Lame
 		far_clip_plane_(i_far_clip_plane)
 	{
 	}
-	eae6320::Math::cMatrix_transformation CameraComponent::WorldToView() const
+
+	Engine::Matrix4x4 CameraComponent::WorldToView() const
 	{ 
-		return eae6320::Math::cMatrix_transformation::CreateWorldToViewTransform(gameObject()->rotation(), gameObject()->position());
+		return Engine::Matrix4x4::CreateWorldToView(gameObject()->position(), gameObject()->rotation());
 	}
 
-	eae6320::Math::cMatrix_transformation CameraComponent::ViewToScreen() const
+	Engine::Matrix4x4 CameraComponent::ViewToScreen() const
 	{
-		return eae6320::Math::cMatrix_transformation::CreateViewToScreenTransform(
+		return Engine::Matrix4x4::CreateViewToScreen(
 			static_cast<float>(Engine::Math::ToRadians(vertical_fov_degrees_)), 
 			aspect_ratio(), near_clip_plane_, far_clip_plane_);
 	}

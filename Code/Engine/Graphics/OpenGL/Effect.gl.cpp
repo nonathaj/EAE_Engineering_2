@@ -150,7 +150,7 @@ namespace Lame
 		return o_constantId >= 0;
 	}
 
-	bool Effect::SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const eae6320::Math::cMatrix_transformation &i_val)
+	bool Effect::SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Engine::Matrix4x4 &i_val)
 	{
 		const GLboolean shouldTranspose = false; // Matrices are already in the correct format
 		glUniformMatrix4fv(i_constant, 1, shouldTranspose, reinterpret_cast<const GLfloat*>(&i_val));

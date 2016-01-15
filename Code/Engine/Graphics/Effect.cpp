@@ -13,17 +13,17 @@ namespace Lame
 	char const * const Effect::WorldToViewUniformName = "world_to_view";
 	char const * const Effect::ViewToScreenUniformName = "view_to_screen";
 
-	bool Effect::SetLocalToWorld(eae6320::Math::cMatrix_transformation i_matrix)
+	bool Effect::SetLocalToWorld(const Engine::Matrix4x4& i_matrix)
 	{
 		return SetConstant(Shader::Vertex, localToWorldUniformId, i_matrix);
 	}
 
-	bool Effect::SetWorldToView(eae6320::Math::cMatrix_transformation i_matrix)
+	bool Effect::SetWorldToView(const Engine::Matrix4x4& i_matrix)
 	{
 		return SetConstant(Shader::Vertex, worldToViewUniformId, i_matrix);
 	}
 
-	bool Effect::SetViewToScreen(eae6320::Math::cMatrix_transformation i_matrix)
+	bool Effect::SetViewToScreen(const Engine::Matrix4x4& i_matrix)
 	{
 		return SetConstant(Shader::Vertex, viewToScreenUniformId, i_matrix);
 	}

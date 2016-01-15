@@ -32,14 +32,6 @@ const Engine::Matrix4x4 Engine::Matrix4x4::zero = Engine::Matrix4x4(
 
 namespace Engine
 {
-	Matrix4x4::Matrix4x4(const float(&i_data)[16]) :
-		Matrix4x4(i_data[0], i_data[1], i_data[2], i_data[3],
-		i_data[4], i_data[5], i_data[6], i_data[7],
-		i_data[8], i_data[9], i_data[10], i_data[11],
-		i_data[12], i_data[13], i_data[14], i_data[15])
-	{
-	}
-
 	Matrix4x4::Matrix4x4(const float r1c1, const float r2c1, const float r3c1, const float r4c1,
 		const float r1c2, const float r2c2, const float r3c2, const float r4c2,
 		const float r1c3, const float r2c3, const float r3c3, const float r4c3,
@@ -65,7 +57,43 @@ namespace Engine
 
 	Matrix4x4 Matrix4x4::CreateTransformation(const Vector3& i_translation, const Quaternion& i_rotation)
 	{
-		return CreateTranslation(i_translation) * CreateRotation(i_rotation);
+		Matrix4x4 matrix;
+		matrix.Set(0, 3, i_translation.x());
+		matrix.Set(1, 3, i_translation.y());
+		matrix.Set(2, 3, i_translation.z());
+		matrix.Set(3, 0, 0.0f);
+		matrix.Set(3, 1, 0.0f);
+		matrix.Set(3, 2, 0.0f);
+		matrix.Set(3, 3, 1.0f);
+
+		const float _2x = i_rotation.x() + i_rotation.x();
+		const float _2y = i_rotation.y() + i_rotation.y();
+		const float _2z = i_rotation.z() + i_rotation.z();
+		const float _2xx = i_rotation.x() * _2x;
+		const float _2xy = _2x * i_rotation.y();
+		const float _2xz = _2x * i_rotation.z();
+		const float _2xw = _2x * i_rotation.w();
+		const float _2yy = _2y * i_rotation.y();
+		const float _2yz = _2y * i_rotation.z();
+		const float _2yw = _2y * i_rotation.w();
+		const float _2zz = _2z * i_rotation.z();
+		const float _2zw = _2z * i_rotation.w();
+
+		matrix.Set(0, 0, 1.0f - _2yy - _2zz);
+		matrix.Set(0, 1, _2xy + _2zw);
+		matrix.Set(0, 2, _2xz - _2yw);
+
+		matrix.Set(1, 0, _2xy - _2zw);
+		matrix.Set(1, 1, 1.0f - _2xx - _2zz);
+		matrix.Set(1, 2, _2yz + _2xw);
+
+		matrix.Set(2, 0, _2xz + _2yw);
+		matrix.Set(2, 1, _2yz - _2xw);
+		matrix.Set(2, 2, 1.0f - _2xx - _2yy);
+
+		return matrix;
+
+		//return CreateTranslation(i_translation) * CreateRotation(i_rotation);
 	}
 
 	Matrix4x4 Matrix4x4::CreateTranslation(float i_x, float i_y, float i_z)
@@ -99,7 +127,7 @@ namespace Engine
 		Matrix4x4 matrix = Matrix4x4::identity;
 		matrix.Set(0, 0, v_cos);
 		matrix.Set(0, 2, v_sin);
-		matrix.Set(2, 0, 0 - v_sin);
+		matrix.Set(2, 0, -v_sin);
 		matrix.Set(2, 2, v_cos);
 		return matrix;
 	}
@@ -109,7 +137,7 @@ namespace Engine
 		float radians = static_cast<float>(Math::ToRadians(i_z_degrees)), v_sin = sin(radians), v_cos = cos(radians);
 		Matrix4x4 matrix = Matrix4x4::identity;
 		matrix.Set(0, 0, v_cos);
-		matrix.Set(0, 1, 0 - v_sin);
+		matrix.Set(0, 1, -v_sin);
 		matrix.Set(1, 0, v_sin);
 		matrix.Set(1, 1, v_cos);
 		return matrix;
@@ -279,8 +307,7 @@ namespace Engine
 		return matrix;
 
 		//Simplified version is this (but is slightly slower)
-		//Matrix4x4 adj = Cofactor().Transposed();
-		//return adj;
+		//return Cofactor().Transposed();
 	}
 
 	Matrix4x4 Matrix4x4::Inverse() const

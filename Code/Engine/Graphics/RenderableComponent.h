@@ -14,7 +14,7 @@ namespace Lame
 	public:
 		RenderableComponent(std::weak_ptr<Engine::GameObject> go, std::shared_ptr<Mesh> i_mesh, std::shared_ptr<Material> i_material);
 
-		bool Render(const eae6320::Math::cMatrix_transformation& i_worldToView, const eae6320::Math::cMatrix_transformation& i_viewToScreen) const;
+		bool Render(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen) const;
 
 		inline std::shared_ptr<Mesh> mesh() const { return mesh_; }
 		inline std::shared_ptr<Material> material() const { return material_; }

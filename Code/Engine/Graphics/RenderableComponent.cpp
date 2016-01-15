@@ -11,10 +11,8 @@ namespace Lame
 	{
 	}
 
-	bool RenderableComponent::Render(const eae6320::Math::cMatrix_transformation& i_worldToView, const eae6320::Math::cMatrix_transformation& i_viewToScreen) const
+	bool RenderableComponent::Render(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen) const
 	{
-		using namespace eae6320::Math;
-
 		std::shared_ptr<Engine::GameObject> go = gameObject();
 		if (go)
 		{

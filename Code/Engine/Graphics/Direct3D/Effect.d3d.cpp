@@ -176,7 +176,7 @@ namespace Lame
 			return false;
 	}
 
-	bool Effect::SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const eae6320::Math::cMatrix_transformation &i_val)
+	bool Effect::SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Engine::Matrix4x4 &i_val)
 	{
 		HRESULT result = get_constant_table(i_shader)->SetMatrixTranspose(context->get_direct3dDevice(), std::get<0>(i_constant), reinterpret_cast<const D3DXMATRIX*>(&i_val));
 		if (!SUCCEEDED(result))

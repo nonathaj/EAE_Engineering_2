@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="eae6320\cMatrix_transformation.h" />
     <ClInclude Include="EnumMask.h" />
     <ClInclude Include="FloatMath.h" />
     <ClInclude Include="HashedString.h" />
@@ -43,7 +42,6 @@
     <None Include="Vector3.inl" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="eae6320\cMatrix_transformation.cpp" />
     <ClCompile Include="HashedString.cpp" />
     <ClCompile Include="Matrix4x4.cpp" />
     <ClCompile Include="Quaternion.cpp" />

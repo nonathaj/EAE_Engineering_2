@@ -4,7 +4,7 @@
 #include "../Component/IComponent.h"
 #include "../Component/GameObject.h"
 #include "Context.h"
-#include "../Core/eae6320/cMatrix_transformation.h"
+#include "../Core/Matrix4x4.h"
 
 namespace Lame
 {
@@ -14,8 +14,8 @@ namespace Lame
 	public:
 		CameraComponent(std::weak_ptr<Engine::GameObject> go, std::shared_ptr<Context> contextPtr, float i_vertical_fov_degree = 60.0f, float i_near_clip_plane = 0.1f, float i_far_clip_plane = 100.0f);
 
-		eae6320::Math::cMatrix_transformation WorldToView() const;
-		eae6320::Math::cMatrix_transformation ViewToScreen() const;
+		Engine::Matrix4x4 WorldToView() const;
+		Engine::Matrix4x4 ViewToScreen() const;
 
 		float near_clip_plane() const { return near_clip_plane_; }
 		void near_clip_plane(const float& i_near_clip_plane) { near_clip_plane_ = i_near_clip_plane; }

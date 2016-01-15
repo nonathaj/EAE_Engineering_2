@@ -5,7 +5,7 @@
 #include "Context.h"
 #include "RenderableComponent.h"
 #include "../Component/GameObject.h"
-#include "../Core/eae6320/cMatrix_transformation.h"
+#include "../Core/Matrix4x4.h"
 
 namespace Lame
 {
@@ -42,8 +42,8 @@ namespace Lame
 		bool success = context()->Clear(true, true, false) && context()->BeginFrame();
 		if (!success)
 			return false;
-		eae6320::Math::cMatrix_transformation worldToView = camera()->WorldToView();
-		eae6320::Math::cMatrix_transformation viewToScreen = camera()->ViewToScreen();
+		Engine::Matrix4x4 worldToView = camera()->WorldToView();
+		Engine::Matrix4x4 viewToScreen = camera()->ViewToScreen();
 
 		std::vector<std::shared_ptr<RenderableComponent>> transparent;
 

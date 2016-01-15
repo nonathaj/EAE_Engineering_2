@@ -7,7 +7,7 @@
 
 #include "../Core/Vector3.h"
 #include "../Core/Quaternion.h"
-#include "../Core/eae6320/cMatrix_transformation.h"
+#include "../Core/Matrix4x4.h"
 
 namespace Engine
 {
@@ -35,7 +35,7 @@ namespace Engine
 		inline bool enabled() const { return enabled_; }
 		inline void enabled(const bool& i_enabled) { enabled_ = i_enabled; }
 
-		inline eae6320::Math::cMatrix_transformation LocalToWorld() const { return eae6320::Math::cMatrix_transformation(rotation(), position()); }
+		inline Engine::Matrix4x4 LocalToWorld() const { return Engine::Matrix4x4::CreateTransformation(position(), rotation()); }
 
 		inline void Destroy() { destroying_ = true; }
 		inline bool IsDestroying() { return destroying_; }
