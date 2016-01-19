@@ -117,6 +117,7 @@ namespace Lame
 		if (has_depth_test())
 		{
 			result = context->get_direct3dDevice()->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
+			success = success && SUCCEEDED(result);
 			result = context->get_direct3dDevice()->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
 		}
 		else
