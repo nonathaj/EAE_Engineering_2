@@ -1,0 +1,9 @@
+return
+{
+	effect = "opaque.effect.bin",
+	uniforms = 
+	{
+		{ name = "base_texture", texture = "metal_brace_D.DDS", shader = "fragment" },
+		{ name = "color_value", value = { 1.0, 1.0, 1.0 }, shader = "fragment" },
+	},
+}

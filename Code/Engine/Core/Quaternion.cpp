@@ -37,12 +37,12 @@ namespace Engine
 		m_z = i_axisOfRotation_normalized.z() * sin_theta_half;
 	}
 
-	Quaternion Quaternion::Euler(const Vector3& i_euler_angles)
+	Quaternion Quaternion::Euler(const float i_euler_x_deg, const float i_euler_y_deg, const float i_euler_z_deg)
 	{
 		Vector3 euler_radians = Vector3(
-			static_cast<float>(Engine::Math::ToRadians(i_euler_angles.x())),
-			static_cast<float>(Engine::Math::ToRadians(i_euler_angles.y())),
-			static_cast<float>(Engine::Math::ToRadians(i_euler_angles.z()))
+			static_cast<float>(Engine::Math::ToRadians(i_euler_x_deg)),
+			static_cast<float>(Engine::Math::ToRadians(i_euler_y_deg)),
+			static_cast<float>(Engine::Math::ToRadians(i_euler_z_deg))
 			);
 
 		const float c1 = std::cos(euler_radians.z() * 0.5f);
@@ -57,6 +57,11 @@ namespace Engine
 			c1 * s2 * c3 + s1 * c2 * s3,
 			s1 * c2 * c3 - c1 * s2 * s3,
 			c1 * c2 * c3 + s1 * s2 * s3);
+	}
+
+	Quaternion Quaternion::Euler(const Vector3& i_euler_angles)
+	{
+		return Euler(i_euler_angles.x(), i_euler_angles.y(), i_euler_angles.z());
 	}
 
 	Quaternion Quaternion::LookRotation(const Vector3& i_forward_direction, const Vector3& i_up_direction)

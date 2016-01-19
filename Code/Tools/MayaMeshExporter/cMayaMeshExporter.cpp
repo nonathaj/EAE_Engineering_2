@@ -765,7 +765,8 @@ namespace
 						fout << "\t\t{ " 
 							<< i_indexBuffer[x] << ", " 
 							<< i_indexBuffer[x + 1] << ", " 
-							<< i_indexBuffer[x + 2] << " }, \n";
+							<< i_indexBuffer[x + 2] << " }, -- Triangle "
+							<< (x / 3) << "\n";
 					}
 				}
 				fout << "\t},\n";

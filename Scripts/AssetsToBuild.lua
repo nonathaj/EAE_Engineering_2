@@ -10,10 +10,13 @@ return
 		tool = "MeshBuilder.exe",
 		files = 
 		{
-			{ source = "asteroid.mesh", target = "asteroid.mesh.bin" },
-			{ source = "bullet.mesh", target = "bullet.mesh.bin" },
-			{ source = "pistachio.mesh", target = "pistachio.mesh.bin" },
-			{ source = "cashew.mesh", target = "cashew.mesh.bin" },
+			{ source = "EAE 6330/ceiling_mesh.mesh", target = "ceiling_mesh.mesh.bin" },
+			{ source = "EAE 6330/cement_mesh.mesh", target = "cement_mesh.mesh.bin" },
+			{ source = "EAE 6330/floor_mesh.mesh", target = "floor_mesh.mesh.bin" },
+			{ source = "EAE 6330/lambert_objects_mesh.mesh", target = "lambert_objects_mesh.mesh.bin" },
+			{ source = "EAE 6330/metal_mesh.mesh", target = "metal_mesh.mesh.bin" },
+			{ source = "EAE 6330/railing_mesh.mesh", target = "railing_mesh.mesh.bin" },
+			{ source = "EAE 6330/walls_mesh.mesh", target = "walls_mesh.mesh.bin" },
 		}
 	},
     {
@@ -38,20 +41,22 @@ return
         tool = "MaterialBuilder.exe",
         files = 
         {
-            { source = "asteroid.material", target = "asteroid.material.bin" },
-            { source = "bullet.material", target = "bullet.material.bin" },
-            { source = "pistachio.material", target = "pistachio.material.bin" },
-            { source = "cashew.material", target = "cashew.material.bin" },
+            { source = "EAE 6330/cement_wall.material", target = "cement_wall.material.bin" },
+            { source = "EAE 6330/floor.material", target = "floor.material.bin" },
+            { source = "EAE 6330/metal_brace.material", target = "metal_brace.material.bin" },
+            { source = "EAE 6330/railing.material", target = "railing.material.bin" },
+            { source = "EAE 6330/wall.material", target = "wall.material.bin" },
         }
     },
     {
         tool = "TextureBuilder.exe",
         files = 
         {
-            { source = "asteroid.jpg", target = "asteroid.DDS" },
-            { source = "metal.jpg", target = "bullet.DDS" },
-            { source = "pistachio.tga", target = "pistachio.DDS" },
-            { source = "cashew.png", target = "cashew.DDS" },
+            { source = "EAE 6330/cement_wall_D.png", target = "cement_wall_D.DDS" },
+            { source = "EAE 6330/floor_D.png", target = "floor_D.DDS" },
+            { source = "EAE 6330/metal_brace_D.png", target = "metal_brace_D.DDS" },
+            { source = "EAE 6330/railing_D.png", target = "railing_D.DDS" },
+            { source = "EAE 6330/wall_D.png", target = "wall_D.DDS" },
         }
     },
 }

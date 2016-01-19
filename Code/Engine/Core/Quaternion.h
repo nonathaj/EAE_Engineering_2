@@ -16,6 +16,7 @@ namespace Engine
 		Quaternion(const float i_w, const float i_x, const float i_y, const float i_z);
 		Quaternion(const float i_angleInRadians, const Vector3& i_axisOfRotation_normalized);
 
+		static Quaternion Euler(const float i_euler_x_deg, const float i_euler_y_deg, const float i_euler_z_deg);
 		static Quaternion Euler(const Vector3& i_euler_angles);
 		static Quaternion LookRotation(const Vector3& i_forward_direction, const Vector3& i_up_direction);
 		

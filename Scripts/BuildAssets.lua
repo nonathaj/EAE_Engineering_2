@@ -107,6 +107,8 @@ local function BuildAsset( i_builderFileName, i_dependencies, i_sourceRelativePa
 
 	-- Build the target if necessary
 	if shouldTargetBeBuilt then
+        print( "Build Started: " .. path_source )
+
 		-- Create the target directory if necessary
 		CreateDirectoryIfNecessary( path_target )
 		-- Build
@@ -130,7 +132,7 @@ local function BuildAsset( i_builderFileName, i_dependencies, i_sourceRelativePa
 			local result, terminationType, exitCode = os.execute( commandLine )
 			if result then
 				-- Display a message for each asset
-				print( "Built " .. path_source )
+				print( "Build Completed: " .. path_source )
 				-- Return the exit code for informational purposes since we have it
 				return true, exitCode
 			else

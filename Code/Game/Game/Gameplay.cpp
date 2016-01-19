@@ -30,31 +30,8 @@ namespace
 	std::shared_ptr<Lame::Mesh> CreateMesh(std::string i_mesh);
 	std::shared_ptr<Lame::RenderableComponent> CreateRenderableObject(std::shared_ptr<Lame::Mesh> i_mesh, std::shared_ptr<Lame::Material> i_material);
 
-	std::shared_ptr<BulletComponent> CreateBullet();
-	std::shared_ptr<EnemyComponent> CreateEnemy();
-
 	Lame::Graphics *graphics = nullptr;
 	Engine::World *world = nullptr;
-
-	std::shared_ptr<PlanetComponent> asteroid;
-
-	std::vector<std::shared_ptr<BulletComponent>> bullets;
-	std::vector<std::shared_ptr<EnemyComponent>> enemies;
-
-	std::shared_ptr<Lame::Material> bulletMat;
-	std::shared_ptr<Lame::Mesh> bulletMesh;
-
-	std::pair<std::shared_ptr<Lame::Mesh>, std::shared_ptr<Lame::Material>> pistachio;
-	std::pair<std::shared_ptr<Lame::Mesh>, std::shared_ptr<Lame::Material>> cashew;
-
-	const float asteroidSize = 2;
-	const float bulletSize = 1.0f / 2;
-	const float enemySize = 1.0f;
-
-	const float enemyCreationDelay = 0.75f;
-	float enemyCreationTimer = 0.0f;
-
-	const float enemySpawnDistance = 20.0f;
 
 	void HandleInput(float deltaTime);
 
@@ -92,28 +69,17 @@ namespace Gameplay
 
 		//initial camera position
 		graphics->camera()->gameObject()->position(Engine::Vector3(0, 0, 15));
+		graphics->camera()->far_clip_plane(15000.0f);
 
-		//create the player's object
-		asteroid = std::shared_ptr<PlanetComponent>(PlanetComponent::Create(graphics->context(), world));
-		if ( !asteroid || !graphics->Add(asteroid->renderable()) )
+		if (!CreateRenderableObject(CreateMesh("data/ceiling_mesh.mesh.bin"), CreateMaterial("data/cement_wall.material.bin")) ||
+			!CreateRenderableObject(CreateMesh("data/cement_mesh.mesh.bin"), CreateMaterial("data/cement_wall.material.bin")) ||
+			!CreateRenderableObject(CreateMesh("data/floor_mesh.mesh.bin"), CreateMaterial("data/floor.material.bin")) || 
+			!CreateRenderableObject(CreateMesh("data/metal_mesh.mesh.bin"), CreateMaterial("data/metal_brace.material.bin")) || 
+			!CreateRenderableObject(CreateMesh("data/railing_mesh.mesh.bin"), CreateMaterial("data/railing.material.bin")) || 
+			!CreateRenderableObject(CreateMesh("data/walls_mesh.mesh.bin"), CreateMaterial("data/wall.material.bin")))
 		{
 			Shutdown();
 			return false;
-		}
-		asteroid->set_weapon_cooldown(0.25f);
-		asteroid->set_rotation_degrees_per_second(120.0f);
-
-		{
-			pistachio.first = CreateMesh("data/pistachio.mesh.bin");
-			pistachio.second = CreateMaterial("data/pistachio.material.bin");
-
-			cashew.first = CreateMesh("data/cashew.mesh.bin");			
-			cashew.second = CreateMaterial("data/cashew.material.bin");
-			if (!pistachio.first || !pistachio.second || !cashew.first || !cashew.second)
-			{
-				Shutdown();
-				return false;
-			}
 		}
 
 		return true;
@@ -126,75 +92,6 @@ namespace Gameplay
 
 		HandleInput(deltaTime);
 
-		//validate all bullets, removing those that have expired
-		const float bulletDuration = 2.5f;
-		const float timeSinceStartup = eae6320::Time::GetTotalSecondsElapsed();
-		for (std::vector<std::shared_ptr<BulletComponent>>::iterator itr = bullets.begin(); itr != bullets.end(); /*do not iterate here*/)
-		{
-			std::shared_ptr<BulletComponent> bullet = *itr;
-			if (timeSinceStartup - bullet->get_creation_time() > bulletDuration)
-			{
-				itr = bullets.erase(itr);
-				world->Remove(bullet->gameObject());
-				graphics->Remove(bullet->renderable());
-			}
-			else
-				++itr;
-		}
-
-		//validate all enemies, removing those that are close to the planet or any bullets
-		for (auto itr = enemies.begin(); itr != enemies.end(); /*  */)
-		{
-			std::shared_ptr<EnemyComponent> enemy = *itr;
-			std::shared_ptr<Engine::GameObject> go = enemy->gameObject();
-
-			bool shouldDelete = false;
-
-			//if we are hitting the planet, destroy this enemy
-			if (Contacting(go, asteroid->gameObject(), enemySize, asteroidSize))
-				shouldDelete = true;
-			else
-			{
-				//if we are contacting any bullet, destroy the bullet and this enemy
-				for (std::vector<std::shared_ptr<BulletComponent>>::iterator itr = bullets.begin(); itr != bullets.end(); /*do not iterate here*/)
-				{
-					std::shared_ptr<BulletComponent> bullet = *itr;
-					if (Contacting(go, bullet->gameObject(), enemySize, bulletSize))
-					{
-						itr = bullets.erase(itr);
-						world->Remove(bullet->gameObject());
-						graphics->Remove(bullet->renderable());
-						shouldDelete = true;
-						break;
-					}
-					else
-						++itr;
-				}
-			}
-
-			if (shouldDelete)
-			{
-				itr = enemies.erase(itr);
-				world->Remove(go);
-				graphics->Remove(enemy->renderable());
-			}
-			else
-			{
-				++itr;
-			}
-		}
-
-		//create a new enemy on a timer
-		enemyCreationTimer -= deltaTime;
-		if (enemyCreationTimer < 0.0f)
-		{
-			enemyCreationTimer = enemyCreationDelay;
-			std::shared_ptr<EnemyComponent> enemy = CreateEnemy();
-			Engine::Vector3 spawnLocation(enemySpawnDistance, 0.0f, 0.0f);
-			spawnLocation = Engine::Quaternion(Engine::Random::Range(0.0f, 2.0f * static_cast<float>(M_PI)), Engine::Vector3(0.0f, 0.0f, 1.0f)) * spawnLocation;
-			enemy->gameObject()->position(spawnLocation);
-		}
-
 		world->Update(deltaTime);
 		bool renderSuccess = graphics->Render();
 		return renderSuccess;
@@ -202,18 +99,6 @@ namespace Gameplay
 
 	bool Shutdown()
 	{
-		asteroid.reset();
-
-		bulletMat.reset();
-		bulletMesh.reset();
-		bullets.clear();
-
-		pistachio.first.reset();
-		pistachio.second.reset();
-		cashew.first.reset();
-		cashew.second.reset();
-		enemies.clear();
-
 		if (world)
 		{
 			delete world;
@@ -235,100 +120,39 @@ namespace
 		using namespace System::UserInput;
 		using namespace Engine;
 
-		//fire bullet
-		std::shared_ptr<GameObject> go = asteroid->gameObject();
-		if (asteroid->can_fire() && Keyboard::Pressed(Keyboard::Space))
-		{
-			const Vector3 spawnPosition = go->position() + go->rotation().inverse() * Vector3(2.5f, 0.0f, 0.0f);
-			std::shared_ptr<BulletComponent> bullet = CreateBullet();
-			bullet->gameObject()->position(spawnPosition);
-			bullet->gameObject()->rotation(go->rotation().inverse());
-			asteroid->OnFire();
-		}
-
-		float movementAmount = 3.0f * deltaTime;
+		const float movementAmount = 300.0f * deltaTime;
 		std::shared_ptr<Engine::GameObject> movableObject = graphics->camera()->gameObject();
-		if (Keyboard::Pressed(Keyboard::Up))						//forward
-			movableObject->Move(Vector3(0.0f, 0.0f, -movementAmount));
-		if (Keyboard::Pressed(Keyboard::Down))						//backward
-			movableObject->Move(Vector3(0.0f, 0.0f, movementAmount));
-		if (Keyboard::Pressed(Keyboard::Right))						//right
-			movableObject->Move(Vector3(movementAmount, 0.0f, 0.0f));
-		if (Keyboard::Pressed(Keyboard::Left))						//left
-			movableObject->Move(Vector3(-movementAmount, 0.0f, 0.0f));
+		Vector3 movementVector = Vector3::zero;
+		if (Keyboard::Pressed(Keyboard::W))						//forward
+			movementVector += Vector3(0.0f, 0.0f, -movementAmount);
+		if (Keyboard::Pressed(Keyboard::S))						//backward
+			movementVector += Vector3(0.0f, 0.0f, movementAmount);
+		if (Keyboard::Pressed(Keyboard::D))						//right
+			movementVector += Vector3(movementAmount, 0.0f, 0.0f);
+		if (Keyboard::Pressed(Keyboard::A))						//left
+			movementVector += Vector3(-movementAmount, 0.0f, 0.0f);
+		if (Keyboard::Pressed(Keyboard::E))						//up
+			movementVector += Vector3(0.0f, movementAmount, 0.0f);
+		if (Keyboard::Pressed(Keyboard::Q))						//down
+			movementVector += Vector3(0.0f, -movementAmount, 0.0f);
 
-		if (Keyboard::Pressed(Keyboard::M))
-			graphics->camera()->vertical_fov(graphics->camera()->vertical_fov() + 4.0f * deltaTime);
-		if (Keyboard::Pressed(Keyboard::N))
-			graphics->camera()->vertical_fov(graphics->camera()->vertical_fov() - 4.0f * deltaTime);
+		movementVector = graphics->camera()->gameObject()->rotation() * movementVector;
+		graphics->camera()->gameObject()->Move(movementVector);
+
+		const float rotationAmount = 30.0f * deltaTime;
+		if (Keyboard::Pressed(Keyboard::Left))						//rotate left
+			movableObject->Rotate(Quaternion::Euler(0.0f, -movementAmount, 0.0f));
+		if (Keyboard::Pressed(Keyboard::Right))						//rotate Right
+			movableObject->Rotate(Quaternion::Euler(0.0f, movementAmount, 0.0f));
+		//if (Keyboard::Pressed(Keyboard::Up))						//rotate up
+		//	movableObject->Rotate(Quaternion::Euler(movementAmount, 0.0f, 0.0f));
+		//if (Keyboard::Pressed(Keyboard::Down))						//rotate Down
+		//	movableObject->Rotate(Quaternion::Euler(-movementAmount, 0.0f, 0.0f));
 	}
 
 	bool Contacting(std::shared_ptr<Engine::GameObject> go1, std::shared_ptr<Engine::GameObject> go2, const float& go1Size, const float& go2Size)
 	{
 		return go1->position().distance(go2->position()) <= go1Size + go2Size;
-	}
-
-	std::shared_ptr<BulletComponent> CreateBullet()
-	{
-		if (!world || !graphics || !graphics->context())
-			return nullptr;
-
-		if (!bulletMat)
-		{
-			bulletMat = CreateMaterial("data/bullet.material.bin");
-			if (!bulletMat)
-				return nullptr;
-		}
-
-		if (!bulletMesh)
-		{
-			bulletMesh = CreateMesh("data/bullet.mesh.bin");
-			if (!bulletMesh)
-				return nullptr;
-		}
-
-		std::shared_ptr<Lame::RenderableComponent> renderable = CreateRenderableObject(bulletMesh, bulletMat);
-		if (!renderable)
-			return nullptr;
-
-		const float bulletSpeed = 10.0f;
-		const float creationTime = eae6320::Time::GetTotalSecondsElapsed();
-		std::shared_ptr<BulletComponent> bullet = std::shared_ptr<BulletComponent>(new BulletComponent(creationTime, bulletSpeed, renderable));
-		if (!bullet)
-		{
-			world->Remove(renderable->gameObject());
-			graphics->Remove(renderable);
-			return nullptr;
-		}
-		bullets.push_back(bullet);
-		return bullet;
-	}
-
-	std::shared_ptr<EnemyComponent> CreateEnemy()
-	{
-		if (!pistachio.first || !pistachio.second || !cashew.first || !cashew.second)
-			return nullptr;
-
-		std::shared_ptr<Lame::RenderableComponent> renderable;
-		bool isCashew = Engine::Random::Value() > 0.5f;
-		if (isCashew)
-			renderable = CreateRenderableObject(cashew.first, cashew.second);
-		else
-			renderable = CreateRenderableObject(pistachio.first, pistachio.second);
-
-		if (!renderable)
-			return nullptr;
-
-		std::shared_ptr<EnemyComponent> enemy(new EnemyComponent(renderable));
-		if (!enemy)
-		{
-			world->Remove(renderable->gameObject());
-			graphics->Remove(renderable);
-			return nullptr;
-		}
-
-		enemies.push_back(enemy);
-		return enemy;
 	}
 
 	std::shared_ptr<Lame::Material> CreateMaterial(std::string i_material)
