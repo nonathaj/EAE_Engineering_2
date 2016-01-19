@@ -130,7 +130,7 @@ namespace
 			presentationParameters.Windowed = TRUE;
 			presentationParameters.EnableAutoDepthStencil = TRUE;
 			presentationParameters.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
-			presentationParameters.AutoDepthStencilFormat = D3DFORMAT::D3DFMT_D16;
+			presentationParameters.AutoDepthStencilFormat = D3DFORMAT::D3DFMT_D24S8;
 		}
 		HRESULT result = i_direct3dInterface->CreateDevice(useDefaultDevice, useHardwareRendering,
 			i_renderingWindow, useHardwareVertexProcessing, &presentationParameters, &o_direct3dDevice);
