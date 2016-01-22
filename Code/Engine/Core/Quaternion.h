@@ -10,6 +10,7 @@ namespace Engine
 	{
 	public:
 		static const Quaternion identity;
+		static const Quaternion zero;
 
 		Quaternion();
 		Quaternion(const Vector3& i_complex, const float i_real);

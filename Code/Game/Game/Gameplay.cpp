@@ -124,17 +124,17 @@ namespace
 		std::shared_ptr<Engine::GameObject> movableObject = graphics->camera()->gameObject();
 		Vector3 movementVector = Vector3::zero;
 		if (Keyboard::Pressed(Keyboard::W))						//forward
-			movementVector += Vector3(0.0f, 0.0f, -movementAmount);
+			movementVector += Vector3::forward * movementAmount;
 		if (Keyboard::Pressed(Keyboard::S))						//backward
-			movementVector += Vector3(0.0f, 0.0f, movementAmount);
+			movementVector += Vector3::back * movementAmount;
 		if (Keyboard::Pressed(Keyboard::D))						//right
-			movementVector += Vector3(movementAmount, 0.0f, 0.0f);
+			movementVector += Vector3::right * movementAmount;
 		if (Keyboard::Pressed(Keyboard::A))						//left
-			movementVector += Vector3(-movementAmount, 0.0f, 0.0f);
+			movementVector += Vector3::left * movementAmount;
 		if (Keyboard::Pressed(Keyboard::E))						//up
-			movementVector += Vector3(0.0f, movementAmount, 0.0f);
+			movementVector += Vector3::up * movementAmount;
 		if (Keyboard::Pressed(Keyboard::Q))						//down
-			movementVector += Vector3(0.0f, -movementAmount, 0.0f);
+			movementVector += Vector3::down * movementAmount;
 
 		movementVector = graphics->camera()->gameObject()->rotation() * movementVector;
 		graphics->camera()->gameObject()->Move(movementVector);

@@ -8,10 +8,12 @@
 #include <limits>
 
 #include "Vector3.h"
+#include "Matrix4x4.h"
 
 namespace Engine
 {
 	const Quaternion Quaternion::identity(0.0f, 0.0f, 0.0f, 1.0f);
+	const Quaternion Quaternion::zero(0.0f, 0.0f, 0.0f, 0.0f);
 
 	Quaternion::Quaternion()
 	{
@@ -131,14 +133,16 @@ namespace Engine
 		const float sqy = y() * y();
 		const float sqz = z() * z();
 
-		euler.y( std::asin(2.0f * (w() * y() - x() * z())) );
-		if ((M_PI / 2) - fabs(euler.y()) > std::numeric_limits<float>::epsilon()) {
-			euler.z( std::atan2(2.0f * (x() * y() + w() * z()), sqx - sqy - sqz + sqw) );
-			euler.x( std::atan2(2.0f * (w() * x() + y() * z()), sqw - sqx - sqy + sqz) );
+		euler.y(std::asin(2.0f * (w() * y() - x() * z())));
+		if ((M_PI / 2) - fabs(euler.y()) > std::numeric_limits<float>::epsilon())
+		{
+			euler.z(std::atan2(2.0f * (x() * y() + w() * z()), sqx - sqy - sqz + sqw));
+			euler.x(std::atan2(2.0f * (w() * x() + y() * z()), sqw - sqx - sqy + sqz));
 		}
-		else {
+		else
+		{
 			// compute heading from local 'down' vector
-			euler.z( std::atan2(2 * y() * z() - 2 * x() * w(), 2 * x() * z() + 2 * y() * w()) );
+			euler.z(std::atan2(2 * y() * z() - 2 * x() * w(), 2 * x() * z() + 2 * y() * w()));
 			euler.x(0.0f);
 
 			// If facing down, reverse yaw
@@ -151,7 +155,7 @@ namespace Engine
 			static_cast<float>(Engine::Math::ToDegrees(euler.x())),
 			static_cast<float>(Engine::Math::ToDegrees(euler.y())),
 			static_cast<float>(Engine::Math::ToDegrees(euler.z()))
-		);
+			);
 
 		return euler;
 	}
@@ -183,10 +187,11 @@ namespace Engine
 
 	Vector3 operator*(const Quaternion& i_lhs, const Vector3& i_rhs)
 	{
+		return Matrix4x4::CreateRotation(i_lhs).Multiply(i_rhs);
 		//https://gamedev.stackexchange.com/questions/28395/rotating-vector3-by-a-quaternion
-		Vector3 u = i_lhs.complex();
+		/*Vector3 u = i_lhs.complex();
 		return 2.0f * u.dot(i_rhs) * u
 			+ (i_lhs.w() * i_lhs.w() - u.dot(u)) * i_rhs
-			+ 2.0f * i_lhs.w() * u.cross(i_rhs);
+			+ 2.0f * i_lhs.w() * u.cross(i_rhs);*/
 	}
 }

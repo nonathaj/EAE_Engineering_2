@@ -57,39 +57,7 @@ namespace Engine
 
 	Matrix4x4 Matrix4x4::CreateTransformation(const Vector3& i_translation, const Quaternion& i_rotation)
 	{
-		const float _2x = i_rotation.x() + i_rotation.x();
-		const float _2y = i_rotation.y() + i_rotation.y();
-		const float _2z = i_rotation.z() + i_rotation.z();
-		const float _2xx = i_rotation.x() * _2x;
-		const float _2xy = _2x * i_rotation.y();
-		const float _2xz = _2x * i_rotation.z();
-		const float _2xw = _2x * i_rotation.w();
-		const float _2yy = _2y * i_rotation.y();
-		const float _2yz = _2y * i_rotation.z();
-		const float _2yw = _2y * i_rotation.w();
-		const float _2zz = _2z * i_rotation.z();
-		const float _2zw = _2z * i_rotation.w();
-
-		return Matrix4x4(
-			//Row 1
-			1.0f - _2yy - _2zz,
-			_2xy + _2zw,
-			_2xz - _2yw,
-			i_translation.x(),
-
-			//Row 2
-			_2xy - _2zw,
-			1.0f - _2xx - _2zz,
-			_2yz + _2xw,
-			i_translation.y(),
-
-			//Row 3
-			_2xz + _2yw,
-			_2yz - _2xw,
-			1.0f - _2xx - _2yy,
-			i_translation.z(),
-
-			0.0f, 0.0f, 0.0f, 1.0f );
+		return CreateTranslation(i_translation) * CreateRotation(i_rotation);
 	}
 
 	Matrix4x4 Matrix4x4::CreateTranslation(float i_x, float i_y, float i_z)
@@ -97,13 +65,13 @@ namespace Engine
 		return Matrix4x4(
 			1, 0, 0, i_x,
 			0, 1, 0, i_y,
-			0, 0, 1, i_z,
+			0, 0, 1, -i_z,
 			0, 0, 0, 1);
 	}
 
 	Matrix4x4 Matrix4x4::CreateTranslation(const Vector3& i_translation)
 	{
-		return CreateTranslation(i_translation.x(), i_translation.y(), i_translation.z());
+		return CreateTranslation(i_translation.x(), i_translation.y(), -i_translation.z());
 	}
 
 	Matrix4x4 Matrix4x4::CreateRotationX(const float i_x_degrees)
