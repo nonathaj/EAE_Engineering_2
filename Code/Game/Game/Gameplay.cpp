@@ -76,7 +76,8 @@ namespace Gameplay
 			!CreateRenderableObject(CreateMesh("data/floor_mesh.mesh.bin"), CreateMaterial("data/floor.material.bin")) || 
 			!CreateRenderableObject(CreateMesh("data/metal_mesh.mesh.bin"), CreateMaterial("data/metal_brace.material.bin")) || 
 			!CreateRenderableObject(CreateMesh("data/railing_mesh.mesh.bin"), CreateMaterial("data/railing.material.bin")) || 
-			!CreateRenderableObject(CreateMesh("data/walls_mesh.mesh.bin"), CreateMaterial("data/wall.material.bin")))
+			!CreateRenderableObject(CreateMesh("data/walls_mesh.mesh.bin"), CreateMaterial("data/wall.material.bin")) ||
+			!CreateRenderableObject(CreateMesh("data/lambert_objects_mesh.mesh.bin"), CreateMaterial("data/white.material.bin")))
 		{
 			Shutdown();
 			return false;

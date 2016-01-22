@@ -46,6 +46,7 @@ return
             { source = "EAE 6330/metal_brace.material", target = "metal_brace.material.bin" },
             { source = "EAE 6330/railing.material", target = "railing.material.bin" },
             { source = "EAE 6330/wall.material", target = "wall.material.bin" },
+            { source = "EAE 6330/white.material", target = "white.material.bin" },
         }
     },
     {
@@ -57,6 +58,7 @@ return
             { source = "EAE 6330/metal_brace_D.png", target = "metal_brace_D.DDS" },
             { source = "EAE 6330/railing_D.png", target = "railing_D.DDS" },
             { source = "EAE 6330/wall_D.png", target = "wall_D.DDS" },
+            { source = "EAE 6330/white.png", target = "white.DDS" },
         }
     },
 }
