@@ -124,30 +124,33 @@ namespace
 		std::shared_ptr<Engine::GameObject> movableObject = graphics->camera()->gameObject();
 		Vector3 movementVector = Vector3::zero;
 		if (Keyboard::Pressed(Keyboard::W))						//forward
-			movementVector += Vector3::forward * movementAmount;
+			movementVector += Vector3::forward;
 		if (Keyboard::Pressed(Keyboard::S))						//backward
-			movementVector += Vector3::back * movementAmount;
+			movementVector += Vector3::back;
 		if (Keyboard::Pressed(Keyboard::D))						//right
-			movementVector += Vector3::right * movementAmount;
+			movementVector += Vector3::right;
 		if (Keyboard::Pressed(Keyboard::A))						//left
-			movementVector += Vector3::left * movementAmount;
+			movementVector += Vector3::left;
 		if (Keyboard::Pressed(Keyboard::E))						//up
-			movementVector += Vector3::up * movementAmount;
+			movementVector += Vector3::up;
 		if (Keyboard::Pressed(Keyboard::Q))						//down
-			movementVector += Vector3::down * movementAmount;
+			movementVector += Vector3::down;
 
-		movementVector = graphics->camera()->gameObject()->rotation() * movementVector;
+		movementVector = graphics->camera()->gameObject()->rotation() * movementVector * movementAmount;
 		graphics->camera()->gameObject()->Move(movementVector);
 
 		const float rotationAmount = 30.0f * deltaTime;
+		Vector3 rotationAxis = Vector3::zero;
 		if (Keyboard::Pressed(Keyboard::Left))						//rotate left
-			movableObject->Rotate(Quaternion::Euler(0.0f, -movementAmount, 0.0f));
+			rotationAxis += Vector3::up;
 		if (Keyboard::Pressed(Keyboard::Right))						//rotate Right
-			movableObject->Rotate(Quaternion::Euler(0.0f, movementAmount, 0.0f));
+			rotationAxis += Vector3::down;
 		//if (Keyboard::Pressed(Keyboard::Up))						//rotate up
-		//	movableObject->Rotate(Quaternion::Euler(movementAmount, 0.0f, 0.0f));
+		//	rotationAxis += Vector3::Vector3::right;
 		//if (Keyboard::Pressed(Keyboard::Down))						//rotate Down
-		//	movableObject->Rotate(Quaternion::Euler(-movementAmount, 0.0f, 0.0f));
+		//	rotationAxis += Vector3::Vector3::left;
+
+		movableObject->Rotate(Quaternion::Euler(rotationAxis * rotationAmount));
 	}
 
 	bool Contacting(std::shared_ptr<Engine::GameObject> go1, std::shared_ptr<Engine::GameObject> go2, const float& go1Size, const float& go2Size)
