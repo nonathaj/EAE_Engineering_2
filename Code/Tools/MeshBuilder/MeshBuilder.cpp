@@ -51,9 +51,10 @@ bool eae6320::MeshBuilder::Build( const std::vector<std::string>& )
 						stack->Push("pos");
 						if (stack->SwapTableKey() && stack->PeekArray(position) && position.size() == 3)
 						{
-							vert.x = static_cast<float>(position[0]);
-							vert.y = static_cast<float>(position[1]);
-							vert.z = static_cast<float>(position[2]);
+							vert.position = Engine::Vector3(
+								static_cast<float>(position[0]),
+								static_cast<float>(position[1]),
+								static_cast<float>(position[2]) );
 						}
 						else
 						{

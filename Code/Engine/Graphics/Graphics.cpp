@@ -6,6 +6,7 @@
 #include "RenderableComponent.h"
 #include "../Component/GameObject.h"
 #include "../Core/Matrix4x4.h"
+#include "../System/Console.h"
 
 namespace Lame
 {
@@ -42,6 +43,7 @@ namespace Lame
 		bool success = context()->Clear(true, true, false) && context()->BeginFrame();
 		if (!success)
 			return false;
+
 		Engine::Matrix4x4 worldToView = camera()->WorldToView();
 		Engine::Matrix4x4 viewToScreen = camera()->ViewToScreen();
 
@@ -56,7 +58,9 @@ namespace Lame
 				if ((*itr)->material()->effect()->has_transparency())
 					transparent.push_back(*itr);
 				else
+				{
 					success = (*itr)->Render(worldToView, viewToScreen) && success;
+				}
 				++itr;
 			}
 			else
@@ -67,7 +71,9 @@ namespace Lame
 
 		//render all the transparent objects on top of the opaque ones
 		for (size_t x = 0; x < transparent.size(); x++)
+		{
 			success = transparent[x]->Render(worldToView, viewToScreen) && success;
+		}
 
 		success = context()->EndFrame() && success;
 		return success;

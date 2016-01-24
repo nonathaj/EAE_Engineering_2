@@ -1,12 +1,5 @@
-/*
-	This file contains the function declarations for graphics
-*/
-
-#ifndef EAE6320_GRAPHICS_H
-#define EAE6320_GRAPHICS_H
-
-// Header Files
-//=============
+#ifndef LAME_GRAPHICS_H
+#define LAME_GRAPHICS_H
 
 #include <memory>
 #include <vector>
@@ -14,8 +7,6 @@
 #include "../../Engine/Windows/Includes.h"
 #include "CameraComponent.h"
 
-// Interface
-//==========
 namespace Lame
 {
 	class Context;
@@ -60,4 +51,4 @@ namespace Lame
 	}
 }
 
-#endif	// EAE6320_GRAPHICS_H
+#endif	// LAME_GRAPHICS_H

@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include "Color.h"
+#include "../Core/Vector3.h"
 #include "../../External/Lua/Includes.h"
 
 namespace Lame
@@ -11,7 +12,7 @@ namespace Lame
 	{
 	public:
 		// POSITION, 3 floats == 12 bytes, Offset = 0
-		float x, y, z;
+		Engine::Vector3 position;
 
 		// TEXCOORD0, 2 floats = 8 bytes, Offset 12
 		float u, v;

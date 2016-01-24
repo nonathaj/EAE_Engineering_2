@@ -95,6 +95,7 @@ namespace Gameplay
 
 		world->Update(deltaTime);
 		bool renderSuccess = graphics->Render();
+
 		return renderSuccess;
 	}
 
@@ -138,7 +139,16 @@ namespace
 			movementVector += Vector3::down;
 
 		movementVector = graphics->camera()->gameObject()->rotation() * movementVector * movementAmount;
-		graphics->camera()->gameObject()->Move(movementVector);
+		if (!Engine::Math::Float::IsNaN(movementVector.x()) &&
+			!Engine::Math::Float::IsNaN(movementVector.y()) &&
+			!Engine::Math::Float::IsNaN(movementVector.z()))
+		{
+			graphics->camera()->gameObject()->Move(movementVector);
+		}
+		else
+		{
+			DEBUG_PRINT("Invalid movement vector");
+		}
 
 		const float rotationAmount = 30.0f * deltaTime;
 		Vector3 rotationAxis = Vector3::zero;

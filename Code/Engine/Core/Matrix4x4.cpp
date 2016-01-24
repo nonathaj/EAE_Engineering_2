@@ -123,12 +123,19 @@ namespace Engine
 
 	Matrix4x4 Matrix4x4::CreateRotation(const Quaternion& i_rotation)
 	{
-		return CreateRotation(i_rotation.euler());
+		//http://stackoverflow.com/questions/1556260/convert-quaternion-rotation-to-rotation-matrix
+		Quaternion n = i_rotation.normalized();
+		return Matrix4x4(
+			1.0f - 2.0f * n.y() * n.y() - 2.0f * n.z() * n.z(), 2.0f * n.x() * n.y() - 2.0f * n.z() * n.w(), 2.0f * n.x() * n.z() + 2.0f * n.y() * n.w(), 0.0f,
+			2.0f * n.x() * n.y() + 2.0f * n.z() * n.w(), 1.0f - 2.0f * n.x() * n.x() - 2.0f * n.z() * n.z(), 2.0f * n.y() * n.z() - 2.0f * n.x() * n.w(), 0.0f,
+			2.0f * n.x() * n.z() - 2.0f * n.y() * n.w(), 2.0f * n.y() * n.z() + 2.0f * n.x() * n.w(), 1.0f - 2.0f * n.x() * n.x() - 2.0f * n.y() * n.y(), 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f);
 	}
 
 	Matrix4x4 Matrix4x4::CreateWorldToView(const Vector3& i_cameraPosition, const Quaternion& i_cameraOrientation)
 	{
 		Matrix4x4 viewToWorld = CreateTransformation(i_cameraPosition, i_cameraOrientation);
+
 		// A camera can only ever have rotation and translation
 		// and so a lot of simplifying assumptions can be made in order to create the inverse
 		return Matrix4x4(
@@ -285,6 +292,7 @@ namespace Engine
 
 	Vector3 Matrix4x4::Multiply(const Vector3& i_rhs, const float i_w) const
 	{
+		assert(IsValid());
 		return Vector3(
 			i_rhs.x() * Get(0, 0) + i_rhs.y() * Get(0, 1) + i_rhs.z() * Get(0, 2) + i_w * Get(0, 3),
 			i_rhs.x() * Get(1, 0) + i_rhs.y() * Get(1, 1) + i_rhs.z() * Get(1, 2) + i_w * Get(1, 3),
