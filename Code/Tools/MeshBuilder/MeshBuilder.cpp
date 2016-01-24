@@ -92,10 +92,10 @@ bool eae6320::MeshBuilder::Build( const std::vector<std::string>& )
 						stack->Push("color");
 						if (stack->SwapTableKey() && stack->PeekArray(color) && color.size() == 4)
 						{
-							vert.r = static_cast<uint8_t>(color[0] * 255.0);
-							vert.g = static_cast<uint8_t>(color[1] * 255.0);
-							vert.b = static_cast<uint8_t>(color[2] * 255.0);
-							vert.a = static_cast<uint8_t>(color[3] * 255.0);
+							vert.color.r(static_cast<uint8_t>(color[0] * 255.0));
+							vert.color.g(static_cast<uint8_t>(color[1] * 255.0));
+							vert.color.b(static_cast<uint8_t>(color[2] * 255.0));
+							vert.color.a(static_cast<uint8_t>(color[3] * 255.0));
 						}
 						else
 						{
