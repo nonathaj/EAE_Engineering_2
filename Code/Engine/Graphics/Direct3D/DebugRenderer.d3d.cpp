@@ -63,17 +63,22 @@ namespace Lame
 
 	bool DebugRenderer::AddLine(const Engine::Vector3& i_start, const Engine::Vector3& i_end, const Lame::Color32& i_color)
 	{
+		return AddLine(i_start, i_end, i_color, i_color);
+	}
+
+	bool DebugRenderer::AddLine(const Engine::Vector3& i_start, const Engine::Vector3& i_end, const Lame::Color32& i_start_color, const Lame::Color32& i_end_color)
+	{
 		if (line_vertices.size() >= max_lines_count)
 			return false;
 
 		Lame::Vertex start;
 		start.position = i_start;
-		start.color = i_color;
+		start.color = i_start_color;
 		line_vertices.push_back(start);
 
 		Lame::Vertex end;
 		end.position = i_end;
-		end.color = i_color;
+		end.color = i_end_color;
 		line_vertices.push_back(end);
 
 		return true;
