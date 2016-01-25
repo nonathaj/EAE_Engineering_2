@@ -4,6 +4,7 @@
 #include "Graphics.h"
 #include "Context.h"
 #include "RenderableComponent.h"
+#include "DebugRenderer.h"
 #include "../Component/GameObject.h"
 #include "../Core/Matrix4x4.h"
 #include "../System/Console.h"
@@ -35,7 +36,8 @@ namespace Lame
 		context_(i_context),
 		camera_(i_camera),
 		camera_gamebject_(i_camera_gamebject),
-		renderables_()
+		renderables_(),
+		debug_renderer_(nullptr)
 	{ }
 
 	bool Graphics::Render()
@@ -125,5 +127,18 @@ namespace Lame
 			return true;
 		}
 		return false;
+	}
+
+	bool Graphics::EnableDebugDrawing(std::shared_ptr<Lame::Effect> i_effect, const size_t i_line_count)
+	{
+		if (!debug_renderer_)
+		{
+			debug_renderer_ = std::shared_ptr<DebugRenderer>(DebugRenderer::Create(i_effect, i_line_count));
+			return debug_renderer_ != nullptr;
+		}
+		else
+		{
+			return false;
+		}
 	}
 }

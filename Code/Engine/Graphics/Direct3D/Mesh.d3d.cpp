@@ -15,26 +15,6 @@
 
 namespace Lame
 {
-	namespace
-	{
-		HRESULT GetVertexProcessingUsage(IDirect3DDevice9* i_device, DWORD& o_usage)
-		{
-			D3DDEVICE_CREATION_PARAMETERS deviceCreationParameters;
-			const HRESULT result = i_device->GetCreationParameters(&deviceCreationParameters);
-			if (SUCCEEDED(result))
-			{
-				DWORD vertexProcessingType = deviceCreationParameters.BehaviorFlags &
-					(D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_MIXED_VERTEXPROCESSING | D3DCREATE_SOFTWARE_VERTEXPROCESSING);
-				o_usage = (vertexProcessingType != D3DCREATE_SOFTWARE_VERTEXPROCESSING) ? 0 : D3DUSAGE_SOFTWAREPROCESSING;
-			}
-			else
-			{
-				System::UserOutput::Display("Direct3D failed to get the device's creation parameters");
-			}
-			return result;
-		}
-	}
-
 	Mesh::Mesh(size_t i_vertex_count, size_t i_index_count, std::shared_ptr<Context> i_context) :
 		vertex_count_(i_vertex_count),
 		index_count_(i_index_count),
@@ -97,7 +77,7 @@ namespace Lame
 		DWORD usage = 0;
 		{
 			// The type of vertex processing should match what was specified when the device interface was created with CreateDevice()
-			const HRESULT result = GetVertexProcessingUsage(i_context->get_direct3dDevice(), usage);
+			const HRESULT result = i_context->GetVertexProcessingUsage(usage);
 			if (FAILED(result))
 			{
 				System::UserOutput::Display("Unable to get vertex processing usage information");
@@ -161,13 +141,13 @@ namespace Lame
 
 			// Create a vertex buffer
 			{
-				const unsigned int bufferSize = static_cast<unsigned int>(i_vertex_count * sizeof(Vertex));
+				const UINT bufferSize = static_cast<UINT>(i_vertex_count * sizeof(Vertex));
 				// We will define our own vertex format
 				const DWORD useSeparateVertexDeclaration = 0;
 				// Place the vertex buffer into memory that Direct3D thinks is the most appropriate
 				const D3DPOOL useDefaultPool = D3DPOOL_DEFAULT;
 				HANDLE* const notUsed = NULL;
-				const HRESULT result = i_context->get_direct3dDevice()->CreateVertexBuffer(static_cast<UINT>(bufferSize), usage, useSeparateVertexDeclaration, useDefaultPool,
+				const HRESULT result = i_context->get_direct3dDevice()->CreateVertexBuffer(bufferSize, usage, useSeparateVertexDeclaration, useDefaultPool,
 					&mesh->vertex_buffer_, notUsed);
 				if (FAILED(result))
 				{

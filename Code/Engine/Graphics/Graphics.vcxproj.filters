@@ -41,6 +41,9 @@
     <ClCompile Include="OpenGL\Texture.gl.cpp">
       <Filter>OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="Direct3D\DebugRenderer.d3d.cpp">
+      <Filter>Direct3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics.h" />
@@ -54,5 +57,6 @@
     <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="DebugRenderer.h" />
   </ItemGroup>
 </Project>

@@ -49,8 +49,8 @@ namespace Lame
 #error No typedef for ConstantHandle
 #endif
 
-		static Effect* Create(std::shared_ptr<Context> i_context, const std::string& i_effect_path);
-		static Effect* Create(std::shared_ptr<Context> i_context, const char* i_vertex_path, const char* i_fragment_path, Engine::EnumMask<RenderState> i_renderMask);
+		static Effect* Create(std::shared_ptr<Context> i_context, const std::string& i_effect_path, bool requiresLocalToWorld = true);
+		static Effect* Create(std::shared_ptr<Context> i_context, const char* i_vertex_path, const char* i_fragment_path, Engine::EnumMask<RenderState> i_renderMask, bool requiresLocalToWorld = true);
 		~Effect();
 
 		bool Bind();

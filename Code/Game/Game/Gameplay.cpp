@@ -58,6 +58,22 @@ namespace Gameplay
 				return false;
 			}
 
+			//enable debug drawing for this graphics
+			{
+				std::shared_ptr<Lame::Effect> debug(Lame::Effect::Create(graphics->context(), "data/debug.effect.bin", false));
+				if (!debug)
+				{
+					System::UserOutput::Display("Failed to create debug effect.");
+					Shutdown();
+					return false;
+				}
+				if (!graphics->EnableDebugDrawing(debug, 10000))
+				{
+					Shutdown();
+					return false;
+				}
+			}
+
 			std::string error;
 			if (!eae6320::Time::Initialize(&error))
 			{

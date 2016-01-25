@@ -33,7 +33,7 @@ namespace Lame
 		return SetConstant(i_shader, i_constant, reinterpret_cast<const float*>(&i_val), 3);
 	}
 
-	Effect* Effect::Create(std::shared_ptr<Context> i_context, const std::string& i_effect_path)
+	Effect* Effect::Create(std::shared_ptr<Context> i_context, const std::string& i_effect_path, bool requiresLocalToWorld)
 	{
 		size_t fileLength;
 		char *fileData = System::File::LoadBinary(i_effect_path, &fileLength);
@@ -56,7 +56,7 @@ namespace Lame
 		}
 
 		//create the effect and cleanup the temporary buffer
-		Effect *effect = Create(i_context, vertex, fragment, renderMask);
+		Effect *effect = Create(i_context, vertex, fragment, renderMask, requiresLocalToWorld);
 		delete[] fileData;
 		return effect;
 	}

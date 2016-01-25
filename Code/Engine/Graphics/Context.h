@@ -37,13 +37,13 @@ namespace Lame
 #if EAE6320_PLATFORM_D3D
 		IDirect3D9* get_direct3dInterface() const { return direct3dInterface; }
 		IDirect3DDevice9* get_direct3dDevice() const { return direct3dDevice; }
+		HRESULT GetVertexProcessingUsage(DWORD& o_usage);
 #elif EAE6320_PLATFORM_GL
 		HDC get_deviceContext() const { return deviceContext; }
 		HGLRC get_openGlRenderingContext() const { return openGlRenderingContext; }
 #endif
 
 	private:
-
 		Context(HWND i_renderingWindow);
 
 		//Do not allow Contexts to be managed without pointers

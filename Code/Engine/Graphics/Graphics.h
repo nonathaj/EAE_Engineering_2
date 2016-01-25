@@ -11,6 +11,8 @@ namespace Lame
 {
 	class Context;
 	class RenderableComponent;
+	class DebugRenderer;
+	class Effect;
 
 	class Graphics
 	{
@@ -29,6 +31,10 @@ namespace Lame
 		inline std::shared_ptr<Context> context() const { return context_; }
 		inline std::shared_ptr<CameraComponent> camera() const { return camera_; }
 
+		bool EnableDebugDrawing(std::shared_ptr<Lame::Effect> i_effect, const size_t i_line_count);
+
+		DebugRenderer* debug_renderer() const { return debug_renderer_.get(); }
+
 	private:
 		Graphics(std::shared_ptr<Context> i_context, std::shared_ptr<CameraComponent> i_camera, std::shared_ptr<Engine::GameObject> i_camera_gamebject);
 
@@ -39,6 +45,7 @@ namespace Lame
 
 		std::shared_ptr<Context> context_;
 		std::vector<std::shared_ptr<RenderableComponent>> renderables_;
+		std::shared_ptr<DebugRenderer> debug_renderer_;
 
 		//store the camera's gameobject, so it lives for the duration of this graphics
 		std::shared_ptr<Engine::GameObject> camera_gamebject_;
