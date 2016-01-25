@@ -1,17 +1,18 @@
 
 #include "../DebugRenderer.h"
 
+#ifdef ENABLE_DEBUG_RENDERING
+
 #include "../Vertex.h"
 #include "../Effect.h"
 #include "../Context.h"
+#include "../../Core/Matrix4x4.h"
 #include "../../System/UserOutput.h"
 
 namespace Lame
 {
 	DebugRenderer* DebugRenderer::Create(std::shared_ptr<Lame::Effect> i_effect, const size_t i_line_count)
 	{
-		IDirect3DVertexBuffer9 *vertex_buffer;
-
 		// The usage tells Direct3D how this vertex buffer will be used
 		DWORD usage = 0;
 		{
@@ -27,6 +28,7 @@ namespace Lame
 		}
 
 		//Create the Vertex Buffer
+		IDirect3DVertexBuffer9 *vertex_buffer;
 		{
 			const UINT bufferSize = static_cast<UINT>(i_line_count * sizeof(Vertex));
 			// We will define our own vertex format
@@ -53,8 +55,7 @@ namespace Lame
 		}
 		else
 		{
-			if (vertex_buffer)
-				vertex_buffer->Release();
+			vertex_buffer->Release();
 			System::UserOutput::Display("Failed to Create DebugRenderer");
 			return nullptr;
 		}
@@ -78,7 +79,7 @@ namespace Lame
 		return true;
 	}
 
-	bool DebugRenderer::Render()
+	bool DebugRenderer::Render(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen)
 	{
 		// Lock the vertex buffer for editing
 		Vertex *vertexData;
@@ -104,7 +105,9 @@ namespace Lame
 		}
 
 		//set the effect
-		if (!effect->Bind())
+		if (!effect->Bind() ||
+			!effect->SetWorldToView(i_worldToView) ||
+			!effect->SetViewToScreen(i_viewToScreen) )
 		{
 			line_vertices.clear();
 			return false;
@@ -126,7 +129,7 @@ namespace Lame
 			}
 		}
 
-		result = effect->get_context()->get_direct3dDevice()->DrawPrimitive(D3DPT_LINELIST, 0, static_cast<UINT>(line_vertices.size()));
+		result = effect->get_context()->get_direct3dDevice()->DrawPrimitive(D3DPT_LINELIST, 0, static_cast<UINT>(line_vertices.size() / 2));
 		if (FAILED(result))
 		{
 			line_vertices.clear();
@@ -138,3 +141,5 @@ namespace Lame
 		return true;
 	}
 }
+
+#endif //ENABLE_DEBUG_RENDERING

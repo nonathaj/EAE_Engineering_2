@@ -24,6 +24,13 @@ namespace Lame
 		void a(const float i_val) { alpha_ = i_val; }
 
 		Color32 GetColor32() const;
+
+		static const Color clear;
+		static const Color white;
+		static const Color black;
+		static const Color red;
+		static const Color green;
+		static const Color blue;
 	private:
 #if EAE6320_PLATFORM_D3D
 		float blue_, green_, red_, alpha_;
@@ -49,6 +56,13 @@ namespace Lame
 		void a(const uint8_t i_val) { alpha_ = i_val; }
 
 		Color GetColor() const;
+
+		static const Color32 clear;
+		static const Color32 white;
+		static const Color32 black;
+		static const Color32 red;
+		static const Color32 green;
+		static const Color32 blue;
 	private:
 #if EAE6320_PLATFORM_D3D
 		uint8_t blue_, green_, red_, alpha_;	// Direct3D expects the byte layout of a color to be different from what you might expect

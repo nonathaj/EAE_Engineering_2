@@ -2,7 +2,7 @@ return
 {
 	vertex = "debug_vertex.shader.bin",
 	fragment = "debug_fragment.shader.bin",
-	transparency = true,
+	transparency = false,
 	depth_test = true,
 	depth_write = true,
 	face_cull = true,

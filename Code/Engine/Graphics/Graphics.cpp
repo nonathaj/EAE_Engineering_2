@@ -8,6 +8,7 @@
 #include "../Component/GameObject.h"
 #include "../Core/Matrix4x4.h"
 #include "../System/Console.h"
+#include "../System/UserOutput.h"
 
 namespace Lame
 {
@@ -71,6 +72,10 @@ namespace Lame
 			}
 		}
 
+#ifdef ENABLE_DEBUG_RENDERING
+		success = debug_renderer_->Render(worldToView, viewToScreen) && success;
+#endif
+
 		//render all the transparent objects on top of the opaque ones
 		for (size_t x = 0; x < transparent.size(); x++)
 		{
@@ -129,11 +134,18 @@ namespace Lame
 		return false;
 	}
 
-	bool Graphics::EnableDebugDrawing(std::shared_ptr<Lame::Effect> i_effect, const size_t i_line_count)
+#ifdef ENABLE_DEBUG_RENDERING
+	bool Graphics::EnableDebugDrawing(const std::string& i_effect_path, const size_t i_line_count)
 	{
 		if (!debug_renderer_)
 		{
-			debug_renderer_ = std::shared_ptr<DebugRenderer>(DebugRenderer::Create(i_effect, i_line_count));
+			std::shared_ptr<Lame::Effect> debug_effect(Effect::Create(context(), i_effect_path, false));
+			if (!debug_effect)
+			{
+				System::UserOutput::Display("Failed to create effect for Debug Rendering");
+				return false;
+			}
+			debug_renderer_ = std::shared_ptr<DebugRenderer>(DebugRenderer::Create(debug_effect, i_line_count));
 			return debug_renderer_ != nullptr;
 		}
 		else
@@ -141,4 +153,5 @@ namespace Lame
 			return false;
 		}
 	}
+#endif //ENABLE_DEBUG_RENDERING
 }

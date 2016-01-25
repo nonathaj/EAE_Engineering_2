@@ -13,15 +13,12 @@ uniform float4x4 view_to_screen;
 
 void main(
 
-	// These values come from one of the sVertex that we filled the vertex buffer with in C code
 	in const float3 i_position : POSITION,
 	in const float4 i_color : COLOR,
 	in const float2 i_texcoords : TEXCOORD0,
 
 	out float4 o_position : POSITION,
-	out float4 o_color : COLOR,
-	out float2 o_texcoords : TEXCOORD0
-
+	out float4 o_color : COLOR
 	)
 	
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -30,17 +27,11 @@ void main(
 
 #define o_position gl_Position
 
-
-// These values come from one of the sVertex that we filled the vertex buffer with in C code
 layout( location = 0 ) in float3 i_position;
 layout( location = 1 ) in float2 i_texcoords;
 layout( location = 2 ) in float4 i_color;
 
 layout( location = 0 ) out float4 o_color;
-layout( location = 1 ) out float2 o_texcoords;
-
-// Entry Point
-//============
 
 void main()
 
@@ -58,6 +49,5 @@ void main()
 	// Pass the input color and texture coordinates to the fragment shader unchanged:
 	{
 		o_color = i_color;
-		o_texcoords = i_texcoords;
 	}
 }

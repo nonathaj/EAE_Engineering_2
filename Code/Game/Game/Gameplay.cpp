@@ -58,16 +58,9 @@ namespace Gameplay
 				return false;
 			}
 
-			//enable debug drawing for this graphics
+			//enable debug drawing for graphics
 			{
-				std::shared_ptr<Lame::Effect> debug(Lame::Effect::Create(graphics->context(), "data/debug.effect.bin", false));
-				if (!debug)
-				{
-					System::UserOutput::Display("Failed to create debug effect.");
-					Shutdown();
-					return false;
-				}
-				if (!graphics->EnableDebugDrawing(debug, 10000))
+				if (!graphics->EnableDebugDrawing("data/debug.effect.bin", 10000))
 				{
 					Shutdown();
 					return false;
@@ -85,7 +78,8 @@ namespace Gameplay
 
 		//initial camera position
 		graphics->camera()->gameObject()->position(Engine::Vector3(0, 0, 15));
-		graphics->camera()->far_clip_plane(15000.0f);
+		graphics->camera()->near_clip_plane(1.0f);
+		graphics->camera()->far_clip_plane(5000.0f);
 
 		if (!CreateRenderableObject(CreateMesh("data/ceiling_mesh.mesh.bin"), CreateMaterial("data/cement_wall.material.bin")) ||
 			!CreateRenderableObject(CreateMesh("data/cement_mesh.mesh.bin"), CreateMaterial("data/cement_wall.material.bin")) ||
@@ -108,6 +102,8 @@ namespace Gameplay
 		const float deltaTime = eae6320::Time::GetSecondsElapsedThisFrame();
 
 		HandleInput(deltaTime);
+
+		graphics->debug_renderer()->AddLine(Engine::Vector3::zero, Engine::Vector3::forward * 2000.0f, Lame::Color32::blue);
 
 		world->Update(deltaTime);
 		bool renderSuccess = graphics->Render();

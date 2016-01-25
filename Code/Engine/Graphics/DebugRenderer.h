@@ -1,6 +1,12 @@
 #ifndef _LAME_DEBUGRENDERER_H
 #define _LAME_DEBUGRENDERER_H
 
+#ifdef _DEBUG
+#define ENABLE_DEBUG_RENDERING
+#endif
+
+#ifdef ENABLE_DEBUG_RENDERING
+
 #include <vector>
 #include <cstdint>
 #include <memory>
@@ -17,6 +23,7 @@
 namespace Engine
 {
 	class Vector3;
+	class Matrix4x4;
 }
 
 namespace Lame
@@ -31,7 +38,7 @@ namespace Lame
 
 		bool AddLine(const Engine::Vector3& i_start, const Engine::Vector3& i_end, const Lame::Color32& i_color);
 
-		bool Render();
+		bool Render(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen);
 
 		std::shared_ptr<Lame::Effect> get_effect() const { return effect; }
 
@@ -52,5 +59,7 @@ namespace Lame
 #endif
 	};
 }
+
+#endif //ENABLE_DEBUG_RENDERING
 
 #endif //_LAME_DEBUGRENDERER_H
