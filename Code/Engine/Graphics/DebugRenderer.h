@@ -23,6 +23,7 @@
 namespace Engine
 {
 	class Vector3;
+	class Quaternion;
 	class Matrix4x4;
 }
 
@@ -38,6 +39,8 @@ namespace Lame
 
 		bool AddLine(const Engine::Vector3& i_start, const Engine::Vector3& i_end, const Lame::Color32& i_start_color, const Lame::Color32& i_end_color);
 		bool AddLine(const Engine::Vector3& i_start, const Engine::Vector3& i_end, const Lame::Color32& i_color);
+
+		bool AddLineBox(const Engine::Vector3& i_center, const Engine::Vector3& i_extends, const Lame::Color32& i_color);
 
 		bool Render(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen);
 

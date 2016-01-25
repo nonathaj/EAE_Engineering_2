@@ -104,6 +104,7 @@ namespace Gameplay
 		HandleInput(deltaTime);
 
 		graphics->debug_renderer()->AddLine(Engine::Vector3::zero, Engine::Vector3::forward * 2000.0f, Lame::Color32::blue, Lame::Color32::white);
+		graphics->debug_renderer()->AddLineBox(Engine::Vector3::zero, Engine::Vector3::one * 250.0f, Lame::Color32::red);
 
 		world->Update(deltaTime);
 		bool renderSuccess = graphics->Render();
