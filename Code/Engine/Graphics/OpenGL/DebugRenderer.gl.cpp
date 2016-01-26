@@ -37,7 +37,9 @@ namespace Lame
 
 	bool DebugRenderer::Render(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen)
 	{
+		//TODO finish rendering of OpenGL lines
 		//glShadeModel(GL_SMOOTH);
+		effect->Bind();
 		glBindVertexArray(vertex_array_id_); // setup for the layout of LineSegment_t
 		glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_id_);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(Lame::Vertex) / 2 * line_vertices.size(), line_vertices.data(), GL_DYNAMIC_DRAW);
