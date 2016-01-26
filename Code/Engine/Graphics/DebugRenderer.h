@@ -60,6 +60,7 @@ namespace Lame
 		IDirect3DVertexBuffer9 *vertex_buffer_;
 #elif EAE6320_PLATFORM_GL
 		GLuint vertex_array_id_;
+		GLuint vertex_buffer_id_;
 #endif
 	};
 }
