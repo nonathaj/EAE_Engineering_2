@@ -83,11 +83,12 @@ namespace Gameplay
 
 		if (!CreateRenderableObject(CreateMesh("data/ceiling_mesh.mesh.bin"), CreateMaterial("data/cement_wall.material.bin")) ||
 			!CreateRenderableObject(CreateMesh("data/cement_mesh.mesh.bin"), CreateMaterial("data/cement_wall.material.bin")) ||
-			!CreateRenderableObject(CreateMesh("data/floor_mesh.mesh.bin"), CreateMaterial("data/floor.material.bin")) || 
-			!CreateRenderableObject(CreateMesh("data/metal_mesh.mesh.bin"), CreateMaterial("data/metal_brace.material.bin")) || 
-			!CreateRenderableObject(CreateMesh("data/railing_mesh.mesh.bin"), CreateMaterial("data/railing.material.bin")) || 
+			!CreateRenderableObject(CreateMesh("data/floor_mesh.mesh.bin"), CreateMaterial("data/floor.material.bin")) ||
+			!CreateRenderableObject(CreateMesh("data/metal_mesh.mesh.bin"), CreateMaterial("data/metal_brace.material.bin")) ||
+			!CreateRenderableObject(CreateMesh("data/railing_mesh.mesh.bin"), CreateMaterial("data/railing.material.bin")) ||
 			!CreateRenderableObject(CreateMesh("data/walls_mesh.mesh.bin"), CreateMaterial("data/wall.material.bin")) ||
-			!CreateRenderableObject(CreateMesh("data/lambert_objects_mesh.mesh.bin"), CreateMaterial("data/white.material.bin")))
+			!CreateRenderableObject(CreateMesh("data/lambert_objects_mesh.mesh.bin"), CreateMaterial("data/white.material.bin")) ||
+			!CreateRenderableObject(std::shared_ptr<Lame::Mesh>(Lame::Mesh::CreateCylinder(graphics->context(), 120.0f, 120.0f, 250.0f, 10, 10)), CreateMaterial("data/white.material.bin")) )
 		{
 			Shutdown();
 			return false;

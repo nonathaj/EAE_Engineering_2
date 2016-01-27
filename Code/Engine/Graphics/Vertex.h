@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include "Color.h"
+#include "../Core/Vector2.h"
 #include "../Core/Vector3.h"
 #include "../../External/Lua/Includes.h"
 
@@ -15,10 +16,13 @@ namespace Lame
 		Engine::Vector3 position;
 
 		// TEXCOORD0, 2 floats = 8 bytes, Offset 12
-		float u, v;
+		Engine::Vector2 texcoord;
 
 		// COLOR0, 4 uint8_ts == 4 bytes, Offset = 20
 		Color32 color;
+
+		Vertex() {}
+		Vertex(Engine::Vector3 i_pos, Engine::Vector2 i_tex, Color32 i_color) : position(i_pos), texcoord(i_tex), color(i_color) {}
 	};
 }
 

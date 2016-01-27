@@ -5,12 +5,19 @@
 #include <string>
 #include <memory>
 
+#include "Color.h"
+
 #if EAE6320_PLATFORM_D3D
 #include <d3d9.h>
 #elif EAE6320_PLATFORM_GL
 #include "../../Engine/Windows/Includes.h"
 #include <gl/GL.h>
 #endif
+
+namespace Engine
+{
+	class Vector3;
+}
 
 namespace Lame
 {
@@ -26,6 +33,10 @@ namespace Lame
 		
 		//load a mesh from the mesh binary file
 		static Mesh* Create(std::shared_ptr<Context> i_context, std::string i_mesh_path);
+
+		static Mesh* CreateBox(std::shared_ptr<Context> i_context, const Engine::Vector3& i_size, const Color32& i_vertex_color = Color32::white);
+		static Mesh* CreateSphere(std::shared_ptr<Context> i_context, const float i_radius, const size_t i_slice_count, const size_t i_stack_count, const Color32& i_vertex_color = Color32::white);
+		static Mesh* CreateCylinder(std::shared_ptr<Context> i_context, const float i_bottom_radius, const float i_top_radius, const float i_height, const float i_slice_count, const float i_stack_count, const Color32& i_vertex_color = Color32::white);
 
 		//Destroy a mesh
 		~Mesh();

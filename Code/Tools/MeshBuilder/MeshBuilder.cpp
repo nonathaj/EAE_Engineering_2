@@ -73,8 +73,8 @@ bool eae6320::MeshBuilder::Build( const std::vector<std::string>& )
 						stack->Push("texcoord");
 						if (stack->SwapTableKey() && stack->PeekArray(texcoords) && texcoords.size() == 2)
 						{
-							vert.u = static_cast<float>(texcoords[0]);
-							vert.v = 1.0f - static_cast<float>(texcoords[1]);
+							vert.texcoord.x(static_cast<float>(texcoords[0]));
+							vert.texcoord.y(1.0f - static_cast<float>(texcoords[1]));
 						}
 						else
 						{
