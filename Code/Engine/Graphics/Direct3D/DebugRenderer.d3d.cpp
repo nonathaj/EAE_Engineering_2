@@ -6,19 +6,20 @@
 #include "../Vertex.h"
 #include "../Effect.h"
 #include "../Context.h"
+#include "../Mesh.h"
 #include "../../Core/Matrix4x4.h"
 #include "../../System/UserOutput.h"
 #include "../../Core/Quaternion.h"
 
 namespace Lame
 {
-	DebugRenderer* DebugRenderer::Create(std::shared_ptr<Lame::Effect> i_effect, const size_t i_line_count)
+	DebugRenderer* DebugRenderer::Create(std::shared_ptr<Lame::Context> i_context, const size_t i_line_count)
 	{
 		// The usage tells Direct3D how this vertex buffer will be used
 		DWORD usage = 0;
 		{
 			// The type of vertex processing should match what was specified when the device interface was created with CreateDevice()
-			const HRESULT result = i_effect->get_context()->GetVertexProcessingUsage(usage);
+			const HRESULT result = i_context->GetVertexProcessingUsage(usage);
 			if (FAILED(result))
 			{
 				System::UserOutput::Display("Unable to get vertex processing usage information");
@@ -37,7 +38,7 @@ namespace Lame
 			// Place the vertex buffer into memory that Direct3D thinks is the most appropriate
 			const D3DPOOL pool = D3DPOOL_DEFAULT;
 			HANDLE* const notUsed = nullptr;
-			const HRESULT result = i_effect->get_context()->get_direct3dDevice()->CreateVertexBuffer(bufferSize, usage, useSeparateVertexDeclaration, pool, &vertex_buffer, notUsed);
+			const HRESULT result = i_context->get_direct3dDevice()->CreateVertexBuffer(bufferSize, usage, useSeparateVertexDeclaration, pool, &vertex_buffer, notUsed);
 			if (FAILED(result))
 			{
 				System::UserOutput::Display("Direct3D failed to create a vertex buffer");
@@ -45,11 +46,21 @@ namespace Lame
 			}
 		}
 
+		std::shared_ptr<Lame::Effect> line_effect(Lame::Effect::Create(i_context, "data/debug/line.effect.bin", false));
+		std::shared_ptr<Lame::Effect> shape_effect(Lame::Effect::Create(i_context, "data/debug/shape.effect.bin", true));
+		if (!line_effect || !shape_effect)
+		{
+			vertex_buffer->Release();
+			System::UserOutput::Display("Failed to Create Debug Effects");
+			return nullptr;
+		}
+
 		DebugRenderer* deb = new DebugRenderer();
 		if (deb)
 		{
 			deb->max_lines_count = i_line_count;
-			deb->effect = i_effect;
+			deb->line_effect = line_effect;
+			deb->shape_effect = shape_effect;
 			deb->vertex_buffer_ = vertex_buffer;
 			deb->line_vertices.reserve(i_line_count);
 			return deb;
@@ -62,7 +73,7 @@ namespace Lame
 		}
 	}
 
-	bool DebugRenderer::Render(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen)
+	bool DebugRenderer::RenderLines(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen)
 	{
 		// Lock the vertex buffer for editing
 		Vertex *vertexData;
@@ -70,7 +81,6 @@ namespace Lame
 		if (FAILED(result))
 		{
 			System::UserOutput::Display("Direct3D failed to lock the vertex buffer");
-			line_vertices.clear();
 			return false;
 		}
 
@@ -83,16 +93,14 @@ namespace Lame
 		if (FAILED(result))
 		{
 			System::UserOutput::Display("Direct3D failed to unlock the vertex buffer");
-			line_vertices.clear();
 			return false;
 		}
 
 		//set the effect
-		if (!effect->Bind() ||
-			!effect->SetWorldToView(i_worldToView) ||
-			!effect->SetViewToScreen(i_viewToScreen) )
+		if (!line_effect->Bind() ||
+			!line_effect->SetWorldToView(i_worldToView) ||
+			!line_effect->SetViewToScreen(i_viewToScreen))
 		{
-			line_vertices.clear();
 			return false;
 		}
 
@@ -104,23 +112,19 @@ namespace Lame
 			const unsigned int bufferOffset = 0;
 			// The "stride" defines how large a single vertex is in the stream of data
 			const unsigned int bufferStride = sizeof(Vertex);
-			result = effect->get_context()->get_direct3dDevice()->SetStreamSource(streamIndex, vertex_buffer_, bufferOffset, bufferStride);
+			result = line_effect->get_context()->get_direct3dDevice()->SetStreamSource(streamIndex, vertex_buffer_, bufferOffset, bufferStride);
 			if (FAILED(result))
 			{
-				line_vertices.clear();
 				return false;
 			}
 		}
 
-		result = effect->get_context()->get_direct3dDevice()->DrawPrimitive(D3DPT_LINELIST, 0, static_cast<UINT>(line_vertices.size() / 2));
+		result = line_effect->get_context()->get_direct3dDevice()->DrawPrimitive(D3DPT_LINELIST, 0, static_cast<UINT>(line_vertices.size() / 2));
 		if (FAILED(result))
 		{
-			line_vertices.clear();
 			return false;
 		}
 
-		//clear the data
-		line_vertices.clear();
 		return true;
 	}
 }

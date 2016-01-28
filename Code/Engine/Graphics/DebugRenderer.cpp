@@ -1,14 +1,16 @@
 
-#include "../DebugRenderer.h"
+#include "DebugRenderer.h"
 
 #ifdef ENABLE_DEBUG_RENDERING
 
-#include "../Vertex.h"
-#include "../Effect.h"
-#include "../Context.h"
-#include "../../Core/Matrix4x4.h"
-#include "../../System/UserOutput.h"
-#include "../../Core/Quaternion.h"
+#include "Vertex.h"
+#include "Effect.h"
+#include "Context.h"
+#include "Mesh.h"
+#include "../Core/Matrix4x4.h"
+#include "../System/UserOutput.h"
+#include "../Core/Quaternion.h"
+#include "../System/Console.h"
 
 namespace Lame
 {
@@ -63,6 +65,67 @@ namespace Lame
 		line_vertices.push_back(end);
 
 		return true;
+	}
+
+	bool DebugRenderer::AddMesh(std::shared_ptr<Lame::Mesh> i_mesh, const Engine::Transform& i_transform)
+	{
+		if (!i_mesh)
+			return false;
+
+		DebugMesh dm;
+		dm.mesh = i_mesh;
+		dm.transform = i_transform;
+		meshes.push_back(dm);
+		return true;
+	}
+
+	bool DebugRenderer::Render(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen)
+	{
+		bool linesRendered = RenderLines(i_worldToView, i_viewToScreen);
+		bool meshesRendered = RenderMeshes(i_worldToView, i_viewToScreen);
+		line_vertices.clear();
+		meshes.clear();
+		return linesRendered && meshesRendered;
+	}
+
+	bool DebugRenderer::RenderMeshes(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen)
+	{
+		if (shape_effect->Bind() &&
+			shape_effect->SetWorldToView(i_worldToView) &&
+			shape_effect->SetViewToScreen(i_viewToScreen))
+		{
+			bool success = true;
+			for (auto itr = meshes.begin(); itr != meshes.end(); ++itr)
+			{
+				success = 
+					shape_effect->SetLocalToWorld(itr->transform.LocalToWorld()) && 
+					itr->mesh->Draw() && 
+					success;
+			}
+			return success;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	bool DebugRenderer::AddFillBox(const Engine::Vector3& i_size, const Engine::Transform& i_transform, const Color32& i_color)
+	{
+		std::shared_ptr<Lame::Mesh> mesh(Lame::Mesh::CreateBox(shape_effect->get_context(), i_size, i_color));
+		return AddMesh(mesh, i_transform);
+	}
+
+	bool DebugRenderer::AddFillSphere(const float i_radius, const Engine::Transform& i_transform, const Color32& i_color)
+	{
+		std::shared_ptr<Lame::Mesh> mesh(Lame::Mesh::CreateSphere(shape_effect->get_context(), i_radius, 10, 10, i_color));
+		return AddMesh(mesh, i_transform);
+	}
+
+	bool DebugRenderer::AddFillCylinder(const float i_top_radius, const float i_bottom_radius, const float i_height, const Engine::Transform& i_transform, const Color32& i_color)
+	{
+		std::shared_ptr<Lame::Mesh> mesh(Lame::Mesh::CreateCylinder(shape_effect->get_context(), i_bottom_radius, i_top_radius, i_height, 10, 10, i_color));
+		return AddMesh(mesh, i_transform);
 	}
 }
 

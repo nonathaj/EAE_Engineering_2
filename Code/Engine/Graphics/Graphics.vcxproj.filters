@@ -47,7 +47,7 @@
     <ClCompile Include="OpenGL\DebugRenderer.gl.cpp">
       <Filter>OpenGL</Filter>
     </ClCompile>
-    <ClCompile Include="OpenGL\DebugRenderer.cpp" />
+    <ClCompile Include="DebugRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics.h" />

@@ -5,22 +5,11 @@
 namespace Engine
 {
 	GameObject::GameObject() :
-		position_(0.0f, 0.0f, 0.0f),
-		rotation_(Quaternion::identity),
+		transform_(Engine::Vector3::zero, Engine::Quaternion::identity),
 		name_(""),
 		enabled_(true),
 		components_()
 	{
-	}
-
-	void GameObject::Move(const Engine::Vector3& i_movement)
-	{
-		position_ += i_movement;
-	}
-
-	void GameObject::Rotate(const Engine::Quaternion& i_rotation)
-	{
-		rotation_ = rotation_ * i_rotation;
 	}
 
 	void GameObject::Update(float deltaTime)

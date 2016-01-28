@@ -2,7 +2,7 @@
 	This is an example of a vertex shader
 */
 
-#include "shaders.inc"
+#include "../shaders.inc"
 
 uniform float4x4 world_to_view;
 uniform float4x4 view_to_screen;

@@ -1,7 +1,7 @@
 return
 {
-	vertex = "debug_vertex.shader.bin",
-	fragment = "debug_fragment.shader.bin",
+	vertex = "debug/line_vertex.shader.bin",
+	fragment = "debug/line_fragment.shader.bin",
 	transparency = false,
 	depth_test = true,
 	depth_write = true,

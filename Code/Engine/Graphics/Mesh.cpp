@@ -117,50 +117,55 @@ namespace Lame
 		const float theta_step = 2.0f * pi / i_slice_count;
 
 		std::vector<Vertex> vertices;
-		vertices.push_back(Lame::Vertex(Engine::Vector3(0.0f, i_radius, 0.0f), Engine::Vector2(0.0f, 0.0f), i_vertex_color));
-		for (size_t x = 1; x <= i_stack_count; x++)
 		{
-			const float phi = x * phi_step;
-			for (size_t y = 0; y <= i_slice_count; y++)
+			vertices.reserve((i_stack_count - 1) * i_slice_count + 2);
+			vertices.push_back(Lame::Vertex(Engine::Vector3(0.0f, i_radius, 0.0f), Engine::Vector2(0.0f, 0.0f), i_vertex_color));
+			for (size_t x = 1; x <= i_stack_count; x++)
 			{
-				const float theta = y * theta_step;
-				vertices.push_back(Lame::Vertex(
-					Engine::Vector3(i_radius * std::sin(phi) * std::cos(theta), i_radius * std::cos(phi), i_radius * std::sin(phi) * std::sin(theta)),
-					Engine::Vector2(theta / pi * 2, phi / pi),
-					i_vertex_color ));
+				const float phi = x * phi_step;
+				for (size_t y = 0; y <= i_slice_count; y++)
+				{
+					const float theta = y * theta_step;
+					vertices.push_back(Lame::Vertex(
+						Engine::Vector3(i_radius * std::sin(phi) * std::cos(theta), i_radius * std::cos(phi), i_radius * std::sin(phi) * std::sin(theta)),
+						Engine::Vector2(theta / pi * 2, phi / pi),
+						i_vertex_color));
+				}
 			}
+			vertices.push_back(Lame::Vertex(Engine::Vector3(0.0f, -i_radius, 0.0f), Engine::Vector2(0.0f, 1.0f), i_vertex_color));
 		}
-		vertices.push_back(Lame::Vertex(Engine::Vector3(0.0f, -i_radius, 0.0f), Engine::Vector2(0.0f, 1.0f), i_vertex_color));
 
 		std::vector<uint32_t> indices;
-		for (uint32_t x = 1; x <= i_slice_count; x++)
 		{
-			indices.push_back(0);
-			indices.push_back(x + 1);
-			indices.push_back(x);
-		}
-		uint32_t baseIndex = 1;
-		uint32_t ringVertexCount = static_cast<uint32_t>(i_slice_count + 1);
-		for (uint32_t i = 0; i < i_stack_count - 2; i++)
-		{
-			for (uint32_t j = 0; j < i_slice_count; j++)
+			for (uint32_t x = 1; x <= i_slice_count; x++)
 			{
-				indices.push_back(baseIndex + i*ringVertexCount + j);
-				indices.push_back(baseIndex + i*ringVertexCount + j + 1);
-				indices.push_back(baseIndex + (i + 1)*ringVertexCount + j);
-
-				indices.push_back(baseIndex + (i + 1)*ringVertexCount + j);
-				indices.push_back(baseIndex + i*ringVertexCount + j + 1);
-				indices.push_back(baseIndex + (i + 1)*ringVertexCount + j + 1);
+				indices.push_back(0);
+				indices.push_back(x + 1);
+				indices.push_back(x);
 			}
-		}
-		uint32_t southPoleIndex = static_cast<uint32_t>(vertices.size() - 1);
-		baseIndex = southPoleIndex - ringVertexCount;
-		for (uint32_t i = 0; i < i_slice_count; i++)
-		{
-			indices.push_back(southPoleIndex);
-			indices.push_back(baseIndex + i);
-			indices.push_back(baseIndex + i + 1);
+			uint32_t baseIndex = 1;
+			uint32_t ringVertexCount = static_cast<uint32_t>(i_slice_count + 1);
+			for (uint32_t i = 0; i < i_stack_count - 1; i++)
+			{
+				for (uint32_t j = 0; j < i_slice_count; j++)
+				{
+					indices.push_back(baseIndex + i * ringVertexCount + j);
+					indices.push_back(baseIndex + i * ringVertexCount + j + 1);
+					indices.push_back(baseIndex + (i + 1) * ringVertexCount + j);
+
+					indices.push_back(baseIndex + (i + 1) * ringVertexCount + j);
+					indices.push_back(baseIndex + i * ringVertexCount + j + 1);
+					indices.push_back(baseIndex + (i + 1) * ringVertexCount + j + 1);
+				}
+			}
+			uint32_t southPoleIndex = static_cast<uint32_t>(vertices.size() - 1);
+			baseIndex = southPoleIndex - ringVertexCount;
+			for (uint32_t i = 0; i < i_slice_count; i++)
+			{
+				indices.push_back(southPoleIndex);
+				indices.push_back(baseIndex + i);
+				indices.push_back(baseIndex + i + 1);
+			}
 		}
 		return CreateRightHanded(i_context, vertices.data(), vertices.size(), indices.data(), indices.size());
 	}

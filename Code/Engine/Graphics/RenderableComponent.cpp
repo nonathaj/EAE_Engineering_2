@@ -21,7 +21,7 @@ namespace Lame
 				return true;
 
 			return material()->Bind() &&							// try to bind the effect
-				material()->effect()->SetLocalToWorld(go->LocalToWorld()) &&
+				material()->effect()->SetLocalToWorld(go->transform().LocalToWorld()) &&
 				material()->effect()->SetWorldToView(i_worldToView) &&
 				material()->effect()->SetViewToScreen(i_viewToScreen) &&
 				mesh()->Draw();									// try to draw the mesh

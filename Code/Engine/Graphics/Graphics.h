@@ -33,7 +33,7 @@ namespace Lame
 		inline std::shared_ptr<CameraComponent> camera() const { return camera_; }
 		
 #ifdef ENABLE_DEBUG_RENDERING
-		bool EnableDebugDrawing(const std::string& i_effect_path, const size_t i_line_count);
+		bool EnableDebugDrawing(const size_t i_line_count);
 
 		DebugRenderer* debug_renderer() const { return debug_renderer_.get(); }
 #endif

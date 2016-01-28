@@ -12,6 +12,7 @@
 #include "../../Engine/Core/Singleton.h"
 #include "../../Engine/System/eae6320/Time.h"
 #include "../../Engine/Component/World.h"
+#include "../../Engine/Component/Transform.h"
 #include "../../Engine/Component/GameObject.h"
 #include "../../Engine/Graphics/RenderableComponent.h"
 #include "../../Engine/System/UserInput.h"
@@ -60,7 +61,7 @@ namespace Gameplay
 
 			//enable debug drawing for graphics
 			{
-				if (!graphics->EnableDebugDrawing("data/debug.effect.bin", 10000))
+				if (!graphics->EnableDebugDrawing(10000))
 				{
 					Shutdown();
 					return false;
@@ -77,7 +78,7 @@ namespace Gameplay
 		}
 
 		//initial camera position
-		graphics->camera()->gameObject()->position(Engine::Vector3(0, 0, 15));
+		graphics->camera()->gameObject()->transform().position(Engine::Vector3(0, 0, 15));
 		graphics->camera()->near_clip_plane(1.0f);
 		graphics->camera()->far_clip_plane(5000.0f);
 
@@ -87,8 +88,7 @@ namespace Gameplay
 			!CreateRenderableObject(CreateMesh("data/metal_mesh.mesh.bin"), CreateMaterial("data/metal_brace.material.bin")) ||
 			!CreateRenderableObject(CreateMesh("data/railing_mesh.mesh.bin"), CreateMaterial("data/railing.material.bin")) ||
 			!CreateRenderableObject(CreateMesh("data/walls_mesh.mesh.bin"), CreateMaterial("data/wall.material.bin")) ||
-			!CreateRenderableObject(CreateMesh("data/lambert_objects_mesh.mesh.bin"), CreateMaterial("data/white.material.bin")) ||
-			!CreateRenderableObject(std::shared_ptr<Lame::Mesh>(Lame::Mesh::CreateCylinder(graphics->context(), 120.0f, 120.0f, 250.0f, 10, 10)), CreateMaterial("data/white.material.bin")) )
+			!CreateRenderableObject(CreateMesh("data/lambert_objects_mesh.mesh.bin"), CreateMaterial("data/white.material.bin")) )
 		{
 			Shutdown();
 			return false;
@@ -105,7 +105,19 @@ namespace Gameplay
 		HandleInput(deltaTime);
 
 		graphics->debug_renderer()->AddLine(Engine::Vector3::zero, Engine::Vector3::forward * 2000.0f, Lame::Color32::blue, Lame::Color32::white);
-		graphics->debug_renderer()->AddLineBox(Engine::Vector3::zero, Engine::Vector3::one * 250.0f, Lame::Color32::red);
+		//graphics->debug_renderer()->AddLineBox(Engine::Vector3::zero, Engine::Vector3::one * 250.0f, Lame::Color32::red);
+
+		Lame::Color32 transparent_red = Lame::Color32::red;
+		transparent_red.a(127);
+		graphics->debug_renderer()->AddFillBox(Engine::Vector3::one * 250.0f, Engine::Transform(Engine::Vector3(250, 150, -500), Engine::Quaternion::identity), transparent_red);
+
+		Lame::Color32 transparent_green = Lame::Color32::green;
+		transparent_green.a(127);
+		graphics->debug_renderer()->AddFillSphere(125.0f, Engine::Transform(Engine::Vector3(-250, 150, -500), Engine::Quaternion::identity), transparent_green);
+
+		Lame::Color32 transparent_blue = Lame::Color32::blue;
+		transparent_blue.a(127);
+		graphics->debug_renderer()->AddFillCylinder(125.0f, 125.0f, 250.0f, Engine::Transform(Engine::Vector3(0, -150, -500), Engine::Quaternion::Euler(90.0f, 0.0f, 0.0f)), transparent_blue);
 
 		world->Update(deltaTime);
 		bool renderSuccess = graphics->Render();
@@ -152,12 +164,12 @@ namespace
 		if (Keyboard::Pressed(Keyboard::Q))						//down
 			movementVector += Vector3::down;
 
-		movementVector = graphics->camera()->gameObject()->rotation() * movementVector * movementAmount;
+		movementVector = graphics->camera()->gameObject()->transform().rotation() * movementVector * movementAmount;
 		if (!Engine::Math::Float::IsNaN(movementVector.x()) &&
 			!Engine::Math::Float::IsNaN(movementVector.y()) &&
 			!Engine::Math::Float::IsNaN(movementVector.z()))
 		{
-			graphics->camera()->gameObject()->Move(movementVector);
+			graphics->camera()->gameObject()->transform().Move(movementVector);
 		}
 		else
 		{
@@ -175,12 +187,12 @@ namespace
 		//if (Keyboard::Pressed(Keyboard::Down))						//rotate Down
 		//	rotationAxis += Vector3::Vector3::left;
 
-		movableObject->Rotate(Quaternion::Euler(rotationAxis * rotationAmount));
+		movableObject->transform().Rotate(Quaternion::Euler(rotationAxis * rotationAmount));
 	}
 
 	bool Contacting(std::shared_ptr<Engine::GameObject> go1, std::shared_ptr<Engine::GameObject> go2, const float& go1Size, const float& go2Size)
 	{
-		return go1->position().distance(go2->position()) <= go1Size + go2Size;
+		return go1->transform().position().distance(go2->transform().position()) <= go1Size + go2Size;
 	}
 
 	std::shared_ptr<Lame::Material> CreateMaterial(std::string i_material)

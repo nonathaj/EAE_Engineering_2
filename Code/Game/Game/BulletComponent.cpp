@@ -19,5 +19,5 @@ BulletComponent::~BulletComponent()
 
 void BulletComponent::Update(float i_deltaTime)
 {
-	gameObject()->Move(gameObject()->rotation() * Engine::Vector3(get_speed(), 0.0f, 0.0f) * i_deltaTime);
+	gameObject()->transform().Move(gameObject()->transform().rotation() * Engine::Vector3(get_speed(), 0.0f, 0.0f) * i_deltaTime);
 }

@@ -17,7 +17,7 @@ namespace Lame
 
 	Engine::Matrix4x4 CameraComponent::WorldToView() const
 	{ 
-		return Engine::Matrix4x4::CreateWorldToView(gameObject()->position(), gameObject()->rotation());
+		return Engine::Matrix4x4::CreateWorldToView(gameObject()->transform().position(), gameObject()->transform().rotation());
 	}
 
 	Engine::Matrix4x4 CameraComponent::ViewToScreen() const

@@ -4,10 +4,12 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="IComponent.cpp" />
     <ClCompile Include="World.cpp" />
+    <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="IComponent.h" />
     <ClInclude Include="World.h" />
+    <ClInclude Include="Transform.h" />
   </ItemGroup>
 </Project>

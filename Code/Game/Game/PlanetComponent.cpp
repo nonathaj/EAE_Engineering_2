@@ -60,17 +60,17 @@ void PlanetComponent::Update(float deltaTime)
 	Vector3 rotationAxis(0.0f, 0.0f, 1.0f);
 	std::shared_ptr<Engine::GameObject> go = gameObject();
 	if (Keyboard::Pressed(Keyboard::A))
-		go->Rotate(Quaternion(-rotationSpeed, rotationAxis));
+		go->transform().Rotate(Quaternion(-rotationSpeed, rotationAxis));
 	else if (Keyboard::Pressed(Keyboard::D))
-		go->Rotate(Quaternion(rotationSpeed, rotationAxis));
+		go->transform().Rotate(Quaternion(rotationSpeed, rotationAxis));
 
 	float movementAmount = 3.0f * deltaTime;
 	if (Keyboard::Pressed(Keyboard::I))						//up
-		go->Move(Vector3(0.0f, movementAmount, 0.0f));
+		go->transform().Move(Vector3(0.0f, movementAmount, 0.0f));
 	if (Keyboard::Pressed(Keyboard::K))						//down
-		go->Move(Vector3(0.0f, -movementAmount, 0.0f));
+		go->transform().Move(Vector3(0.0f, -movementAmount, 0.0f));
 	if (Keyboard::Pressed(Keyboard::L))						//right
-		go->Move(Vector3(movementAmount, 0.0f, 0.0f));
+		go->transform().Move(Vector3(movementAmount, 0.0f, 0.0f));
 	if (Keyboard::Pressed(Keyboard::J))						//left
-		go->Move(Vector3(-movementAmount, 0.0f, 0.0f));
+		go->transform().Move(Vector3(-movementAmount, 0.0f, 0.0f));
 }
