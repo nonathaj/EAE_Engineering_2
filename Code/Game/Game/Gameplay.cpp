@@ -109,14 +109,13 @@ namespace Gameplay
 
 		Lame::Color32 transparent_red = Lame::Color32::red;
 		transparent_red.a(127);
-		graphics->debug_renderer()->AddFillBox(Engine::Vector3::one * 250.0f, Engine::Transform(Engine::Vector3(250, 150, -500), Engine::Quaternion::identity), transparent_red);
-
 		Lame::Color32 transparent_green = Lame::Color32::green;
 		transparent_green.a(127);
-		graphics->debug_renderer()->AddFillSphere(125.0f, Engine::Transform(Engine::Vector3(-250, 150, -500), Engine::Quaternion::identity), transparent_green);
-
 		Lame::Color32 transparent_blue = Lame::Color32::blue;
 		transparent_blue.a(127);
+
+		graphics->debug_renderer()->AddFillBox(Engine::Vector3::one * 250.0f, Engine::Transform(Engine::Vector3(250, 150, -500), Engine::Quaternion::identity), transparent_red);
+		graphics->debug_renderer()->AddFillSphere(125.0f, Engine::Transform(Engine::Vector3(-250, 150, -500), Engine::Quaternion::identity), transparent_green);
 		graphics->debug_renderer()->AddFillCylinder(125.0f, 125.0f, 250.0f, Engine::Transform(Engine::Vector3(0, -150, -500), Engine::Quaternion::Euler(90.0f, 0.0f, 0.0f)), transparent_blue);
 
 		world->Update(deltaTime);

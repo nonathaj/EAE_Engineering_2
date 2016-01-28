@@ -2,13 +2,20 @@
 #define _LAME_VERTEX_H
 
 #include <cstdint>
+#include <memory>
 #include "Color.h"
 #include "../Core/Vector2.h"
 #include "../Core/Vector3.h"
 #include "../../External/Lua/Includes.h"
 
+#if EAE6320_PLATFORM_D3D
+#include <d3d9.h>
+#endif
+
 namespace Lame
 {
+	class Context;
+
 	struct Vertex
 	{
 	public:
@@ -23,6 +30,13 @@ namespace Lame
 
 		Vertex() {}
 		Vertex(Engine::Vector3 i_pos, Engine::Vector2 i_tex, Color32 i_color) : position(i_pos), texcoord(i_tex), color(i_color) {}
+
+		static bool SetVertexFormat(
+			std::shared_ptr<Lame::Context> i_context
+#if EAE6320_PLATFORM_D3D
+			, IDirect3DVertexDeclaration9 ** o_vertex_declaration			//d3d needs the vertex declaration
+#endif
+			);
 	};
 }
 
