@@ -23,8 +23,6 @@ return
         tool = "EffectBuilder.exe",
         files = 
         {
-            { source = "debug/line.effect", target = "debug/line.effect.bin" },
-            { source = "debug/shape.effect", target = "debug/shape.effect.bin" },
             { source = "opaque.effect", target = "opaque.effect.bin" },
             { source = "transparent.effect", target = "transparent.effect.bin" },
         }

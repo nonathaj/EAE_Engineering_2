@@ -123,6 +123,8 @@ namespace Lame
 			glDisable(GL_DEPTH_TEST);
 		success = success && glGetError() == GL_NO_ERROR;
 
+		//FIXME No implementation for is_wireframe on OpenGL
+
 		//depth writing
 		glDepthMask(has_depth_write() ? GL_TRUE : GL_FALSE);
 		success = success && glGetError() == GL_NO_ERROR;

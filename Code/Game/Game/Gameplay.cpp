@@ -59,14 +59,14 @@ namespace Gameplay
 				return false;
 			}
 
+#ifdef ENABLE_DEBUG_RENDERING
 			//enable debug drawing for graphics
+			if (!graphics->EnableDebugDrawing(10000))
 			{
-				if (!graphics->EnableDebugDrawing(10000))
-				{
-					Shutdown();
-					return false;
-				}
+				Shutdown();
+				return false;
 			}
+#endif
 
 			std::string error;
 			if (!eae6320::Time::Initialize(&error))
@@ -119,37 +119,45 @@ namespace Gameplay
 		Lame::Color32 transparent_blue = Lame::Color32::blue;
 		transparent_blue.a(127);
 
-		graphics->debug_renderer()->AddFillBox(
+		const bool debug_wireframes = false;
+
+		graphics->debug_renderer()->AddBox(
+			debug_wireframes,
 			Engine::Vector3::one * 250.0f, 
 			Engine::Transform(Engine::Vector3(250, 0, -300), 
 			Engine::Quaternion::identity), 
 			transparent_red);
-		graphics->debug_renderer()->AddFillBox(
+		graphics->debug_renderer()->AddBox(
+			debug_wireframes,
 			Engine::Vector3::one * 250.0f,
 			Engine::Transform(Engine::Vector3(-250, 0, -300),
 			Engine::Quaternion::identity),
 			transparent_blue);
 
-		graphics->debug_renderer()->AddFillSphere(
-			125.0f, 
+		graphics->debug_renderer()->AddSphere(
+			debug_wireframes,
+			125.0f,
 			Engine::Transform(
 				Engine::Vector3(250, 0, -800), 
 				Engine::Quaternion::identity), 
 			transparent_red);
-		graphics->debug_renderer()->AddFillSphere(
+		graphics->debug_renderer()->AddSphere(
+			debug_wireframes,
 			125.0f,
 			Engine::Transform(
 			Engine::Vector3(-250, 0, -800),
 			Engine::Quaternion::identity),
 			transparent_blue);
 
-		graphics->debug_renderer()->AddFillCylinder(
-			125.0f, 125.0f, 250.0f, 
+		graphics->debug_renderer()->AddCylinder(
+			debug_wireframes,
+			125.0f, 125.0f, 250.0f,
 			Engine::Transform(
 				Engine::Vector3(250, 0, 500), 
 				Engine::Quaternion::Euler(90.0f, 0.0f, 0.0f)), 
 			transparent_red);
-		graphics->debug_renderer()->AddFillCylinder(
+		graphics->debug_renderer()->AddCylinder(
+			debug_wireframes,
 			125.0f, 125.0f, 250.0f,
 			Engine::Transform(
 			Engine::Vector3(-250, 0, 500),

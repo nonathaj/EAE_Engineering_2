@@ -133,6 +133,13 @@ namespace Lame
 			result = context->get_direct3dDevice()->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 		success = success && SUCCEEDED(result);
 
+		//wireframe mode
+		if (is_wireframe())
+			result = context->get_direct3dDevice()->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
+		else
+			result = context->get_direct3dDevice()->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+		success = success && SUCCEEDED(result);
+
 		return success;
 	}
 
@@ -184,7 +191,7 @@ namespace Lame
 		HRESULT result = get_constant_table(i_shader)->SetMatrixTranspose(context->get_direct3dDevice(), std::get<0>(i_constant), reinterpret_cast<const D3DXMATRIX*>(&i_val));
 		if (!SUCCEEDED(result))
 		{
-			System::UserOutput::Display("DirectX failed to set a constant uniform value.");
+			System::UserOutput::Display("DirectX failed to set a constant uniform Matrix value.");
 			return false;
 		}
 		return true;
@@ -195,7 +202,7 @@ namespace Lame
 		HRESULT result = get_constant_table(i_shader)->SetFloatArray(context->get_direct3dDevice(), std::get<0>(i_constant), i_val, static_cast<UINT>(i_val_count));
 		if (!SUCCEEDED(result))
 		{
-			System::UserOutput::Display("DirectX failed to set a constant uniform value.");
+			System::UserOutput::Display("DirectX failed to set a constant uniform float array value.");
 			return false;
 		}
 		return true;
@@ -206,7 +213,7 @@ namespace Lame
 		HRESULT result = context->get_direct3dDevice()->SetTexture(std::get<1>(i_constant), i_val->texture());
 		if (!SUCCEEDED(result))
 		{
-			System::UserOutput::Display("DirectX failed to set a constant uniform value.");
+			System::UserOutput::Display("DirectX failed to set a constant uniform Texture value.");
 			return false;
 		}
 		return true;

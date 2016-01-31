@@ -47,6 +47,7 @@ bool EffectBuilder::Build(const std::vector<std::string>&)
 		renderMask.set(Lame::RenderState::DepthTest, flags["depth_test"]);
 		renderMask.set(Lame::RenderState::DepthWrite, flags["depth_write"]);
 		renderMask.set(Lame::RenderState::FaceCull, flags["face_cull"]);
+		renderMask.set(Lame::RenderState::Wireframe, flags["wireframe"]);
 	}
 
 	////////////////////////////////////////////

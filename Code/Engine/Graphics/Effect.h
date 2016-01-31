@@ -31,6 +31,7 @@ namespace Lame
 		DepthTest,
 		DepthWrite,
 		FaceCull,
+		Wireframe,
 		Count
 	};
 
@@ -76,16 +77,19 @@ namespace Lame
 		Engine::EnumMask<RenderState> render_mask() { return renderMask; }
 
 		bool has_transparency() { return renderMask.test(RenderState::Transparency); }
-		void has_transparency(const bool& i_val) { renderMask.set(RenderState::Transparency, i_val); }
+		void has_transparency(const bool i_val) { renderMask.set(RenderState::Transparency, i_val); }
 
 		bool has_depth_test() { return renderMask.test(RenderState::DepthTest); }
-		void has_depth_test(const bool& i_val) { renderMask.set(RenderState::DepthTest, i_val); }
+		void has_depth_test(const bool i_val) { renderMask.set(RenderState::DepthTest, i_val); }
 		
 		bool has_depth_write() { return renderMask.test(RenderState::DepthWrite); }
-		void has_depth_write(const bool& i_val) { renderMask.set(RenderState::DepthWrite, i_val); }
+		void has_depth_write(const bool i_val) { renderMask.set(RenderState::DepthWrite, i_val); }
 		
 		bool has_face_cull() { return renderMask.test(RenderState::FaceCull); }
-		void has_face_cull(const bool& i_val) { renderMask.set(RenderState::FaceCull, i_val); }
+		void has_face_cull(const bool i_val) { renderMask.set(RenderState::FaceCull, i_val); }
+
+		bool is_wireframe() { return renderMask.test(RenderState::Wireframe); }
+		void is_wireframe(const bool i_val) { renderMask.set(RenderState::Wireframe, i_val); }
 
 	private:
 		Effect(std::shared_ptr<Context> i_context, Engine::EnumMask<RenderState> i_renderMask) : context(i_context), renderMask(i_renderMask) {}
