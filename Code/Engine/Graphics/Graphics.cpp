@@ -37,8 +37,10 @@ namespace Lame
 		context_(i_context),
 		camera_(i_camera),
 		camera_gamebject_(i_camera_gamebject),
-		renderables_(),
-		debug_renderer_(nullptr)
+		renderables_()
+#ifdef ENABLE_DEBUG_RENDERING
+		, debug_renderer_(nullptr)
+#endif
 	{ }
 
 	bool Graphics::Render()

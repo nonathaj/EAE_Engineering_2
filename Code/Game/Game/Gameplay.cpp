@@ -21,10 +21,6 @@
 #include "../../Engine/Core/Math.h"
 #include "../../Engine/Core/Random.h"
 
-#include "BulletComponent.h"
-#include "PlanetComponent.h"
-#include "EnemyComponent.h"
-
 namespace
 {
 	std::shared_ptr<Lame::Material> CreateMaterial(std::string i_material);
@@ -103,66 +99,6 @@ namespace Gameplay
 		const float deltaTime = eae6320::Time::GetSecondsElapsedThisFrame();
 
 		HandleInput(deltaTime);
-
-		graphics->debug_renderer()->AddLine(
-			Engine::Vector3(100, 0, 0), 
-			Engine::Vector3(100, -250, 0), 
-			Lame::Color32::blue);
-		graphics->debug_renderer()->AddLine(
-			Engine::Vector3(-100, 0, 0),
-			Engine::Vector3(-100, -250, 0),
-			Lame::Color32::red);
-		//graphics->debug_renderer()->AddLineBox(Engine::Vector3::zero, Engine::Vector3::one * 250.0f, Lame::Color32::red);
-
-		Lame::Color32 transparent_red = Lame::Color32::red;
-		transparent_red.a(127);
-		Lame::Color32 transparent_blue = Lame::Color32::blue;
-		transparent_blue.a(127);
-
-		const bool debug_wireframes = true;
-
-		graphics->debug_renderer()->AddBox(
-			debug_wireframes,
-			Engine::Vector3::one * 250.0f, 
-			Engine::Transform(Engine::Vector3(250, 0, -300), 
-			Engine::Quaternion::identity), 
-			transparent_red);
-		graphics->debug_renderer()->AddBox(
-			debug_wireframes,
-			Engine::Vector3::one * 250.0f,
-			Engine::Transform(Engine::Vector3(-250, 0, -300),
-			Engine::Quaternion::identity),
-			transparent_blue);
-
-		graphics->debug_renderer()->AddSphere(
-			debug_wireframes,
-			125.0f,
-			Engine::Transform(
-				Engine::Vector3(250, 0, -800), 
-				Engine::Quaternion::identity), 
-			transparent_red);
-		graphics->debug_renderer()->AddSphere(
-			debug_wireframes,
-			125.0f,
-			Engine::Transform(
-			Engine::Vector3(-250, 0, -800),
-			Engine::Quaternion::identity),
-			transparent_blue);
-
-		graphics->debug_renderer()->AddCylinder(
-			debug_wireframes,
-			125.0f, 125.0f, 250.0f,
-			Engine::Transform(
-				Engine::Vector3(250, 0, 500), 
-				Engine::Quaternion::Euler(90.0f, 0.0f, 0.0f)), 
-			transparent_red);
-		graphics->debug_renderer()->AddCylinder(
-			debug_wireframes,
-			125.0f, 125.0f, 250.0f,
-			Engine::Transform(
-			Engine::Vector3(-250, 0, 500),
-			Engine::Quaternion::Euler(90.0f, 0.0f, 0.0f)),
-			transparent_blue);
 
 		world->Update(deltaTime);
 		bool renderSuccess = graphics->Render();

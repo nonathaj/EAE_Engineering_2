@@ -204,20 +204,14 @@
     <Image Include="Resources\small.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BulletComponent.h" />
-    <ClInclude Include="EnemyComponent.h" />
     <ClInclude Include="Gameplay.h" />
-    <ClInclude Include="PlanetComponent.h" />
     <ClInclude Include="Resources\Resource.h" />
     <ClInclude Include="Resources\targetver.h" />
     <ClInclude Include="WindowsProgram.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BulletComponent.cpp" />
-    <ClCompile Include="EnemyComponent.cpp" />
     <ClCompile Include="EntryPoint.cpp" />
     <ClCompile Include="Gameplay.cpp" />
-    <ClCompile Include="PlanetComponent.cpp" />
     <ClCompile Include="WindowsProgram.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
