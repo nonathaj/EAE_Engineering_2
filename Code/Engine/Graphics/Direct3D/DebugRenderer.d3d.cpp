@@ -42,7 +42,7 @@ namespace Lame
 			rendermask.set(Lame::RenderState::Transparency, false);
 			rendermask.set(Lame::RenderState::DepthTest, true);
 			rendermask.set(Lame::RenderState::DepthWrite, true);
-			rendermask.set(Lame::RenderState::FaceCull, true);
+			rendermask.set(Lame::RenderState::FaceCull, false);
 			rendermask.set(Lame::RenderState::Wireframe, true);
 			wireframe_shape_effect = std::shared_ptr<Lame::Effect>(Lame::Effect::Create(i_context, vertex_shader, fragment_shader, rendermask, true));
 			if (!wireframe_shape_effect)

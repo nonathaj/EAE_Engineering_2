@@ -119,7 +119,7 @@ namespace Gameplay
 		Lame::Color32 transparent_blue = Lame::Color32::blue;
 		transparent_blue.a(127);
 
-		const bool debug_wireframes = false;
+		const bool debug_wireframes = true;
 
 		graphics->debug_renderer()->AddBox(
 			debug_wireframes,
