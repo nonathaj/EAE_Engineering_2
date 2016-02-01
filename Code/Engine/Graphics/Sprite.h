@@ -18,14 +18,25 @@ namespace Engine
 namespace Lame
 {
 	class Context;
+	class Effect;
+	class Texture;
 
 	class Sprite
 	{
 	public:
+		static Sprite* Create(std::shared_ptr<Context> i_context, const Engine::Rectangle2D& i_screen_pos);
 
-		inline std::shared_ptr<Context> get_context() { return context; }
+		bool Render();
+
+		inline std::shared_ptr<Context> context() { return context_; }
+		inline std::shared_ptr<Effect> effect() { return effect_; }
+		inline std::shared_ptr<Texture> texture() { return texture_; }
 	private:
-		std::shared_ptr<Context> context;
+		Sprite();
+
+		std::shared_ptr<Context> context_;
+		std::shared_ptr<Effect> effect_;
+		std::shared_ptr<Texture> texture_;
 
 #if EAE6320_PLATFORM_D3D
 		IDirect3DVertexBuffer9 *vertex_buffer_;

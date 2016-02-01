@@ -11,7 +11,6 @@
 #include "../Vertex.h"
 #include "../Graphics.h"
 #include "../../System/UserOutput.h"
-#include "../../../External/OpenGlExtensions/OpenGlExtensions.h"
 
 namespace Lame
 {

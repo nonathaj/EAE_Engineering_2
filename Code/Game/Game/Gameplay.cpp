@@ -103,7 +103,7 @@ namespace Gameplay
 		HandleInput(deltaTime);
 
 		graphics->debug_renderer()->AddBox(
-			false, 
+			true, 
 			Engine::Vector3::one * 250.0f,
 			Engine::Transform::CreateDefault());
 
