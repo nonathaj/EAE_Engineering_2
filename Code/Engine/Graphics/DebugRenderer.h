@@ -31,7 +31,7 @@ namespace Engine
 
 namespace Lame
 {
-	struct Color32;
+	class Color32;
 	class Context;
 	class Mesh;
 

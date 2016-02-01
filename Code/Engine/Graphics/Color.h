@@ -5,13 +5,14 @@
 
 namespace Lame
 {
-	struct Color32;
+	class Color32;
 
-	struct Color
+	class Color
 	{
 	public:
 		Color() { }
 		Color(float r, float g, float b, float a = 1.0f) : red_(r), green_(g), blue_(b), alpha_(a) {}
+		Color(const Color32& i_color);
 
 		float r() const { return red_; }
 		float g() const { return green_; }
@@ -22,8 +23,6 @@ namespace Lame
 		void g(const float i_val) { green_ = i_val; }
 		void b(const float i_val) { blue_ = i_val; }
 		void a(const float i_val) { alpha_ = i_val; }
-
-		Color32 GetColor32() const;
 
 		static const Color clear;
 		static const Color white;
@@ -39,11 +38,12 @@ namespace Lame
 #endif
 	};
 
-	struct Color32
+	class Color32
 	{
 	public:
 		Color32() { }
 		Color32(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) : red_(r), green_(g), blue_(b), alpha_(a) {}
+		Color32(const Color& i_color);
 
 		uint8_t r() const { return red_; }
 		uint8_t g() const { return green_; }
@@ -54,8 +54,6 @@ namespace Lame
 		void g(const uint8_t i_val) { green_ = i_val; }
 		void b(const uint8_t i_val) { blue_ = i_val; }
 		void a(const uint8_t i_val) { alpha_ = i_val; }
-
-		Color GetColor() const;
 
 		static const Color32 clear;
 		static const Color32 white;

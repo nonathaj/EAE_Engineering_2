@@ -6,12 +6,18 @@
 
 #include "../System/UserOutput.h"
 #include "../System/FileLoader.h"
+#include "Color.h"
 
 namespace Lame
 {
 	bool Effect::SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Engine::Vector3 &i_val)
 	{
 		return SetConstant(i_shader, i_constant, reinterpret_cast<const float*>(&i_val), 3);
+	}
+
+	bool Effect::SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Color& i_val)
+	{
+		return SetConstant(i_shader, i_constant, reinterpret_cast<const float*>(&i_val), 4);
 	}
 
 	Effect* Effect::Create(std::shared_ptr<Context> i_context, const std::string& i_effect_path)

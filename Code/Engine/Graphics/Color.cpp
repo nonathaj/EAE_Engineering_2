@@ -17,25 +17,21 @@ namespace Lame
 	const Color32 Color32::green(0, 255, 0, 255);
 	const Color32 Color32::blue(0, 0, 255, 255);
 
-	//Allow a Color to be converted to a Color32
-	Color32 Color::GetColor32() const
+	//Allow a Color32 to be converted to a Color
+	Color::Color(const Color32& i_color) :
+		red_(i_color.r() / 255.0f),
+		green_(i_color.g() / 255.0f),
+		blue_(i_color.b() / 255.0f),
+		alpha_(i_color.a() / 255.0f)
 	{
-		const float color32Max = 255.0f;
-		return Color32(
-			static_cast<uint8_t>(this->r() * color32Max),
-			static_cast<uint8_t>(this->g() * color32Max),
-			static_cast<uint8_t>(this->b() * color32Max),
-			static_cast<uint8_t>(this->a() * color32Max) );
 	}
 
-	//Allow a Color32 to be converted to a Color
-	Color Color32::GetColor() const
+	//Allow a Color to be converted to a Color32
+	Color32::Color32(const Color& i_color) :
+		red_(static_cast<uint8_t>(i_color.r() * 255.0f)),
+		green_(static_cast<uint8_t>(i_color.g() * 255.0f)),
+		blue_(static_cast<uint8_t>(i_color.b() * 255.0f)),
+		alpha_(static_cast<uint8_t>(i_color.a() * 255.0f))
 	{
-		const float color32Max = 255.0f;
-		return Color(
-			this->r() / color32Max, 
-			this->g() / color32Max, 
-			this->b() / color32Max, 
-			this->a() / color32Max );
 	}
 }

@@ -27,23 +27,23 @@ namespace Engine
 		static_assert(has_enum_count<EnumType>::value, "Enum provided to EnumMask must have a \"Count\" option as the last element in the enum.");
 
 	public:
-		inline bool test(const EnumType i_key) { return mask_.test(i_key); }
+		inline bool test(const EnumType i_key) const { return mask_.test(i_key); }
 		inline void set() { mask_.set(); }
 		inline void set(const EnumType i_key, bool i_val = true) { mask_.set(i_key, i_val); }
 		inline void reset() { mask_.reset(); }
 		inline void reset(const EnumType i_key) { mask_.reset(i_key); }
 		inline void flip() { mask_.flip(); }
 		inline void flip(const EnumType i_key) { mask_.flip(i_key); }
-		inline size_t count() { return mask_.count(); }					//number of set bits
-		inline size_t size() { return mask_.size(); }					//number of bits in the entire set
-		inline bool any() { return mask_.any(); }
-		inline bool none() { return mask_.none(); }
-		inline bool all() { return mask_.all(); }
+		inline size_t count() const { return mask_.count(); }				//number of set bits
+		inline size_t size() const { return mask_.size(); }					//number of bits in the entire set
+		inline bool any() const { return mask_.any(); }
+		inline bool none() const { return mask_.none(); }
+		inline bool all() const { return mask_.all(); }
 		inline std::bitset<EnumType::Count> mask() const { return mask_; }
 		inline void mask(const std::bitset<EnumType::Count>& i_mask) { mask_ = i_mask; }
 
-		bool operator==(const EnumMask<EnumType>& i_other) { return mask_ == i_other.mask_; }
-		bool operator!=(const EnumMask<EnumType>& i_other) { return mask_ != i_other.mask_; }
+		bool operator==(const EnumMask<EnumType>& i_other) const { return mask_ == i_other.mask_; }
+		bool operator!=(const EnumMask<EnumType>& i_other) const { return mask_ != i_other.mask_; }
 
 		EnumMask<EnumType> operator&=(const EnumMask<EnumType>& i_other)
 		{
@@ -57,21 +57,21 @@ namespace Engine
 			return *this;
 		}
 
-		EnumMask<EnumType> operator&(const EnumMask<EnumType>& i_other)
+		EnumMask<EnumType> operator&(const EnumMask<EnumType>& i_other) const
 		{
 			EnumMask<EnumType> newMask;
 			newMask.mask_ = mask_ & i_other.mask_;
 			return newMask;
 		}
 
-		EnumMask<EnumType> operator|(const EnumMask<EnumType>& i_other)
+		EnumMask<EnumType> operator|(const EnumMask<EnumType>& i_other) const
 		{
 			EnumMask<EnumType> newMask;
 			newMask.mask_ = mask_ | i_other.mask_;
 			return newMask;
 		}
 
-		EnumMask<EnumType> operator~()
+		EnumMask<EnumType> operator~() const
 		{
 			EnumMask<EnumType> newMask;
 			newMask.mask_ = ~mask_;

@@ -24,6 +24,7 @@ namespace Lame
 {
 	class Context;
 	class Texture;
+	class Color;
 
 	enum RenderState
 	{
@@ -61,6 +62,7 @@ namespace Lame
 
 		//sets the value of a cache'd constant
 		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Engine::Vector3 &i_val);
+		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Color& i_val);
 		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Engine::Matrix4x4 &i_val);
 		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const float *i_val, const size_t &i_val_count);
 		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Lame::Texture *i_val
@@ -70,21 +72,21 @@ namespace Lame
 			);
 
 		std::shared_ptr<Context> get_context() { return context; }
-		Engine::EnumMask<RenderState> render_mask() { return renderMask; }
+		Engine::EnumMask<RenderState> render_mask() const { return renderMask; }
 
-		bool has_transparency() { return renderMask.test(RenderState::Transparency); }
+		bool has_transparency() const { return renderMask.test(RenderState::Transparency); }
 		void has_transparency(const bool i_val) { renderMask.set(RenderState::Transparency, i_val); }
 
-		bool has_depth_test() { return renderMask.test(RenderState::DepthTest); }
+		bool has_depth_test() const { return renderMask.test(RenderState::DepthTest); }
 		void has_depth_test(const bool i_val) { renderMask.set(RenderState::DepthTest, i_val); }
 		
-		bool has_depth_write() { return renderMask.test(RenderState::DepthWrite); }
+		bool has_depth_write() const { return renderMask.test(RenderState::DepthWrite); }
 		void has_depth_write(const bool i_val) { renderMask.set(RenderState::DepthWrite, i_val); }
 		
-		bool has_face_cull() { return renderMask.test(RenderState::FaceCull); }
+		bool has_face_cull() const { return renderMask.test(RenderState::FaceCull); }
 		void has_face_cull(const bool i_val) { renderMask.set(RenderState::FaceCull, i_val); }
 
-		bool is_wireframe() { return renderMask.test(RenderState::Wireframe); }
+		bool is_wireframe() const { return renderMask.test(RenderState::Wireframe); }
 		void is_wireframe(const bool i_val) { renderMask.set(RenderState::Wireframe, i_val); }
 
 	private:
