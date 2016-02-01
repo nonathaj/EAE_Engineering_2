@@ -10,11 +10,66 @@
 #include "../../Core/Matrix4x4.h"
 #include "../../System/UserOutput.h"
 #include "../../Core/Quaternion.h"
+#include "../../Core/EnumMask.h"
 
 namespace Lame
 {
 	DebugRenderer* DebugRenderer::Create(std::shared_ptr<Lame::Context> i_context, const size_t i_line_count)
 	{
+		std::shared_ptr<Lame::Effect> line_effect;
+		{
+			const char * const vertex_shader = "data/debug/line_vertex.shader.bin";
+			const char * const fragment_shader = "data/debug/line_fragment.shader.bin";
+			Engine::EnumMask<Lame::RenderState> rendermask;
+			rendermask.set(Lame::RenderState::Transparency, false);
+			rendermask.set(Lame::RenderState::DepthTest, true);
+			rendermask.set(Lame::RenderState::DepthWrite, true);
+			rendermask.set(Lame::RenderState::FaceCull, true);
+			rendermask.set(Lame::RenderState::Wireframe, true);
+			line_effect = std::shared_ptr<Lame::Effect>(Lame::Effect::Create(i_context, vertex_shader, fragment_shader, rendermask, false));
+			if (!line_effect)
+			{
+				System::UserOutput::Display("Failed to create debug line effect");
+				return nullptr;
+			}
+		}
+
+		std::shared_ptr<Lame::Effect> wireframe_shape_effect;
+		{
+			const char * const vertex_shader = "data/debug/shape_vertex.shader.bin";
+			const char * const fragment_shader = "data/debug/shape_fragment.shader.bin";
+			Engine::EnumMask<Lame::RenderState> rendermask;
+			rendermask.set(Lame::RenderState::Transparency, false);
+			rendermask.set(Lame::RenderState::DepthTest, true);
+			rendermask.set(Lame::RenderState::DepthWrite, true);
+			rendermask.set(Lame::RenderState::FaceCull, false);
+			rendermask.set(Lame::RenderState::Wireframe, true);
+			wireframe_shape_effect = std::shared_ptr<Lame::Effect>(Lame::Effect::Create(i_context, vertex_shader, fragment_shader, rendermask, true));
+			if (!wireframe_shape_effect)
+			{
+				System::UserOutput::Display("Failed to create debug wireframe effect");
+				return nullptr;
+			}
+		}
+
+		std::shared_ptr<Lame::Effect> fill_shape_effect;
+		{
+			const char * const vertex_shader = "data/debug/shape_vertex.shader.bin";
+			const char * const fragment_shader = "data/debug/shape_fragment.shader.bin";
+			Engine::EnumMask<Lame::RenderState> rendermask;
+			rendermask.set(Lame::RenderState::Transparency, true);
+			rendermask.set(Lame::RenderState::DepthTest, true);
+			rendermask.set(Lame::RenderState::DepthWrite, true);
+			rendermask.set(Lame::RenderState::FaceCull, true);
+			rendermask.set(Lame::RenderState::Wireframe, false);
+			fill_shape_effect = std::shared_ptr<Lame::Effect>(Lame::Effect::Create(i_context, vertex_shader, fragment_shader, rendermask, true));
+			if (!fill_shape_effect)
+			{
+				System::UserOutput::Display("Failed to create debug filled shape effect");
+				return nullptr;
+			}
+		}
+
 		// The usage tells Direct3D how this vertex buffer will be used
 		DWORD usage = 0;
 		{
@@ -46,21 +101,13 @@ namespace Lame
 			}
 		}
 
-		std::shared_ptr<Lame::Effect> line_effect(Lame::Effect::Create(i_context, "data/debug/line.effect.bin", false));
-		std::shared_ptr<Lame::Effect> shape_effect(Lame::Effect::Create(i_context, "data/debug/shape.effect.bin", true));
-		if (!line_effect || !shape_effect)
-		{
-			vertex_buffer->Release();
-			System::UserOutput::Display("Failed to Create Debug Effects");
-			return nullptr;
-		}
-
 		DebugRenderer* deb = new DebugRenderer();
 		if (deb)
 		{
 			deb->max_lines_count = i_line_count;
 			deb->line_effect = line_effect;
-			deb->shape_effect = shape_effect;
+			deb->solid_shape_effect = fill_shape_effect;
+			deb->wireframe_shape_effect = wireframe_shape_effect;
 			deb->vertex_buffer_ = vertex_buffer;
 			deb->line_vertices.reserve(i_line_count);
 			return deb;
@@ -139,3 +186,4 @@ namespace Lame
 }
 
 #endif //ENABLE_DEBUG_RENDERING
+

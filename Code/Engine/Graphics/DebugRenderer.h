@@ -50,18 +50,17 @@ namespace Lame
 		bool AddLine(const Engine::Vector3& i_start, const Engine::Vector3& i_end, const Lame::Color32& i_start_color, const Lame::Color32& i_end_color);
 		bool AddLine(const Engine::Vector3& i_start, const Engine::Vector3& i_end, const Lame::Color32& i_color);
 
-		bool AddLineBox(const Engine::Vector3& i_center, const Engine::Vector3& i_extends, const Lame::Color32& i_color);
+		bool AddMesh(std::shared_ptr<Lame::Mesh> i_mesh, const Engine::Transform& i_transform, const bool i_render_as_wireframe);
 
-		bool AddMesh(std::shared_ptr<Lame::Mesh> i_mesh, const Engine::Transform& i_transform);
-
-		bool AddFillBox(const Engine::Vector3& i_size, const Engine::Transform& i_transform, const Color32& i_color = Color32::white);
-		bool AddFillSphere(const float i_radius, const Engine::Transform& i_transform, const Color32& i_color = Color32::white);
-		bool AddFillCylinder(const float i_top_radius, const float i_bottom_radius, const float i_height, const Engine::Transform& i_transform, const Color32& i_color = Color32::white);
+		bool AddBox(const bool i_render_wireframe, const Engine::Vector3& i_size, const Engine::Transform& i_transform, const Color32& i_color = Color32::white);
+		bool AddSphere(const bool i_render_wireframe, const float i_radius, const Engine::Transform& i_transform, const Color32& i_color = Color32::white);
+		bool AddCylinder(const bool i_render_wireframe, const float i_top_radius, const float i_bottom_radius, const float i_height, const Engine::Transform& i_transform, const Color32& i_color = Color32::white);
 
 		bool Render(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen);
 
 		std::shared_ptr<Lame::Effect> get_line_effect() const { return line_effect; }
-		std::shared_ptr<Lame::Effect> get_shape_effect() const { return shape_effect; }
+		std::shared_ptr<Lame::Effect> get_solid_shape_effect() const { return solid_shape_effect; }
+		std::shared_ptr<Lame::Effect> get_wireframe_shape_effect() const { return wireframe_shape_effect; }
 
 	private:
 		DebugRenderer() {}
@@ -69,15 +68,17 @@ namespace Lame
 		DebugRenderer& operator=(const DebugRenderer &i_other);
 
 		bool RenderLines(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen);
-		bool RenderMeshes(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen);
+		static bool RenderMeshes(std::shared_ptr<Lame::Effect> effect, const std::vector<DebugMesh>& i_meshes, const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen);
 
 		std::shared_ptr<Lame::Effect> line_effect;
-		std::shared_ptr<Lame::Effect> shape_effect;
+		std::shared_ptr<Lame::Effect> solid_shape_effect;
+		std::shared_ptr<Lame::Effect> wireframe_shape_effect;
 
 		std::vector<Lame::Vertex> line_vertices;
 		size_t max_lines_count;
 
-		std::vector<DebugMesh> meshes;
+		std::vector<DebugMesh> wireframe_meshes;
+		std::vector<DebugMesh> solid_meshes;
 
 #if EAE6320_PLATFORM_D3D
 		IDirect3DVertexBuffer9 *vertex_buffer_;

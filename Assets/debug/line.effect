@@ -1,9 +1,0 @@
-return
-{
-	vertex = "debug/line_vertex.shader.bin",
-	fragment = "debug/line_fragment.shader.bin",
-	transparency = false,
-	depth_test = true,
-	depth_write = true,
-	face_cull = true,
-}

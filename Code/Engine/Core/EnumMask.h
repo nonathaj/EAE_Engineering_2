@@ -39,7 +39,7 @@ namespace Engine
 		inline bool any() { return mask_.any(); }
 		inline bool none() { return mask_.none(); }
 		inline bool all() { return mask_.all(); }
-		inline std::bitset<EnumType::Count> mask() { return mask_; }
+		inline std::bitset<EnumType::Count> mask() const { return mask_; }
 		inline void mask(const std::bitset<EnumType::Count>& i_mask) { mask_ = i_mask; }
 
 		bool operator==(const EnumMask<EnumType>& i_other) { return mask_ == i_other.mask_; }
