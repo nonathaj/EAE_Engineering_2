@@ -25,7 +25,7 @@ namespace
 
 namespace Lame
 {
-	Effect* Effect::Create(std::shared_ptr<Context> i_context, const char* i_vertex_path, const char* i_fragment_path, Engine::EnumMask<RenderState> i_renderMask, bool requiresLocalToWorld)
+	Effect* Effect::Create(std::shared_ptr<Context> i_context, const char* i_vertex_path, const char* i_fragment_path, Engine::EnumMask<RenderState> i_renderMask)
 	{
 		// The vertex shader is a program that operates on vertices.
 		// Its input comes from a C/C++ "draw call" and is:
@@ -60,17 +60,6 @@ namespace Lame
 			effect->fragmentShader = fragmentShader;
 			effect->vertexConstantTable = vertexConstantTable;
 			effect->fragmentConstantTable = fragmentConstantTable;
-
-			if (
-				(requiresLocalToWorld && 
-					!effect->CacheConstant(Shader::Vertex, LocalToWorldUniformName, effect->localToWorldUniformId) ) ||
-				!effect->CacheConstant(Shader::Vertex, WorldToViewUniformName, effect->worldToViewUniformId) ||
-				!effect->CacheConstant(Shader::Vertex, ViewToScreenUniformName, effect->viewToScreenUniformId))
-			{
-				System::UserOutput::Display("DirectX failed to find all required uniform constants for effect.");
-				delete effect;
-				return nullptr;
-			}
 		}
 		else
 		{

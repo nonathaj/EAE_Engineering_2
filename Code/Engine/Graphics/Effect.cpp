@@ -9,31 +9,12 @@
 
 namespace Lame
 {
-	char const * const Effect::LocalToWorldUniformName = "local_to_world";
-	char const * const Effect::WorldToViewUniformName = "world_to_view";
-	char const * const Effect::ViewToScreenUniformName = "view_to_screen";
-
-	bool Effect::SetLocalToWorld(const Engine::Matrix4x4& i_matrix)
-	{
-		return SetConstant(Shader::Vertex, localToWorldUniformId, i_matrix);
-	}
-
-	bool Effect::SetWorldToView(const Engine::Matrix4x4& i_matrix)
-	{
-		return SetConstant(Shader::Vertex, worldToViewUniformId, i_matrix);
-	}
-
-	bool Effect::SetViewToScreen(const Engine::Matrix4x4& i_matrix)
-	{
-		return SetConstant(Shader::Vertex, viewToScreenUniformId, i_matrix);
-	}
-
 	bool Effect::SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Engine::Vector3 &i_val)
 	{
 		return SetConstant(i_shader, i_constant, reinterpret_cast<const float*>(&i_val), 3);
 	}
 
-	Effect* Effect::Create(std::shared_ptr<Context> i_context, const std::string& i_effect_path, bool requiresLocalToWorld)
+	Effect* Effect::Create(std::shared_ptr<Context> i_context, const std::string& i_effect_path)
 	{
 		size_t fileLength;
 		char *fileData = System::File::LoadBinary(i_effect_path, &fileLength);
@@ -56,7 +37,7 @@ namespace Lame
 		}
 
 		//create the effect and cleanup the temporary buffer
-		Effect *effect = Create(i_context, vertex, fragment, renderMask, requiresLocalToWorld);
+		Effect *effect = Create(i_context, vertex, fragment, renderMask);
 		delete[] fileData;
 		return effect;
 	}

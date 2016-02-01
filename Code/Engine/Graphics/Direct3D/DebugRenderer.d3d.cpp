@@ -17,6 +17,8 @@ namespace Lame
 	DebugRenderer* DebugRenderer::Create(std::shared_ptr<Lame::Context> i_context, const size_t i_line_count)
 	{
 		std::shared_ptr<Lame::Effect> line_effect;
+		Effect::ConstantHandle line_worldToViewUniformId;
+		Effect::ConstantHandle line_viewToScreenUniformId;
 		{
 			const char * const vertex_shader = "data/debug/line_vertex.shader.bin";
 			const char * const fragment_shader = "data/debug/line_fragment.shader.bin";
@@ -26,8 +28,10 @@ namespace Lame
 			rendermask.set(Lame::RenderState::DepthWrite, true);
 			rendermask.set(Lame::RenderState::FaceCull, true);
 			rendermask.set(Lame::RenderState::Wireframe, true);
-			line_effect = std::shared_ptr<Lame::Effect>(Lame::Effect::Create(i_context, vertex_shader, fragment_shader, rendermask, false));
-			if (!line_effect)
+			line_effect = std::shared_ptr<Lame::Effect>(Lame::Effect::Create(i_context, vertex_shader, fragment_shader, rendermask));
+			if (!line_effect ||
+				!line_effect->CacheConstant(Lame::Effect::Shader::Vertex, WorldToViewUniformName, line_worldToViewUniformId) ||
+				!line_effect->CacheConstant(Lame::Effect::Shader::Vertex, ViewToScreenUniformName, line_viewToScreenUniformId) )
 			{
 				System::UserOutput::Display("Failed to create debug line effect");
 				return nullptr;
@@ -35,6 +39,9 @@ namespace Lame
 		}
 
 		std::shared_ptr<Lame::Effect> wireframe_shape_effect;
+		Effect::ConstantHandle wire_localToWorldUniformId;
+		Effect::ConstantHandle wire_worldToViewUniformId;
+		Effect::ConstantHandle wire_viewToScreenUniformId;
 		{
 			const char * const vertex_shader = "data/debug/shape_vertex.shader.bin";
 			const char * const fragment_shader = "data/debug/shape_fragment.shader.bin";
@@ -44,8 +51,12 @@ namespace Lame
 			rendermask.set(Lame::RenderState::DepthWrite, true);
 			rendermask.set(Lame::RenderState::FaceCull, false);
 			rendermask.set(Lame::RenderState::Wireframe, true);
-			wireframe_shape_effect = std::shared_ptr<Lame::Effect>(Lame::Effect::Create(i_context, vertex_shader, fragment_shader, rendermask, true));
-			if (!wireframe_shape_effect)
+			wireframe_shape_effect = std::shared_ptr<Lame::Effect>(Lame::Effect::Create(i_context, vertex_shader, fragment_shader, rendermask));
+			if (!wireframe_shape_effect ||
+				!wireframe_shape_effect->CacheConstant(Lame::Effect::Shader::Vertex, LocalToWorldUniformName, wire_localToWorldUniformId) ||
+				!wireframe_shape_effect->CacheConstant(Lame::Effect::Shader::Vertex, WorldToViewUniformName, wire_worldToViewUniformId) ||
+				!wireframe_shape_effect->CacheConstant(Lame::Effect::Shader::Vertex, ViewToScreenUniformName, wire_viewToScreenUniformId) )
+
 			{
 				System::UserOutput::Display("Failed to create debug wireframe effect");
 				return nullptr;
@@ -53,6 +64,9 @@ namespace Lame
 		}
 
 		std::shared_ptr<Lame::Effect> fill_shape_effect;
+		Effect::ConstantHandle solid_localToWorldUniformId;
+		Effect::ConstantHandle solid_worldToViewUniformId;
+		Effect::ConstantHandle solid_viewToScreenUniformId;
 		{
 			const char * const vertex_shader = "data/debug/shape_vertex.shader.bin";
 			const char * const fragment_shader = "data/debug/shape_fragment.shader.bin";
@@ -62,8 +76,11 @@ namespace Lame
 			rendermask.set(Lame::RenderState::DepthWrite, true);
 			rendermask.set(Lame::RenderState::FaceCull, true);
 			rendermask.set(Lame::RenderState::Wireframe, false);
-			fill_shape_effect = std::shared_ptr<Lame::Effect>(Lame::Effect::Create(i_context, vertex_shader, fragment_shader, rendermask, true));
-			if (!fill_shape_effect)
+			fill_shape_effect = std::shared_ptr<Lame::Effect>(Lame::Effect::Create(i_context, vertex_shader, fragment_shader, rendermask));
+			if (!fill_shape_effect ||
+				!fill_shape_effect->CacheConstant(Lame::Effect::Shader::Vertex, LocalToWorldUniformName, solid_localToWorldUniformId) ||
+				!fill_shape_effect->CacheConstant(Lame::Effect::Shader::Vertex, WorldToViewUniformName, solid_worldToViewUniformId) ||
+				!fill_shape_effect->CacheConstant(Lame::Effect::Shader::Vertex, ViewToScreenUniformName, solid_viewToScreenUniformId))
 			{
 				System::UserOutput::Display("Failed to create debug filled shape effect");
 				return nullptr;
@@ -104,10 +121,21 @@ namespace Lame
 		DebugRenderer* deb = new DebugRenderer();
 		if (deb)
 		{
-			deb->max_lines_count = i_line_count;
 			deb->line_effect = line_effect;
+			deb->line_worldToViewUniformId = line_worldToViewUniformId;
+			deb->line_viewToScreenUniformId = line_viewToScreenUniformId;
+
 			deb->solid_shape_effect = fill_shape_effect;
+			deb->wire_localToWorldUniformId = wire_localToWorldUniformId;
+			deb->wire_worldToViewUniformId = wire_worldToViewUniformId;
+			deb->wire_viewToScreenUniformId = wire_viewToScreenUniformId;
+
 			deb->wireframe_shape_effect = wireframe_shape_effect;
+			deb->solid_localToWorldUniformId = solid_localToWorldUniformId;
+			deb->solid_worldToViewUniformId = solid_worldToViewUniformId;
+			deb->solid_viewToScreenUniformId = solid_viewToScreenUniformId;
+
+			deb->max_lines_count = i_line_count;
 			deb->vertex_buffer_ = vertex_buffer;
 			deb->line_vertices.reserve(i_line_count);
 			return deb;
@@ -154,8 +182,8 @@ namespace Lame
 
 		//set the effect
 		if (!line_effect->Bind() ||
-			!line_effect->SetWorldToView(i_worldToView) ||
-			!line_effect->SetViewToScreen(i_viewToScreen))
+			!line_effect->SetConstant(Effect::Shader::Vertex, line_worldToViewUniformId, i_worldToView) ||
+			!line_effect->SetConstant(Effect::Shader::Vertex, line_viewToScreenUniformId, i_viewToScreen))
 		{
 			return false;
 		}

@@ -68,5 +68,6 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="DebugRenderer.h" />
+    <ClInclude Include="Sprite.h" />
   </ItemGroup>
 </Project>

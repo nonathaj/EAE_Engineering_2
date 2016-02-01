@@ -19,6 +19,7 @@
 #endif
 
 #include "Vertex.h"
+#include "Effect.h"
 #include "../Component/Transform.h"
 
 namespace Engine
@@ -32,7 +33,6 @@ namespace Lame
 {
 	struct Color32;
 	class Context;
-	class Effect;
 	class Mesh;
 
 	class DebugRenderer
@@ -68,7 +68,8 @@ namespace Lame
 		DebugRenderer& operator=(const DebugRenderer &i_other);
 
 		bool RenderLines(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen);
-		static bool RenderMeshes(std::shared_ptr<Lame::Effect> effect, const std::vector<DebugMesh>& i_meshes, const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen);
+		bool RenderSolidMeshes(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen);
+		bool RenderWireframeMeshes(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen);
 
 		std::shared_ptr<Lame::Effect> line_effect;
 		std::shared_ptr<Lame::Effect> solid_shape_effect;
@@ -86,6 +87,21 @@ namespace Lame
 		GLuint vertex_array_id_;
 		GLuint vertex_buffer_id_;
 #endif
+
+		Effect::ConstantHandle line_worldToViewUniformId;
+		Effect::ConstantHandle line_viewToScreenUniformId;
+
+		Effect::ConstantHandle wire_localToWorldUniformId;
+		Effect::ConstantHandle wire_worldToViewUniformId;
+		Effect::ConstantHandle wire_viewToScreenUniformId;
+
+		Effect::ConstantHandle solid_localToWorldUniformId;
+		Effect::ConstantHandle solid_worldToViewUniformId;
+		Effect::ConstantHandle solid_viewToScreenUniformId;
+
+		static char const * const LocalToWorldUniformName;
+		static char const * const WorldToViewUniformName;
+		static char const * const ViewToScreenUniformName;
 	};
 }
 

@@ -151,6 +151,7 @@ namespace Lame
 		}
 
 		//Create the Index Buffer
+		if(i_index_count > 0)
 		{
 			// Create an index buffer
 			{
@@ -206,6 +207,10 @@ namespace Lame
 				}
 			}
 		}
+		else
+		{
+			mesh->index_buffer_ = nullptr;
+		}
 
 		return mesh;
 	}
@@ -225,6 +230,7 @@ namespace Lame
 			if (!SUCCEEDED(result))
 				return false;
 		}
+
 		// Bind a specific index buffer to the device as a data source
 		{
 			result = context->get_direct3dDevice()->SetIndices(index_buffer_);

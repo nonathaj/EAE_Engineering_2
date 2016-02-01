@@ -84,7 +84,9 @@ namespace Gameplay
 			!CreateRenderableObject(CreateMesh("data/metal_mesh.mesh.bin"), CreateMaterial("data/metal_brace.material.bin")) ||
 			!CreateRenderableObject(CreateMesh("data/railing_mesh.mesh.bin"), CreateMaterial("data/railing.material.bin")) ||
 			!CreateRenderableObject(CreateMesh("data/walls_mesh.mesh.bin"), CreateMaterial("data/wall.material.bin")) ||
-			!CreateRenderableObject(CreateMesh("data/lambert_objects_mesh.mesh.bin"), CreateMaterial("data/white.material.bin")) )
+			!CreateRenderableObject(CreateMesh("data/lambert_objects_mesh.mesh.bin"), CreateMaterial("data/white.material.bin")) 
+//			|| !CreateRenderableObject(std::shared_ptr<Lame::Mesh>(Lame::Mesh::Create2DQuad(graphics->context(), Engine::Vector2::one * 350)), CreateMaterial("data/railing.material.bin"))
+			)
 		{
 			Shutdown();
 			return false;
@@ -99,6 +101,11 @@ namespace Gameplay
 		const float deltaTime = eae6320::Time::GetSecondsElapsedThisFrame();
 
 		HandleInput(deltaTime);
+
+		graphics->debug_renderer()->AddBox(
+			false, 
+			Engine::Vector3::one * 250.0f,
+			Engine::Transform::CreateDefault());
 
 		world->Update(deltaTime);
 		bool renderSuccess = graphics->Render();
@@ -207,7 +214,7 @@ namespace
 			return nullptr;
 
 		//create the renderable
-		std::shared_ptr<RenderableComponent> renderable(new RenderableComponent(go, i_mesh, i_material));
+		std::shared_ptr<RenderableComponent> renderable(RenderableComponent::Create(go, i_mesh, i_material));
 		if (!renderable)
 		{
 			world->Remove(go);

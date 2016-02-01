@@ -11,6 +11,7 @@
 #include "../System/Console.h"
 #include "../System/FileLoader.h"
 
+#include "../Core/Vector2.h"
 #include "../Core/Vector3.h"
 
 #include "Vertex.h"
@@ -267,6 +268,19 @@ namespace Lame
 			}
 		}
 
+		return CreateRightHanded(i_context, vertices.data(), vertices.size(), indices.data(), indices.size());
+	}
+
+	Mesh* Mesh::CreateQuad(std::shared_ptr<Context> i_context, const Engine::Vector2& i_extends, const Color32& i_vertex_color)
+	{
+		Engine::Vector2 half_extends = i_extends / 2;
+		std::vector<Vertex> vertices;
+		vertices.push_back(Lame::Vertex(Engine::Vector2(-half_extends.x(), half_extends.y()), Engine::Vector2(0.0f, 0.0f), i_vertex_color));
+		vertices.push_back(Lame::Vertex(Engine::Vector2(half_extends.x(), half_extends.y()), Engine::Vector2(1.0f, 0.0f), i_vertex_color));
+		vertices.push_back(Lame::Vertex(Engine::Vector2(-half_extends.x(), -half_extends.y()), Engine::Vector2(0.0f, 1.0f), i_vertex_color));
+		vertices.push_back(Lame::Vertex(Engine::Vector2(half_extends.x(), -half_extends.y()), Engine::Vector2(1.0f, 1.0f), i_vertex_color));
+
+		std::vector<uint32_t> indices = { 0, 2, 1, 1, 2, 3 };
 		return CreateRightHanded(i_context, vertices.data(), vertices.size(), indices.data(), indices.size());
 	}
 }

@@ -14,6 +14,10 @@
 
 namespace Lame
 {
+	char const * const DebugRenderer::LocalToWorldUniformName = "local_to_world";
+	char const * const DebugRenderer::WorldToViewUniformName = "world_to_view";
+	char const * const DebugRenderer::ViewToScreenUniformName = "view_to_screen";
+
 	bool DebugRenderer::AddLine(const Engine::Vector3& i_start, const Engine::Vector3& i_end, const Lame::Color32& i_color)
 	{
 		return AddLine(i_start, i_end, i_color, i_color);
@@ -55,26 +59,48 @@ namespace Lame
 	bool DebugRenderer::Render(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen)
 	{
 		const bool lines_rendered = RenderLines(i_worldToView, i_viewToScreen);
-		const bool wireframe_meshes_rendered = RenderMeshes(wireframe_shape_effect, wireframe_meshes, i_worldToView, i_viewToScreen);
-		const bool solid_meshes_rendered = RenderMeshes(solid_shape_effect, solid_meshes, i_worldToView, i_viewToScreen);
+		const bool wireframe_meshes_rendered = RenderWireframeMeshes(i_worldToView, i_viewToScreen);
+		const bool solid_meshes_rendered = RenderSolidMeshes(i_worldToView, i_viewToScreen);
 		line_vertices.clear();
 		wireframe_meshes.clear();
 		solid_meshes.clear();
 		return lines_rendered && wireframe_meshes_rendered && solid_meshes_rendered;
 	}
 
-	bool DebugRenderer::RenderMeshes(std::shared_ptr<Lame::Effect> effect, const std::vector<DebugMesh>& i_meshes, const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen)
+	bool DebugRenderer::RenderSolidMeshes(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen)
 	{
-		if (effect->Bind() &&
-			effect->SetWorldToView(i_worldToView) &&
-			effect->SetViewToScreen(i_viewToScreen))
+		if (solid_shape_effect->Bind() &&
+			solid_shape_effect->SetConstant(Lame::Effect::Shader::Vertex, solid_worldToViewUniformId, i_worldToView) &&
+			solid_shape_effect->SetConstant(Lame::Effect::Shader::Vertex, solid_viewToScreenUniformId, i_viewToScreen))
 		{
 			bool success = true;
-			for (auto itr = i_meshes.begin(); itr != i_meshes.end(); ++itr)
+			for (auto itr = solid_meshes.begin(); itr != solid_meshes.end(); ++itr)
 			{
-				success = 
-					effect->SetLocalToWorld(itr->transform.LocalToWorld()) &&
-					itr->mesh->Draw() && 
+				success =
+					solid_shape_effect->SetConstant(Lame::Effect::Shader::Vertex, solid_localToWorldUniformId, itr->transform.LocalToWorld()) &&
+					itr->mesh->Draw() &&
+					success;
+			}
+			return success;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	bool DebugRenderer::RenderWireframeMeshes(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen)
+	{
+		if (wireframe_shape_effect->Bind() &&
+			wireframe_shape_effect->SetConstant(Lame::Effect::Shader::Vertex, wire_worldToViewUniformId, i_worldToView) &&
+			wireframe_shape_effect->SetConstant(Lame::Effect::Shader::Vertex, wire_viewToScreenUniformId, i_viewToScreen))
+		{
+			bool success = true;
+			for (auto itr = wireframe_meshes.begin(); itr != wireframe_meshes.end(); ++itr)
+			{
+				success =
+					wireframe_shape_effect->SetConstant(Lame::Effect::Shader::Vertex, wire_localToWorldUniformId, itr->transform.LocalToWorld()) &&
+					itr->mesh->Draw() &&
 					success;
 			}
 			return success;

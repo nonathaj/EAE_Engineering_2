@@ -30,6 +30,7 @@ namespace Lame
 
 		uint32_t screen_width() const;
 		uint32_t screen_height() const;
+		float aspect_ratio() const;
 
 		Color get_screen_clear_color() const { return screen_clear_color; }
 		void set_screen_clear_color(const Color& i_screen_clear_color);
