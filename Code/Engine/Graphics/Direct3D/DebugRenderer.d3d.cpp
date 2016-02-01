@@ -120,6 +120,15 @@ namespace Lame
 		}
 	}
 
+	DebugRenderer::~DebugRenderer()
+	{
+		if (vertex_buffer_)
+		{
+			vertex_buffer_->Release();
+			vertex_buffer_ = nullptr;
+		}
+	}
+
 	bool DebugRenderer::RenderLines(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen)
 	{
 		// Lock the vertex buffer for editing

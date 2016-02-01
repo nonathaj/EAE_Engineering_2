@@ -45,6 +45,8 @@ namespace Lame
 	public:
 		static DebugRenderer* Create(std::shared_ptr<Lame::Context> i_context, const size_t i_line_count);
 
+		~DebugRenderer();
+
 		bool AddLine(const Engine::Vector3& i_start, const Engine::Vector3& i_end, const Lame::Color32& i_start_color, const Lame::Color32& i_end_color);
 		bool AddLine(const Engine::Vector3& i_start, const Engine::Vector3& i_end, const Lame::Color32& i_color);
 
