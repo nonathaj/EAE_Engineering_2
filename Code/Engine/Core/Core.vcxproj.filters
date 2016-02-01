@@ -13,6 +13,7 @@
     <ClInclude Include="Quaternion.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="Matrix4x4.h" />
+    <ClInclude Include="Rectangle2D.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FloatMath.inl" />
@@ -30,5 +31,6 @@
     <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="Matrix4x4.cpp" />
+    <ClCompile Include="Rectangle2D.cpp" />
   </ItemGroup>
 </Project>
