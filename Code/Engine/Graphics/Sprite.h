@@ -21,7 +21,7 @@ namespace Lame
 	class Sprite
 	{
 	public:
-		static Sprite* Create(std::shared_ptr<Effect> i_effect, std::shared_ptr<Lame::Texture> i_texture, const Engine::Rectangle2D& i_screen_pos);
+		static Sprite* Create(std::shared_ptr<Effect> i_effect, std::shared_ptr<Lame::Texture> i_texture, const Engine::Vector2& i_screen_pos_normalized, const float i_height_normalized, const Engine::Rectangle2D& i_texture_coords);
 
 		bool Render();
 
@@ -30,19 +30,17 @@ namespace Lame
 		inline Color color() const { return color_; }
 		inline void color(const Color& i_color) { color_ = i_color; }
 
-		inline Engine::Rectangle2D texture_coord() const { return texture_coord_; }
-		inline Engine::Rectangle2D screen_pos() const { return screen_pos_; }
+		inline Engine::Rectangle2D texture_coord() const;
+		inline Engine::Rectangle2D screen_pos() const;
 
-		inline void texture_coord(const Engine::Rectangle2D& i_tex);
-		inline void screen_pos(const Engine::Rectangle2D& i_screen_pos);
+		inline bool texture_coord(const Engine::Rectangle2D& i_tex);
+		bool screen_pos(const Engine::Vector2& i_screen_pos_normalized);
 	private:
 		Sprite() : color_(Color::white) {}
 
 		bool UpdateVertexData();
 
 		Color color_;
-		Engine::Rectangle2D texture_coord_;
-		Engine::Rectangle2D screen_pos_;
 
 		std::shared_ptr<Effect> effect_;
 		std::shared_ptr<Texture> texture_;

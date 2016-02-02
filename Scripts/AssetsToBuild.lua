@@ -25,6 +25,7 @@ return
         {
             { source = "opaque.effect", target = "opaque.effect.bin" },
             { source = "transparent.effect", target = "transparent.effect.bin" },
+            { source = "sprite.effect", target = "sprite.effect.bin" },
         }
     },
 	{
@@ -35,6 +36,8 @@ return
 			{ source = "debug/shape_vertex.shader", target = "debug/shape_vertex.shader.bin", arguments = "vertex" },
 			{ source = "debug/shape_fragment.shader", target = "debug/shape_fragment.shader.bin", arguments = "fragment" },
             { source = "debug/line_vertex.shader", target = "debug/line_vertex.shader.bin", arguments = "vertex" },
+			{ source = "sprite_vertex.shader", target = "sprite_vertex.shader.bin", arguments = "vertex" },
+			{ source = "sprite_fragment.shader", target = "sprite_fragment.shader.bin", arguments = "fragment" },
 			{ source = "debug/line_fragment.shader", target = "debug/line_fragment.shader.bin", arguments = "fragment" },
             { source = "vertex.shader", target = "vertex.shader.bin", arguments = "vertex" },
 			{ source = "opaque_fragment.shader", target = "opaque_fragment.shader.bin", arguments = "fragment" },
@@ -63,6 +66,7 @@ return
             { source = "EAE 6330/railing_D.png", target = "railing_D.DDS" },
             { source = "EAE 6330/wall_D.png", target = "wall_D.DDS" },
             { source = "EAE 6330/white.png", target = "white.DDS" },
+            { source = "alpha.png", target = "alpha.DDS" },
         }
     },
 }

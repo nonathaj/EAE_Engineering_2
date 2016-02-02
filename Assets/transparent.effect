@@ -6,6 +6,5 @@ return
 	depth_test = true,
 	depth_write = false,
 	face_cull = false,
-	wireframe = true,
 	wireframe = false,
 }

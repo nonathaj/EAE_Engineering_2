@@ -5,6 +5,7 @@
 #include "Context.h"
 #include "RenderableComponent.h"
 #include "DebugRenderer.h"
+#include "Sprite.h"
 #include "../Component/GameObject.h"
 #include "../Core/Matrix4x4.h"
 #include "../System/Console.h"
@@ -84,6 +85,11 @@ namespace Lame
 			success = transparent[x]->Render(worldToView, viewToScreen) && success;
 		}
 
+		for (auto itr = sprites_.begin(); itr != sprites_.end(); ++itr)
+		{
+			success = (*itr)->Render();
+		}
+
 		success = context()->EndFrame() && success;
 		return success;
 	}
@@ -121,16 +127,44 @@ namespace Lame
 		return false;
 	}
 
+	bool Graphics::Add(std::shared_ptr<Lame::Sprite> i_sprite)
+	{
+		if (!i_sprite || i_sprite->effect()->get_context() != context())
+			return false;
+
+		auto itr = std::find(sprites_.begin(), sprites_.end(), i_sprite);
+		if (itr == sprites_.end())
+		{
+			sprites_.push_back(i_sprite);
+			return true;
+		}
+		return false;
+	}
+
 	bool Graphics::Remove(std::shared_ptr<RenderableComponent> i_renderable)
 	{
 		//first check if this renderable even has the same context as us, if not, then we can't even remove it
-		if (!MatchesContext(i_renderable))
+		if (i_renderable || !MatchesContext(i_renderable))
 			return false;
 
 		auto itr = std::find(renderables_.begin(), renderables_.end(), i_renderable);
 		if (itr != renderables_.end())
 		{
 			renderables_.erase(itr);
+			return true;
+		}
+		return false;
+	}
+
+	bool Graphics::Remove(std::shared_ptr<Sprite> i_sprite)
+	{
+		if (!i_sprite || i_sprite->effect()->get_context() != context())
+			return false;
+
+		auto itr = std::find(sprites_.begin(), sprites_.end(), i_sprite);
+		if (itr != sprites_.end())
+		{
+			sprites_.erase(itr);
 			return true;
 		}
 		return false;

@@ -14,6 +14,7 @@ namespace Lame
 	class Context;
 	class RenderableComponent;
 	class Effect;
+	class Sprite;
 
 	class Graphics
 	{
@@ -25,6 +26,9 @@ namespace Lame
 
 		bool Add(std::shared_ptr<RenderableComponent> i_renderable);
 		bool Remove(std::shared_ptr<RenderableComponent> i_renderable);
+
+		bool Add(std::shared_ptr<Sprite> i_sprite);
+		bool Remove(std::shared_ptr<Sprite> i_renderable);
 
 		//does this renderable have the same context as this graphics object
 		bool MatchesContext(std::shared_ptr<RenderableComponent> i_renderable);
@@ -48,6 +52,7 @@ namespace Lame
 
 		std::shared_ptr<Context> context_;
 		std::vector<std::shared_ptr<RenderableComponent>> renderables_;
+		std::vector<std::shared_ptr<Lame::Sprite>> sprites_;
 
 #ifdef ENABLE_DEBUG_RENDERING
 		std::shared_ptr<DebugRenderer> debug_renderer_;

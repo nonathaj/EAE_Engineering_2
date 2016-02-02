@@ -1,0 +1,10 @@
+return
+{
+	vertex = "sprite_vertex.shader.bin",
+	fragment = "sprite_fragment.shader.bin",
+	transparency = true,
+	depth_test = false,
+	depth_write = false,
+	face_cull = true,
+	wireframe = false,
+}

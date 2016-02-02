@@ -9,6 +9,7 @@
 #include "../../Engine/Graphics/Mesh.h"
 #include "../../Engine/Graphics/Effect.h"
 #include "../../Engine/Graphics/Graphics.h"
+#include "../../Engine/Graphics/Sprite.h"
 #include "../../Engine/Core/Singleton.h"
 #include "../../Engine/System/eae6320/Time.h"
 #include "../../Engine/Component/World.h"
@@ -29,6 +30,9 @@ namespace
 
 	Lame::Graphics *graphics = nullptr;
 	Engine::World *world = nullptr;
+
+	std::shared_ptr<Lame::Effect> sprite_effect;
+	std::shared_ptr<Lame::Sprite> sprite;
 
 	void HandleInput(float deltaTime);
 
@@ -92,6 +96,26 @@ namespace Gameplay
 			return false;
 		}
 
+		sprite_effect = std::shared_ptr<Lame::Effect>(Lame::Effect::Create(graphics->context(), "data/sprite.effect.bin"));
+		if (!sprite_effect)
+		{
+			Shutdown();
+			return false;
+		}
+
+		sprite = std::shared_ptr<Lame::Sprite>(
+			Lame::Sprite::Create(
+			sprite_effect,
+			std::shared_ptr<Lame::Texture>(Lame::Texture::Create(graphics->context(), "data/alpha.DDS")),
+			Engine::Vector2::zero,
+			0.5f,
+			Engine::Rectangle2D::CreateTLNormalized()));
+		if (!sprite || !graphics->Add(sprite))
+		{
+			Shutdown();
+			return false;
+		}
+
 		return true;
 	}
 
@@ -115,6 +139,8 @@ namespace Gameplay
 
 	bool Shutdown()
 	{
+		sprite_effect.reset();
+		sprite.reset();
 		if (world)
 		{
 			delete world;

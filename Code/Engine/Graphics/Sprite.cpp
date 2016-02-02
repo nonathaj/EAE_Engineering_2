@@ -7,13 +7,24 @@ namespace Lame
 	char const * const Sprite::BaseTextureUniformName = "base_texture";
 
 
-	void Sprite::texture_coord(const Engine::Rectangle2D& i_tex)
+	bool Sprite::texture_coord(const Engine::Rectangle2D& i_tex)
 	{
-
+		return UpdateVertexData();
 	}
 
-	void Sprite::screen_pos(const Engine::Rectangle2D& i_screen_pos)
+	bool Sprite::screen_pos(const Engine::Vector2& i_screen_pos_normalized)
 	{
+		return UpdateVertexData();
+	}
 
+
+	inline Engine::Rectangle2D Sprite::texture_coord() const
+	{
+		return Engine::Rectangle2D();
+	}
+
+	inline Engine::Rectangle2D Sprite::screen_pos() const
+	{
+		return Engine::Rectangle2D();
 	}
 }

@@ -7,10 +7,11 @@
 #include "../Effect.h"
 
 #include "../../System/UserOutput.h"
+#include "../../System/Console.h"
 
 namespace Lame
 {
-	Sprite* Sprite::Create(std::shared_ptr<Effect> i_effect, std::shared_ptr<Lame::Texture> i_texture, const Engine::Rectangle2D& i_screen_pos)
+	Sprite* Sprite::Create(std::shared_ptr<Effect> i_effect, std::shared_ptr<Lame::Texture> i_texture, const Engine::Vector2& i_screen_pos_normalized, const float i_height_normalized, const Engine::Rectangle2D& i_texture_coords)
 	{
 		if (!i_effect || !i_texture)
 			return nullptr;
@@ -48,7 +49,7 @@ namespace Lame
 		// Create a vertex buffer
 		IDirect3DVertexBuffer9 *vertex_buffer;
 		{
-			const UINT bufferSize = static_cast<UINT>(4 * sizeof(Vertex));
+			const UINT bufferSize = static_cast<UINT>(6 * sizeof(Vertex));
 			// We will define our own vertex format
 			const DWORD useSeparateVertexDeclaration = 0;
 			// Place the vertex buffer into memory that Direct3D thinks is the most appropriate
@@ -59,6 +60,50 @@ namespace Lame
 			{
 				System::UserOutput::Display("Direct3D failed to create a vertex buffer");
 				return nullptr;
+			}
+		}
+
+		{
+			// Fill the vertex buffer with the triangle's vertices
+			// Before the vertex buffer can be changed it must be "locked"'
+			Vertex *vertexData;
+			{
+				const HRESULT result = vertex_buffer->Lock(0, 0, reinterpret_cast<void**>(&vertexData), 0);
+				if (FAILED(result))
+				{
+					System::UserOutput::Display("Direct3D failed to lock the vertex buffer");
+					return false;
+				}
+			}
+			//Fill the buffer
+			{
+				const float screen_width = i_height_normalized * i_effect->get_context()->aspect_ratio();
+				const Engine::Vector2 half_extends = Engine::Vector2(i_height_normalized, screen_width) / 2;
+				vertexData[0] = Vertex(
+					i_screen_pos_normalized + Engine::Vector2(-half_extends.x(), half_extends.y()), 
+					Engine::Vector2(i_texture_coords.left(), i_texture_coords.top()), 
+					Lame::Color32::white );
+				vertexData[1] = Vertex(
+					i_screen_pos_normalized + Engine::Vector2(half_extends.x(), half_extends.y()),
+					Engine::Vector2(i_texture_coords.left(), i_texture_coords.top()),
+					Lame::Color32::white );
+				vertexData[2] = Vertex(
+					i_screen_pos_normalized + Engine::Vector2(-half_extends.x(), -half_extends.y()), 
+					Engine::Vector2(i_texture_coords.left(), i_texture_coords.top()), 
+					Lame::Color32::white );
+				vertexData[3] = Vertex(
+					i_screen_pos_normalized + Engine::Vector2(half_extends.x(), -half_extends.y()), 
+					Engine::Vector2(i_texture_coords.left(), i_texture_coords.top()), 
+					Lame::Color32::white);
+			}
+			// The buffer must be "unlocked" before it can be used
+			{
+				const HRESULT result = vertex_buffer->Unlock();
+				if (FAILED(result))
+				{
+					System::UserOutput::Display("Direct3D failed to unlock the vertex buffer");
+					return false;
+				}
 			}
 		}
 
@@ -131,9 +176,11 @@ namespace Lame
 				return false;
 		}
 
+		DEBUG_PRINT("vertex(%p) texture(%p) effect(%p)", vertex_buffer_, texture().get(), effect().get());
+
 		//Render the Quad
 		{
-			HRESULT result = effect()->get_context()->get_direct3dDevice()->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
+			HRESULT result = effect()->get_context()->get_direct3dDevice()->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
 			return SUCCEEDED(result);
 		}
 	}
