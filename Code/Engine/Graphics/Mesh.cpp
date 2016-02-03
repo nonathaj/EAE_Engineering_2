@@ -281,6 +281,22 @@ namespace Lame
 		vertices.push_back(Lame::Vertex(Engine::Vector2(half_extends.x(), -half_extends.y()), Engine::Vector2(1.0f, 1.0f), i_vertex_color));
 
 		std::vector<uint32_t> indices = { 0, 2, 1, 1, 2, 3 };
-		return CreateRightHanded(i_context, vertices.data(), vertices.size(), indices.data(), indices.size());
+		Mesh* mesh = CreateRightHanded(i_context, vertices.data(), vertices.size(), indices.data(), indices.size());
+
+		mesh->primitive_type_ = Mesh::PrimitiveType::TriangleStrip;
+		return mesh;
+	}
+
+	size_t Mesh::GetPrimitiveCount(const PrimitiveType i_primitive_type, const size_t i_vertex_count)
+	{
+		switch (i_primitive_type)
+		{
+		case Lame::Mesh::PrimitiveType::TriangleList: 
+			return i_vertex_count / 3;
+		case Lame::Mesh::PrimitiveType::TriangleStrip: 
+			return i_vertex_count < 3 ? 0 : i_vertex_count - 2;
+		default: 
+			return 0;
+		}
 	}
 }

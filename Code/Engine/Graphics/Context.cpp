@@ -27,11 +27,9 @@ namespace Lame
 
 	float Context::aspect_ratio() const
 	{
-		uint32_t width = screen_width();
-		uint32_t height = screen_height();
-		if(width >= height)
-			return static_cast<float>(width) / static_cast<float>(height);
-		else
-			return static_cast<float>(height) / static_cast<float>(width);
+		RECT rect;
+		if (GetWindowRect(renderingWindow, &rect))
+			return static_cast<float>(rect.right - rect.left) / static_cast<float>(rect.bottom - rect.top);
+		return 0;
 	}
 }

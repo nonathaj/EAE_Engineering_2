@@ -5,6 +5,7 @@
 #include "Material.h"
 #include "../System/FileLoader.h"
 #include "../System/UserOutput.h"
+#include "Texture.h"
 
 #include "../System/Console.h"
 

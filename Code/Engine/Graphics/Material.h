@@ -6,10 +6,11 @@
 
 #include "../Core/HashedString.h"
 #include "Effect.h"
-#include "Texture.h"
 
 namespace Lame
 {
+	class Texture;
+
 	class Material
 	{
 	public:

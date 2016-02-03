@@ -12,12 +12,26 @@
 #include "../Graphics.h"
 #include "../../System/UserOutput.h"
 
+namespace
+{
+	D3DPRIMITIVETYPE GetD3DPrimitiveType(Lame::Mesh::PrimitiveType i_prim)
+	{
+		switch (i_prim)
+		{
+		case Lame::Mesh::PrimitiveType::TriangleList: return D3DPT_TRIANGLELIST;
+		case Lame::Mesh::PrimitiveType::TriangleStrip: return D3DPT_TRIANGLESTRIP;
+		default: return static_cast<D3DPRIMITIVETYPE>(0);
+		}
+	}
+}
+
 namespace Lame
 {
-	Mesh::Mesh(size_t i_vertex_count, size_t i_index_count, std::shared_ptr<Context> i_context) :
+	Mesh::Mesh(size_t i_vertex_count, size_t i_index_count, PrimitiveType i_prim_type, std::shared_ptr<Context> i_context) :
 		vertex_count_(i_vertex_count),
 		index_count_(i_index_count),
 		context(i_context),
+		primitive_type_(i_prim_type),
 		vertex_buffer_(nullptr),
 		index_buffer_(nullptr),
 		vertex_declaration_(nullptr)
@@ -65,7 +79,7 @@ namespace Lame
 			return nullptr;
 		}
 
-		Mesh *mesh = new Mesh(i_vertex_count, i_index_count, i_context);
+		Mesh *mesh = new Mesh(i_vertex_count, i_index_count, Lame::Mesh::PrimitiveType::TriangleList, i_context);
 		if (!mesh)
 		{
 			System::UserOutput::Display("Failed to create Mesh, due to insufficient memory.", "Mesh Loading Error");
@@ -113,39 +127,13 @@ namespace Lame
 					return nullptr;
 				}
 			}
-			// Fill the vertex buffer with the triangle's vertices
-			{
-				// Before the vertex buffer can be changed it must be "locked"'
-				Vertex *vertexData;
-				{
-					const unsigned int lockEntireBuffer = 0;
-					const DWORD useDefaultLockingBehavior = 0;
-					const HRESULT result = mesh->vertex_buffer_->Lock(lockEntireBuffer, lockEntireBuffer,
-						reinterpret_cast<void**>(&vertexData), useDefaultLockingBehavior);
-					if (FAILED(result))
-					{
-						System::UserOutput::Display("Direct3D failed to lock the vertex buffer");
-						delete mesh;
-						return nullptr;
-					}
-				}
-				//Fill the buffer
-				{
-					memcpy(vertexData, i_vertices, i_vertex_count * sizeof(*i_vertices));
 
-					//Preferred, but VC++ doesn't like unchecked iterators
-					//std::copy(i_vertices, i_vertices + i_vertex_count, vertexData);
-				}
-				// The buffer must be "unlocked" before it can be used
-				{
-					const HRESULT result = mesh->vertex_buffer_->Unlock();
-					if (FAILED(result))
-					{
-						System::UserOutput::Display("Direct3D failed to unlock the vertex buffer");
-						delete mesh;
-						return nullptr;
-					}
-				}
+			// Fill the vertex buffer with the triangle's vertices
+			if(!mesh->UpdateVertices(i_vertices))
+			{
+				System::UserOutput::Display("Failed to copy vertex data to the mesh");
+				delete mesh;
+				return nullptr;
 			}
 		}
 
@@ -172,38 +160,11 @@ namespace Lame
 				}
 			}
 			// Fill the index buffer with the triangles' connectivity data
+			if (!mesh->UpdateIndices(i_indices))
 			{
-				// Before the index buffer can be changed it must be "locked"
-				uint32_t *indexData;
-				{
-					const unsigned int lockEntireBuffer = 0;
-					const DWORD useDefaultLockingBehavior = 0;
-					const HRESULT result = mesh->index_buffer_->Lock(lockEntireBuffer, lockEntireBuffer,
-						reinterpret_cast<void**>(&indexData), useDefaultLockingBehavior);
-					if (FAILED(result))
-					{
-						System::UserOutput::Display("Direct3D failed to lock the index buffer");
-						delete mesh;
-						return nullptr;
-					}
-				}
-				// Fill the buffer
-				{
-					memcpy(indexData, i_indices, i_index_count * sizeof(*i_indices));
-					
-					//Preferred, but VC++ doesn't like unchecked iterators
-					//std::copy(i_indices, i_indices + i_index_count, indexData);
-				}
-				// The buffer must be "unlocked" before it can be used
-				{
-					const HRESULT result = mesh->index_buffer_->Unlock();
-					if (FAILED(result))
-					{
-						System::UserOutput::Display("Direct3D failed to unlock the index buffer");
-						delete mesh;
-						return nullptr;
-					}
-				}
+				System::UserOutput::Display("Failed to copy index data to the mesh");
+				delete mesh;
+				return nullptr;
 			}
 		}
 		else
@@ -214,7 +175,70 @@ namespace Lame
 		return mesh;
 	}
 
-	bool Mesh::Draw()
+	bool Mesh::UpdateVertices(const Vertex* i_vertices)
+	{
+		// Fill the vertex buffer with the triangle's vertices
+		// Before the vertex buffer can be changed it must be "locked"'
+		Vertex *vertexData;
+		{
+			const unsigned int lockEntireBuffer = 0;
+			const DWORD useDefaultLockingBehavior = 0;
+			const HRESULT result = vertex_buffer_->Lock(lockEntireBuffer, lockEntireBuffer,
+				reinterpret_cast<void**>(&vertexData), useDefaultLockingBehavior);
+			if (FAILED(result))
+			{
+				return false;
+			}
+		}
+
+		//Fill the buffer
+		memcpy(vertexData, i_vertices, vertex_count_ * sizeof(*i_vertices));
+		//Preferred, but VC++ doesn't like unchecked iterators
+		//std::copy(i_vertices, i_vertices + i_vertex_count, vertexData);
+
+		// The buffer must be "unlocked" before it can be used
+		{
+			const HRESULT result = vertex_buffer_->Unlock();
+			if (FAILED(result))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	bool Mesh::UpdateIndices(const uint32_t* i_indices)
+	{
+		// Before the index buffer can be changed it must be "locked"
+		uint32_t *indexData;
+		{
+			const unsigned int lockEntireBuffer = 0;
+			const DWORD useDefaultLockingBehavior = 0;
+			const HRESULT result = index_buffer_->Lock(lockEntireBuffer, lockEntireBuffer,
+				reinterpret_cast<void**>(&indexData), useDefaultLockingBehavior);
+			if (FAILED(result))
+			{
+				return false;
+			}
+		}
+
+		// Fill the buffer
+		memcpy(indexData, i_indices, index_count_ * sizeof(*i_indices));
+		//Preferred, but VC++ doesn't like unchecked iterators
+		//std::copy(i_indices, i_indices + i_index_count, indexData);
+
+		// The buffer must be "unlocked" before it can be used
+		{
+			const HRESULT result = index_buffer_->Unlock();
+			if (FAILED(result))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	bool Mesh::Draw() const
 	{
 		HRESULT result;
 		// Bind a specific vertex buffer to the device as a data source
@@ -238,17 +262,18 @@ namespace Lame
 		}
 		// Render objects from the current streams
 		{
-			// We are using triangles as the "primitive" type,
-			// and we have defined the vertex buffer as a triangle list
-			// (meaning that every triangle is defined by three vertices)
-			const D3DPRIMITIVETYPE primitiveType = D3DPT_TRIANGLELIST;
-			// It's possible to start rendering primitives in the middle of the stream
-			const UINT indexOfFirstVertexToRender = 0;
-			const UINT indexOfFirstIndexToUse = 0;
-			const UINT primitiveCountToRender = static_cast<UINT>(index_count_ / 3);	// How many triangles will be drawn?
-			result = context->get_direct3dDevice()->DrawIndexedPrimitive(primitiveType,
-				indexOfFirstVertexToRender, indexOfFirstVertexToRender, static_cast<UINT>(vertex_count_),
-				indexOfFirstIndexToUse, primitiveCountToRender);
+			const D3DPRIMITIVETYPE primitiveType = GetD3DPrimitiveType(primitive_type());
+			if (index_count_ > 0)
+			{
+				const UINT primitiveCount = static_cast<UINT>(GetPrimitiveCount(primitive_type(), index_count_));
+				result = context->get_direct3dDevice()->DrawIndexedPrimitive(primitiveType,
+					0, 0, static_cast<UINT>(vertex_count_), 0, primitiveCount);
+			}
+			else
+			{
+				const UINT primitiveCount = static_cast<UINT>(GetPrimitiveCount(primitive_type(), vertex_count_));
+				result = context->get_direct3dDevice()->DrawPrimitive(primitiveType, 0, primitiveCount);
+			}
 			return SUCCEEDED(result);
 		}
 	}

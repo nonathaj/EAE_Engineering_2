@@ -11,6 +11,11 @@
 #include <gl/GL.h>
 #endif
 
+namespace Engine
+{
+	class Vector2;
+}
+
 namespace Lame
 {
 	class Context;
@@ -21,6 +26,9 @@ namespace Lame
 		static Texture* Create(std::shared_ptr<Context> i_context, const std::string& i_path);
 
 		~Texture();
+
+		size_t width() const { return width_; }
+		size_t height() const { return height_; }
 
 #if EAE6320_PLATFORM_D3D
 		IDirect3DTexture9* texture() const { return texture_; }
@@ -40,6 +48,7 @@ namespace Lame
 #else
 #error No definition to store a texture
 #endif
+		size_t width_, height_;
 	};
 }
 

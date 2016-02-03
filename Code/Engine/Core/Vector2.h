@@ -47,6 +47,8 @@ namespace Engine
 
 		inline Vector2& operator+=(const Vector2& rhs);
 		inline Vector2& operator-=(const Vector2& rhs);
+		inline Vector2& operator+=(const float &rhs);
+		inline Vector2& operator-=(const float &rhs);
 		inline Vector2& operator*=(const float &rhs);
 		inline Vector2& operator/=(const float &rhs);
 	};
@@ -54,11 +56,15 @@ namespace Engine
 	inline Vector2 operator+(const Vector2 &i_lhs, const Vector2 &i_rhs);
 	inline Vector2 operator-(const Vector2 &i_lhs, const Vector2 &i_rhs);
 
+	inline Vector2 operator+(const Vector2 &i_lhs, const float i_rhs);
+	inline Vector2 operator+(const float i_lhs, const Vector2 &i_rhs);
+	inline Vector2 operator-(const Vector2 &i_lhs, const float i_rhs);
+	inline Vector2 operator-(const float i_lhs, const Vector2 & i_rhs);
+
 	inline Vector2 operator*(const Vector2 &i_lhs, const float &i_rhs);
 	inline Vector2 operator*(const float &i_lhs, const Vector2 &i_rhs);
 
 	inline Vector2 operator/(const Vector2 &i_lhs, const float &i_rhs);
-	inline Vector2 operator/(const float &i_lhs, const Vector2 &i_rhs);
 
 	inline bool operator==(const Vector2 &i_lhs, const Vector2 &i_rhs);
 	inline bool operator!=(const Vector2 &i_lhs, const Vector2 &i_rhs);

@@ -10,6 +10,7 @@
 #include "../../Engine/Graphics/Effect.h"
 #include "../../Engine/Graphics/Graphics.h"
 #include "../../Engine/Graphics/Sprite.h"
+#include "../../Engine/Graphics/Texture.h"
 #include "../../Engine/Core/Singleton.h"
 #include "../../Engine/System/eae6320/Time.h"
 #include "../../Engine/Component/World.h"
@@ -82,14 +83,14 @@ namespace Gameplay
 		graphics->camera()->near_clip_plane(1.0f);
 		graphics->camera()->far_clip_plane(5000.0f);
 
-		if (!CreateRenderableObject(CreateMesh("data/ceiling_mesh.mesh.bin"), CreateMaterial("data/cement_wall.material.bin")) ||
+		if (
+			!CreateRenderableObject(CreateMesh("data/ceiling_mesh.mesh.bin"), CreateMaterial("data/cement_wall.material.bin")) ||
 			!CreateRenderableObject(CreateMesh("data/cement_mesh.mesh.bin"), CreateMaterial("data/cement_wall.material.bin")) ||
 			!CreateRenderableObject(CreateMesh("data/floor_mesh.mesh.bin"), CreateMaterial("data/floor.material.bin")) ||
 			!CreateRenderableObject(CreateMesh("data/metal_mesh.mesh.bin"), CreateMaterial("data/metal_brace.material.bin")) ||
 			!CreateRenderableObject(CreateMesh("data/railing_mesh.mesh.bin"), CreateMaterial("data/railing.material.bin")) ||
 			!CreateRenderableObject(CreateMesh("data/walls_mesh.mesh.bin"), CreateMaterial("data/wall.material.bin")) ||
 			!CreateRenderableObject(CreateMesh("data/lambert_objects_mesh.mesh.bin"), CreateMaterial("data/white.material.bin")) 
-//			|| !CreateRenderableObject(std::shared_ptr<Lame::Mesh>(Lame::Mesh::Create2DQuad(graphics->context(), Engine::Vector2::one * 350)), CreateMaterial("data/railing.material.bin"))
 			)
 		{
 			Shutdown();
@@ -107,8 +108,8 @@ namespace Gameplay
 			Lame::Sprite::Create(
 			sprite_effect,
 			std::shared_ptr<Lame::Texture>(Lame::Texture::Create(graphics->context(), "data/alpha.DDS")),
-			Engine::Vector2::zero,
-			0.5f,
+			Engine::Vector2::one * 0.5f,
+			1.0f,
 			Engine::Rectangle2D::CreateTLNormalized()));
 		if (!sprite || !graphics->Add(sprite))
 		{

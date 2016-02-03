@@ -1,10 +1,11 @@
 
 #include "../Texture.h"
 
-#include <D3dx9tex.h>
 #include <sstream>
+#include <D3dx9tex.h>
 
 #include "../Context.h"
+#include "../../Core/Vector2.h"
 #include "../../System/UserOutput.h"
 
 namespace Lame
@@ -18,11 +19,11 @@ namespace Lame
 		const D3DPOOL letD3dManageMemory = D3DPOOL_MANAGED;
 		const DWORD useDefaultFiltering = D3DX_DEFAULT;
 		const D3DCOLOR noColorKey = 0;
-		D3DXIMAGE_INFO* noSourceInfo = nullptr;
+		D3DXIMAGE_INFO sourceInfo;
 		PALETTEENTRY* noColorPalette = nullptr;
 		IDirect3DTexture9 *d3dtexture = nullptr;
 		const HRESULT result = D3DXCreateTextureFromFileEx(i_context->get_direct3dDevice(), i_path.c_str(), useDimensionsFromFile, useDimensionsFromFile, useMipMapsFromFile,
-			staticTexture, useFormatFromFile, letD3dManageMemory, useDefaultFiltering, useDefaultFiltering, noColorKey, noSourceInfo, noColorPalette,
+			staticTexture, useFormatFromFile, letD3dManageMemory, useDefaultFiltering, useDefaultFiltering, noColorKey, &sourceInfo, noColorPalette,
 			&d3dtexture);
 		if (!SUCCEEDED(result))
 		{
@@ -54,6 +55,8 @@ namespace Lame
 		if (texture)
 		{
 			texture->texture_ = d3dtexture;
+			texture->width_ = static_cast<size_t>(sourceInfo.Width);
+			texture->height_ = static_cast<size_t>(sourceInfo.Height);
 			return texture;
 		}
 		else
