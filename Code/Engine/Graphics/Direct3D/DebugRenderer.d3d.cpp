@@ -204,12 +204,7 @@ namespace Lame
 		}
 
 		result = line_effect->get_context()->get_direct3dDevice()->DrawPrimitive(D3DPT_LINELIST, 0, static_cast<UINT>(line_vertices.size() / 2));
-		if (FAILED(result))
-		{
-			return false;
-		}
-
-		return true;
+		return SUCCEEDED(result);
 	}
 }
 
