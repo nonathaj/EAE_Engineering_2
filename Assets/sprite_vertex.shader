@@ -35,7 +35,7 @@ void main()
 ////////////////////////////////////////////////////////////////////////////////////////
 {
 	// Pass the input to the fragment shader unchanged:
-	o_position = float4(i_position, 0);
+	o_position = float4(i_position, 1.0);
 	o_color = i_color;
 	o_texcoords = i_texcoords;
 }

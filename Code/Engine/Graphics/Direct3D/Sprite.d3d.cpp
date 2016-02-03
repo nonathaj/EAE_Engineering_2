@@ -5,6 +5,7 @@
 #include "../Context.h"
 #include "../Texture.h"
 #include "../Effect.h"
+#include "../Mesh.h"
 
 #include "../../System/UserOutput.h"
 #include "../../System/Console.h"
@@ -63,6 +64,7 @@ namespace Lame
 			}
 		}
 
+		const float screen_width = i_height_normalized * i_effect->get_context()->aspect_ratio();
 		{
 			// Fill the vertex buffer with the triangle's vertices
 			// Before the vertex buffer can be changed it must be "locked"'
@@ -77,7 +79,6 @@ namespace Lame
 			}
 			//Fill the buffer
 			{
-				const float screen_width = i_height_normalized * i_effect->get_context()->aspect_ratio();
 				const Engine::Vector2 half_extends = Engine::Vector2(i_height_normalized, screen_width) / 2;
 				vertexData[0] = Vertex(
 					i_screen_pos_normalized + Engine::Vector2(-half_extends.x(), half_extends.y()), 
@@ -116,6 +117,8 @@ namespace Lame
 			sprite->vertex_declaration_ = vertex_declaration;
 			sprite->color_uniform_id = color_uniform;
 			sprite->texture_uniform_id = texture_uniform;
+			sprite->texture_coord = i_texture_coords;
+			sprite->screen_coord = Engine::Rectangle2D(i_screen_pos_normalized, Engine::Vector2(screen_width, i_height_normalized));
 		}
 		else
 		{
@@ -132,6 +135,11 @@ namespace Lame
 		{
 			return false;
 		}
+
+		Lame::Mesh* mesh = Lame::Mesh::CreateQuad(effect()->get_context(), Engine::Vector2(1, 1) );
+		const bool drawn = mesh->Draw();
+		delete mesh;
+		return drawn;
 
 		// Bind a specific vertex buffer to the device as a data source
 		{

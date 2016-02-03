@@ -33,6 +33,8 @@ namespace Lame
 		Sprite() : color_(Color::white) {}
 
 		Color color_;
+		Engine::Rectangle2D texture_coord;
+		Engine::Rectangle2D screen_coord;
 
 		std::shared_ptr<Effect> effect_;
 		std::shared_ptr<Texture> texture_;
