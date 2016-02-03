@@ -29,16 +29,8 @@ namespace Lame
 		inline std::shared_ptr<Texture> texture() const { return texture_; }
 		inline Color color() const { return color_; }
 		inline void color(const Color& i_color) { color_ = i_color; }
-
-		inline Engine::Rectangle2D texture_coord() const;
-		inline Engine::Rectangle2D screen_pos() const;
-
-		inline bool texture_coord(const Engine::Rectangle2D& i_tex);
-		bool screen_pos(const Engine::Vector2& i_screen_pos_normalized);
 	private:
 		Sprite() : color_(Color::white) {}
-
-		bool UpdateVertexData();
 
 		Color color_;
 

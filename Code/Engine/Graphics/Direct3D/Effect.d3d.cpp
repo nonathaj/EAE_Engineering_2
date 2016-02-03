@@ -27,26 +27,10 @@ namespace Lame
 {
 	Effect* Effect::Create(std::shared_ptr<Context> i_context, const char* i_vertex_path, const char* i_fragment_path, Engine::EnumMask<RenderState> i_renderMask)
 	{
-		// The vertex shader is a program that operates on vertices.
-		// Its input comes from a C/C++ "draw call" and is:
-		//	* Position
-		//	* Any other data we want
-		// Its output is:
-		//	* Position
-		//		(So that the graphics hardware knows which pixels to fill in for the triangle)
-		//	* Any other data we want
 		IDirect3DVertexShader9* vertexShader = nullptr;
-		// The fragment shader is a program that operates on fragments
-		// (or potential pixels).
-		// Its input is:
-		//	* The data that was output from the vertex shader,
-		//		interpolated based on how close the fragment is
-		//		to each vertex in the triangle.
-		// Its output is:
-		//	* The final color that the pixel should be
-		IDirect3DPixelShader9* fragmentShader = nullptr;
-
 		ID3DXConstantTable *vertexConstantTable = nullptr;
+
+		IDirect3DPixelShader9* fragmentShader = nullptr;
 		ID3DXConstantTable *fragmentConstantTable = nullptr;
 
 		if (!LoadFragmentShader(i_context.get(), i_fragment_path, fragmentShader, &fragmentConstantTable) || 
@@ -214,65 +198,59 @@ namespace
 	bool LoadFragmentShader(const Lame::Context *i_context, std::string i_path, IDirect3DPixelShader9*& o_fragmentShader, ID3DXConstantTable** o_fragmentConstantTable)
 	{
 		char const * const errorHeader = "Fragment Shader Loading Error";
-		bool wereThereErrors = false;
 
 		// Load the source code from file and compile it
 		char* compiledShader = System::File::LoadBinary(i_path);
 		if (!compiledShader)
-			wereThereErrors = true;
-		else
-		{
-			// Create the fragment shader object
-			HRESULT result = i_context->get_direct3dDevice()->CreatePixelShader(reinterpret_cast<DWORD*>(compiledShader),
-				&o_fragmentShader);
-			if (FAILED(result))
-			{
-				System::UserOutput::Display("Direct3D failed to create the fragment shader", errorHeader);
-				wereThereErrors = true;
-			}
+			return false;
 
-			//get the constant table
-			result = D3DXGetShaderConstantTable(reinterpret_cast<const DWORD*>(compiledShader), o_fragmentConstantTable);
-			if (FAILED(result))
-			{
-				System::UserOutput::Display("Direct3D failed to load the Fragment Constant Table", errorHeader);
-				wereThereErrors = true;
-			}
+		// Create the fragment shader object
+		HRESULT result = i_context->get_direct3dDevice()->CreatePixelShader(reinterpret_cast<DWORD*>(compiledShader),
+			&o_fragmentShader);
+		if (FAILED(result) || !o_fragmentShader)
+		{
+			System::UserOutput::Display("Direct3D failed to create the fragment shader", errorHeader);
+			return false;
+		}
+
+		//get the constant table
+		result = D3DXGetShaderConstantTable(reinterpret_cast<const DWORD*>(compiledShader), o_fragmentConstantTable);
+		if (FAILED(result) || !o_fragmentConstantTable)
+		{
+			System::UserOutput::Display("Direct3D failed to load the Fragment Constant Table", errorHeader);
+			return false;
 		}
 		delete[] compiledShader;
-		return !wereThereErrors;
+		return true;
 	}
 
 	bool LoadVertexShader(const Lame::Context *i_context, std::string i_path, IDirect3DVertexShader9*& o_vertexShader, ID3DXConstantTable** o_vertexConstantTable)
 	{
 		char const * const errorHeader = "Vertex Shader Loading Error";
-		bool wereThereErrors = false;
 
 		// Load the source code from file and compile it
 		char* compiledShader = System::File::LoadBinary(i_path);
 		if (!compiledShader)
-			wereThereErrors = true;
-		else
-		{
-			// Create the vertex shader object
-			HRESULT result = i_context->get_direct3dDevice()->CreateVertexShader(reinterpret_cast<DWORD*>(compiledShader),
-				&o_vertexShader);
-			if (FAILED(result))
-			{
-				System::UserOutput::Display("Direct3D failed to create the vertex shader", errorHeader);
-				wereThereErrors = true;
-			}
+			return false;
 
-			//get the constant table
-			result = D3DXGetShaderConstantTable(reinterpret_cast<const DWORD*>(compiledShader), o_vertexConstantTable);
-			if (FAILED(result))
-			{
-				System::UserOutput::Display("Direct3D failed to load the Vertex Constant Table", errorHeader);
-				wereThereErrors = true;
-			}
+		// Create the vertex shader object
+		HRESULT result = i_context->get_direct3dDevice()->CreateVertexShader(reinterpret_cast<DWORD*>(compiledShader),
+			&o_vertexShader);
+		if (FAILED(result) || !o_vertexShader)
+		{
+			System::UserOutput::Display("Direct3D failed to create the vertex shader", errorHeader);
+			return false;
+		}
+
+		//get the constant table
+		result = D3DXGetShaderConstantTable(reinterpret_cast<const DWORD*>(compiledShader), o_vertexConstantTable);
+		if (FAILED(result) || !o_vertexConstantTable)
+		{
+			System::UserOutput::Display("Direct3D failed to load the Vertex Constant Table", errorHeader);
+			return false;
 		}
 
 		delete[] compiledShader;
-		return !wereThereErrors;
+		return true;
 	}
 }

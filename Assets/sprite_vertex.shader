@@ -1,6 +1,3 @@
-/*
-	This is an example of a vertex shader
-*/
 
 #include "shaders.inc"
 
@@ -10,8 +7,8 @@
 
 void main(
 	in const float3 i_position : POSITION,
-	in const float4 i_color : COLOR,
 	in const float2 i_texcoords : TEXCOORD0,
+	in const float4 i_color : COLOR,
 
 	out float4 o_position : POSITION,
 	out float4 o_color : COLOR,

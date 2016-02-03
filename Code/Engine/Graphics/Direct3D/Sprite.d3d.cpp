@@ -49,7 +49,7 @@ namespace Lame
 		// Create a vertex buffer
 		IDirect3DVertexBuffer9 *vertex_buffer;
 		{
-			const UINT bufferSize = static_cast<UINT>(6 * sizeof(Vertex));
+			const UINT bufferSize = static_cast<UINT>(4 * sizeof(Vertex));
 			// We will define our own vertex format
 			const DWORD useSeparateVertexDeclaration = 0;
 			// Place the vertex buffer into memory that Direct3D thinks is the most appropriate
@@ -124,47 +124,11 @@ namespace Lame
 		return sprite;
 	}
 
-	bool Sprite::UpdateVertexData()
-	{
-		// Fill the vertex buffer with the triangle's vertices
-		// Before the vertex buffer can be changed it must be "locked"'
-		Vertex *vertexData;
-		{
-			const HRESULT result = vertex_buffer_->Lock(0, 0, reinterpret_cast<void**>(&vertexData), 0);
-			if (FAILED(result))
-			{
-				System::UserOutput::Display("Direct3D failed to lock the vertex buffer");
-				return false;
-			}
-		}
-		//Fill the buffer
-		{
-			//TODO
-
-			//std::memcpy(vertexData, i_vertices, i_vertex_count * sizeof(*i_vertices));
-
-			//Preferred, but VC++ doesn't like unchecked iterators
-			//std::copy(i_vertices, i_vertices + i_vertex_count, vertexData);
-		}
-		// The buffer must be "unlocked" before it can be used
-		{
-			const HRESULT result = vertex_buffer_->Unlock();
-			if (FAILED(result))
-			{
-				System::UserOutput::Display("Direct3D failed to unlock the vertex buffer");
-				return false;
-			}
-		}
-
-		return true;
-	}
-
 	bool Sprite::Render()
 	{
 		if (!effect()->Bind() ||
 			!effect()->SetConstant(Lame::Effect::Shader::Fragment, color_uniform_id, color()) ||
-			!effect()->SetConstant(Lame::Effect::Shader::Fragment, texture_uniform_id, texture().get() )
-			)
+			!effect()->SetConstant(Lame::Effect::Shader::Fragment, texture_uniform_id, texture().get()) )
 		{
 			return false;
 		}
@@ -172,11 +136,9 @@ namespace Lame
 		// Bind a specific vertex buffer to the device as a data source
 		{
 			HRESULT result = effect()->get_context()->get_direct3dDevice()->SetStreamSource(0, vertex_buffer_, 0, sizeof(Vertex));
-			if (!SUCCEEDED(result))
+			if (FAILED(result))
 				return false;
 		}
-
-		DEBUG_PRINT("vertex(%p) texture(%p) effect(%p)", vertex_buffer_, texture().get(), effect().get());
 
 		//Render the Quad
 		{
