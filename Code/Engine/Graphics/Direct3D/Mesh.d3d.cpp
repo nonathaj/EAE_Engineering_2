@@ -92,45 +92,40 @@ namespace Lame
 			}
 
 			// Create a vertex buffer
+			const UINT bufferSize = static_cast<UINT>(i_vertex_count * sizeof(Vertex));
+			// We will define our own vertex format
+			const DWORD useSeparateVertexDeclaration = 0;
+			// Place the vertex buffer into memory that Direct3D thinks is the most appropriate
+			const D3DPOOL useDefaultPool = D3DPOOL_DEFAULT;
+			HANDLE* const notUsed = NULL;
+			const HRESULT result = i_context->get_direct3dDevice()->CreateVertexBuffer(bufferSize, usage, useSeparateVertexDeclaration, useDefaultPool,
+				&mesh->vertex_buffer_, notUsed);
+			if (FAILED(result))
 			{
-				const UINT bufferSize = static_cast<UINT>(i_vertex_count * sizeof(Vertex));
-				// We will define our own vertex format
-				const DWORD useSeparateVertexDeclaration = 0;
-				// Place the vertex buffer into memory that Direct3D thinks is the most appropriate
-				const D3DPOOL useDefaultPool = D3DPOOL_DEFAULT;
-				HANDLE* const notUsed = NULL;
-				const HRESULT result = i_context->get_direct3dDevice()->CreateVertexBuffer(bufferSize, usage, useSeparateVertexDeclaration, useDefaultPool,
-					&mesh->vertex_buffer_, notUsed);
-				if (FAILED(result))
-				{
-					System::UserOutput::Display("Direct3D failed to create a vertex buffer");
-					delete mesh;
-					return nullptr;
-				}
+				System::UserOutput::Display("Direct3D failed to create a vertex buffer");
+				delete mesh;
+				return nullptr;
 			}
 		}
 
 		//Create the Index Buffer
 		if (i_index_count > 0)
 		{
-			// Create an index buffer
+			// We are drawing a square
+			UINT bufferSize = static_cast<UINT>(i_index_count * sizeof(uint32_t));
+			// We'll use 32-bit indices in this class to keep things simple
+			// (i.e. every index will be a 32 bit unsigned integer)
+			const D3DFORMAT format = D3DFMT_INDEX32;
+			// Place the index buffer into memory that Direct3D thinks is the most appropriate
+			const D3DPOOL useDefaultPool = D3DPOOL_DEFAULT;
+			HANDLE* notUsed = NULL;
+			const HRESULT result = i_context->get_direct3dDevice()->CreateIndexBuffer(bufferSize, usage, format, useDefaultPool,
+				&mesh->index_buffer_, notUsed);
+			if (FAILED(result))
 			{
-				// We are drawing a square
-				UINT bufferSize = static_cast<UINT>(i_index_count * sizeof(uint32_t));
-				// We'll use 32-bit indices in this class to keep things simple
-				// (i.e. every index will be a 32 bit unsigned integer)
-				const D3DFORMAT format = D3DFMT_INDEX32;
-				// Place the index buffer into memory that Direct3D thinks is the most appropriate
-				const D3DPOOL useDefaultPool = D3DPOOL_DEFAULT;
-				HANDLE* notUsed = NULL;
-				const HRESULT result = i_context->get_direct3dDevice()->CreateIndexBuffer(bufferSize, usage, format, useDefaultPool,
-					&mesh->index_buffer_, notUsed);
-				if (FAILED(result))
-				{
-					System::UserOutput::Display("Direct3D failed to create an index buffer");
-					delete mesh;
-					return nullptr;
-				}
+				System::UserOutput::Display("Direct3D failed to create an index buffer");
+				delete mesh;
+				return nullptr;
 			}
 		}
 		else
@@ -141,7 +136,7 @@ namespace Lame
 		return mesh;
 	}
 
-	Mesh* Mesh::CreateRightHanded(const bool i_static, std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
+	Mesh* Mesh::CreateRightHandedTriList(const bool i_static, std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
 	{
 		if (i_index_count % 3 != 0)		//index buffer must be a list of triangles
 		{
@@ -152,7 +147,7 @@ namespace Lame
 		if(hasIndices)
 			SwapIndexOrder(i_indices, i_index_count);
 
-		Mesh *mesh = CreateLeftHanded(i_static, i_context, i_vertices, i_vertex_count, i_indices, i_index_count);
+		Mesh *mesh = CreateLeftHandedTriList(i_static, i_context, i_vertices, i_vertex_count, i_indices, i_index_count);
 
 		if (hasIndices)
 			SwapIndexOrder(i_indices, i_index_count);
@@ -160,7 +155,7 @@ namespace Lame
 	}
 
 	//Create a mesh with LEFT-HANDED indices
-	Mesh* Mesh::CreateLeftHanded(const bool i_static, std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
+	Mesh* Mesh::CreateLeftHandedTriList(const bool i_static, std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
 	{
 		Mesh* mesh = CreateEmpty(i_static, i_context, Lame::Mesh::PrimitiveType::TriangleList, i_vertex_count, i_index_count);
 		if (!mesh)
@@ -219,14 +214,14 @@ namespace Lame
 			// The "stride" defines how large a single vertex is in the stream of data
 			const unsigned int bufferStride = sizeof(Vertex);
 			result = context->get_direct3dDevice()->SetStreamSource(streamIndex, vertex_buffer_, bufferOffset, bufferStride);
-			if (!SUCCEEDED(result))
+			if (FAILED(result))
 				return false;
 		}
 
 		// Bind a specific index buffer to the device as a data source
 		{
 			result = context->get_direct3dDevice()->SetIndices(index_buffer_);
-			if (!SUCCEEDED(result))
+			if (FAILED(result))
 				return false;
 		}
 		// Render objects from the current streams

@@ -57,14 +57,13 @@ namespace Lame
 			sprite->vertices[2] = Vertex(Engine::Vector2(realsc.left(), realsc.bottom()), Engine::Vector2(i_texture_coords.left(), i_texture_coords.bottom()), color);
 			sprite->vertices[3] = Vertex(Engine::Vector2(realsc.right(), realsc.bottom()), Engine::Vector2(i_texture_coords.right(), i_texture_coords.bottom()), color);
 
-			mesh = std::shared_ptr<Mesh>(Mesh::CreateRightHanded(false, i_effect->get_context(), sprite->vertices, 4, nullptr, 0));
-			if (!mesh)
+			mesh = std::shared_ptr<Mesh>(Mesh::CreateEmpty(false, i_effect->get_context(), Lame::Mesh::PrimitiveType::TriangleStrip, 4, 0));
+			if (!mesh || !mesh->UpdateVertices(sprite->vertices))
 			{
 				System::UserOutput::Display("Unable to create Mesh for Sprite");
 				delete sprite;
 				return nullptr;
 			}
-			mesh->primitive_type(Mesh::PrimitiveType::TriangleStrip);
 		}
 
 		sprite->effect_ = i_effect;

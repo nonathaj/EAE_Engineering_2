@@ -39,8 +39,8 @@ namespace Lame
 		static Mesh* CreateEmpty(const bool i_static, std::shared_ptr<Context> i_context, PrimitiveType i_prim_type, const size_t i_vertex_count, const size_t i_index_count);
 
 		//load a mesh with defined data
-		static Mesh* CreateRightHanded(const bool i_static, std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices = nullptr, size_t i_index_count = 0);
-		static Mesh* CreateLeftHanded(const bool i_static, std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices = nullptr, size_t i_index_count = 0);
+		static Mesh* CreateRightHandedTriList(const bool i_static, std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices = nullptr, size_t i_index_count = 0);
+		static Mesh* CreateLeftHandedTriList(const bool i_static, std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices = nullptr, size_t i_index_count = 0);
 		
 		//load a mesh from the mesh binary file
 		static Mesh* Create(std::shared_ptr<Context> i_context, std::string i_mesh_path);

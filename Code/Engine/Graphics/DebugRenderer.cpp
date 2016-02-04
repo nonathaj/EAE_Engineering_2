@@ -61,7 +61,6 @@ namespace Lame
 				!wireframe_shape_effect->CacheConstant(Lame::Effect::Shader::Vertex, LocalToWorldUniformName, wire_localToWorldUniformId) ||
 				!wireframe_shape_effect->CacheConstant(Lame::Effect::Shader::Vertex, WorldToViewUniformName, wire_worldToViewUniformId) ||
 				!wireframe_shape_effect->CacheConstant(Lame::Effect::Shader::Vertex, ViewToScreenUniformName, wire_viewToScreenUniformId))
-
 			{
 				System::UserOutput::Display("Failed to create debug wireframe effect");
 				return nullptr;
