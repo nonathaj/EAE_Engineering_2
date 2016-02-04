@@ -11,6 +11,7 @@ namespace
 {
 	bool CreateDevice(IDirect3D9* _direct3dInterface, const HWND i_renderingWindow, IDirect3DDevice9*& direct3dDevice);
 	bool CreateInterface(IDirect3D9*& o_direct3dInterface);
+	bool SetSamplerState(IDirect3DDevice9* direct3dDevice);
 }
 
 namespace Lame
@@ -21,7 +22,8 @@ namespace Lame
 		IDirect3DDevice9* direct3dDevice = nullptr;
 
 		if (!CreateInterface(direct3dInterface) || 
-			!CreateDevice(direct3dInterface, i_renderingWindow, direct3dDevice) )
+			!CreateDevice(direct3dInterface, i_renderingWindow, direct3dDevice) ||
+			!SetSamplerState(direct3dDevice) )
 			goto OnError;
 
 		Context *context = new Context(i_renderingWindow);
@@ -127,6 +129,20 @@ namespace Lame
 
 namespace
 {
+	bool SetSamplerState(IDirect3DDevice9* direct3dDevice)
+	{
+		for (DWORD i = 0; i < 8; ++i)
+		{
+			if (FAILED(direct3dDevice->SetSamplerState(i, D3DSAMP_MINFILTER, D3DTEXF_LINEAR)))
+				return false;
+			if (FAILED(direct3dDevice->SetSamplerState(i, D3DSAMP_MINFILTER, D3DTEXF_LINEAR)))
+				return false;
+			if (FAILED(direct3dDevice->SetSamplerState(i, D3DSAMP_MINFILTER, D3DTEXF_LINEAR)))
+				return false;
+		}
+		return true;
+	}
+
 	bool CreateDevice(IDirect3D9* i_direct3dInterface, const HWND i_renderingWindow, IDirect3DDevice9*& o_direct3dDevice)
 	{
 		const UINT useDefaultDevice = D3DADAPTER_DEFAULT;

@@ -57,7 +57,7 @@ namespace Lame
 		}
 	}
 
-	Mesh* Mesh::CreateRightHanded(std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
+	Mesh* Mesh::CreateRightHanded(const bool i_static, std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
 	{
 		if (i_index_count % 3 != 0)		//index buffer must be a list of triangles
 		{
@@ -68,7 +68,7 @@ namespace Lame
 		if(hasIndices)
 			SwapIndexOrder(i_indices, i_index_count);
 
-		Mesh *mesh = CreateLeftHanded(i_context, i_vertices, i_vertex_count, i_indices, i_index_count);
+		Mesh *mesh = CreateLeftHanded(i_static, i_context, i_vertices, i_vertex_count, i_indices, i_index_count);
 
 		if (hasIndices)
 			SwapIndexOrder(i_indices, i_index_count);
@@ -76,7 +76,7 @@ namespace Lame
 	}
 
 	//Create a mesh with LEFT-HANDED indices
-	Mesh* Mesh::CreateLeftHanded(std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
+	Mesh* Mesh::CreateLeftHanded(const bool i_static, std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
 	{
 		if (i_index_count % 3 != 0)		//index buffer must be a list of triangles
 		{
@@ -103,7 +103,7 @@ namespace Lame
 				return nullptr;
 			}
 			// Our code will only ever write to the buffer
-			usage |= D3DUSAGE_WRITEONLY;
+			usage |= (i_static ? 0x0 : D3DUSAGE_DYNAMIC) | D3DUSAGE_WRITEONLY;
 		}
 
 		//Create the Vertex Buffer

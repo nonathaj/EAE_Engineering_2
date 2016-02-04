@@ -52,9 +52,9 @@ namespace Lame
 		//create the mesh
 		Mesh *mesh = nullptr;
 #if EAE6320_PLATFORM_D3D
-		mesh = CreateLeftHanded(i_context, vertices, *vertex_count, indices, *index_count);
+		mesh = CreateLeftHanded(true, i_context, vertices, *vertex_count, indices, *index_count);
 #elif EAE6320_PLATFORM_GL
-		mesh = CreateRightHanded(i_context, vertices, *vertex_count, indices, *index_count);
+		mesh = CreateRightHanded(true, i_context, vertices, *vertex_count, indices, *index_count);
 #endif
 
 		//cleanup the loaded file
@@ -63,7 +63,7 @@ namespace Lame
 		return mesh;
 	}
 
-	Mesh* Mesh::CreateBox(std::shared_ptr<Context> i_context, const Engine::Vector3& i_size, const Color32& i_color)
+	Mesh* Mesh::CreateBox(const bool i_static, std::shared_ptr<Context> i_context, const Engine::Vector3& i_size, const Color32& i_color)
 	{
 		const Engine::Vector3 half = i_size / 2.0f;
 
@@ -108,10 +108,10 @@ namespace Lame
 			20,21,22,20,22,23
 		};
 
-		return CreateRightHanded(i_context, vertices.data(), vertices.size(), indices.data(), indices.size());
+		return CreateRightHanded(i_static, i_context, vertices.data(), vertices.size(), indices.data(), indices.size());
 	}
 
-	Mesh* Mesh::CreateSphere(std::shared_ptr<Context> i_context, const float i_radius, const size_t i_slice_count, const size_t i_stack_count, const Color32& i_vertex_color)
+	Mesh* Mesh::CreateSphere(const bool i_static, std::shared_ptr<Context> i_context, const float i_radius, const size_t i_slice_count, const size_t i_stack_count, const Color32& i_vertex_color)
 	{
 		const float pi = static_cast<float>(M_PI);
 		const float phi_step = pi / i_stack_count;
@@ -168,10 +168,10 @@ namespace Lame
 				indices.push_back(baseIndex + i + 1);
 			}
 		}
-		return CreateRightHanded(i_context, vertices.data(), vertices.size(), indices.data(), indices.size());
+		return CreateRightHanded(i_static, i_context, vertices.data(), vertices.size(), indices.data(), indices.size());
 	}
 
-	Mesh* Mesh::CreateCylinder(std::shared_ptr<Context> i_context, const float i_bottom_radius, const float i_top_radius, const float i_height, const float i_slice_count, const float i_stack_count, const Color32& i_vertex_color)
+	Mesh* Mesh::CreateCylinder(const bool i_static, std::shared_ptr<Context> i_context, const float i_bottom_radius, const float i_top_radius, const float i_height, const float i_slice_count, const float i_stack_count, const Color32& i_vertex_color)
 	{
 		std::vector<Vertex> vertices;
 		std::vector<uint32_t> indices;
@@ -268,10 +268,10 @@ namespace Lame
 			}
 		}
 
-		return CreateRightHanded(i_context, vertices.data(), vertices.size(), indices.data(), indices.size());
+		return CreateRightHanded(i_static, i_context, vertices.data(), vertices.size(), indices.data(), indices.size());
 	}
 
-	Mesh* Mesh::CreateQuad(std::shared_ptr<Context> i_context, const Engine::Vector2& i_extends, const Color32& i_vertex_color)
+	Mesh* Mesh::CreateQuad(const bool i_static, std::shared_ptr<Context> i_context, const Engine::Vector2& i_extends, const Color32& i_vertex_color)
 	{
 		Engine::Vector2 half_extends = i_extends / 2;
 		std::vector<Vertex> vertices;
@@ -281,7 +281,7 @@ namespace Lame
 		vertices.push_back(Lame::Vertex(Engine::Vector2(half_extends.x(), -half_extends.y()), Engine::Vector2(1.0f, 1.0f), i_vertex_color));
 
 		std::vector<uint32_t> indices = { 0, 2, 1, 1, 2, 3 };
-		Mesh* mesh = CreateRightHanded(i_context, vertices.data(), vertices.size(), indices.data(), indices.size());
+		Mesh* mesh = CreateRightHanded(i_static, i_context, vertices.data(), vertices.size(), indices.data(), indices.size());
 
 		mesh->primitive_type_ = Mesh::PrimitiveType::TriangleStrip;
 		return mesh;

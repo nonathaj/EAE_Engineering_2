@@ -113,19 +113,19 @@ namespace Lame
 
 	bool DebugRenderer::AddBox(const bool i_render_wireframe, const Engine::Vector3& i_size, const Engine::Transform& i_transform, const Color32& i_color)
 	{
-		std::shared_ptr<Lame::Mesh> mesh(Lame::Mesh::CreateBox(solid_shape_effect->get_context(), i_size, i_color));
+		std::shared_ptr<Lame::Mesh> mesh(Lame::Mesh::CreateBox(true, solid_shape_effect->get_context(), i_size, i_color));
 		return AddMesh(mesh, i_transform, i_render_wireframe);
 	}
 
 	bool DebugRenderer::AddSphere(const bool i_render_wireframe, const float i_radius, const Engine::Transform& i_transform, const Color32& i_color)
 	{
-		std::shared_ptr<Lame::Mesh> mesh(Lame::Mesh::CreateSphere(solid_shape_effect->get_context(), i_radius, 10, 10, i_color));
+		std::shared_ptr<Lame::Mesh> mesh(Lame::Mesh::CreateSphere(true, solid_shape_effect->get_context(), i_radius, 10, 10, i_color));
 		return AddMesh(mesh, i_transform, i_render_wireframe);
 	}
 
 	bool DebugRenderer::AddCylinder(const bool i_render_wireframe, const float i_top_radius, const float i_bottom_radius, const float i_height, const Engine::Transform& i_transform, const Color32& i_color)
 	{
-		std::shared_ptr<Lame::Mesh> mesh(Lame::Mesh::CreateCylinder(solid_shape_effect->get_context(), i_bottom_radius, i_top_radius, i_height, 10, 10, i_color));
+		std::shared_ptr<Lame::Mesh> mesh(Lame::Mesh::CreateCylinder(true, solid_shape_effect->get_context(), i_bottom_radius, i_top_radius, i_height, 10, 10, i_color));
 		return AddMesh(mesh, i_transform, i_render_wireframe);
 	}
 }

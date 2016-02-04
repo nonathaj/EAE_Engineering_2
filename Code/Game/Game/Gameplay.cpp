@@ -142,10 +142,12 @@ namespace Gameplay
 
 		HandleInput(deltaTime);
 
+#ifdef ENABLE_DEBUG_RENDERING
 		graphics->debug_renderer()->AddBox(
 			true, 
 			Engine::Vector3::one * 250.0f,
 			Engine::Transform::CreateDefault());
+#endif
 
 		world->Update(deltaTime);
 		bool renderSuccess = graphics->Render();

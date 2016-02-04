@@ -57,7 +57,7 @@ namespace Lame
 			sprite->vertices[2] = Vertex(Engine::Vector2(realsc.left(), realsc.bottom()), Engine::Vector2(i_texture_coords.left(), i_texture_coords.bottom()), color);
 			sprite->vertices[3] = Vertex(Engine::Vector2(realsc.right(), realsc.bottom()), Engine::Vector2(i_texture_coords.right(), i_texture_coords.bottom()), color);
 
-			mesh = std::shared_ptr<Mesh>(Mesh::CreateRightHanded(i_effect->get_context(), sprite->vertices, 4, nullptr, 0));
+			mesh = std::shared_ptr<Mesh>(Mesh::CreateRightHanded(false, i_effect->get_context(), sprite->vertices, 4, nullptr, 0));
 			if (!mesh)
 			{
 				System::UserOutput::Display("Unable to create Mesh for Sprite");
