@@ -147,6 +147,10 @@ namespace Gameplay
 			true, 
 			Engine::Vector3::one * 250.0f,
 			Engine::Transform::CreateDefault());
+
+		graphics->debug_renderer()->AddLine(Engine::Vector3::zero, Engine::Vector3(0, 0, -1000), Lame::Color32::blue);
+		graphics->debug_renderer()->AddLine(Engine::Vector3(0, 100, 0), Engine::Vector3(0, 100, -1000), Lame::Color32::red);
+
 #endif
 
 		world->Update(deltaTime);

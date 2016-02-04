@@ -11,13 +11,6 @@
 #include <cstdint>
 #include <memory>
 
-#if EAE6320_PLATFORM_D3D
-#include <d3d9.h>
-#elif EAE6320_PLATFORM_GL
-#include "../../Engine/Windows/Includes.h"
-#include <gl/GL.h>
-#endif
-
 #include "Vertex.h"
 #include "Effect.h"
 #include "../Component/Transform.h"
@@ -44,8 +37,6 @@ namespace Lame
 		};
 	public:
 		static DebugRenderer* Create(std::shared_ptr<Lame::Context> i_context, const size_t i_line_count);
-
-		~DebugRenderer();
 
 		bool AddLine(const Engine::Vector3& i_start, const Engine::Vector3& i_end, const Lame::Color32& i_start_color, const Lame::Color32& i_end_color);
 		bool AddLine(const Engine::Vector3& i_start, const Engine::Vector3& i_end, const Lame::Color32& i_color);
@@ -78,15 +69,10 @@ namespace Lame
 		std::vector<Lame::Vertex> line_vertices;
 		size_t max_lines_count;
 
+		std::shared_ptr<Lame::Mesh> line_renderer;
+
 		std::vector<DebugMesh> wireframe_meshes;
 		std::vector<DebugMesh> solid_meshes;
-
-#if EAE6320_PLATFORM_D3D
-		IDirect3DVertexBuffer9 *vertex_buffer_;
-#elif EAE6320_PLATFORM_GL
-		GLuint vertex_array_id_;
-		GLuint vertex_buffer_id_;
-#endif
 
 		Effect::ConstantHandle line_worldToViewUniformId;
 		Effect::ConstantHandle line_viewToScreenUniformId;

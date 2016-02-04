@@ -32,8 +32,11 @@ namespace Lame
 		{ 
 			TriangleList,	//Sequence of Independent Triangles
 			TriangleStrip,	//Sequence of Sliding Triangles
+			LineList,		//Sequence of Independent Lines
 		};
 		static size_t GetPrimitiveCount(const PrimitiveType i_primitive_type, const size_t i_index_count);
+
+		static Mesh* CreateEmpty(const bool i_static, std::shared_ptr<Context> i_context, PrimitiveType i_prim_type, const size_t i_vertex_count, const size_t i_index_count);
 
 		//load a mesh with defined data
 		static Mesh* CreateRightHanded(const bool i_static, std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices = nullptr, size_t i_index_count = 0);
@@ -51,12 +54,12 @@ namespace Lame
 		//Destroy a mesh
 		~Mesh();
 
-		//render the mesh
-		bool Draw() const;
+		//Render this mesh, with an optional max number of primitives (0 will render full buffer)
+		bool Draw(const size_t i_max_primitives = 0) const;
 
-		//copies the number of vertices/indices to the mesh data
-		bool UpdateVertices(const Vertex* i_vertices);
-		bool UpdateIndices(const uint32_t* i_indices);
+		//copies the vertices/indices to the mesh data (0 amount will copy the full buffer length)
+		bool UpdateVertices(const Vertex* i_vertices, const size_t i_amount = 0);
+		bool UpdateIndices(const uint32_t* i_indices, const size_t i_amount = 0);
 
 		inline PrimitiveType primitive_type() const { return primitive_type_; }
 		inline void primitive_type(const PrimitiveType i_prim) { primitive_type_ = i_prim; }

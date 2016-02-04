@@ -20,6 +20,7 @@ namespace
 		{
 		case Lame::Mesh::PrimitiveType::TriangleList: return D3DPT_TRIANGLELIST;
 		case Lame::Mesh::PrimitiveType::TriangleStrip: return D3DPT_TRIANGLESTRIP;
+		case Lame::Mesh::PrimitiveType::LineList: return D3DPT_LINELIST;
 		default: return static_cast<D3DPRIMITIVETYPE>(0);
 		}
 	}
@@ -57,34 +58,9 @@ namespace Lame
 		}
 	}
 
-	Mesh* Mesh::CreateRightHanded(const bool i_static, std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
+	Mesh* Mesh::CreateEmpty(const bool i_static, std::shared_ptr<Context> i_context, PrimitiveType i_prim_type, const size_t i_vertex_count, const size_t i_index_count)
 	{
-		if (i_index_count % 3 != 0)		//index buffer must be a list of triangles
-		{
-			System::UserOutput::Display("Cannot create a Mesh with non-triangular data. (Ensure number of indices is divisible by 3)");
-			return nullptr;
-		}
-		bool hasIndices = i_index_count > 0 && i_indices;
-		if(hasIndices)
-			SwapIndexOrder(i_indices, i_index_count);
-
-		Mesh *mesh = CreateLeftHanded(i_static, i_context, i_vertices, i_vertex_count, i_indices, i_index_count);
-
-		if (hasIndices)
-			SwapIndexOrder(i_indices, i_index_count);
-		return mesh;
-	}
-
-	//Create a mesh with LEFT-HANDED indices
-	Mesh* Mesh::CreateLeftHanded(const bool i_static, std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
-	{
-		if (i_index_count % 3 != 0)		//index buffer must be a list of triangles
-		{
-			System::UserOutput::Display("Cannot create a Mesh with non-triangular data. (Ensure number of indices is divisible by 3)");
-			return nullptr;
-		}
-
-		Mesh *mesh = new Mesh(i_vertex_count, i_index_count, Lame::Mesh::PrimitiveType::TriangleList, i_context);
+		Mesh *mesh = new Mesh(i_vertex_count, i_index_count, i_prim_type, i_context);
 		if (!mesh)
 		{
 			System::UserOutput::Display("Failed to create Mesh, due to insufficient memory.", "Mesh Loading Error");
@@ -132,18 +108,10 @@ namespace Lame
 					return nullptr;
 				}
 			}
-
-			// Fill the vertex buffer with the triangle's vertices
-			if(!mesh->UpdateVertices(i_vertices))
-			{
-				System::UserOutput::Display("Failed to copy vertex data to the mesh");
-				delete mesh;
-				return nullptr;
-			}
 		}
 
 		//Create the Index Buffer
-		if(i_index_count > 0 && i_indices)
+		if (i_index_count > 0)
 		{
 			// Create an index buffer
 			{
@@ -164,13 +132,6 @@ namespace Lame
 					return nullptr;
 				}
 			}
-			// Fill the index buffer with the triangles' connectivity data
-			if (!mesh->UpdateIndices(i_indices))
-			{
-				System::UserOutput::Display("Failed to copy index data to the mesh");
-				delete mesh;
-				return nullptr;
-			}
 		}
 		else
 		{
@@ -180,70 +141,73 @@ namespace Lame
 		return mesh;
 	}
 
-	bool Mesh::UpdateVertices(const Vertex* i_vertices)
+	Mesh* Mesh::CreateRightHanded(const bool i_static, std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
 	{
-		// Fill the vertex buffer with the triangle's vertices
-		// Before the vertex buffer can be changed it must be "locked"'
-		Vertex *vertexData;
+		if (i_index_count % 3 != 0)		//index buffer must be a list of triangles
 		{
-			const unsigned int lockEntireBuffer = 0;
-			const DWORD useDefaultLockingBehavior = 0;
-			const HRESULT result = vertex_buffer_->Lock(lockEntireBuffer, lockEntireBuffer,
-				reinterpret_cast<void**>(&vertexData), useDefaultLockingBehavior);
-			if (FAILED(result))
-			{
-				return false;
-			}
+			System::UserOutput::Display("Cannot create a Mesh with non-triangular data. (Ensure number of indices is divisible by 3)");
+			return nullptr;
 		}
+		bool hasIndices = i_index_count > 0 && i_indices;
+		if(hasIndices)
+			SwapIndexOrder(i_indices, i_index_count);
 
-		//Fill the buffer
-		memcpy(vertexData, i_vertices, vertex_count_ * sizeof(*i_vertices));
-		//Preferred, but VC++ doesn't like unchecked iterators
-		//std::copy(i_vertices, i_vertices + i_vertex_count, vertexData);
+		Mesh *mesh = CreateLeftHanded(i_static, i_context, i_vertices, i_vertex_count, i_indices, i_index_count);
 
-		// The buffer must be "unlocked" before it can be used
-		{
-			const HRESULT result = vertex_buffer_->Unlock();
-			if (FAILED(result))
-			{
-				return false;
-			}
-		}
-		return true;
+		if (hasIndices)
+			SwapIndexOrder(i_indices, i_index_count);
+		return mesh;
 	}
 
-	bool Mesh::UpdateIndices(const uint32_t* i_indices)
+	//Create a mesh with LEFT-HANDED indices
+	Mesh* Mesh::CreateLeftHanded(const bool i_static, std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
 	{
+		Mesh* mesh = CreateEmpty(i_static, i_context, Lame::Mesh::PrimitiveType::TriangleList, i_vertex_count, i_index_count);
+		if (!mesh)
+			return nullptr;
+
+		if (!mesh->UpdateVertices(i_vertices))
+		{
+			System::UserOutput::Display("Failed to copy vertex data to the mesh");
+			delete mesh;
+			return nullptr;
+		}
+		if (i_indices && !mesh->UpdateIndices(i_indices))
+		{
+			System::UserOutput::Display("Failed to copy index data to the mesh");
+			delete mesh;
+			return nullptr;
+		}
+		return mesh;
+	}
+
+	bool Mesh::UpdateVertices(const Vertex* i_vertices, const size_t i_amount)
+	{
+		Vertex *vertexData;
+		HRESULT result = vertex_buffer_->Lock(0, 0, reinterpret_cast<void**>(&vertexData), 0);
+		if (FAILED(result))
+			return false;
+
+		const size_t vertsToCopy = i_amount == 0 ? vertex_count_ : i_amount;
+		memcpy(vertexData, i_vertices, vertsToCopy * sizeof(*i_vertices));
+		return SUCCEEDED(vertex_buffer_->Unlock());
+	}
+
+	bool Mesh::UpdateIndices(const uint32_t* i_indices, const size_t i_amount)
+	{
+		if (!index_buffer_)
+			return false;
 		// Before the index buffer can be changed it must be "locked"
 		uint32_t *indexData;
-		{
-			const unsigned int lockEntireBuffer = 0;
-			const DWORD useDefaultLockingBehavior = 0;
-			const HRESULT result = index_buffer_->Lock(lockEntireBuffer, lockEntireBuffer,
-				reinterpret_cast<void**>(&indexData), useDefaultLockingBehavior);
-			if (FAILED(result))
-			{
-				return false;
-			}
-		}
-
-		// Fill the buffer
-		memcpy(indexData, i_indices, index_count_ * sizeof(*i_indices));
-		//Preferred, but VC++ doesn't like unchecked iterators
-		//std::copy(i_indices, i_indices + i_index_count, indexData);
-
-		// The buffer must be "unlocked" before it can be used
-		{
-			const HRESULT result = index_buffer_->Unlock();
-			if (FAILED(result))
-			{
-				return false;
-			}
-		}
-		return true;
+		HRESULT result = index_buffer_->Lock(0, 0, reinterpret_cast<void**>(&indexData), 0);
+		if (FAILED(result))
+			return false;
+		const size_t indsToCopy = i_amount == 0 ? index_count_ : i_amount;
+		memcpy(indexData, i_indices, indsToCopy * sizeof(*i_indices));
+		return SUCCEEDED(index_buffer_->Unlock());
 	}
 
-	bool Mesh::Draw() const
+	bool Mesh::Draw(const size_t i_max_primitives) const
 	{
 		HRESULT result;
 		// Bind a specific vertex buffer to the device as a data source
@@ -270,13 +234,17 @@ namespace Lame
 			const D3DPRIMITIVETYPE primitiveType = GetD3DPrimitiveType(primitive_type());
 			if (index_count_ > 0)
 			{
-				const UINT primitiveCount = static_cast<UINT>(GetPrimitiveCount(primitive_type(), index_count_));
+				UINT primitiveCount = static_cast<UINT>(GetPrimitiveCount(primitive_type(), index_count_));
+				if (i_max_primitives > 0)
+					primitiveCount = i_max_primitives < primitiveCount ? static_cast<UINT>(i_max_primitives) : primitiveCount;
 				result = context->get_direct3dDevice()->DrawIndexedPrimitive(primitiveType,
 					0, 0, static_cast<UINT>(vertex_count_), 0, primitiveCount);
 			}
 			else
 			{
-				const UINT primitiveCount = static_cast<UINT>(GetPrimitiveCount(primitive_type(), vertex_count_));
+				UINT primitiveCount = static_cast<UINT>(GetPrimitiveCount(primitive_type(), vertex_count_));
+				if (i_max_primitives > 0)
+					primitiveCount = i_max_primitives < primitiveCount ? static_cast<UINT>(i_max_primitives) : primitiveCount;
 				result = context->get_direct3dDevice()->DrawPrimitive(primitiveType, 0, primitiveCount);
 			}
 			return SUCCEEDED(result);
