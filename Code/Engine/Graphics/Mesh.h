@@ -33,11 +33,11 @@ namespace Lame
 			TriangleList,	//Sequence of Independent Triangles
 			TriangleStrip,	//Sequence of Sliding Triangles
 		};
-		static size_t GetPrimitiveCount(const PrimitiveType i_primitive_type, const size_t i_vertex_count);
+		static size_t GetPrimitiveCount(const PrimitiveType i_primitive_type, const size_t i_index_count);
 
 		//load a mesh with defined data
-		static Mesh* CreateRightHanded(std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count);
-		static Mesh* CreateLeftHanded(std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count);
+		static Mesh* CreateRightHanded(std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices = nullptr, size_t i_index_count = 0);
+		static Mesh* CreateLeftHanded(std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices = nullptr, size_t i_index_count = 0);
 		
 		//load a mesh from the mesh binary file
 		static Mesh* Create(std::shared_ptr<Context> i_context, std::string i_mesh_path);

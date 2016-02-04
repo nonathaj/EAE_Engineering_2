@@ -58,6 +58,16 @@ namespace
 		{ System::UserInput::Keyboard::Down, VK_DOWN },
 		{ System::UserInput::Keyboard::Left, VK_LEFT },
 		{ System::UserInput::Keyboard::Right, VK_RIGHT },
+		{ System::UserInput::Keyboard::Alpha0, 0x30 },
+		{ System::UserInput::Keyboard::Alpha1, 0x31 },
+		{ System::UserInput::Keyboard::Alpha2, 0x32 },
+		{ System::UserInput::Keyboard::Alpha3, 0x33 },
+		{ System::UserInput::Keyboard::Alpha4, 0x34 },
+		{ System::UserInput::Keyboard::Alpha5, 0x35 },
+		{ System::UserInput::Keyboard::Alpha6, 0x36 },
+		{ System::UserInput::Keyboard::Alpha7, 0x37 },
+		{ System::UserInput::Keyboard::Alpha8, 0x38 },
+		{ System::UserInput::Keyboard::Alpha9, 0x39 },
 	};
 
 	std::unordered_map<System::UserInput::Mouse::Button, const int> mouseButtonCodes =

@@ -41,31 +41,30 @@ namespace Lame
 			return nullptr;
 		}
 
-		std::shared_ptr<Mesh> mesh;
-		{
-			const Color32 color = Color32::white;
-			const Engine::Rectangle2D realsc = GetRealScreenCoord(i_screen_coords);
-			std::vector<Vertex> vertices = {
-				Vertex(Engine::Vector2(realsc.left(), realsc.top()), Engine::Vector2(i_texture_coords.left(), i_texture_coords.top()), color),
-				Vertex(Engine::Vector2(realsc.right(), realsc.top()), Engine::Vector2(i_texture_coords.right(), i_texture_coords.top()), color),
-				Vertex(Engine::Vector2(realsc.left(), realsc.bottom()), Engine::Vector2(i_texture_coords.left(), i_texture_coords.bottom()), color),
-				Vertex(Engine::Vector2(realsc.right(), realsc.bottom()), Engine::Vector2(i_texture_coords.right(), i_texture_coords.bottom()), color),
-			};
-
-			mesh = std::shared_ptr<Mesh>(Mesh::CreateRightHanded(i_effect->get_context(), vertices.data(), vertices.size(), nullptr, 0));
-			if (!mesh)
-			{
-				System::UserOutput::Display("Unable to create Mesh for Sprite");
-				return nullptr;
-			}
-			mesh->primitive_type(Mesh::PrimitiveType::TriangleStrip);
-		}
-
 		Sprite* sprite = new Sprite();
 		if (!sprite)
 		{
 			System::UserOutput::Display("Insufficient memory to create Sprite");
 			return nullptr;
+		}
+
+		std::shared_ptr<Mesh> mesh;
+		{
+			const Color32 color = Color32::white;
+			const Engine::Rectangle2D realsc = GetRealScreenCoord(i_screen_coords);
+			sprite->vertices[0] = Vertex(Engine::Vector2(realsc.left(), realsc.top()), Engine::Vector2(i_texture_coords.left(), i_texture_coords.top()), color);
+			sprite->vertices[1] = Vertex(Engine::Vector2(realsc.right(), realsc.top()), Engine::Vector2(i_texture_coords.right(), i_texture_coords.top()), color);
+			sprite->vertices[2] = Vertex(Engine::Vector2(realsc.left(), realsc.bottom()), Engine::Vector2(i_texture_coords.left(), i_texture_coords.bottom()), color);
+			sprite->vertices[3] = Vertex(Engine::Vector2(realsc.right(), realsc.bottom()), Engine::Vector2(i_texture_coords.right(), i_texture_coords.bottom()), color);
+
+			mesh = std::shared_ptr<Mesh>(Mesh::CreateRightHanded(i_effect->get_context(), sprite->vertices, 4, nullptr, 0));
+			if (!mesh)
+			{
+				System::UserOutput::Display("Unable to create Mesh for Sprite");
+				delete sprite;
+				return nullptr;
+			}
+			mesh->primitive_type(Mesh::PrimitiveType::TriangleStrip);
 		}
 
 		sprite->effect_ = i_effect;
@@ -78,14 +77,10 @@ namespace Lame
 
 	bool Sprite::Render()
 	{
-		if (!effect()->Bind() ||
-			!effect()->SetConstant(Lame::Effect::Shader::Fragment, color_uniform_id, color()) ||
-			!effect()->SetConstant(Lame::Effect::Shader::Fragment, texture_uniform_id, texture().get()))
-		{
-			return false;
-		}
-
-		return mesh()->Draw();
+		return effect()->Bind() &&
+			effect()->SetConstant(Lame::Effect::Shader::Fragment, color_uniform_id, color()) &&
+			effect()->SetConstant(Lame::Effect::Shader::Fragment, texture_uniform_id, texture().get()) &&
+			mesh()->Draw();
 	}
 
 	bool Sprite::screen_coords(const Engine::Rectangle2D& i_screen_coords)
@@ -107,6 +102,18 @@ namespace Lame
 		return mesh()->UpdateVertices(vertices);
 	}
 
+	Engine::Rectangle2D Sprite::texture_coords() const
+	{
+		return Engine::Rectangle2D(
+			vertices[0].texcoord.x(), vertices[3].texcoord.x(), vertices[0].texcoord.y(), vertices[3].texcoord.y());
+	}
+
+	Engine::Rectangle2D Sprite::screen_coords() const
+	{
+		Engine::Rectangle2D real_screen(vertices[0].position.x(), vertices[3].position.x(), vertices[0].position.y(), vertices[3].position.y());
+		return GetVirtualScreenCoord(real_screen);
+	}
+
 	Engine::Rectangle2D Sprite::GetRealScreenCoord(const Engine::Rectangle2D& i_virtual_screen_coord)
 	{
 		return Engine::Rectangle2D(
@@ -123,5 +130,20 @@ namespace Lame
 			(i_real_screen_coord.right() + 1.0f) / 2.0f,
 			(i_real_screen_coord.top() + 1.0f) / 2.0f,
 			(i_real_screen_coord.bottom() + 1.0f) / 2.0f);
+	}
+
+	bool Sprite::SelectFromSheet(const size_t i_horz_count, const size_t i_vert_count, const size_t i_index)
+	{
+		if (i_horz_count == 0 || i_vert_count == 0)
+			return false;
+
+		const float width = 1.0f / static_cast<float>(i_horz_count);
+		const float height = 1.0f / static_cast<float>(i_vert_count);
+		const size_t x = i_index % i_horz_count;
+		const size_t y = i_index / i_horz_count;
+		if (y >= i_vert_count)
+			return false;
+		Engine::Rectangle2D tex(x * width, (x + 1) * width, y * height, (y + 1) * height);
+		return texture_coords(tex);
 	}
 }

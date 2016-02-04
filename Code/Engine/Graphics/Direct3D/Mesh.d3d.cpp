@@ -64,9 +64,14 @@ namespace Lame
 			System::UserOutput::Display("Cannot create a Mesh with non-triangular data. (Ensure number of indices is divisible by 3)");
 			return nullptr;
 		}
-		SwapIndexOrder(i_indices, i_index_count);
+		bool hasIndices = i_index_count > 0 && i_indices;
+		if(hasIndices)
+			SwapIndexOrder(i_indices, i_index_count);
+
 		Mesh *mesh = CreateLeftHanded(i_context, i_vertices, i_vertex_count, i_indices, i_index_count);
-		SwapIndexOrder(i_indices, i_index_count);
+
+		if (hasIndices)
+			SwapIndexOrder(i_indices, i_index_count);
 		return mesh;
 	}
 
@@ -138,7 +143,7 @@ namespace Lame
 		}
 
 		//Create the Index Buffer
-		if(i_index_count > 0)
+		if(i_index_count > 0 && i_indices)
 		{
 			// Create an index buffer
 			{

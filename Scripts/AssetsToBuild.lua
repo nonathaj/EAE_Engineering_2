@@ -66,7 +66,8 @@ return
             { source = "EAE 6330/railing_D.png", target = "railing_D.DDS" },
             { source = "EAE 6330/wall_D.png", target = "wall_D.DDS" },
             { source = "EAE 6330/white.png", target = "white.DDS" },
-            { source = "alpha.png", target = "alpha.DDS" },
+            { source = "eae6320alpha.png", target = "alpha.DDS" },
+            { source = "numbers.png", target = "numbers.DDS" },
         }
     },
 }

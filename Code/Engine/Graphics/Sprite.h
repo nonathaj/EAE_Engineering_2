@@ -30,6 +30,10 @@ namespace Lame
 
 		bool screen_coords(const Engine::Rectangle2D& i_screen_coords);
 		bool texture_coords(const Engine::Rectangle2D& i_texture_coords);
+		Engine::Rectangle2D texture_coords() const;
+		Engine::Rectangle2D screen_coords() const;
+
+		bool SelectFromSheet(const size_t i_horz_count, const size_t i_vert_count, const size_t i_index);
 
 		static Engine::Rectangle2D GetRealScreenCoord(const Engine::Rectangle2D& i_virtual_screen_coord);
 		static Engine::Rectangle2D GetVirtualScreenCoord(const Engine::Rectangle2D& i_real_screen_coord);

@@ -33,11 +33,14 @@ namespace
 	Engine::World *world = nullptr;
 
 	std::shared_ptr<Lame::Effect> sprite_effect;
+
 	std::shared_ptr<Lame::Sprite> sprite;
+	std::shared_ptr<Lame::Sprite> number;
 
 	void HandleInput(float deltaTime);
 
 	bool Contacting(std::shared_ptr<Engine::GameObject> go1, std::shared_ptr<Engine::GameObject> go2, const float& go1Size, const float& go2Size);
+	uint8_t GetNumberKeyPressed();
 }
 
 namespace Gameplay
@@ -108,14 +111,26 @@ namespace Gameplay
 			Lame::Sprite::Create(
 			sprite_effect,
 			std::shared_ptr<Lame::Texture>(Lame::Texture::Create(graphics->context(), "data/alpha.DDS")),
-			Engine::Vector2::one * 0.5f,
-			1.0f,
-			Engine::Rectangle2D::CreateTLNormalized()));
+			Engine::Vector2::one * 0.1f,
+			0.2f,
+			Engine::Rectangle2D::CreateTLNormalized() ));
 		if (!sprite || !graphics->Add(sprite))
 		{
 			Shutdown();
 			return false;
 		}
+
+		number = std::shared_ptr<Lame::Sprite>(Lame::Sprite::Create(
+			sprite_effect,
+			std::shared_ptr<Lame::Texture>(Lame::Texture::Create(graphics->context(), "data/numbers.DDS")),
+			Engine::Rectangle2D(Engine::Vector2::one * 0.8f, Engine::Vector2(0.2f, 0.3f)),
+			Engine::Rectangle2D::CreateTLNormalized() ));
+		if (!number || !graphics->Add(number))
+		{
+			Shutdown();
+			return false;
+		}
+		number->SelectFromSheet(10, 1, 0);
 
 		return true;
 	}
@@ -158,6 +173,32 @@ namespace Gameplay
 
 namespace
 {
+	uint8_t GetNumberKeyPressed()
+	{
+		using namespace System::UserInput;
+		if (Keyboard::Pressed(Keyboard::Alpha0))
+			return 0;
+		else if (Keyboard::Pressed(Keyboard::Alpha1))
+			return 1;
+		else if (Keyboard::Pressed(Keyboard::Alpha2))
+			return 2;
+		else if (Keyboard::Pressed(Keyboard::Alpha3))
+			return 3;
+		else if (Keyboard::Pressed(Keyboard::Alpha4))
+			return 4;
+		else if (Keyboard::Pressed(Keyboard::Alpha5))
+			return 5;
+		else if (Keyboard::Pressed(Keyboard::Alpha6))
+			return 6;
+		else if (Keyboard::Pressed(Keyboard::Alpha7))
+			return 7;
+		else if (Keyboard::Pressed(Keyboard::Alpha8))
+			return 8;
+		else if (Keyboard::Pressed(Keyboard::Alpha9))
+			return 9;
+		return -1;
+	}
+
 	void HandleInput(float deltaTime)
 	{
 		using namespace System::UserInput;
@@ -191,7 +232,7 @@ namespace
 			DEBUG_PRINT("Invalid movement vector");
 		}
 
-		const float rotationAmount = 30.0f * deltaTime;
+		const float rotationAmount = 40.0f * deltaTime;
 		Vector3 rotationAxis = Vector3::zero;
 		if (Keyboard::Pressed(Keyboard::Left))						//rotate left
 			rotationAxis += Vector3::up;
@@ -203,6 +244,12 @@ namespace
 		//	rotationAxis += Vector3::Vector3::left;
 
 		movableObject->transform().Rotate(Quaternion::Euler(rotationAxis * rotationAmount));
+
+		uint8_t num = GetNumberKeyPressed();
+		if (num < 10)
+		{
+			number->SelectFromSheet(10, 1, num);
+		}
 	}
 
 	bool Contacting(std::shared_ptr<Engine::GameObject> go1, std::shared_ptr<Engine::GameObject> go2, const float& go1Size, const float& go2Size)

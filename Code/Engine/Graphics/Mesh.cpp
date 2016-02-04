@@ -287,14 +287,14 @@ namespace Lame
 		return mesh;
 	}
 
-	size_t Mesh::GetPrimitiveCount(const PrimitiveType i_primitive_type, const size_t i_vertex_count)
+	size_t Mesh::GetPrimitiveCount(const PrimitiveType i_primitive_type, const size_t i_index_count)
 	{
 		switch (i_primitive_type)
 		{
 		case Lame::Mesh::PrimitiveType::TriangleList: 
-			return i_vertex_count / 3;
+			return i_index_count / 3;
 		case Lame::Mesh::PrimitiveType::TriangleStrip: 
-			return i_vertex_count < 3 ? 0 : i_vertex_count - 2;
+			return i_index_count < 3 ? 0 : i_index_count - 2;
 		default: 
 			return 0;
 		}
