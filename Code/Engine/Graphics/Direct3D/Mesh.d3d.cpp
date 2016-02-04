@@ -78,7 +78,6 @@ namespace Lame
 				delete mesh;
 				return nullptr;
 			}
-			// Our code will only ever write to the buffer
 			usage |= (i_static ? 0x0 : D3DUSAGE_DYNAMIC) | D3DUSAGE_WRITEONLY;
 		}
 
