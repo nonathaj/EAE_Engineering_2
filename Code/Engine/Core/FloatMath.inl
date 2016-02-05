@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "Math.h"
 
-namespace Engine
+namespace Lame
 {
 	namespace Math
 	{
@@ -70,7 +70,7 @@ namespace Engine
 				const int32_t right = *reinterpret_cast<const int32_t*>(&i_rhs);
 
 				//if they have different signs, they are not equal (unless both are zero)
-				if (Engine::Math::IsNegative(left) != Engine::Math::IsNegative(right))
+				if (Lame::Math::IsNegative(left) != Lame::Math::IsNegative(right))
 					return i_lhs == i_rhs;
 
 				//Compare the ULP difference to our maxULP difference allowed

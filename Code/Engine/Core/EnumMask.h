@@ -4,7 +4,7 @@
 #include <cstddef>
 #include <bitset>
 
-namespace Engine
+namespace Lame
 {
 	//struct for ensuring an enum has a count element.
 	//this does NOT validate that the count element is the last element
@@ -82,7 +82,7 @@ namespace Engine
 		std::bitset<EnumType::Count> mask_;
 	};
 
-} //namespace Engine
+} //namespace Lame
 
 #define ENUM_FLAGS_OPERATORS(Enum_Type) \
 inline Enum_Type operator|(Enum_Type a, Enum_Type b) { return static_cast<Enum_Type>(a | b); } \

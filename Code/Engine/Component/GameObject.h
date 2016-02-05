@@ -7,7 +7,7 @@
 
 #include "Transform.h"
 
-namespace Engine
+namespace Lame
 {
 	class IComponent;
 
@@ -27,10 +27,10 @@ namespace Engine
 		inline void Destroy() { destroying_ = true; }
 		inline bool IsDestroying() { return destroying_; }
 
-		inline Engine::Transform& transform() { return transform_; }
+		inline Lame::Transform& transform() { return transform_; }
 
 	private:
-		Engine::Transform transform_;
+		Lame::Transform transform_;
 		std::string name_;
 
 		bool enabled_;

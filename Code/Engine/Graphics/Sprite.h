@@ -16,8 +16,8 @@ namespace Lame
 	class Sprite
 	{
 	public:
-		static Sprite* Create(std::shared_ptr<Effect> i_effect, std::shared_ptr<Lame::Texture> i_texture, const Engine::Vector2& i_screen_pos_normalized, const float i_height_normalized, const Engine::Rectangle2D& i_texture_coords);
-		static Sprite* Create(std::shared_ptr<Effect> i_effect, std::shared_ptr<Lame::Texture> i_texture, const Engine::Rectangle2D& i_screen_coords, const Engine::Rectangle2D& i_texture_coords);
+		static Sprite* Create(std::shared_ptr<Effect> i_effect, std::shared_ptr<Lame::Texture> i_texture, const Lame::Vector2& i_screen_pos_normalized, const float i_height_normalized, const Lame::Rectangle2D& i_texture_coords);
+		static Sprite* Create(std::shared_ptr<Effect> i_effect, std::shared_ptr<Lame::Texture> i_texture, const Lame::Rectangle2D& i_screen_coords, const Lame::Rectangle2D& i_texture_coords);
 
 		bool Render();
 
@@ -28,15 +28,13 @@ namespace Lame
 		inline Color color() const { return color_; }
 		inline void color(const Color& i_color) { color_ = i_color; }
 
-		bool screen_coords(const Engine::Rectangle2D& i_screen_coords);
-		bool texture_coords(const Engine::Rectangle2D& i_texture_coords);
-		Engine::Rectangle2D texture_coords() const;
-		Engine::Rectangle2D screen_coords() const;
+		bool screen_coords(const Lame::Rectangle2D& i_screen_coords);
+		bool texture_coords(const Lame::Rectangle2D& i_texture_coords);
+		Lame::Rectangle2D texture_coords() const;
+		Lame::Rectangle2D screen_coords() const;
 
 		bool SelectFromSheet(const size_t i_horz_count, const size_t i_vert_count, const size_t i_index);
 
-		static Engine::Rectangle2D GetRealScreenCoord(const Engine::Rectangle2D& i_virtual_screen_coord);
-		static Engine::Rectangle2D GetVirtualScreenCoord(const Engine::Rectangle2D& i_real_screen_coord);
 	private:
 		Sprite() : color_(Color::white) {}
 

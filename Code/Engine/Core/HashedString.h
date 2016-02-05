@@ -4,7 +4,7 @@
 #include <string>
 #include <stdint.h>
 
-namespace Engine
+namespace Lame
 {
 	/*
 		HashedString Class
@@ -43,9 +43,9 @@ namespace std
 {
 	//Overload the std::hash to allow the hashedstring to be used in std containers, such as unordered_map
 	template<>
-	struct hash<Engine::HashedString>
+	struct hash<Lame::HashedString>
 	{
-		uint32_t operator()(const Engine::HashedString &i_str) const { return static_cast<uint32_t>(hash<uint32_t>()(i_str.Get())); }
+		uint32_t operator()(const Lame::HashedString &i_str) const { return static_cast<uint32_t>(hash<uint32_t>()(i_str.Get())); }
 	};
 }
 

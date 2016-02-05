@@ -34,7 +34,7 @@ namespace Lame
 		}
 		else
 		{
-			System::UserOutput::Display("Failed to create Direct3D Context, due to insufficient memory.", "Context Loading Error");
+			Lame::UserOutput::Display("Failed to create Direct3D Context, due to insufficient memory.", "Context Loading Error");
 		}
 		return context;
 
@@ -121,7 +121,7 @@ namespace Lame
 		}
 		else
 		{
-			System::UserOutput::Display("Direct3D failed to get the device's creation parameters");
+			Lame::UserOutput::Display("Direct3D failed to get the device's creation parameters");
 		}
 		return result;
 	}
@@ -173,7 +173,7 @@ namespace
 		}
 		else
 		{
-			System::UserOutput::Display("Direct3D failed to create a Direct3D9 device");
+			Lame::UserOutput::Display("Direct3D failed to create a Direct3D9 device");
 			return false;
 		}
 	}
@@ -189,7 +189,7 @@ namespace
 		}
 		else
 		{
-			System::UserOutput::Display("DirectX failed to create a Direct3D9 interface");
+			Lame::UserOutput::Display("DirectX failed to create a Direct3D9 interface");
 			return false;
 		}
 	}

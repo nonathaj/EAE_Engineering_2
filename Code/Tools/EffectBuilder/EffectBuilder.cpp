@@ -17,7 +17,7 @@ bool EffectBuilder::Build(const std::vector<std::string>&)
 	//Data we need
 	////////////////////////////////////////////
 	std::string vertex, fragment;
-	Engine::EnumMask<Lame::RenderState> renderMask;
+	Lame::EnumMask<Lame::RenderState> renderMask;
 
 	////////////////////////////////////////////
 	//Load data from Lua

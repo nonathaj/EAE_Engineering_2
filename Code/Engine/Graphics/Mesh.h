@@ -14,7 +14,7 @@
 #include <gl/GL.h>
 #endif
 
-namespace Engine
+namespace Lame
 {
 	class Vector2;
 	class Vector3;
@@ -46,10 +46,10 @@ namespace Lame
 		static Mesh* Create(std::shared_ptr<Context> i_context, std::string i_mesh_path);
 
 		//create a mesh from procedural data
-		static Mesh* CreateBox(const bool i_static, std::shared_ptr<Context> i_context, const Engine::Vector3& i_size, const Color32& i_vertex_color = Color32::white);
+		static Mesh* CreateBox(const bool i_static, std::shared_ptr<Context> i_context, const Lame::Vector3& i_size, const Color32& i_vertex_color = Color32::white);
 		static Mesh* CreateSphere(const bool i_static, std::shared_ptr<Context> i_context, const float i_radius, const size_t i_slice_count, const size_t i_stack_count, const Color32& i_vertex_color = Color32::white);
 		static Mesh* CreateCylinder(const bool i_static, std::shared_ptr<Context> i_context, const float i_bottom_radius, const float i_top_radius, const float i_height, const float i_slice_count, const float i_stack_count, const Color32& i_vertex_color = Color32::white);
-		static Mesh* CreateQuad(const bool i_static, std::shared_ptr<Context> i_context, const Engine::Vector2& i_extends, const Color32& i_vertex_color = Color32::white);
+		static Mesh* CreateQuad(const bool i_static, std::shared_ptr<Context> i_context, const Lame::Vector2& i_extends, const Color32& i_vertex_color = Color32::white);
 
 		~Mesh();
 

@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace System
+namespace Lame
 {
 	namespace File
 	{

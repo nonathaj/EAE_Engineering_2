@@ -2,10 +2,10 @@
 #include "GameObject.h"
 #include "IComponent.h"
 
-namespace Engine
+namespace Lame
 {
 	GameObject::GameObject() :
-		transform_(Engine::Vector3::zero, Engine::Quaternion::identity),
+		transform_(Lame::Vector3::zero, Lame::Quaternion::identity),
 		name_(""),
 		enabled_(true),
 		components_()

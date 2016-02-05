@@ -6,7 +6,7 @@
 
 namespace Lame
 {
-	CameraComponent::CameraComponent(std::weak_ptr<Engine::GameObject> go, std::shared_ptr<Context> contextPtr, float i_vertical_fov_degree, float i_near_clip_plane, float i_far_clip_plane) :
+	CameraComponent::CameraComponent(std::weak_ptr<Lame::GameObject> go, std::shared_ptr<Context> contextPtr, float i_vertical_fov_degree, float i_near_clip_plane, float i_far_clip_plane) :
 		IComponent(go), 
 		context_(contextPtr), 
 		vertical_fov_degrees_(i_vertical_fov_degree), 
@@ -15,15 +15,15 @@ namespace Lame
 	{
 	}
 
-	Engine::Matrix4x4 CameraComponent::WorldToView() const
+	Lame::Matrix4x4 CameraComponent::WorldToView() const
 	{ 
-		return Engine::Matrix4x4::CreateWorldToView(gameObject()->transform().position(), gameObject()->transform().rotation());
+		return Lame::Matrix4x4::CreateWorldToView(gameObject()->transform().position(), gameObject()->transform().rotation());
 	}
 
-	Engine::Matrix4x4 CameraComponent::ViewToScreen() const
+	Lame::Matrix4x4 CameraComponent::ViewToScreen() const
 	{
-		return Engine::Matrix4x4::CreateViewToScreen(
-			static_cast<float>(Engine::Math::ToRadians(vertical_fov_degrees_)), 
+		return Lame::Matrix4x4::CreateViewToScreen(
+			static_cast<float>(Lame::Math::ToRadians(vertical_fov_degrees_)), 
 			aspect_ratio(), near_clip_plane_, far_clip_plane_);
 	}
 

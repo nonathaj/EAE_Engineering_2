@@ -11,7 +11,7 @@
 ///	Instead of storing type information for each class, this stores a static int for each class marked
 ///		with the macro.  So attempting conversions only requires an integer compare.
 ///
-namespace Engine
+namespace Lame
 {
 	namespace TypeHandling
 	{
@@ -35,7 +35,7 @@ namespace Engine
 // A handy macro for adding type ID info to a class
 #define ADD_TYPEID() \
 public: \
-	inline virtual Engine::TypeHandling::typeid_t GetTypeID() const { return Engine::TypeHandling::GetTypeIDFromInstance( this ); } \
+	inline virtual Lame::TypeHandling::typeid_t GetTypeID() const { return Lame::TypeHandling::GetTypeIDFromInstance( this ); } \
 private:
 
 // A template for casting from base to derived, if it's possible

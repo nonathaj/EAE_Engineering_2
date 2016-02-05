@@ -29,7 +29,7 @@ namespace Lame
 		std::string errorHeader = "Mesh loading error";
 
 		size_t fileLength;
-		char *fileData = System::File::LoadBinary(i_mesh_path, &fileLength);
+		char *fileData = Lame::File::LoadBinary(i_mesh_path, &fileLength);
 		if (!fileData)
 			return nullptr;
 
@@ -44,7 +44,7 @@ namespace Lame
 		{
 			std::stringstream error;
 			error << "Loaded data for mesh " << i_mesh_path << " is invalid";
-			System::UserOutput::Display(error.str(), errorHeader);
+			Lame::UserOutput::Display(error.str(), errorHeader);
 			delete[] fileData;
 			return nullptr;
 		}
@@ -63,41 +63,41 @@ namespace Lame
 		return mesh;
 	}
 
-	Mesh* Mesh::CreateBox(const bool i_static, std::shared_ptr<Context> i_context, const Engine::Vector3& i_size, const Color32& i_color)
+	Mesh* Mesh::CreateBox(const bool i_static, std::shared_ptr<Context> i_context, const Lame::Vector3& i_size, const Color32& i_color)
 	{
-		const Engine::Vector3 half = i_size / 2.0f;
+		const Lame::Vector3 half = i_size / 2.0f;
 
 		std::vector<Vertex> vertices;
 		// front
-		vertices.push_back(Lame::Vertex(Engine::Vector3(-half.x(), -half.y(), -half.z()), Engine::Vector2(0, 1), i_color));
-		vertices.push_back(Lame::Vertex(Engine::Vector3(-half.x(), +half.y(), -half.z()), Engine::Vector2(0, 0), i_color));
-		vertices.push_back(Lame::Vertex(Engine::Vector3(+half.x(), +half.y(), -half.z()), Engine::Vector2(1, 0), i_color));
-		vertices.push_back(Lame::Vertex(Engine::Vector3(+half.x(), -half.y(), -half.z()), Engine::Vector2(1, 1), i_color));
+		vertices.push_back(Lame::Vertex(Lame::Vector3(-half.x(), -half.y(), -half.z()), Lame::Vector2(0, 1), i_color));
+		vertices.push_back(Lame::Vertex(Lame::Vector3(-half.x(), +half.y(), -half.z()), Lame::Vector2(0, 0), i_color));
+		vertices.push_back(Lame::Vertex(Lame::Vector3(+half.x(), +half.y(), -half.z()), Lame::Vector2(1, 0), i_color));
+		vertices.push_back(Lame::Vertex(Lame::Vector3(+half.x(), -half.y(), -half.z()), Lame::Vector2(1, 1), i_color));
 		// back
-		vertices.push_back(Lame::Vertex(Engine::Vector3(-half.x(), -half.y(), +half.z()), Engine::Vector2(1, 1), i_color));
-		vertices.push_back(Lame::Vertex(Engine::Vector3(+half.x(), -half.y(), +half.z()), Engine::Vector2(0, 1), i_color));
-		vertices.push_back(Lame::Vertex(Engine::Vector3(+half.x(), +half.y(), +half.z()), Engine::Vector2(0, 0), i_color));
-		vertices.push_back(Lame::Vertex(Engine::Vector3(-half.x(), +half.y(), +half.z()), Engine::Vector2(1, 0), i_color));
+		vertices.push_back(Lame::Vertex(Lame::Vector3(-half.x(), -half.y(), +half.z()), Lame::Vector2(1, 1), i_color));
+		vertices.push_back(Lame::Vertex(Lame::Vector3(+half.x(), -half.y(), +half.z()), Lame::Vector2(0, 1), i_color));
+		vertices.push_back(Lame::Vertex(Lame::Vector3(+half.x(), +half.y(), +half.z()), Lame::Vector2(0, 0), i_color));
+		vertices.push_back(Lame::Vertex(Lame::Vector3(-half.x(), +half.y(), +half.z()), Lame::Vector2(1, 0), i_color));
 		// top
-		vertices.push_back(Lame::Vertex(Engine::Vector3(-half.x(), +half.y(), -half.z()), Engine::Vector2(0, 1), i_color));
-		vertices.push_back(Lame::Vertex(Engine::Vector3(-half.x(), +half.y(), +half.z()), Engine::Vector2(0, 0), i_color));
-		vertices.push_back(Lame::Vertex(Engine::Vector3(+half.x(), +half.y(), +half.z()), Engine::Vector2(1, 0), i_color));
-		vertices.push_back(Lame::Vertex(Engine::Vector3(+half.x(), +half.y(), -half.z()), Engine::Vector2(1, 1), i_color));
+		vertices.push_back(Lame::Vertex(Lame::Vector3(-half.x(), +half.y(), -half.z()), Lame::Vector2(0, 1), i_color));
+		vertices.push_back(Lame::Vertex(Lame::Vector3(-half.x(), +half.y(), +half.z()), Lame::Vector2(0, 0), i_color));
+		vertices.push_back(Lame::Vertex(Lame::Vector3(+half.x(), +half.y(), +half.z()), Lame::Vector2(1, 0), i_color));
+		vertices.push_back(Lame::Vertex(Lame::Vector3(+half.x(), +half.y(), -half.z()), Lame::Vector2(1, 1), i_color));
 		// bottom
-		vertices.push_back(Lame::Vertex(Engine::Vector3(-half.x(), -half.y(), -half.z()), Engine::Vector2(1, 1), i_color));
-		vertices.push_back(Lame::Vertex(Engine::Vector3(+half.x(), -half.y(), -half.z()), Engine::Vector2(0, 1), i_color));
-		vertices.push_back(Lame::Vertex(Engine::Vector3(+half.x(), -half.y(), +half.z()), Engine::Vector2(0, 0), i_color));
-		vertices.push_back(Lame::Vertex(Engine::Vector3(-half.x(), -half.y(), +half.z()), Engine::Vector2(1, 0), i_color));
+		vertices.push_back(Lame::Vertex(Lame::Vector3(-half.x(), -half.y(), -half.z()), Lame::Vector2(1, 1), i_color));
+		vertices.push_back(Lame::Vertex(Lame::Vector3(+half.x(), -half.y(), -half.z()), Lame::Vector2(0, 1), i_color));
+		vertices.push_back(Lame::Vertex(Lame::Vector3(+half.x(), -half.y(), +half.z()), Lame::Vector2(0, 0), i_color));
+		vertices.push_back(Lame::Vertex(Lame::Vector3(-half.x(), -half.y(), +half.z()), Lame::Vector2(1, 0), i_color));
 		// left
-		vertices.push_back(Lame::Vertex(Engine::Vector3(-half.x(), -half.y(), +half.z()), Engine::Vector2(0, 1), i_color));
-		vertices.push_back(Lame::Vertex(Engine::Vector3(-half.x(), +half.y(), +half.z()), Engine::Vector2(0, 0), i_color));
-		vertices.push_back(Lame::Vertex(Engine::Vector3(-half.x(), +half.y(), -half.z()), Engine::Vector2(1, 0), i_color));
-		vertices.push_back(Lame::Vertex(Engine::Vector3(-half.x(), -half.y(), -half.z()), Engine::Vector2(1, 1), i_color));
+		vertices.push_back(Lame::Vertex(Lame::Vector3(-half.x(), -half.y(), +half.z()), Lame::Vector2(0, 1), i_color));
+		vertices.push_back(Lame::Vertex(Lame::Vector3(-half.x(), +half.y(), +half.z()), Lame::Vector2(0, 0), i_color));
+		vertices.push_back(Lame::Vertex(Lame::Vector3(-half.x(), +half.y(), -half.z()), Lame::Vector2(1, 0), i_color));
+		vertices.push_back(Lame::Vertex(Lame::Vector3(-half.x(), -half.y(), -half.z()), Lame::Vector2(1, 1), i_color));
 		// right
-		vertices.push_back(Lame::Vertex(Engine::Vector3(+half.x(), -half.y(), -half.z()), Engine::Vector2(0, 1), i_color));
-		vertices.push_back(Lame::Vertex(Engine::Vector3(+half.x(), +half.y(), -half.z()), Engine::Vector2(0, 0), i_color));
-		vertices.push_back(Lame::Vertex(Engine::Vector3(+half.x(), +half.y(), +half.z()), Engine::Vector2(1, 0), i_color));
-		vertices.push_back(Lame::Vertex(Engine::Vector3(+half.x(), -half.y(), +half.z()), Engine::Vector2(1, 1), i_color));
+		vertices.push_back(Lame::Vertex(Lame::Vector3(+half.x(), -half.y(), -half.z()), Lame::Vector2(0, 1), i_color));
+		vertices.push_back(Lame::Vertex(Lame::Vector3(+half.x(), +half.y(), -half.z()), Lame::Vector2(0, 0), i_color));
+		vertices.push_back(Lame::Vertex(Lame::Vector3(+half.x(), +half.y(), +half.z()), Lame::Vector2(1, 0), i_color));
+		vertices.push_back(Lame::Vertex(Lame::Vector3(+half.x(), -half.y(), +half.z()), Lame::Vector2(1, 1), i_color));
 
 		std::vector<uint32_t> indices = {
 			0,1,2,0,2,3,
@@ -120,7 +120,7 @@ namespace Lame
 		std::vector<Vertex> vertices;
 		{
 			vertices.reserve((i_stack_count - 1) * i_slice_count + 2);
-			vertices.push_back(Lame::Vertex(Engine::Vector3(0.0f, i_radius, 0.0f), Engine::Vector2(0.0f, 0.0f), i_vertex_color));
+			vertices.push_back(Lame::Vertex(Lame::Vector3(0.0f, i_radius, 0.0f), Lame::Vector2(0.0f, 0.0f), i_vertex_color));
 			for (size_t x = 1; x <= i_stack_count; x++)
 			{
 				const float phi = x * phi_step;
@@ -128,12 +128,12 @@ namespace Lame
 				{
 					const float theta = y * theta_step;
 					vertices.push_back(Lame::Vertex(
-						Engine::Vector3(i_radius * std::sin(phi) * std::cos(theta), i_radius * std::cos(phi), i_radius * std::sin(phi) * std::sin(theta)),
-						Engine::Vector2(theta / pi * 2, phi / pi),
+						Lame::Vector3(i_radius * std::sin(phi) * std::cos(theta), i_radius * std::cos(phi), i_radius * std::sin(phi) * std::sin(theta)),
+						Lame::Vector2(theta / pi * 2, phi / pi),
 						i_vertex_color));
 				}
 			}
-			vertices.push_back(Lame::Vertex(Engine::Vector3(0.0f, -i_radius, 0.0f), Engine::Vector2(0.0f, 1.0f), i_vertex_color));
+			vertices.push_back(Lame::Vertex(Lame::Vector3(0.0f, -i_radius, 0.0f), Lame::Vector2(0.0f, 1.0f), i_vertex_color));
 		}
 
 		std::vector<uint32_t> indices;
@@ -193,8 +193,8 @@ namespace Lame
 					const float c = std::cos(j * dTheta);
 					const float s = std::sin(j * dTheta);
 
-					Engine::Vector3 v = Engine::Vector3(r * c, y, r * s);
-					Engine::Vector2 uv = Engine::Vector2((float)j / i_slice_count, 1.0f - (float)i / i_stack_count);
+					Lame::Vector3 v = Lame::Vector3(r * c, y, r * s);
+					Lame::Vector2 uv = Lame::Vector2((float)j / i_slice_count, 1.0f - (float)i / i_stack_count);
 					vertices.push_back(Lame::Vertex(v, uv, i_vertex_color));
 
 				}
@@ -229,9 +229,9 @@ namespace Lame
 
 				const float u = x / i_height + 0.5f;
 				const float v = z / i_height + 0.5f;
-				vertices.push_back(Lame::Vertex(Engine::Vector3(x, y, z), Engine::Vector2(u, v), i_vertex_color));
+				vertices.push_back(Lame::Vertex(Lame::Vector3(x, y, z), Lame::Vector2(u, v), i_vertex_color));
 			}
-			vertices.push_back(Lame::Vertex(Engine::Vector3(0, y, 0), Engine::Vector2(0.5f, 0.5f), i_vertex_color));
+			vertices.push_back(Lame::Vertex(Lame::Vector3(0, y, 0), Lame::Vector2(0.5f, 0.5f), i_vertex_color));
 			const uint32_t centerIndex = static_cast<uint32_t>(vertices.size() - 1);
 			for (uint32_t i = 0; i < i_slice_count; i++)
 			{
@@ -256,9 +256,9 @@ namespace Lame
 
 				const float u = x / i_height + 0.5f;
 				const float v = z / i_height + 0.5f;
-				vertices.push_back(Lame::Vertex(Engine::Vector3(x, y, z), Engine::Vector2(u, v), i_vertex_color));
+				vertices.push_back(Lame::Vertex(Lame::Vector3(x, y, z), Lame::Vector2(u, v), i_vertex_color));
 			}
-			vertices.push_back(Lame::Vertex(Engine::Vector3(0, y, 0), Engine::Vector2(0.5f, 0.5f), i_vertex_color));
+			vertices.push_back(Lame::Vertex(Lame::Vector3(0, y, 0), Lame::Vector2(0.5f, 0.5f), i_vertex_color));
 			const uint32_t centerIndex = static_cast<uint32_t>(vertices.size() - 1);
 			for (int i = 0; i < i_slice_count; i++)
 			{
@@ -271,18 +271,18 @@ namespace Lame
 		return CreateRightHandedTriList(i_static, i_context, vertices.data(), vertices.size(), indices.data(), indices.size());
 	}
 
-	Mesh* Mesh::CreateQuad(const bool i_static, std::shared_ptr<Context> i_context, const Engine::Vector2& i_extends, const Color32& i_vertex_color)
+	Mesh* Mesh::CreateQuad(const bool i_static, std::shared_ptr<Context> i_context, const Lame::Vector2& i_extends, const Color32& i_vertex_color)
 	{
 		Mesh* mesh = CreateEmpty(i_static, i_context, Lame::Mesh::PrimitiveType::TriangleStrip, 4, 0);
 		if (!mesh)
 			return nullptr;
 
-		Engine::Vector2 half = i_extends / 2;
+		Lame::Vector2 half = i_extends / 2;
 		Vertex vertices[] = {
-			Lame::Vertex(Engine::Vector2(-half.x(), half.y()), Engine::Vector2(0.0f, 0.0f), i_vertex_color),
-			Lame::Vertex(Engine::Vector2(half.x(), half.y()), Engine::Vector2(1.0f, 0.0f), i_vertex_color),
-			Lame::Vertex(Engine::Vector2(-half.x(), -half.y()), Engine::Vector2(0.0f, 1.0f), i_vertex_color),
-			Lame::Vertex(Engine::Vector2(half.x(), -half.y()), Engine::Vector2(1.0f, 1.0f), i_vertex_color)
+			Lame::Vertex(Lame::Vector2(-half.x(), half.y()), Lame::Vector2(0.0f, 0.0f), i_vertex_color),
+			Lame::Vertex(Lame::Vector2(half.x(), half.y()), Lame::Vector2(1.0f, 0.0f), i_vertex_color),
+			Lame::Vertex(Lame::Vector2(-half.x(), -half.y()), Lame::Vector2(0.0f, 1.0f), i_vertex_color),
+			Lame::Vertex(Lame::Vector2(half.x(), -half.y()), Lame::Vector2(1.0f, 1.0f), i_vertex_color)
 		};
 		if (!mesh->UpdateVertices(vertices))
 		{

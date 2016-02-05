@@ -63,7 +63,7 @@ namespace Lame
 		Mesh *mesh = new Mesh(i_vertex_count, i_index_count, i_prim_type, i_context);
 		if (!mesh)
 		{
-			System::UserOutput::Display("Failed to create Mesh, due to insufficient memory.", "Mesh Loading Error");
+			Lame::UserOutput::Display("Failed to create Mesh, due to insufficient memory.", "Mesh Loading Error");
 			return nullptr;
 		}
 
@@ -74,7 +74,7 @@ namespace Lame
 			const HRESULT result = i_context->GetVertexProcessingUsage(usage);
 			if (FAILED(result))
 			{
-				System::UserOutput::Display("Unable to get vertex processing usage information");
+				Lame::UserOutput::Display("Unable to get vertex processing usage information");
 				delete mesh;
 				return nullptr;
 			}
@@ -101,7 +101,7 @@ namespace Lame
 				&mesh->vertex_buffer_, notUsed);
 			if (FAILED(result))
 			{
-				System::UserOutput::Display("Direct3D failed to create a vertex buffer");
+				Lame::UserOutput::Display("Direct3D failed to create a vertex buffer");
 				delete mesh;
 				return nullptr;
 			}
@@ -122,7 +122,7 @@ namespace Lame
 				&mesh->index_buffer_, notUsed);
 			if (FAILED(result))
 			{
-				System::UserOutput::Display("Direct3D failed to create an index buffer");
+				Lame::UserOutput::Display("Direct3D failed to create an index buffer");
 				delete mesh;
 				return nullptr;
 			}
@@ -139,7 +139,7 @@ namespace Lame
 	{
 		if (i_index_count % 3 != 0)		//index buffer must be a list of triangles
 		{
-			System::UserOutput::Display("Cannot create a Mesh with non-triangular data. (Ensure number of indices is divisible by 3)");
+			Lame::UserOutput::Display("Cannot create a Mesh with non-triangular data. (Ensure number of indices is divisible by 3)");
 			return nullptr;
 		}
 		bool hasIndices = i_index_count > 0 && i_indices;
@@ -162,13 +162,13 @@ namespace Lame
 
 		if (!mesh->UpdateVertices(i_vertices))
 		{
-			System::UserOutput::Display("Failed to copy vertex data to the mesh");
+			Lame::UserOutput::Display("Failed to copy vertex data to the mesh");
 			delete mesh;
 			return nullptr;
 		}
 		if (i_indices && !mesh->UpdateIndices(i_indices))
 		{
-			System::UserOutput::Display("Failed to copy index data to the mesh");
+			Lame::UserOutput::Display("Failed to copy index data to the mesh");
 			delete mesh;
 			return nullptr;
 		}

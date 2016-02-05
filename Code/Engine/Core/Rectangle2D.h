@@ -1,7 +1,7 @@
 #ifndef _ENGINE_CORE_RECTANGLE_H
 #define _ENGINE_CORE_RECTANGLE_H
 
-namespace Engine
+namespace Lame
 {
 	class Vector2;
 

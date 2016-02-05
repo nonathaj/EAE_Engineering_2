@@ -6,7 +6,7 @@
 
 #include "UserOutput.h"
 
-namespace System
+namespace Lame
 {
 	namespace File
 	{
@@ -18,7 +18,7 @@ namespace System
 			{
 				std::stringstream error;
 				error << "Failed to open " << i_file_name << " binary file";
-				System::UserOutput::Display(error.str());
+				Lame::UserOutput::Display(error.str());
 				return nullptr;
 			}
 
@@ -33,7 +33,7 @@ namespace System
 			{
 				std::stringstream error;
 				error << "Failed to create temporary buffer for " << i_file_name;
-				System::UserOutput::Display(error.str());
+				Lame::UserOutput::Display(error.str());
 				return nullptr;
 			}
 

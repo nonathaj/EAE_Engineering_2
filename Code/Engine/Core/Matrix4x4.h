@@ -5,7 +5,7 @@
 
 #include "FloatMath.h"
 
-namespace Engine
+namespace Lame
 {
 	class Vector3;
 	class Quaternion;
@@ -72,7 +72,7 @@ namespace Engine
 	Matrix4x4 operator*(const float i_left, const Matrix4x4& i_right);
 }
 
-namespace Engine
+namespace Lame
 {
 	inline float Matrix4x4::Get(const size_t i_row, const size_t i_column) const
 	{

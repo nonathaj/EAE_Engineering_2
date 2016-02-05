@@ -5,7 +5,7 @@
 #include <math.h>
 #include "FloatMath.h"
 
-namespace Engine
+namespace Lame
 {
 	class Vector2;
 	/*

@@ -4,7 +4,7 @@
 #include "../Windows/Includes.h"
 #include "Time.h"
 
-namespace Engine
+namespace Lame
 {
 	namespace Time
 	{

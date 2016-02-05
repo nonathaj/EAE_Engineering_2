@@ -27,7 +27,7 @@ namespace Lame
 		GLuint texture_id;
 		if(!LoadTexture(i_path.c_str(), texture_id, &errorMsg))
 		{
-			System::UserOutput::Display(errorMsg, "OpenGL Texture Load Error");
+			Lame::UserOutput::Display(errorMsg, "OpenGL Texture Load Error");
 			return nullptr;
 		}
 
@@ -42,7 +42,7 @@ namespace Lame
 			glDeleteTextures(1, &texture_id);
 			std::stringstream error;
 			error << "Insufficient memory to create texture for " << i_path;
-			System::UserOutput::Display(error.str(), "Texture Load Error");
+			Lame::UserOutput::Display(error.str(), "Texture Load Error");
 			return nullptr;
 		}
 	}

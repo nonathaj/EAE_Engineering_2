@@ -21,6 +21,7 @@
 #include "../../Engine/System/Console.h"
 #include "../../Engine/System/UserOutput.h"
 #include "../../Engine/Core/Math.h"
+#include "../../Engine/Core/Vector3.h"
 #include "../../Engine/Core/Random.h"
 
 namespace
@@ -30,7 +31,7 @@ namespace
 	std::shared_ptr<Lame::RenderableComponent> CreateRenderableObject(std::shared_ptr<Lame::Mesh> i_mesh, std::shared_ptr<Lame::Material> i_material);
 
 	Lame::Graphics *graphics = nullptr;
-	Engine::World *world = nullptr;
+	Lame::World *world = nullptr;
 
 	std::shared_ptr<Lame::Effect> sprite_effect;
 
@@ -39,7 +40,7 @@ namespace
 
 	void HandleInput(float deltaTime);
 
-	bool Contacting(std::shared_ptr<Engine::GameObject> go1, std::shared_ptr<Engine::GameObject> go2, const float& go1Size, const float& go2Size);
+	bool Contacting(std::shared_ptr<Lame::GameObject> go1, std::shared_ptr<Lame::GameObject> go2, const float& go1Size, const float& go2Size);
 	uint8_t GetNumberKeyPressed();
 }
 
@@ -49,7 +50,7 @@ namespace Gameplay
 	{
 		//generate container/manager objects
 		{
-			world = new Engine::World();
+			world = new Lame::World();
 			if (!world)
 			{
 				Shutdown();
@@ -75,14 +76,14 @@ namespace Gameplay
 			std::string error;
 			if (!eae6320::Time::Initialize(&error))
 			{
-				System::UserOutput::Display(error, "Time initialization error");
+				Lame::UserOutput::Display(error, "Time initialization error");
 				Shutdown();
 				return false;
 			}
 		}
 
 		//initial camera position
-		graphics->camera()->gameObject()->transform().position(Engine::Vector3(0, 0, 15));
+		graphics->camera()->gameObject()->transform().position(Lame::Vector3(0, 0, 15));
 		graphics->camera()->near_clip_plane(1.0f);
 		graphics->camera()->far_clip_plane(5000.0f);
 
@@ -111,9 +112,9 @@ namespace Gameplay
 			Lame::Sprite::Create(
 			sprite_effect,
 			std::shared_ptr<Lame::Texture>(Lame::Texture::Create(graphics->context(), "data/alpha.DDS")),
-			Engine::Vector2::one * 0.1f,
+			Lame::Vector2::one * 0.1f,
 			0.2f,
-			Engine::Rectangle2D::CreateTLNormalized() ));
+			Lame::Rectangle2D::CreateTLNormalized() ));
 		if (!sprite || !graphics->Add(sprite))
 		{
 			Shutdown();
@@ -123,8 +124,8 @@ namespace Gameplay
 		number = std::shared_ptr<Lame::Sprite>(Lame::Sprite::Create(
 			sprite_effect,
 			std::shared_ptr<Lame::Texture>(Lame::Texture::Create(graphics->context(), "data/numbers.DDS")),
-			Engine::Rectangle2D(Engine::Vector2::one * 0.8f, Engine::Vector2(0.2f, 0.3f)),
-			Engine::Rectangle2D::CreateTLNormalized() ));
+			Lame::Rectangle2D(Lame::Vector2::one * 0.8f, Lame::Vector2(0.2f, 0.3f)),
+			Lame::Rectangle2D::CreateTLNormalized() ));
 		if (!number || !graphics->Add(number))
 		{
 			Shutdown();
@@ -145,11 +146,11 @@ namespace Gameplay
 #ifdef ENABLE_DEBUG_RENDERING
 		graphics->debug_renderer()->AddBox(
 			true, 
-			Engine::Vector3::one * 250.0f,
-			Engine::Transform::CreateDefault());
+			Lame::Vector3::one * 250.0f,
+			Lame::Transform::CreateDefault());
 
-		graphics->debug_renderer()->AddLine(Engine::Vector3::zero, Engine::Vector3(0, 0, -1000), Lame::Color32::blue);
-		graphics->debug_renderer()->AddLine(Engine::Vector3(0, 100, 0), Engine::Vector3(0, 100, -1000), Lame::Color32::red);
+		graphics->debug_renderer()->AddLine(Lame::Vector3::zero, Lame::Vector3(0, 0, -1000), Lame::Color32::blue);
+		graphics->debug_renderer()->AddLine(Lame::Vector3(0, 100, 0), Lame::Vector3(0, 100, -1000), Lame::Color32::red);
 
 #endif
 
@@ -181,7 +182,7 @@ namespace
 {
 	uint8_t GetNumberKeyPressed()
 	{
-		using namespace System::UserInput;
+		using namespace Lame::UserInput;
 		if (Keyboard::Pressed(Keyboard::Alpha0))
 			return 0;
 		else if (Keyboard::Pressed(Keyboard::Alpha1))
@@ -207,11 +208,11 @@ namespace
 
 	void HandleInput(float deltaTime)
 	{
-		using namespace System::UserInput;
-		using namespace Engine;
+		using namespace Lame::UserInput;
+		using namespace Lame;
 
 		const float movementAmount = 300.0f * deltaTime;
-		std::shared_ptr<Engine::GameObject> movableObject = graphics->camera()->gameObject();
+		std::shared_ptr<Lame::GameObject> movableObject = graphics->camera()->gameObject();
 		Vector3 movementVector = Vector3::zero;
 		if (Keyboard::Pressed(Keyboard::W))						//forward
 			movementVector += Vector3::forward;
@@ -227,9 +228,9 @@ namespace
 			movementVector += Vector3::down;
 
 		movementVector = graphics->camera()->gameObject()->transform().rotation() * movementVector * movementAmount;
-		if (!Engine::Math::Float::IsNaN(movementVector.x()) &&
-			!Engine::Math::Float::IsNaN(movementVector.y()) &&
-			!Engine::Math::Float::IsNaN(movementVector.z()))
+		if (!Lame::Math::Float::IsNaN(movementVector.x()) &&
+			!Lame::Math::Float::IsNaN(movementVector.y()) &&
+			!Lame::Math::Float::IsNaN(movementVector.z()))
 		{
 			graphics->camera()->gameObject()->transform().Move(movementVector);
 		}
@@ -258,7 +259,7 @@ namespace
 		}
 	}
 
-	bool Contacting(std::shared_ptr<Engine::GameObject> go1, std::shared_ptr<Engine::GameObject> go2, const float& go1Size, const float& go2Size)
+	bool Contacting(std::shared_ptr<Lame::GameObject> go1, std::shared_ptr<Lame::GameObject> go2, const float& go1Size, const float& go2Size)
 	{
 		return go1->transform().position().distance(go2->transform().position()) <= go1Size + go2Size;
 	}
@@ -289,7 +290,7 @@ namespace
 		using namespace Lame;
 
 		//create the gameObject
-		std::shared_ptr<Engine::GameObject> go = world->AddNewGameObject();
+		std::shared_ptr<Lame::GameObject> go = world->AddNewGameObject();
 		if (!go)
 			return nullptr;
 

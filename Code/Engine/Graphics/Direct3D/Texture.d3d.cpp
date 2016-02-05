@@ -47,7 +47,7 @@ namespace Lame
 				error << "Out of memory";
 				break;
 			}
-			System::UserOutput::Display(error.str(), "DirectX Texture Load Error");
+			Lame::UserOutput::Display(error.str(), "DirectX Texture Load Error");
 			return nullptr;
 		}
 
@@ -63,7 +63,7 @@ namespace Lame
 		{
 			std::stringstream error;
 			error << "Insufficient memory to create texture for " << i_path;
-			System::UserOutput::Display(error.str(), "Texture Load Error");
+			Lame::UserOutput::Display(error.str(), "Texture Load Error");
 			d3dtexture->Release();
 			return nullptr;
 		}

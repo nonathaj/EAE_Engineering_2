@@ -2,7 +2,7 @@
 #define _ENGINE_MATH_CQUATERNION_H
 
 //Based on https://cs.stanford.edu/~acoates/quaternion.h
-namespace Engine
+namespace Lame
 {
 	class Vector3;
 

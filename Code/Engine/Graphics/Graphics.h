@@ -15,6 +15,7 @@ namespace Lame
 	class RenderableComponent;
 	class Effect;
 	class Sprite;
+	class Rectangle2D;
 
 	class Graphics
 	{
@@ -42,8 +43,10 @@ namespace Lame
 		DebugRenderer* debug_renderer() const { return debug_renderer_.get(); }
 #endif
 
+		static Lame::Rectangle2D GetRealScreenCoord(const Lame::Rectangle2D& i_virtual_screen_coord);
+		static Lame::Rectangle2D GetVirtualScreenCoord(const Lame::Rectangle2D& i_real_screen_coord);
 	private:
-		Graphics(std::shared_ptr<Context> i_context, std::shared_ptr<CameraComponent> i_camera, std::shared_ptr<Engine::GameObject> i_camera_gamebject);
+		Graphics(std::shared_ptr<Context> i_context, std::shared_ptr<CameraComponent> i_camera, std::shared_ptr<Lame::GameObject> i_camera_gamebject);
 
 		//Do not allow Graphics to be managed without pointers
 		Graphics();
@@ -57,9 +60,8 @@ namespace Lame
 #ifdef ENABLE_DEBUG_RENDERING
 		std::shared_ptr<DebugRenderer> debug_renderer_;
 #endif
-
 		//store the camera's gameobject, so it lives for the duration of this graphics
-		std::shared_ptr<Engine::GameObject> camera_gamebject_;
+		std::shared_ptr<Lame::GameObject> camera_gamebject_;
 		std::shared_ptr<CameraComponent> camera_;
 	};
 

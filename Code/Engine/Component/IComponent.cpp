@@ -2,7 +2,7 @@
 #include "IComponent.h"
 #include "GameObject.h"
 
-namespace Engine
+namespace Lame
 {
 	IComponent::IComponent(std::weak_ptr<GameObject> go) : 
 		gameObject_(go), enabled_(true)

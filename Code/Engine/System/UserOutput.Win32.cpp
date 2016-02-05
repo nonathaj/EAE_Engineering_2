@@ -2,7 +2,7 @@
 #include "UserOutput.h"
 #include "../Windows/Includes.h"
 
-namespace System
+namespace Lame
 {
 	namespace UserOutput
 	{

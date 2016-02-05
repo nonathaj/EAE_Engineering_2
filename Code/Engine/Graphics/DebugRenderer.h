@@ -15,15 +15,11 @@
 #include "Effect.h"
 #include "../Component/Transform.h"
 
-namespace Engine
+namespace Lame
 {
 	class Vector3;
 	class Quaternion;
 	class Matrix4x4;
-}
-
-namespace Lame
-{
 	class Color32;
 	class Context;
 	class Mesh;
@@ -32,22 +28,22 @@ namespace Lame
 	{
 		struct DebugMesh
 		{
-			Engine::Transform transform;
+			Lame::Transform transform;
 			std::shared_ptr<Lame::Mesh> mesh;
 		};
 	public:
 		static DebugRenderer* Create(std::shared_ptr<Lame::Context> i_context, const size_t i_line_count);
 
-		bool AddLine(const Engine::Vector3& i_start, const Engine::Vector3& i_end, const Lame::Color32& i_start_color, const Lame::Color32& i_end_color);
-		bool AddLine(const Engine::Vector3& i_start, const Engine::Vector3& i_end, const Lame::Color32& i_color);
+		bool AddLine(const Lame::Vector3& i_start, const Lame::Vector3& i_end, const Lame::Color32& i_start_color, const Lame::Color32& i_end_color);
+		bool AddLine(const Lame::Vector3& i_start, const Lame::Vector3& i_end, const Lame::Color32& i_color);
 
-		bool AddMesh(std::shared_ptr<Lame::Mesh> i_mesh, const Engine::Transform& i_transform, const bool i_render_as_wireframe);
+		bool AddMesh(std::shared_ptr<Lame::Mesh> i_mesh, const Lame::Transform& i_transform, const bool i_render_as_wireframe);
 
-		bool AddBox(const bool i_render_wireframe, const Engine::Vector3& i_size, const Engine::Transform& i_transform, const Color32& i_color = Color32::white);
-		bool AddSphere(const bool i_render_wireframe, const float i_radius, const Engine::Transform& i_transform, const Color32& i_color = Color32::white);
-		bool AddCylinder(const bool i_render_wireframe, const float i_top_radius, const float i_bottom_radius, const float i_height, const Engine::Transform& i_transform, const Color32& i_color = Color32::white);
+		bool AddBox(const bool i_render_wireframe, const Lame::Vector3& i_size, const Lame::Transform& i_transform, const Color32& i_color = Color32::white);
+		bool AddSphere(const bool i_render_wireframe, const float i_radius, const Lame::Transform& i_transform, const Color32& i_color = Color32::white);
+		bool AddCylinder(const bool i_render_wireframe, const float i_top_radius, const float i_bottom_radius, const float i_height, const Lame::Transform& i_transform, const Color32& i_color = Color32::white);
 
-		bool Render(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen);
+		bool Render(const Lame::Matrix4x4& i_worldToView, const Lame::Matrix4x4& i_viewToScreen);
 
 		std::shared_ptr<Lame::Effect> get_line_effect() const { return line_effect; }
 		std::shared_ptr<Lame::Effect> get_solid_shape_effect() const { return solid_shape_effect; }
@@ -58,9 +54,9 @@ namespace Lame
 		DebugRenderer(const DebugRenderer &i_other);
 		DebugRenderer& operator=(const DebugRenderer &i_other);
 
-		bool RenderLines(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen);
-		bool RenderSolidMeshes(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen);
-		bool RenderWireframeMeshes(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen);
+		bool RenderLines(const Lame::Matrix4x4& i_worldToView, const Lame::Matrix4x4& i_viewToScreen);
+		bool RenderSolidMeshes(const Lame::Matrix4x4& i_worldToView, const Lame::Matrix4x4& i_viewToScreen);
+		bool RenderWireframeMeshes(const Lame::Matrix4x4& i_worldToView, const Lame::Matrix4x4& i_viewToScreen);
 
 		std::shared_ptr<Lame::Effect> line_effect;
 		std::shared_ptr<Lame::Effect> solid_shape_effect;

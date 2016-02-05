@@ -52,7 +52,7 @@ namespace Lame
 #endif
 
 		static Effect* Create(std::shared_ptr<Context> i_context, const std::string& i_effect_path);
-		static Effect* Create(std::shared_ptr<Context> i_context, const char* i_vertex_path, const char* i_fragment_path, Engine::EnumMask<RenderState> i_renderMask);
+		static Effect* Create(std::shared_ptr<Context> i_context, const char* i_vertex_path, const char* i_fragment_path, Lame::EnumMask<RenderState> i_renderMask);
 		~Effect();
 
 		bool Bind();
@@ -61,9 +61,9 @@ namespace Lame
 		bool CacheConstant(const Shader &i_shader, const std::string &i_constant, ConstantHandle &o_constantId);
 
 		//sets the value of a cache'd constant
-		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Engine::Vector3 &i_val);
+		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Lame::Vector3 &i_val);
 		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Color& i_val);
-		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Engine::Matrix4x4 &i_val);
+		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Lame::Matrix4x4 &i_val);
 		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const float *i_val, const size_t &i_val_count);
 		bool SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Lame::Texture *i_val
 #if defined( LAME_EFFECT_TEXTURE_INDEX_REQUIRED_TO_SET_TEXTURE )
@@ -72,7 +72,7 @@ namespace Lame
 			);
 
 		std::shared_ptr<Context> get_context() { return context; }
-		Engine::EnumMask<RenderState> render_mask() const { return renderMask; }
+		Lame::EnumMask<RenderState> render_mask() const { return renderMask; }
 
 		bool has_transparency() const { return renderMask.test(RenderState::Transparency); }
 		void has_transparency(const bool i_val) { renderMask.set(RenderState::Transparency, i_val); }
@@ -90,7 +90,7 @@ namespace Lame
 		void is_wireframe(const bool i_val) { renderMask.set(RenderState::Wireframe, i_val); }
 
 	private:
-		Effect(std::shared_ptr<Context> i_context, Engine::EnumMask<RenderState> i_renderMask) : context(i_context), renderMask(i_renderMask) {}
+		Effect(std::shared_ptr<Context> i_context, Lame::EnumMask<RenderState> i_renderMask) : context(i_context), renderMask(i_renderMask) {}
 
 		//Do not allow Effects to be managed without pointers
 		Effect();
@@ -98,7 +98,7 @@ namespace Lame
 		Effect& operator=(const Effect &i_mesh);
 
 		std::shared_ptr<Context> context;
-		Engine::EnumMask<RenderState> renderMask;
+		Lame::EnumMask<RenderState> renderMask;
 #if EAE6320_PLATFORM_D3D
 		IDirect3DVertexShader9 *vertexShader;
 		IDirect3DPixelShader9 *fragmentShader;

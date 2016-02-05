@@ -48,7 +48,7 @@ namespace Lame
 					std::stringstream errorMessage;
 					errorMessage << "OpenGL failed to set the " << attributes[x].identifier << " vertex attribute: " <<
 						reinterpret_cast<const char*>(gluErrorString(errorCode));
-					System::UserOutput::Display(errorMessage.str());
+					Lame::UserOutput::Display(errorMessage.str());
 					return false;
 				}
 			}
@@ -57,7 +57,7 @@ namespace Lame
 				std::stringstream errorMessage;
 				errorMessage << "OpenGL failed to set the " << attributes[x].identifier << " vertex attribute: " <<
 					reinterpret_cast<const char*>(gluErrorString(errorCode));
-				System::UserOutput::Display(errorMessage.str());
+				Lame::UserOutput::Display(errorMessage.str());
 				return false;
 			}
 		}

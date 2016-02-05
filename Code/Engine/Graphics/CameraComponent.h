@@ -8,14 +8,14 @@
 
 namespace Lame
 {
-	class CameraComponent : public Engine::IComponent
+	class CameraComponent : public Lame::IComponent
 	{
 		ADD_TYPEID()
 	public:
-		CameraComponent(std::weak_ptr<Engine::GameObject> go, std::shared_ptr<Context> contextPtr, float i_vertical_fov_degree = 60.0f, float i_near_clip_plane = 0.1f, float i_far_clip_plane = 100.0f);
+		CameraComponent(std::weak_ptr<Lame::GameObject> go, std::shared_ptr<Context> contextPtr, float i_vertical_fov_degree = 60.0f, float i_near_clip_plane = 0.1f, float i_far_clip_plane = 100.0f);
 
-		Engine::Matrix4x4 WorldToView() const;
-		Engine::Matrix4x4 ViewToScreen() const;
+		Lame::Matrix4x4 WorldToView() const;
+		Lame::Matrix4x4 ViewToScreen() const;
 
 		float near_clip_plane() const { return near_clip_plane_; }
 		void near_clip_plane(const float& i_near_clip_plane) { near_clip_plane_ = i_near_clip_plane; }

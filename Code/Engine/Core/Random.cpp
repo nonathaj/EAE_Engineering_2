@@ -14,7 +14,7 @@ namespace
 	std::uniform_real_distribution<float> distribution(0.0f, 1.0f + std::numeric_limits<float>::epsilon());
 }
 
-namespace Engine
+namespace Lame
 {
 	namespace Random
 	{

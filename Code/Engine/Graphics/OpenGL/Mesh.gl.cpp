@@ -33,7 +33,7 @@ namespace Lame
 			{
 				std::stringstream errorMessage;
 				errorMessage << "OpenGL failed to delete the vertex array: " << reinterpret_cast<const char*>(gluErrorString(errorCode));
-				System::UserOutput::Display(errorMessage.str());
+				Lame::UserOutput::Display(errorMessage.str());
 			}
 			vertex_array_id_ = 0;
 		}
@@ -43,7 +43,7 @@ namespace Lame
 	{
 		if (i_index_count % 3 != 0)		//index buffer must be a list of triangles
 		{
-			System::UserOutput::Display("Cannot create a Mesh with non-triangular data. (Ensure number of indices is divisible by 3)");
+			Lame::UserOutput::Display("Cannot create a Mesh with non-triangular data. (Ensure number of indices is divisible by 3)");
 			return nullptr;
 		}
 		SwapIndexOrder(i_indices, i_index_count);
@@ -57,7 +57,7 @@ namespace Lame
 	{
 		if (i_index_count % 3 != 0)		//index buffer must be a list of triangles
 		{
-			System::UserOutput::Display("Cannot create a Mesh with non-triangular data. (Ensure number of indices is divisible by 3)");
+			Lame::UserOutput::Display("Cannot create a Mesh with non-triangular data. (Ensure number of indices is divisible by 3)");
 			return nullptr;
 		}
 
@@ -81,7 +81,7 @@ namespace Lame
 					wereThereErrors = true;
 					std::stringstream errorMessage;
 					errorMessage << "OpenGL failed to bind the vertex array: " << reinterpret_cast<const char*>(gluErrorString(errorCode));
-					System::UserOutput::Display(errorMessage.str());
+					Lame::UserOutput::Display(errorMessage.str());
 					goto OnExit;
 				}
 			}
@@ -91,7 +91,7 @@ namespace Lame
 				std::stringstream errorMessage;
 				errorMessage << "OpenGL failed to get an unused vertex array ID: " <<
 					reinterpret_cast<const char*>(gluErrorString(errorCode));
-				System::UserOutput::Display(errorMessage.str());
+				Lame::UserOutput::Display(errorMessage.str());
 				goto OnExit;
 			}
 		}
@@ -111,7 +111,7 @@ namespace Lame
 					std::stringstream errorMessage;
 					errorMessage << "OpenGL failed to bind the vertex buffer: " <<
 						reinterpret_cast<const char*>(gluErrorString(errorCode));
-					System::UserOutput::Display(errorMessage.str());
+					Lame::UserOutput::Display(errorMessage.str());
 					goto OnExit;
 				}
 			}
@@ -121,7 +121,7 @@ namespace Lame
 				std::stringstream errorMessage;
 				errorMessage << "OpenGL failed to get an unused vertex buffer ID: " <<
 					reinterpret_cast<const char*>(gluErrorString(errorCode));
-				System::UserOutput::Display(errorMessage.str());
+				Lame::UserOutput::Display(errorMessage.str());
 				goto OnExit;
 			}
 		}
@@ -137,7 +137,7 @@ namespace Lame
 				std::stringstream errorMessage;
 				errorMessage << "OpenGL failed to allocate the vertex buffer: " <<
 					reinterpret_cast<const char*>(gluErrorString(errorCode));
-				System::UserOutput::Display(errorMessage.str());
+				Lame::UserOutput::Display(errorMessage.str());
 				goto OnExit;
 			}
 		}
@@ -162,7 +162,7 @@ namespace Lame
 					std::stringstream errorMessage;
 					errorMessage << "OpenGL failed to bind the index buffer: " <<
 						reinterpret_cast<const char*>(gluErrorString(errorCode));
-					System::UserOutput::Display(errorMessage.str());
+					Lame::UserOutput::Display(errorMessage.str());
 					goto OnExit;
 				}
 			}
@@ -172,7 +172,7 @@ namespace Lame
 				std::stringstream errorMessage;
 				errorMessage << "OpenGL failed to get an unused index buffer ID: " <<
 					reinterpret_cast<const char*>(gluErrorString(errorCode));
-				System::UserOutput::Display(errorMessage.str());
+				Lame::UserOutput::Display(errorMessage.str());
 				goto OnExit;
 			}
 		}
@@ -189,7 +189,7 @@ namespace Lame
 				std::stringstream errorMessage;
 				errorMessage << "OpenGL failed to allocate the index buffer: " <<
 					reinterpret_cast<const char*>(gluErrorString(errorCode));
-				System::UserOutput::Display(errorMessage.str());
+				Lame::UserOutput::Display(errorMessage.str());
 				goto OnExit;
 			}
 		}
@@ -222,7 +222,7 @@ namespace Lame
 						std::stringstream errorMessage;
 						errorMessage << "OpenGL failed to delete the vertex buffer: " <<
 							reinterpret_cast<const char*>(gluErrorString(errorCode));
-						System::UserOutput::Display(errorMessage.str());
+						Lame::UserOutput::Display(errorMessage.str());
 					}
 					vertexBufferId = 0;
 				}
@@ -239,7 +239,7 @@ namespace Lame
 						std::stringstream errorMessage;
 						errorMessage << "\nOpenGL failed to delete the index buffer: " <<
 							reinterpret_cast<const char*>(gluErrorString(errorCode));
-						System::UserOutput::Display(errorMessage.str());
+						Lame::UserOutput::Display(errorMessage.str());
 					}
 					indexBufferId = 0;
 				}
@@ -250,7 +250,7 @@ namespace Lame
 				std::stringstream errorMessage;
 				errorMessage << "OpenGL failed to unbind the vertex array: " <<
 					reinterpret_cast<const char*>(gluErrorString(errorCode));
-				System::UserOutput::Display(errorMessage.str());
+				Lame::UserOutput::Display(errorMessage.str());
 			}
 		}
 
@@ -276,7 +276,7 @@ namespace Lame
 			glBindVertexArray(vertex_array_id_);
 			if (glGetError() != GL_NO_ERROR)
 			{
-				System::UserOutput::Display("Failed to bind vertex array");
+				Lame::UserOutput::Display("Failed to bind vertex array");
 				return false;
 			}
 		}
@@ -299,7 +299,7 @@ namespace Lame
 			}
 			else
 			{
-				System::UserOutput::Display("Error while attempting to draw mesh: %s", reinterpret_cast<const char *>(gluErrorString(errorCode)));
+				Lame::UserOutput::Display("Error while attempting to draw mesh: %s", reinterpret_cast<const char *>(gluErrorString(errorCode)));
 				return false;
 			}
 		}

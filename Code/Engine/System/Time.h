@@ -10,7 +10,7 @@
 
 	Tracks the deltaTime since the last frame, and the elapsed time since the game began.
 */
-namespace Engine
+namespace Lame
 {
 	namespace Time
 	{

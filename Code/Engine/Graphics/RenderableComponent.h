@@ -8,23 +8,23 @@
 
 namespace Lame
 {
-	class RenderableComponent : public Engine::IComponent
+	class RenderableComponent : public Lame::IComponent
 	{
 		ADD_TYPEID()
 	public: 		
-		static RenderableComponent* Create(std::weak_ptr<Engine::GameObject> go, std::shared_ptr<Mesh> i_mesh, std::shared_ptr<Material> i_material);
+		static RenderableComponent* Create(std::weak_ptr<Lame::GameObject> go, std::shared_ptr<Mesh> i_mesh, std::shared_ptr<Material> i_material);
 
-		bool Render(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen) const;
+		bool Render(const Lame::Matrix4x4& i_worldToView, const Lame::Matrix4x4& i_viewToScreen) const;
 
-		bool SetLocalToWorld(const Engine::Matrix4x4& i_matrix) const;
-		bool SetWorldToView(const Engine::Matrix4x4& i_matrix) const;
-		bool SetViewToScreen(const Engine::Matrix4x4& i_matrix) const;
+		bool SetLocalToWorld(const Lame::Matrix4x4& i_matrix) const;
+		bool SetWorldToView(const Lame::Matrix4x4& i_matrix) const;
+		bool SetViewToScreen(const Lame::Matrix4x4& i_matrix) const;
 
 		inline std::shared_ptr<Mesh> mesh() const { return mesh_; }
 		inline std::shared_ptr<Material> material() const { return material_; }
 	private:
 		RenderableComponent();
-		RenderableComponent(std::weak_ptr<Engine::GameObject> go) : IComponent(go) { }
+		RenderableComponent(std::weak_ptr<Lame::GameObject> go) : IComponent(go) { }
 
 		std::shared_ptr<Mesh> mesh_;
 		std::shared_ptr<Material> material_;

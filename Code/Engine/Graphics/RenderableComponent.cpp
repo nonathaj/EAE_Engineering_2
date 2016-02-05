@@ -11,7 +11,7 @@ namespace Lame
 	char const * const RenderableComponent::WorldToViewUniformName = "world_to_view";
 	char const * const RenderableComponent::ViewToScreenUniformName = "view_to_screen";
 
-	RenderableComponent* RenderableComponent::Create(std::weak_ptr<Engine::GameObject> go, std::shared_ptr<Mesh> i_mesh, std::shared_ptr<Material> i_material)
+	RenderableComponent* RenderableComponent::Create(std::weak_ptr<Lame::GameObject> go, std::shared_ptr<Mesh> i_mesh, std::shared_ptr<Material> i_material)
 	{
 		if (go.expired() || !i_mesh || !i_material)
 			return nullptr;
@@ -24,7 +24,7 @@ namespace Lame
 			!i_material->effect()->CacheConstant(Effect::Shader::Vertex, WorldToViewUniformName, worldToViewUniformId) ||
 			!i_material->effect()->CacheConstant(Effect::Shader::Vertex, ViewToScreenUniformName, viewToScreenUniformId) )
 		{
-			System::UserOutput::Display("Failed to find all required uniform constants for RenderableComponent.");
+			Lame::UserOutput::Display("Failed to find all required uniform constants for RenderableComponent.");
 			return nullptr;
 		}
 
@@ -40,9 +40,9 @@ namespace Lame
 		return comp;
 	}
 
-	bool RenderableComponent::Render(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen) const
+	bool RenderableComponent::Render(const Lame::Matrix4x4& i_worldToView, const Lame::Matrix4x4& i_viewToScreen) const
 	{
-		std::shared_ptr<Engine::GameObject> go = gameObject();
+		std::shared_ptr<Lame::GameObject> go = gameObject();
 		if (go)
 		{
 			//if the gameobject or this component are disabled, we don't need to render anything
@@ -59,17 +59,17 @@ namespace Lame
 			return false;
 	}
 	
-	bool RenderableComponent::SetLocalToWorld(const Engine::Matrix4x4& i_matrix) const
+	bool RenderableComponent::SetLocalToWorld(const Lame::Matrix4x4& i_matrix) const
 	{
 		return material()->effect()->SetConstant(Effect::Shader::Vertex, localToWorldUniformId, i_matrix);
 	}
 
-	bool RenderableComponent::SetWorldToView(const Engine::Matrix4x4& i_matrix) const
+	bool RenderableComponent::SetWorldToView(const Lame::Matrix4x4& i_matrix) const
 	{
 		return material()->effect()->SetConstant(Effect::Shader::Vertex, worldToViewUniformId, i_matrix);
 	}
 
-	bool RenderableComponent::SetViewToScreen(const Engine::Matrix4x4& i_matrix) const
+	bool RenderableComponent::SetViewToScreen(const Lame::Matrix4x4& i_matrix) const
 	{
 		return material()->effect()->SetConstant(Effect::Shader::Vertex, viewToScreenUniformId, i_matrix);
 	}

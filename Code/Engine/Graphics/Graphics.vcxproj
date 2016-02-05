@@ -74,6 +74,7 @@
     <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Context.h" />
+    <ClInclude Include="DebugMenu.h" />
     <ClInclude Include="DebugRenderer.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="Graphics.h" />

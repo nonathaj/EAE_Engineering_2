@@ -1,5 +1,5 @@
 
-namespace Engine
+namespace Lame
 {
 	namespace TypeHandling
 	{
@@ -33,7 +33,7 @@ namespace Engine
 template<typename To, typename From>
 inline To * attempt_cast(From * i_pFrom)
 {
-	if (i_pFrom && i_pFrom->GetTypeID() == Engine::TypeHandling::GetTypeID<To>())
+	if (i_pFrom && i_pFrom->GetTypeID() == Lame::TypeHandling::GetTypeID<To>())
 		return static_cast<To *>(i_pFrom);
 	else
 		return nullptr;
@@ -42,7 +42,7 @@ inline To * attempt_cast(From * i_pFrom)
 template<typename To, typename From>
 inline const To * attempt_cast(const From * i_pFrom)
 {
-	if (i_pFrom && i_pFrom->GetTypeID() == Engine::TypeHandling::GetTypeID<To>())
+	if (i_pFrom && i_pFrom->GetTypeID() == Lame::TypeHandling::GetTypeID<To>())
 		return static_cast<const To *>(i_pFrom);
 	else
 		return nullptr;
@@ -51,7 +51,7 @@ inline const To * attempt_cast(const From * i_pFrom)
 template<typename To, typename From>
 inline std::shared_ptr<To> attempt_pointer_cast(const std::shared_ptr<From>& i_from)
 {
-	if (i_from && i_from->GetTypeID() == Engine::TypeHandling::GetTypeID<To>())
+	if (i_from && i_from->GetTypeID() == Lame::TypeHandling::GetTypeID<To>())
 		return std::static_pointer_cast<To>(i_from);
 	else
 		return nullptr;

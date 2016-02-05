@@ -42,13 +42,13 @@ namespace Lame
 			result = i_context->get_direct3dDevice()->SetVertexDeclaration(*o_vertex_declaration);
 			if (FAILED(result))
 			{
-				System::UserOutput::Display("Direct3D failed to set the vertex declaration");
+				Lame::UserOutput::Display("Direct3D failed to set the vertex declaration");
 				return false;
 			}
 		}
 		else
 		{
-			System::UserOutput::Display("Direct3D failed to create a Direct3D9 vertex declaration");
+			Lame::UserOutput::Display("Direct3D failed to create a Direct3D9 vertex declaration");
 			return false;
 		}
 		return true;

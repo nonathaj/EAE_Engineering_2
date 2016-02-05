@@ -25,7 +25,7 @@ namespace
 
 namespace Lame
 {
-	Effect* Effect::Create(std::shared_ptr<Context> i_context, const char* i_vertex_path, const char* i_fragment_path, Engine::EnumMask<RenderState> i_renderMask)
+	Effect* Effect::Create(std::shared_ptr<Context> i_context, const char* i_vertex_path, const char* i_fragment_path, Lame::EnumMask<RenderState> i_renderMask)
 	{
 		IDirect3DVertexShader9* vertexShader = nullptr;
 		ID3DXConstantTable *vertexConstantTable = nullptr;
@@ -47,7 +47,7 @@ namespace Lame
 		}
 		else
 		{
-			System::UserOutput::Display("Failed to create Effect, due to insufficient memory.", "Effect Loading Error");
+			Lame::UserOutput::Display("Failed to create Effect, due to insufficient memory.", "Effect Loading Error");
 		}
 		return effect;
 	}
@@ -56,7 +56,7 @@ namespace Lame
 	{
 		if (!context)
 		{
-			System::UserOutput::Display("Direct3D Context has been destroyed, failed to bind Effect.", "Effect bind failure");
+			Lame::UserOutput::Display("Direct3D Context has been destroyed, failed to bind Effect.", "Effect bind failure");
 			return false;
 		}
 
@@ -120,7 +120,7 @@ namespace Lame
 	{
 		if (!context)
 		{
-			System::UserOutput::Display("Direct3D Context has been destroyed before effect.", "WARNING: Effect destruction after context");
+			Lame::UserOutput::Display("Direct3D Context has been destroyed before effect.", "WARNING: Effect destruction after context");
 		}
 
 		if (vertexConstantTable)
@@ -159,12 +159,12 @@ namespace Lame
 			return false;
 	}
 
-	bool Effect::SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Engine::Matrix4x4 &i_val)
+	bool Effect::SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Lame::Matrix4x4 &i_val)
 	{
 		HRESULT result = get_constant_table(i_shader)->SetMatrixTranspose(context->get_direct3dDevice(), std::get<0>(i_constant), reinterpret_cast<const D3DXMATRIX*>(&i_val));
 		if (!SUCCEEDED(result))
 		{
-			System::UserOutput::Display("DirectX failed to set a constant uniform Matrix value.");
+			Lame::UserOutput::Display("DirectX failed to set a constant uniform Matrix value.");
 			return false;
 		}
 		return true;
@@ -175,7 +175,7 @@ namespace Lame
 		HRESULT result = get_constant_table(i_shader)->SetFloatArray(context->get_direct3dDevice(), std::get<0>(i_constant), i_val, static_cast<UINT>(i_val_count));
 		if (!SUCCEEDED(result))
 		{
-			System::UserOutput::Display("DirectX failed to set a constant uniform float array value.");
+			Lame::UserOutput::Display("DirectX failed to set a constant uniform float array value.");
 			return false;
 		}
 		return true;
@@ -186,7 +186,7 @@ namespace Lame
 		HRESULT result = context->get_direct3dDevice()->SetTexture(std::get<1>(i_constant), i_val->texture());
 		if (!SUCCEEDED(result))
 		{
-			System::UserOutput::Display("DirectX failed to set a constant uniform Texture value.");
+			Lame::UserOutput::Display("DirectX failed to set a constant uniform Texture value.");
 			return false;
 		}
 		return true;
@@ -200,7 +200,7 @@ namespace
 		char const * const errorHeader = "Fragment Shader Loading Error";
 
 		// Load the source code from file and compile it
-		char* compiledShader = System::File::LoadBinary(i_path);
+		char* compiledShader = Lame::File::LoadBinary(i_path);
 		if (!compiledShader)
 			return false;
 
@@ -209,7 +209,7 @@ namespace
 			&o_fragmentShader);
 		if (FAILED(result) || !o_fragmentShader)
 		{
-			System::UserOutput::Display("Direct3D failed to create the fragment shader", errorHeader);
+			Lame::UserOutput::Display("Direct3D failed to create the fragment shader", errorHeader);
 			return false;
 		}
 
@@ -217,7 +217,7 @@ namespace
 		result = D3DXGetShaderConstantTable(reinterpret_cast<const DWORD*>(compiledShader), o_fragmentConstantTable);
 		if (FAILED(result) || !o_fragmentConstantTable)
 		{
-			System::UserOutput::Display("Direct3D failed to load the Fragment Constant Table", errorHeader);
+			Lame::UserOutput::Display("Direct3D failed to load the Fragment Constant Table", errorHeader);
 			return false;
 		}
 		delete[] compiledShader;
@@ -229,7 +229,7 @@ namespace
 		char const * const errorHeader = "Vertex Shader Loading Error";
 
 		// Load the source code from file and compile it
-		char* compiledShader = System::File::LoadBinary(i_path);
+		char* compiledShader = Lame::File::LoadBinary(i_path);
 		if (!compiledShader)
 			return false;
 
@@ -238,7 +238,7 @@ namespace
 			&o_vertexShader);
 		if (FAILED(result) || !o_vertexShader)
 		{
-			System::UserOutput::Display("Direct3D failed to create the vertex shader", errorHeader);
+			Lame::UserOutput::Display("Direct3D failed to create the vertex shader", errorHeader);
 			return false;
 		}
 
@@ -246,7 +246,7 @@ namespace
 		result = D3DXGetShaderConstantTable(reinterpret_cast<const DWORD*>(compiledShader), o_vertexConstantTable);
 		if (FAILED(result) || !o_vertexConstantTable)
 		{
-			System::UserOutput::Display("Direct3D failed to load the Vertex Constant Table", errorHeader);
+			Lame::UserOutput::Display("Direct3D failed to load the Vertex Constant Table", errorHeader);
 			return false;
 		}
 

@@ -5,7 +5,7 @@
 
 #include "../Core/TypeHandling.h"
 
-namespace Engine
+namespace Lame
 {
 	class GameObject;
 

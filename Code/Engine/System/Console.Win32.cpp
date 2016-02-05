@@ -6,7 +6,7 @@
 #include "..\Windows\Includes.h"
 #include "Console.h"
 
-namespace System
+namespace Lame
 {
 	void ConsolePrint(bool i_displayFileAndLine, std::string i_file, const unsigned int i_line, std::string i_fmt, ...)
 	{
@@ -37,4 +37,4 @@ namespace System
 		OutputDebugStringA(strOutput);
 	}
 
-} // namespace Engine
+} // namespace Lame

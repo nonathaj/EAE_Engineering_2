@@ -35,7 +35,7 @@ namespace
 
 namespace Lame
 {
-	Effect* Effect::Create(std::shared_ptr<Context> i_context, const char* i_vertex_path, const char* i_fragment_path, Engine::EnumMask<RenderState> i_renderMask, bool requiresLocalToWorld)
+	Effect* Effect::Create(std::shared_ptr<Context> i_context, const char* i_vertex_path, const char* i_fragment_path, Lame::EnumMask<RenderState> i_renderMask, bool requiresLocalToWorld)
 	{
 		// A vertex shader is a program that operates on vertices.
 		// Its input comes from a C/C++ "draw call" and is:
@@ -71,14 +71,14 @@ namespace Lame
 				!effect->CacheConstant(Shader::Vertex, ViewToScreenUniformName, effect->viewToScreenUniformId))
 
 			{
-				System::UserOutput::Display("OpenGL failed to find all required uniform constants for effect.");
+				Lame::UserOutput::Display("OpenGL failed to find all required uniform constants for effect.");
 				delete effect;
 				return nullptr;
 			}
 		}
 		else
 		{
-			System::UserOutput::Display("Failed to create Effect, due to insufficient memory.", "Effect Loading Error");
+			Lame::UserOutput::Display("Failed to create Effect, due to insufficient memory.", "Effect Loading Error");
 		}
 		return effect;
 	}
@@ -143,7 +143,7 @@ namespace Lame
 				std::stringstream errorMessage;
 				errorMessage << "OpenGL failed to delete the program: " <<
 					reinterpret_cast<const char*>(gluErrorString(errorCode));
-				System::UserOutput::Display(errorMessage.str());
+				Lame::UserOutput::Display(errorMessage.str());
 			}
 			programId = 0;
 		}
@@ -155,7 +155,7 @@ namespace Lame
 		return o_constantId >= 0;
 	}
 
-	bool Effect::SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Engine::Matrix4x4 &i_val)
+	bool Effect::SetConstant(const Shader &i_shader, const ConstantHandle &i_constant, const Lame::Matrix4x4 &i_val)
 	{
 		const GLboolean shouldTranspose = false; // Matrices are already in the correct format
 		glUniformMatrix4fv(i_constant, 1, shouldTranspose, reinterpret_cast<const GLfloat*>(&i_val));
@@ -165,7 +165,7 @@ namespace Lame
 		{
 			std::stringstream errorMessage;
 			errorMessage << "OpenGL failed to set a constant uniform value: " << reinterpret_cast<const char*>(gluErrorString(errorCode));
-			System::UserOutput::Display(errorMessage.str());
+			Lame::UserOutput::Display(errorMessage.str());
 			return false;
 		}
 		return true;
@@ -196,7 +196,7 @@ namespace Lame
 		{
 			std::stringstream errorMessage;
 			errorMessage << "OpenGL failed to set a constant uniform value: " << reinterpret_cast<const char*>(gluErrorString(errorCode)) << " (" << i_constant << ")";
-			System::UserOutput::Display(errorMessage.str());
+			Lame::UserOutput::Display(errorMessage.str());
 			return false;
 		}
 		return true;
@@ -212,7 +212,7 @@ namespace Lame
 			std::stringstream errorMessage;
 			errorMessage << "OpenGL failed to get activate texture unit " << i_index << ": " <<
 				reinterpret_cast<const char*>(gluErrorString(errorCode));
-			System::UserOutput::Display(errorMessage.str());
+			Lame::UserOutput::Display(errorMessage.str());
 			return false;
 		}
 
@@ -224,7 +224,7 @@ namespace Lame
 			std::stringstream errorMessage;
 			errorMessage << "OpenGL failed to bind texture to texture unit " << i_index << ": " <<
 				reinterpret_cast<const char*>(gluErrorString(errorCode));
-			System::UserOutput::Display(errorMessage.str());
+			Lame::UserOutput::Display(errorMessage.str());
 			return false;
 		}
 
@@ -236,7 +236,7 @@ namespace Lame
 			std::stringstream errorMessage;
 			errorMessage << "OpenGL failed to assign texture unit " << i_index << " to sampler uniform: " <<
 				reinterpret_cast<const char*>(gluErrorString(errorCode));
-			System::UserOutput::Display(errorMessage.str());
+			Lame::UserOutput::Display(errorMessage.str());
 			return false;
 		}
 
@@ -257,12 +257,12 @@ namespace
 				std::stringstream errorMessage;
 				errorMessage << "OpenGL failed to create a program: " <<
 					reinterpret_cast<const char*>(gluErrorString(errorCode));
-				System::UserOutput::Display(errorMessage.str());
+				Lame::UserOutput::Display(errorMessage.str());
 				return false;
 			}
 			else if (o_programId == 0)
 			{
-				System::UserOutput::Display("OpenGL failed to create a program");
+				Lame::UserOutput::Display("OpenGL failed to create a program");
 				return false;
 			}
 		}
@@ -304,7 +304,7 @@ namespace
 							std::stringstream errorMessage;
 							errorMessage << "OpenGL failed to get link info of the program: " <<
 								reinterpret_cast<const char*>(gluErrorString(errorCode));
-							System::UserOutput::Display(errorMessage.str());
+							Lame::UserOutput::Display(errorMessage.str());
 							return false;
 						}
 					}
@@ -313,7 +313,7 @@ namespace
 						std::stringstream errorMessage;
 						errorMessage << "OpenGL failed to get the length of the program link info: " <<
 							reinterpret_cast<const char*>(gluErrorString(errorCode));
-						System::UserOutput::Display(errorMessage.str());
+						Lame::UserOutput::Display(errorMessage.str());
 						return false;
 					}
 				}
@@ -328,7 +328,7 @@ namespace
 						{
 							std::stringstream errorMessage;
 							errorMessage << "The program failed to link:\n" << linkInfo;
-							System::UserOutput::Display(errorMessage.str());
+							Lame::UserOutput::Display(errorMessage.str());
 							return false;
 						}
 					}
@@ -337,7 +337,7 @@ namespace
 						std::stringstream errorMessage;
 						errorMessage << "OpenGL failed to find out if linking of the program succeeded: " <<
 							reinterpret_cast<const char*>(gluErrorString(errorCode));
-						System::UserOutput::Display(errorMessage.str());
+						Lame::UserOutput::Display(errorMessage.str());
 						return false;
 					}
 				}
@@ -347,7 +347,7 @@ namespace
 				std::stringstream errorMessage;
 				errorMessage << "OpenGL failed to link the program: " <<
 					reinterpret_cast<const char*>(gluErrorString(errorCode));
-				System::UserOutput::Display(errorMessage.str());
+				Lame::UserOutput::Display(errorMessage.str());
 				return false;
 			}
 		}
@@ -478,7 +478,7 @@ namespace
 			glGetBooleanv(GL_SHADER_COMPILER, &isShaderCompilingSupported);
 			if (!isShaderCompilingSupported)
 			{
-				System::UserOutput::Display("Compiling shaders at run-time isn't supported on this implementation (this should never happen)");
+				Lame::UserOutput::Display("Compiling shaders at run-time isn't supported on this implementation (this should never happen)");
 				return false;
 			}
 		}
@@ -496,7 +496,7 @@ namespace
 				if (!LoadAndAllocateShaderProgram(i_path.c_str(), shaderSource, fileSize, &errorMessage))
 				{
 					wereThereErrors = true;
-					System::UserOutput::Display(errorMessage);
+					Lame::UserOutput::Display(errorMessage);
 					goto OnExit;
 				}
 			}
@@ -510,13 +510,13 @@ namespace
 					std::stringstream errorMessage;
 					errorMessage << "OpenGL failed to get an unused fragment shader ID: " <<
 						reinterpret_cast<const char*>(gluErrorString(errorCode));
-					System::UserOutput::Display(errorMessage.str());
+					Lame::UserOutput::Display(errorMessage.str());
 					goto OnExit;
 				}
 				else if (fragmentShaderId == 0)
 				{
 					wereThereErrors = true;
-					System::UserOutput::Display("OpenGL failed to get an unused fragment shader ID");
+					Lame::UserOutput::Display("OpenGL failed to get an unused fragment shader ID");
 					goto OnExit;
 				}
 			}
@@ -537,7 +537,7 @@ namespace
 					std::stringstream errorMessage;
 					errorMessage << "OpenGL failed to set the fragment shader source code: " <<
 						reinterpret_cast<const char*>(gluErrorString(errorCode));
-					System::UserOutput::Display(errorMessage.str());
+					Lame::UserOutput::Display(errorMessage.str());
 					goto OnExit;
 				}
 			}
@@ -572,7 +572,7 @@ namespace
 							std::stringstream errorMessage;
 							errorMessage << "OpenGL failed to get compilation info of the fragment shader source code: " <<
 								reinterpret_cast<const char*>(gluErrorString(errorCode));
-							System::UserOutput::Display(errorMessage.str());
+							Lame::UserOutput::Display(errorMessage.str());
 							goto OnExit;
 						}
 					}
@@ -582,7 +582,7 @@ namespace
 						std::stringstream errorMessage;
 						errorMessage << "OpenGL failed to get the length of the fragment shader compilation info: " <<
 							reinterpret_cast<const char*>(gluErrorString(errorCode));
-						System::UserOutput::Display(errorMessage.str());
+						Lame::UserOutput::Display(errorMessage.str());
 						goto OnExit;
 					}
 				}
@@ -598,7 +598,7 @@ namespace
 							wereThereErrors = true;
 							std::stringstream errorMessage;
 							errorMessage << "The fragment shader failed to compile:\n" << compilationInfo;
-							System::UserOutput::Display(errorMessage.str());
+							Lame::UserOutput::Display(errorMessage.str());
 							goto OnExit;
 						}
 					}
@@ -608,7 +608,7 @@ namespace
 						std::stringstream errorMessage;
 						errorMessage << "OpenGL failed to find out if compilation of the fragment shader source code succeeded: " <<
 							reinterpret_cast<const char*>(gluErrorString(errorCode));
-						System::UserOutput::Display(errorMessage.str());
+						Lame::UserOutput::Display(errorMessage.str());
 						goto OnExit;
 					}
 				}
@@ -619,7 +619,7 @@ namespace
 				std::stringstream errorMessage;
 				errorMessage << "OpenGL failed to compile the fragment shader source code: " <<
 					reinterpret_cast<const char*>(gluErrorString(errorCode));
-				System::UserOutput::Display(errorMessage.str());
+				Lame::UserOutput::Display(errorMessage.str());
 				goto OnExit;
 			}
 		}
@@ -633,7 +633,7 @@ namespace
 				std::stringstream errorMessage;
 				errorMessage << "OpenGL failed to attach the fragment shader to the program: " <<
 					reinterpret_cast<const char*>(gluErrorString(errorCode));
-				System::UserOutput::Display(errorMessage.str());
+				Lame::UserOutput::Display(errorMessage.str());
 				goto OnExit;
 			}
 		}
@@ -653,7 +653,7 @@ namespace
 				std::stringstream errorMessage;
 				errorMessage << "OpenGL failed to delete the fragment shader ID: " <<
 					reinterpret_cast<const char*>(gluErrorString(errorCode));
-				System::UserOutput::Display(errorMessage.str());
+				Lame::UserOutput::Display(errorMessage.str());
 			}
 			fragmentShaderId = 0;
 		}
@@ -674,7 +674,7 @@ namespace
 			glGetBooleanv(GL_SHADER_COMPILER, &isShaderCompilingSupported);
 			if (!isShaderCompilingSupported)
 			{
-				System::UserOutput::Display("Compiling shaders at run-time isn't supported on this implementation (this should never happen)");
+				Lame::UserOutput::Display("Compiling shaders at run-time isn't supported on this implementation (this should never happen)");
 				return false;
 			}
 		}
@@ -692,7 +692,7 @@ namespace
 				if (!LoadAndAllocateShaderProgram(i_path.c_str(), shaderSource, fileSize, &errorMessage))
 				{
 					wereThereErrors = true;
-					System::UserOutput::Display(errorMessage);
+					Lame::UserOutput::Display(errorMessage);
 					goto OnExit;
 				}
 			}
@@ -706,13 +706,13 @@ namespace
 					std::stringstream errorMessage;
 					errorMessage << "OpenGL failed to get an unused vertex shader ID: " <<
 						reinterpret_cast<const char*>(gluErrorString(errorCode));
-					System::UserOutput::Display(errorMessage.str());
+					Lame::UserOutput::Display(errorMessage.str());
 					goto OnExit;
 				}
 				else if (vertexShaderId == 0)
 				{
 					wereThereErrors = true;
-					System::UserOutput::Display("OpenGL failed to get an unused vertex shader ID");
+					Lame::UserOutput::Display("OpenGL failed to get an unused vertex shader ID");
 					goto OnExit;
 				}
 			}
@@ -732,7 +732,7 @@ namespace
 					std::stringstream errorMessage;
 					errorMessage << "OpenGL failed to set the vertex shader source code: " <<
 						reinterpret_cast<const char*>(gluErrorString(errorCode));
-					System::UserOutput::Display(errorMessage.str());
+					Lame::UserOutput::Display(errorMessage.str());
 					goto OnExit;
 				}
 			}
@@ -767,7 +767,7 @@ namespace
 							std::stringstream errorMessage;
 							errorMessage << "OpenGL failed to get compilation info of the vertex shader source code: " <<
 								reinterpret_cast<const char*>(gluErrorString(errorCode));
-							System::UserOutput::Display(errorMessage.str());
+							Lame::UserOutput::Display(errorMessage.str());
 							goto OnExit;
 						}
 					}
@@ -777,7 +777,7 @@ namespace
 						std::stringstream errorMessage;
 						errorMessage << "OpenGL failed to get the length of the vertex shader compilation info: " <<
 							reinterpret_cast<const char*>(gluErrorString(errorCode));
-						System::UserOutput::Display(errorMessage.str());
+						Lame::UserOutput::Display(errorMessage.str());
 						goto OnExit;
 					}
 				}
@@ -793,7 +793,7 @@ namespace
 							wereThereErrors = true;
 							std::stringstream errorMessage;
 							errorMessage << "The vertex shader failed to compile:\n" << compilationInfo;
-							System::UserOutput::Display(errorMessage.str());
+							Lame::UserOutput::Display(errorMessage.str());
 							goto OnExit;
 						}
 					}
@@ -803,7 +803,7 @@ namespace
 						std::stringstream errorMessage;
 						errorMessage << "OpenGL failed to find out if compilation of the vertex shader source code succeeded: " <<
 							reinterpret_cast<const char*>(gluErrorString(errorCode));
-						System::UserOutput::Display(errorMessage.str());
+						Lame::UserOutput::Display(errorMessage.str());
 						goto OnExit;
 					}
 				}
@@ -814,7 +814,7 @@ namespace
 				std::stringstream errorMessage;
 				errorMessage << "OpenGL failed to compile the vertex shader source code: " <<
 					reinterpret_cast<const char*>(gluErrorString(errorCode));
-				System::UserOutput::Display(errorMessage.str());
+				Lame::UserOutput::Display(errorMessage.str());
 				goto OnExit;
 			}
 		}
@@ -828,7 +828,7 @@ namespace
 				std::stringstream errorMessage;
 				errorMessage << "OpenGL failed to attach the vertex shader to the program: " <<
 					reinterpret_cast<const char*>(gluErrorString(errorCode));
-				System::UserOutput::Display(errorMessage.str());
+				Lame::UserOutput::Display(errorMessage.str());
 				goto OnExit;
 			}
 		}
@@ -848,7 +848,7 @@ namespace
 				std::stringstream errorMessage;
 				errorMessage << "OpenGL failed to delete the vertex shader ID: " <<
 					reinterpret_cast<const char*>(gluErrorString(errorCode));
-				System::UserOutput::Display(errorMessage.str());
+				Lame::UserOutput::Display(errorMessage.str());
 			}
 			vertexShaderId = 0;
 		}

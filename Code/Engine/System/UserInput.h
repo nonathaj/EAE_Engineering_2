@@ -3,7 +3,7 @@
 
 #include <vector>
 
-namespace System
+namespace Lame
 {
 	namespace UserInput
 	{

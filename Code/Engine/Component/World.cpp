@@ -3,7 +3,7 @@
 
 #include "GameObject.h"
 
-namespace Engine
+namespace Lame
 {
 	World::World()
 	{

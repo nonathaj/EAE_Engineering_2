@@ -11,7 +11,7 @@
 #include <gl/GL.h>
 #endif
 
-namespace Engine
+namespace Lame
 {
 	class Vector2;
 }

@@ -5,7 +5,7 @@
 #include <vector>
 #include "FloatMath.h"
 
-namespace Engine
+namespace Lame
 {
 	template<size_t Rows, size_t Columns>
 	class Matrix
@@ -71,7 +71,7 @@ namespace Engine
 	{
 	public:
 		inline bool IsValid() const { return false; }
-		inline float Determinant() const { return Engine::Math::Float::NaN(); }
+		inline float Determinant() const { return Lame::Math::Float::NaN(); }
 		inline void Set(size_t i_row, size_t i_column, float i_value) {}
 	private:
 		float data[1][1];

@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace System
+namespace Lame
 {
 	void ConsolePrint(bool i_displayFileAndLine, std::string i_file, const unsigned int i_line, std::string i_fmt, ...);
 }
@@ -12,8 +12,8 @@ namespace System
 // This is only supported by compilers that support the C99 standard
 #if defined(_DEBUG) && !defined(DISABLE_DEBUG_PRINT)
 
-#define DEBUG_PRINT(fmt,...) System::ConsolePrint(true, __FILE__, __LINE__, (fmt), __VA_ARGS__)
-#define DEBUG_PRINT_NOFILE(fmt,...) System::ConsolePrint(false, nullptr, nullptr, (fmt), __VA_ARGS__)
+#define DEBUG_PRINT(fmt,...) Lame::ConsolePrint(true, __FILE__, __LINE__, (fmt), __VA_ARGS__)
+#define DEBUG_PRINT_NOFILE(fmt,...) Lame::ConsolePrint(false, nullptr, nullptr, (fmt), __VA_ARGS__)
 
 #else
 

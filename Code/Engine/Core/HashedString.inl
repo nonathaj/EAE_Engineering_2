@@ -1,7 +1,7 @@
 
 #include <string.h>
 
-namespace Engine
+namespace Lame
 {
 	inline HashedString::HashedString() 
 		:m_Hash(Hash(""))
@@ -62,4 +62,4 @@ namespace Engine
 		return m_Hash != i_other.m_Hash;
 	}
 
-} // namespace Engine
+} // namespace Lame

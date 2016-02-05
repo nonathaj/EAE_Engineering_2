@@ -10,7 +10,7 @@
 #include "Vector3.h"
 #include "Matrix4x4.h"
 
-namespace Engine
+namespace Lame
 {
 	const Quaternion Quaternion::identity(0.0f, 0.0f, 0.0f, 1.0f);
 	const Quaternion Quaternion::zero(0.0f, 0.0f, 0.0f, 0.0f);
@@ -42,9 +42,9 @@ namespace Engine
 	Quaternion Quaternion::Euler(const float i_euler_x_deg, const float i_euler_y_deg, const float i_euler_z_deg)
 	{
 		Vector3 euler_radians = Vector3(
-			static_cast<float>(Engine::Math::ToRadians(i_euler_x_deg)),
-			static_cast<float>(Engine::Math::ToRadians(i_euler_y_deg)),
-			static_cast<float>(Engine::Math::ToRadians(i_euler_z_deg))
+			static_cast<float>(Lame::Math::ToRadians(i_euler_x_deg)),
+			static_cast<float>(Lame::Math::ToRadians(i_euler_y_deg)),
+			static_cast<float>(Lame::Math::ToRadians(i_euler_z_deg))
 			);
 
 		const float c1 = std::cos(euler_radians.z() * 0.5f);
@@ -152,9 +152,9 @@ namespace Engine
 
 		//convert to degrees
 		euler = Vector3(
-			static_cast<float>(Engine::Math::ToDegrees(euler.x())),
-			static_cast<float>(Engine::Math::ToDegrees(euler.y())),
-			static_cast<float>(Engine::Math::ToDegrees(euler.z()))
+			static_cast<float>(Lame::Math::ToDegrees(euler.x())),
+			static_cast<float>(Lame::Math::ToDegrees(euler.y())),
+			static_cast<float>(Lame::Math::ToDegrees(euler.z()))
 			);
 
 		return euler;

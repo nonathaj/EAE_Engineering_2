@@ -39,12 +39,12 @@ namespace Lame
 				}
 				else
 				{
-					System::UserOutput::Display("Failed to create OpenGL Context, due to insufficient memory.", "Context Loading Error");
+					Lame::UserOutput::Display("Failed to create OpenGL Context, due to insufficient memory.", "Context Loading Error");
 				}
 			}
 			else
 			{
-				System::UserOutput::Display(error);
+				Lame::UserOutput::Display(error);
 			}
 		}
 		
@@ -104,7 +104,7 @@ namespace
 		o_deviceContext = GetDC(i_renderingWindow);
 		if (o_deviceContext == NULL)
 		{
-			System::UserOutput::Display("Windows failed to get the device context");
+			Lame::UserOutput::Display("Windows failed to get the device context");
 			return false;
 		}
 		// Windows requires that an OpenGL "render context" is made for the window we want to use to render into
@@ -130,7 +130,7 @@ namespace
 					{
 						std::stringstream errorMessage;
 						errorMessage << "Windows couldn't choose the closest pixel format: " << eae6320::GetLastWindowsError();
-						System::UserOutput::Display(errorMessage.str());
+						Lame::UserOutput::Display(errorMessage.str());
 						return false;
 					}
 				}
@@ -139,7 +139,7 @@ namespace
 				{
 					std::stringstream errorMessage;
 					errorMessage << "Windows couldn't set the desired pixel format: " << eae6320::GetLastWindowsError();
-					System::UserOutput::Display(errorMessage.str());
+					Lame::UserOutput::Display(errorMessage.str());
 					return false;
 				}
 			}
@@ -149,7 +149,7 @@ namespace
 			{
 				std::stringstream errorMessage;
 				errorMessage << "Windows failed to create an OpenGL rendering context: " << eae6320::GetLastWindowsError();
-				System::UserOutput::Display(errorMessage.str());
+				Lame::UserOutput::Display(errorMessage.str());
 				return false;
 			}
 			// Set it as the rendering context of this thread
@@ -157,7 +157,7 @@ namespace
 			{
 				std::stringstream errorMessage;
 				errorMessage << "Windows failed to set the current OpenGL rendering context: " << eae6320::GetLastWindowsError();
-				System::UserOutput::Display(errorMessage.str());
+				Lame::UserOutput::Display(errorMessage.str());
 				return false;
 			}
 		}
@@ -178,14 +178,14 @@ namespace
 				{
 					std::stringstream errorMessage;
 					errorMessage << "Windows failed to delete the OpenGL rendering context: " << eae6320::GetLastWindowsError();
-					System::UserOutput::Display(errorMessage.str());
+					Lame::UserOutput::Display(errorMessage.str());
 				}
 			}
 			else
 			{
 				std::stringstream errorMessage;
 				errorMessage << "Windows failed to unset the current OpenGL rendering context: " << eae6320::GetLastWindowsError();
-				System::UserOutput::Display(errorMessage.str());
+				Lame::UserOutput::Display(errorMessage.str());
 			}
 		}
 		if (i_deviceContext != nullptr)

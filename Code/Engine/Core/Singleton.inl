@@ -1,6 +1,6 @@
 #include <assert.h>
 
-namespace Engine
+namespace Lame
 {
 	template<class T>
 	Singleton<T>::~Singleton()
@@ -31,4 +31,4 @@ namespace Engine
 	template <class T>
 	T * Singleton<T>::m_pInstance = nullptr;
 
-} // namespace Engine
+} // namespace Lame

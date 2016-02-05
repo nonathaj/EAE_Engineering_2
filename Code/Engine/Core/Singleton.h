@@ -1,7 +1,7 @@
 #ifndef _ENGINE_CORE_SINGLETON_H
 #define _ENGINE_CORE_SINGLETON_H
 
-namespace Engine
+namespace Lame
 {
 	template <class T>
 	class Singleton
@@ -20,7 +20,7 @@ namespace Engine
 
 		static T *m_pInstance;
 	};
-} // namespace Engine
+} // namespace Lame
 
 #include "Singleton.inl"
 

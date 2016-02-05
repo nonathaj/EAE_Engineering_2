@@ -27,7 +27,7 @@ namespace Lame
 		{
 			const char * const vertex_shader = "data/debug/line_vertex.shader.bin";
 			const char * const fragment_shader = "data/debug/line_fragment.shader.bin";
-			Engine::EnumMask<Lame::RenderState> rendermask;
+			Lame::EnumMask<Lame::RenderState> rendermask;
 			rendermask.set(Lame::RenderState::Transparency, false);
 			rendermask.set(Lame::RenderState::DepthTest, true);
 			rendermask.set(Lame::RenderState::DepthWrite, true);
@@ -38,7 +38,7 @@ namespace Lame
 				!line_effect->CacheConstant(Lame::Effect::Shader::Vertex, WorldToViewUniformName, line_worldToViewUniformId) ||
 				!line_effect->CacheConstant(Lame::Effect::Shader::Vertex, ViewToScreenUniformName, line_viewToScreenUniformId))
 			{
-				System::UserOutput::Display("Failed to create debug line effect");
+				Lame::UserOutput::Display("Failed to create debug line effect");
 				return nullptr;
 			}
 		}
@@ -50,7 +50,7 @@ namespace Lame
 		{
 			const char * const vertex_shader = "data/debug/shape_vertex.shader.bin";
 			const char * const fragment_shader = "data/debug/shape_fragment.shader.bin";
-			Engine::EnumMask<Lame::RenderState> rendermask;
+			Lame::EnumMask<Lame::RenderState> rendermask;
 			rendermask.set(Lame::RenderState::Transparency, false);
 			rendermask.set(Lame::RenderState::DepthTest, true);
 			rendermask.set(Lame::RenderState::DepthWrite, true);
@@ -62,7 +62,7 @@ namespace Lame
 				!wireframe_shape_effect->CacheConstant(Lame::Effect::Shader::Vertex, WorldToViewUniformName, wire_worldToViewUniformId) ||
 				!wireframe_shape_effect->CacheConstant(Lame::Effect::Shader::Vertex, ViewToScreenUniformName, wire_viewToScreenUniformId))
 			{
-				System::UserOutput::Display("Failed to create debug wireframe effect");
+				Lame::UserOutput::Display("Failed to create debug wireframe effect");
 				return nullptr;
 			}
 		}
@@ -74,7 +74,7 @@ namespace Lame
 		{
 			const char * const vertex_shader = "data/debug/shape_vertex.shader.bin";
 			const char * const fragment_shader = "data/debug/shape_fragment.shader.bin";
-			Engine::EnumMask<Lame::RenderState> rendermask;
+			Lame::EnumMask<Lame::RenderState> rendermask;
 			rendermask.set(Lame::RenderState::Transparency, true);
 			rendermask.set(Lame::RenderState::DepthTest, true);
 			rendermask.set(Lame::RenderState::DepthWrite, true);
@@ -86,7 +86,7 @@ namespace Lame
 				!fill_shape_effect->CacheConstant(Lame::Effect::Shader::Vertex, WorldToViewUniformName, solid_worldToViewUniformId) ||
 				!fill_shape_effect->CacheConstant(Lame::Effect::Shader::Vertex, ViewToScreenUniformName, solid_viewToScreenUniformId))
 			{
-				System::UserOutput::Display("Failed to create debug filled shape effect");
+				Lame::UserOutput::Display("Failed to create debug filled shape effect");
 				return nullptr;
 			}
 		}
@@ -94,7 +94,7 @@ namespace Lame
 		std::shared_ptr<Lame::Mesh> line_renderer(Lame::Mesh::CreateEmpty(false, i_context, Lame::Mesh::PrimitiveType::LineList, i_line_count * 2, 0));
 		if (!line_renderer)
 		{
-			System::UserOutput::Display("Failed to create debug line mesh");
+			Lame::UserOutput::Display("Failed to create debug line mesh");
 			return nullptr;
 		}
 
@@ -122,12 +122,12 @@ namespace Lame
 		}
 		else
 		{
-			System::UserOutput::Display("Failed to Create DebugRenderer");
+			Lame::UserOutput::Display("Failed to Create DebugRenderer");
 			return nullptr;
 		}
 	}
 
-	bool DebugRenderer::RenderLines(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen)
+	bool DebugRenderer::RenderLines(const Lame::Matrix4x4& i_worldToView, const Lame::Matrix4x4& i_viewToScreen)
 	{
 		if (line_vertices.size() / 2 == 0)
 			return true;
@@ -141,12 +141,12 @@ namespace Lame
 		return lines_rendered;
 	}
 
-	bool DebugRenderer::AddLine(const Engine::Vector3& i_start, const Engine::Vector3& i_end, const Lame::Color32& i_color)
+	bool DebugRenderer::AddLine(const Lame::Vector3& i_start, const Lame::Vector3& i_end, const Lame::Color32& i_color)
 	{
 		return AddLine(i_start, i_end, i_color, i_color);
 	}
 
-	bool DebugRenderer::AddLine(const Engine::Vector3& i_start, const Engine::Vector3& i_end, const Lame::Color32& i_start_color, const Lame::Color32& i_end_color)
+	bool DebugRenderer::AddLine(const Lame::Vector3& i_start, const Lame::Vector3& i_end, const Lame::Color32& i_start_color, const Lame::Color32& i_end_color)
 	{
 		if (line_vertices.size() >= max_lines_count)
 			return false;
@@ -164,7 +164,7 @@ namespace Lame
 		return true;
 	}
 
-	bool DebugRenderer::AddMesh(std::shared_ptr<Lame::Mesh> i_mesh, const Engine::Transform& i_transform, const bool i_render_as_wireframe)
+	bool DebugRenderer::AddMesh(std::shared_ptr<Lame::Mesh> i_mesh, const Lame::Transform& i_transform, const bool i_render_as_wireframe)
 	{
 		if (!i_mesh)
 			return false;
@@ -179,7 +179,7 @@ namespace Lame
 		return true;
 	}
 
-	bool DebugRenderer::Render(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen)
+	bool DebugRenderer::Render(const Lame::Matrix4x4& i_worldToView, const Lame::Matrix4x4& i_viewToScreen)
 	{
 		const bool lines_rendered = RenderLines(i_worldToView, i_viewToScreen);
 		const bool wireframe_meshes_rendered = RenderWireframeMeshes(i_worldToView, i_viewToScreen);
@@ -190,7 +190,7 @@ namespace Lame
 		return lines_rendered && wireframe_meshes_rendered && solid_meshes_rendered;
 	}
 
-	bool DebugRenderer::RenderSolidMeshes(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen)
+	bool DebugRenderer::RenderSolidMeshes(const Lame::Matrix4x4& i_worldToView, const Lame::Matrix4x4& i_viewToScreen)
 	{
 		if (solid_shape_effect->Bind() &&
 			solid_shape_effect->SetConstant(Lame::Effect::Shader::Vertex, solid_worldToViewUniformId, i_worldToView) &&
@@ -212,7 +212,7 @@ namespace Lame
 		}
 	}
 
-	bool DebugRenderer::RenderWireframeMeshes(const Engine::Matrix4x4& i_worldToView, const Engine::Matrix4x4& i_viewToScreen)
+	bool DebugRenderer::RenderWireframeMeshes(const Lame::Matrix4x4& i_worldToView, const Lame::Matrix4x4& i_viewToScreen)
 	{
 		if (wireframe_shape_effect->Bind() &&
 			wireframe_shape_effect->SetConstant(Lame::Effect::Shader::Vertex, wire_worldToViewUniformId, i_worldToView) &&
@@ -234,19 +234,19 @@ namespace Lame
 		}
 	}
 
-	bool DebugRenderer::AddBox(const bool i_render_wireframe, const Engine::Vector3& i_size, const Engine::Transform& i_transform, const Color32& i_color)
+	bool DebugRenderer::AddBox(const bool i_render_wireframe, const Lame::Vector3& i_size, const Lame::Transform& i_transform, const Color32& i_color)
 	{
 		std::shared_ptr<Lame::Mesh> mesh(Lame::Mesh::CreateBox(true, solid_shape_effect->get_context(), i_size, i_color));
 		return AddMesh(mesh, i_transform, i_render_wireframe);
 	}
 
-	bool DebugRenderer::AddSphere(const bool i_render_wireframe, const float i_radius, const Engine::Transform& i_transform, const Color32& i_color)
+	bool DebugRenderer::AddSphere(const bool i_render_wireframe, const float i_radius, const Lame::Transform& i_transform, const Color32& i_color)
 	{
 		std::shared_ptr<Lame::Mesh> mesh(Lame::Mesh::CreateSphere(true, solid_shape_effect->get_context(), i_radius, 10, 10, i_color));
 		return AddMesh(mesh, i_transform, i_render_wireframe);
 	}
 
-	bool DebugRenderer::AddCylinder(const bool i_render_wireframe, const float i_top_radius, const float i_bottom_radius, const float i_height, const Engine::Transform& i_transform, const Color32& i_color)
+	bool DebugRenderer::AddCylinder(const bool i_render_wireframe, const float i_top_radius, const float i_bottom_radius, const float i_height, const Lame::Transform& i_transform, const Color32& i_color)
 	{
 		std::shared_ptr<Lame::Mesh> mesh(Lame::Mesh::CreateCylinder(true, solid_shape_effect->get_context(), i_bottom_radius, i_top_radius, i_height, 10, 10, i_color));
 		return AddMesh(mesh, i_transform, i_render_wireframe);

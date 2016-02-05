@@ -18,19 +18,19 @@ namespace
 	}
 }
 
-const Engine::Matrix4x4 Engine::Matrix4x4::identity = Engine::Matrix4x4(
+const Lame::Matrix4x4 Lame::Matrix4x4::identity = Lame::Matrix4x4(
 	1, 0, 0, 0,
 	0, 1, 0, 0,
 	0, 0, 1, 0,
 	0, 0, 0, 1 );
 
-const Engine::Matrix4x4 Engine::Matrix4x4::zero = Engine::Matrix4x4(
+const Lame::Matrix4x4 Lame::Matrix4x4::zero = Lame::Matrix4x4(
 	0, 0, 0, 0,
 	0, 0, 0, 0,
 	0, 0, 0, 0,
 	0, 0, 0, 0 );
 
-namespace Engine
+namespace Lame
 {
 	Matrix4x4::Matrix4x4(const float r1c1, const float r1c2, const float r1c3, const float r1c4,
 		const float r2c1, const float r2c2, const float r2c3, const float r2c4,

@@ -10,6 +10,7 @@
 #include "../Core/Matrix4x4.h"
 #include "../System/Console.h"
 #include "../System/UserOutput.h"
+#include "../Core/Rectangle2D.h"
 
 namespace Lame
 {
@@ -23,7 +24,7 @@ namespace Lame
 		if (!i_context)
 			return nullptr;
 
-		std::shared_ptr<Engine::GameObject> cameraGameObject(new Engine::GameObject());
+		std::shared_ptr<Lame::GameObject> cameraGameObject(new Lame::GameObject());
 		if (!cameraGameObject)
 			return nullptr;
 
@@ -34,7 +35,7 @@ namespace Lame
 			return new Graphics(i_context, cam, cameraGameObject);
 	}
 
-	Graphics::Graphics(std::shared_ptr<Context> i_context, std::shared_ptr<CameraComponent> i_camera, std::shared_ptr<Engine::GameObject> i_camera_gamebject) :
+	Graphics::Graphics(std::shared_ptr<Context> i_context, std::shared_ptr<CameraComponent> i_camera, std::shared_ptr<Lame::GameObject> i_camera_gamebject) :
 		context_(i_context),
 		camera_(i_camera),
 		camera_gamebject_(i_camera_gamebject),
@@ -50,15 +51,15 @@ namespace Lame
 		if (!success)
 			return false;
 
-		Engine::Matrix4x4 worldToView = camera()->WorldToView();
-		Engine::Matrix4x4 viewToScreen = camera()->ViewToScreen();
+		Lame::Matrix4x4 worldToView = camera()->WorldToView();
+		Lame::Matrix4x4 viewToScreen = camera()->ViewToScreen();
 
 		std::vector<std::shared_ptr<RenderableComponent>> transparent;
 
 		//iterate all the renderables, rendering the opaque ones first.
 		for (auto itr = renderables_.begin(); itr != renderables_.end(); /**/)
 		{
-			std::shared_ptr<Engine::GameObject> go = (*itr)->gameObject();
+			std::shared_ptr<Lame::GameObject> go = (*itr)->gameObject();
 			if (go && !go->IsDestroying())
 			{
 				if ((*itr)->material()->effect()->has_transparency())
@@ -168,6 +169,24 @@ namespace Lame
 			return true;
 		}
 		return false;
+	}
+
+	Lame::Rectangle2D Graphics::GetRealScreenCoord(const Lame::Rectangle2D& i_virtual_screen_coord)
+	{
+		return Lame::Rectangle2D(
+			i_virtual_screen_coord.left() * 2.0f - 1.0f,
+			i_virtual_screen_coord.right() * 2.0f - 1.0f,
+			i_virtual_screen_coord.top() * 2.0f - 1.0f,
+			i_virtual_screen_coord.bottom() * 2.0f - 1.0f);
+	}
+
+	Lame::Rectangle2D Graphics::GetVirtualScreenCoord(const Lame::Rectangle2D& i_real_screen_coord)
+	{
+		return Lame::Rectangle2D(
+			(i_real_screen_coord.left() + 1.0f) / 2.0f,
+			(i_real_screen_coord.right() + 1.0f) / 2.0f,
+			(i_real_screen_coord.top() + 1.0f) / 2.0f,
+			(i_real_screen_coord.bottom() + 1.0f) / 2.0f);
 	}
 
 #ifdef ENABLE_DEBUG_RENDERING

@@ -14,7 +14,7 @@ namespace Lame
 	Material* Material::Create(std::shared_ptr<Lame::Context> i_context, std::string i_path)
 	{
 		size_t fileLength;
-		char *fileData = System::File::LoadBinary(i_path, &fileLength);
+		char *fileData = Lame::File::LoadBinary(i_path, &fileLength);
 		if (!fileData)
 			return nullptr;
 
@@ -53,7 +53,7 @@ namespace Lame
 					std::stringstream error;
 					error << "Failed to cache uniform constant handle \"" << currentParamName << "\" in material "
 						<< i_path;
-					System::UserOutput::Display(error.str(), "Material loading error");
+					Lame::UserOutput::Display(error.str(), "Material loading error");
 					delete[] fileData;
 					return nullptr;
 				}
@@ -84,7 +84,7 @@ namespace Lame
 		{
 			std::stringstream error;
 			error << "Loaded data for material " << i_path << " is invalid";
-			System::UserOutput::Display(error.str(), "Material loading error");
+			Lame::UserOutput::Display(error.str(), "Material loading error");
 			delete[] fileData;
 			return nullptr;
 		}
@@ -92,7 +92,7 @@ namespace Lame
 		Material *material = new Material(effect);
 		if (!material)
 		{
-			System::UserOutput::Display("Insufficient memory when creating Material", "Material creation error");
+			Lame::UserOutput::Display("Insufficient memory when creating Material", "Material creation error");
 			delete[] fileData;
 			return nullptr;
 		}
@@ -184,7 +184,7 @@ namespace Lame
 		{
 			std::stringstream error;
 			error << "Failed to cache uniform constant handle \"" << i_param_name << "\"";
-			System::UserOutput::Display(error.str());
+			Lame::UserOutput::Display(error.str());
 			return false;
 		}
 
@@ -194,7 +194,7 @@ namespace Lame
 			{
 				std::stringstream error;
 				error << "Material already contains a definition for uniform constant handle \"" << i_param_name << "\"";
-				System::UserOutput::Display(error.str());
+				Lame::UserOutput::Display(error.str());
 				return false;
 			}
 		}

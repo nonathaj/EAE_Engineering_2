@@ -2,7 +2,7 @@
 #include "HashedString.h"
 #include <cassert>
 
-namespace Engine
+namespace Lame
 {
 	uint32_t HashedString::Hash(const char * i_string)
 	{
@@ -24,4 +24,4 @@ namespace Engine
 		return hash ^ (hash >> 16);
 	};
 
-} // namespace Engine
+} // namespace Lame

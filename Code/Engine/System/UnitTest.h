@@ -1,7 +1,7 @@
 #ifndef _ENGINE_SYSTEM_UNITTEST_H
 #define _ENGINE_SYSTEM_UNITTEST_H
 
-namespace Engine
+namespace Lame
 {
 	/*
 		UnitTest namespace

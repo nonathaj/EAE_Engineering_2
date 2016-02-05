@@ -1,5 +1,5 @@
 
-namespace Engine
+namespace Lame
 {
 	namespace Time
 	{

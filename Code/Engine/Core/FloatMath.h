@@ -1,7 +1,7 @@
 #ifndef _ENGINE_MATH_FLOATMATH_H
 #define _ENGINE_MATH_FLOATMATH_H
 
-namespace Engine
+namespace Lame
 {
 	namespace Math
 	{
