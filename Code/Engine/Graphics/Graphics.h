@@ -8,6 +8,7 @@
 #include "../../Engine/Windows/Includes.h"
 #include "CameraComponent.h"
 #include "DebugRenderer.h"
+#include "DebugMenu.h"
 
 namespace Lame
 {
@@ -42,6 +43,10 @@ namespace Lame
 
 		DebugRenderer* debug_renderer() const { return debug_renderer_.get(); }
 #endif
+
+#ifdef ENABLE_DEBUG_MENU
+		Debug::Menu* debug_menu() const { return debug_menu_.get(); }
+#endif
 	private:
 		Graphics(std::shared_ptr<Context> i_context, std::shared_ptr<CameraComponent> i_camera, std::shared_ptr<Lame::GameObject> i_camera_gamebject);
 
@@ -56,6 +61,10 @@ namespace Lame
 
 #ifdef ENABLE_DEBUG_RENDERING
 		std::shared_ptr<DebugRenderer> debug_renderer_;
+#endif
+
+#ifdef ENABLE_DEBUG_MENU
+		std::shared_ptr<Debug::Menu> debug_menu_;
 #endif
 		//store the camera's gameobject, so it lives for the duration of this graphics
 		std::shared_ptr<Lame::GameObject> camera_gamebject_;

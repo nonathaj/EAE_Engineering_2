@@ -5,6 +5,7 @@
 #include "Context.h"
 #include "RenderableComponent.h"
 #include "DebugRenderer.h"
+#include "DebugMenu.h"
 #include "Sprite.h"
 #include "FontRenderer.h"
 #include "../Component/GameObject.h"
@@ -29,11 +30,24 @@ namespace Lame
 		if (!cameraGameObject)
 			return nullptr;
 
+#ifdef ENABLE_DEBUG_MENU
+		std::shared_ptr<Debug::Menu> dm(Debug::Menu::Create(i_context));
+		if (!dm)
+		{
+			UserOutput::Display("Failed to create Debug menu");
+		}
+#endif
+
 		std::shared_ptr<CameraComponent> cam(new CameraComponent(cameraGameObject, i_context));
 		if (!cam)
 			return nullptr;
-		else
-			return new Graphics(i_context, cam, cameraGameObject);
+		
+		Graphics* g = new Graphics(i_context, cam, cameraGameObject);
+		if (g)
+		{
+			g->debug_menu_ = dm;
+		}
+		return g;
 	}
 
 	Graphics::Graphics(std::shared_ptr<Context> i_context, std::shared_ptr<CameraComponent> i_camera, std::shared_ptr<Lame::GameObject> i_camera_gamebject) :
@@ -43,6 +57,9 @@ namespace Lame
 		renderables_()
 #ifdef ENABLE_DEBUG_RENDERING
 		, debug_renderer_(nullptr)
+#endif
+#ifdef ENABLE_DEBUG_MENU
+		, debug_menu_(nullptr)
 #endif
 	{ }
 
@@ -89,7 +106,13 @@ namespace Lame
 		}
 
 #ifdef ENABLE_DEBUG_RENDERING
-		success = debug_renderer_->Render(worldToView, viewToScreen) && success;
+		if(debug_renderer_)
+			success = debug_renderer_->Render(worldToView, viewToScreen) && success;
+#endif
+
+#ifdef ENABLE_DEBUG_MENU
+		if(debug_menu_)
+			success = debug_menu_->RenderAndUpdate() && success;
 #endif
 
 		success = context()->EndFrame() && success;

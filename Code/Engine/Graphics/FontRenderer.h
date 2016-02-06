@@ -8,7 +8,6 @@
 
 #if EAE6320_PLATFORM_D3D
 #include <d3d9.h>
-#include <D3dx9core.h>
 #elif EAE6320_PLATFORM_GL
 #include "../../Engine/Windows/Includes.h"
 #include <gl/GL.h>
@@ -42,7 +41,8 @@ namespace Lame
 		std::shared_ptr<Lame::Context> context_;
 
 #if EAE6320_PLATFORM_D3D
-		LPD3DXFONT font;
+		//hack to get around including d3d headers here.  Required internal casts
+		void* font;
 #endif
 	};
 }

@@ -1,6 +1,8 @@
 
 #include "../FontRenderer.h"
 
+#include <D3dx9core.h>
+
 #include "../Context.h"
 #include "../../Core/Rectangle2D.h"
 #include "../../Core/Vector2.h"
@@ -57,10 +59,11 @@ namespace Lame
 
 	FontRenderer::~FontRenderer()
 	{
-		if (font)
+		LPD3DXFONT f = reinterpret_cast<LPD3DXFONT>(font);
+		if (f)
 		{
-			font->Release();
-			font = nullptr;
+			f->Release();
+			f = nullptr;
 		}
 	}
 
@@ -96,7 +99,8 @@ namespace Lame
 			if (!i_word_wrap)
 				format |= DT_WORDBREAK;
 		}
-		INT height = font->DrawTextA(nullptr, i_str, -1, &screen_rect, format, *reinterpret_cast<const D3DCOLOR*>(&i_color));
+		LPD3DXFONT f = reinterpret_cast<LPD3DXFONT>(font);
+		INT height = f->DrawTextA(nullptr, i_str, -1, &screen_rect, format, *reinterpret_cast<const D3DCOLOR*>(&i_color));
 
 		DEBUG_PRINT("r(%d, %d, %d, %d) fmt(%d)", screen_rect.left, screen_rect.right, screen_rect.top, screen_rect.bottom, format);
 		return height != 0;

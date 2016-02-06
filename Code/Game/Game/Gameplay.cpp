@@ -138,6 +138,7 @@ namespace Gameplay
 	{
 		eae6320::Time::OnNewFrame();
 		float deltaTime = eae6320::Time::GetSecondsElapsedThisFrame();
+		LameInput::Get().Tick(deltaTime);
 
 		HandleInput(deltaTime);
 
@@ -160,6 +161,7 @@ namespace Gameplay
 		sprite.reset();
 		graphics.reset();
 		world.reset();
+		LameInput::Release();
 		return true;
 	}
 }
@@ -168,26 +170,26 @@ namespace
 {
 	uint8_t GetNumberKeyPressed()
 	{
-		using namespace Lame::UserInput;
-		if (Keyboard::Pressed(Keyboard::Alpha0))
+		using namespace Lame::Input;
+		if (LameInput::Get().Down(Keyboard::Alpha0))
 			return 0;
-		else if (Keyboard::Pressed(Keyboard::Alpha1))
+		else if (LameInput::Get().Down(Keyboard::Alpha1))
 			return 1;
-		else if (Keyboard::Pressed(Keyboard::Alpha2))
+		else if (LameInput::Get().Down(Keyboard::Alpha2))
 			return 2;
-		else if (Keyboard::Pressed(Keyboard::Alpha3))
+		else if (LameInput::Get().Down(Keyboard::Alpha3))
 			return 3;
-		else if (Keyboard::Pressed(Keyboard::Alpha4))
+		else if (LameInput::Get().Down(Keyboard::Alpha4))
 			return 4;
-		else if (Keyboard::Pressed(Keyboard::Alpha5))
+		else if (LameInput::Get().Down(Keyboard::Alpha5))
 			return 5;
-		else if (Keyboard::Pressed(Keyboard::Alpha6))
+		else if (LameInput::Get().Down(Keyboard::Alpha6))
 			return 6;
-		else if (Keyboard::Pressed(Keyboard::Alpha7))
+		else if (LameInput::Get().Down(Keyboard::Alpha7))
 			return 7;
-		else if (Keyboard::Pressed(Keyboard::Alpha8))
+		else if (LameInput::Get().Down(Keyboard::Alpha8))
 			return 8;
-		else if (Keyboard::Pressed(Keyboard::Alpha9))
+		else if (LameInput::Get().Down(Keyboard::Alpha9))
 			return 9;
 		return -1;
 	}
@@ -195,22 +197,22 @@ namespace
 	void HandleInput(float deltaTime)
 	{
 		using namespace Lame;
-		using namespace Lame::UserInput;
+		using namespace Lame::Input;
 
 		const float movementAmount = 300.0f * deltaTime;
 		std::shared_ptr<GameObject> movableObject = graphics->camera()->gameObject();
 		Vector3 movementVector = Vector3::zero;
-		if (Keyboard::Pressed(Keyboard::W))						//forward
+		if (LameInput::Get().Held(Keyboard::W))						//forward
 			movementVector += Vector3::forward;
-		if (Keyboard::Pressed(Keyboard::S))						//backward
+		if (LameInput::Get().Held(Keyboard::S))						//backward
 			movementVector += Vector3::back;
-		if (Keyboard::Pressed(Keyboard::D))						//right
+		if (LameInput::Get().Held(Keyboard::D))						//right
 			movementVector += Vector3::right;
-		if (Keyboard::Pressed(Keyboard::A))						//left
+		if (LameInput::Get().Held(Keyboard::A))						//left
 			movementVector += Vector3::left;
-		if (Keyboard::Pressed(Keyboard::E))						//up
+		if (LameInput::Get().Held(Keyboard::E))						//up
 			movementVector += Vector3::up;
-		if (Keyboard::Pressed(Keyboard::Q))						//down
+		if (LameInput::Get().Held(Keyboard::Q))						//down
 			movementVector += Vector3::down;
 
 		movementVector = graphics->camera()->gameObject()->transform().rotation() * movementVector * movementAmount;
@@ -227,9 +229,9 @@ namespace
 
 		const float rotationAmount = 40.0f * deltaTime;
 		Vector3 rotationAxis = Vector3::zero;
-		if (Keyboard::Pressed(Keyboard::Left))						//rotate left
+		if (LameInput::Get().Held(Keyboard::Left))						//rotate left
 			rotationAxis += Vector3::up;
-		if (Keyboard::Pressed(Keyboard::Right))						//rotate Right
+		if (LameInput::Get().Held(Keyboard::Right))						//rotate Right
 			rotationAxis += Vector3::down;
 		//if (Keyboard::Pressed(Keyboard::Up))						//rotate up
 		//	rotationAxis += Vector3::Vector3::right;

@@ -22,6 +22,7 @@
     <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="Context.cpp" />
+    <ClCompile Include="DebugMenu.cpp" />
     <ClCompile Include="DebugRenderer.cpp" />
     <ClCompile Include="Direct3D\Context.d3d.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -181,7 +182,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>Component.lib;Core.lib;Opengl32.lib;glu32.lib;OpenGLExtensions.lib;System.lib</AdditionalDependencies>
+      <AdditionalDependencies>Component.lib;Core.lib;System.lib;Opengl32.lib;glu32.lib;OpenGLExtensions.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(LibDir)</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4006,4221 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
@@ -201,7 +202,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>Component.lib;Core.lib;d3d9.lib;d3dx9.lib;System.lib</AdditionalDependencies>
+      <AdditionalDependencies>Component.lib;Core.lib;System.lib;d3d9.lib;d3dx9.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(LibDir);$(DXSDK_DIR)Lib\x64</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4006,4221 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
@@ -226,7 +227,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>Component.lib;Core.lib;Opengl32.lib;glu32.lib;OpenGLExtensions.lib;System.lib</AdditionalDependencies>
+      <AdditionalDependencies>Component.lib;Core.lib;System.lib;Opengl32.lib;glu32.lib;OpenGLExtensions.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(LibDir)</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4006,4221 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
@@ -250,7 +251,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>Component.lib;Core.lib;d3d9.lib;d3dx9.lib;System.lib</AdditionalDependencies>
+      <AdditionalDependencies>Component.lib;Core.lib;System.lib;d3d9.lib;d3dx9.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(LibDir);$(DXSDK_DIR)Lib\x64</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4006,4221 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
