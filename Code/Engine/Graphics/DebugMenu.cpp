@@ -10,19 +10,28 @@ namespace Lame
 {
 	namespace Debug
 	{
-		void Text::stream(std::stringstream& io_stream, const size_t i_width) const
+		void Widget::stream(std::stringstream& io_stream, const size_t i_width, const bool i_selected) const
 		{
-			io_stream << name;
-			if (name.size() + value.size() + 3 > i_width)
-				io_stream << " " << std::string(i_width - name.size() - 1, '-') << std::endl;
+			if (i_selected)
+				io_stream << " -> ";
 			else
-				io_stream << " : ";
+				io_stream << "    ";
+			io_stream << name << " ";
+			if (i_width > 0 && name.size() > 0)
+				io_stream << std::string(i_width - name.size() - 1, '-');
+			io_stream << std::endl << "    ";
+		}
+
+		void Text::stream(std::stringstream& io_stream, const size_t i_width, const bool i_selected) const
+		{
+			Widget::stream(io_stream, i_width, i_selected);
 			io_stream << value << std::endl;
 		}
 
-		void Button::stream(std::stringstream& io_stream, const size_t i_width) const
+		void Button::stream(std::stringstream& io_stream, const size_t i_width, const bool i_selected) const
 		{
-			io_stream << name << std::endl;
+			Widget::stream(io_stream, i_width, i_selected);
+			io_stream << "( Press to activate ) " << std::endl;
 		}
 
 		void Button::input(bool isPositive)
@@ -30,13 +39,10 @@ namespace Lame
 			callback();
 		}
 
-		void CheckBox::stream(std::stringstream& io_stream, const size_t i_width) const
+		void CheckBox::stream(std::stringstream& io_stream, const size_t i_width, const bool i_selected) const
 		{
-			io_stream << name;
-			if (name.size() + 4 > i_width)
-				io_stream << " " << std::string(i_width - name.size() - 1, '-') << std::endl;
-
-			io_stream << " [" << (*value ? 'x' : ' ') << ']' << std::endl;
+			Widget::stream(io_stream, i_width, i_selected);
+			io_stream << '[' << (*value ? 'x' : ' ') << ']' << std::endl;
 		}
 
 		void CheckBox::input(bool isPositive)
@@ -44,13 +50,18 @@ namespace Lame
 			*value = isPositive;
 		}
 
-		void Slider::stream(std::stringstream& io_stream, const size_t i_width) const
+		void Slider::stream(std::stringstream& io_stream, const size_t i_width, const bool i_selected) const
 		{
-			io_stream << name << " " << std::string(i_width - name.size() - 1, '-') << std::endl << '[';
+			Widget::stream(io_stream, i_width, i_selected);
+			io_stream << '[';
 			{
 				size_t max_positions = i_width - 2;
 				size_t current_position = static_cast<size_t>((*value - minimum) / (maximum - minimum) * max_positions);
-				io_stream << std::string(current_position - 1, '=') << '|' << std::string(max_positions - current_position, ' ');
+				if(current_position > 1)
+					io_stream << std::string(current_position - 1, '=');
+				io_stream << '|';
+				if(max_positions > current_position && (max_positions - current_position) > 0)
+					io_stream << std::string(max_positions - current_position, ' ');
 			}
 			io_stream << ']' << std::endl;
 		}
@@ -60,6 +71,10 @@ namespace Lame
 			const float change_percent = 0.05f;
 			const float change_amt = (maximum - minimum) * (isPositive ? 1.f : -1.f) * change_percent;
 			*value += change_amt;
+			if (*value < minimum)
+				*value = minimum;
+			if (*value > maximum)
+				*value = maximum;
 		}
 
 		Menu* Menu::Create(std::shared_ptr<Context> i_context)
@@ -67,7 +82,11 @@ namespace Lame
 			if (!i_context)
 				return nullptr;
 
-			std::shared_ptr<FontRenderer> fr(FontRenderer::Create(i_context, Vector2(0.01f, 0.03f), Font::Pitch::Monospace, Font::Type::Normal, "Consolas"));
+			std::shared_ptr<FontRenderer> fr(FontRenderer::Create(i_context, 
+				Vector2(0.01f, 0.03f), 
+				Font::Pitch::Monospace, 
+				Font::Type::Normal, 
+				"Consolas") );
 			if (!fr)
 				return nullptr;
 
@@ -90,19 +109,17 @@ namespace Lame
 			}
 			LameInput::Get().enabled(!enabled_);
 
-			DEBUG_PRINT("dm=%s input=%s", (enabled_ ? "y" : "n"), (LameInput::Get().enabled() ? "y" : "n"));
-
 			if (!enabled_ || widgets.size() == 0)
 				return;
 
 
-			if (LameInput::Get().DownRaw(Keyboard::Up))
+			if (LameInput::Get().DownRaw(Keyboard::Down))
 			{
 				selected_widget_++;
 				if (selected_widget_ == widgets.size())
 					selected_widget_ = 0;
 			}
-			if (LameInput::Get().DownRaw(Keyboard::Down))
+			if (LameInput::Get().DownRaw(Keyboard::Up))
 			{
 				if (selected_widget_ == 0)
 					selected_widget_ = widgets.size() - 1;
@@ -110,9 +127,18 @@ namespace Lame
 					selected_widget_--;
 			}
 			if (LameInput::Get().DownRaw(Keyboard::Left))
-				widgets[selected_widget_].input(false);
+				widgets[selected_widget_]->input(false);
 			if(LameInput::Get().DownRaw(Keyboard::Right))
-				widgets[selected_widget_].input(true);
+				widgets[selected_widget_]->input(true);
+		}
+
+		Menu::~Menu()
+		{
+			for (auto itr = widgets.begin(); itr != widgets.end(); ++itr)
+			{
+				delete *itr;
+			}
+			widgets.clear();
 		}
 
 		bool Menu::RenderAndUpdate()
@@ -123,15 +149,39 @@ namespace Lame
 				return true;
 
 			std::stringstream content;
-			for (auto itr = widgets.begin(); itr != widgets.end(); ++itr)
-				itr->stream(content, width_);
+			for (size_t x = 0; x < widgets.size(); x++)
+			{
+				widgets[x]->stream(content, width_, x == selected_widget_);
+			}
+
+			DEBUG_PRINT("str(\n%s\n)", content.str().c_str());
 
 			return font_renderer()->Render(
 				content.str().c_str(),
-				Rectangle2D(0, 0, 1, 1),
+				Rectangle2D::CreateBLNormalized(),
 				Font::HorizontalAlignment::Left,
 				false,
 				Color32::green);
+		}
+
+		void Menu::CreateSlider(const char* name, float* value, float min, float max)
+		{
+			widgets.push_back(new Slider(name, value, min, max));
+		}
+
+		void Menu::CreateCheckBox(const char* name, bool* value)
+		{
+			widgets.push_back(new CheckBox(name, value));
+		}
+
+		void Menu::CreateText(const char* name, char* value)
+		{
+			widgets.push_back(new Text(name, value));
+		}
+
+		void Menu::CreateButton(const char* name, std::function<void()> i_function)
+		{
+			widgets.push_back(new Button(name, i_function));
 		}
 	}
 }

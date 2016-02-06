@@ -65,7 +65,7 @@ namespace Lame
 
 	bool Graphics::Render()
 	{
-		bool success = context()->Clear(true, true, false) && context()->BeginFrame();
+		bool success = context()->Clear(true, true, true) && context()->BeginFrame();
 		if (!success)
 			return false;
 
@@ -105,14 +105,14 @@ namespace Lame
 			success = (*itr)->Render() && success;
 		}
 
+#ifdef ENABLE_DEBUG_MENU
+		if (debug_menu_)
+			success = debug_menu_->RenderAndUpdate() && success;
+#endif
+
 #ifdef ENABLE_DEBUG_RENDERING
 		if(debug_renderer_)
 			success = debug_renderer_->Render(worldToView, viewToScreen) && success;
-#endif
-
-#ifdef ENABLE_DEBUG_MENU
-		if(debug_menu_)
-			success = debug_menu_->RenderAndUpdate() && success;
 #endif
 
 		success = context()->EndFrame() && success;

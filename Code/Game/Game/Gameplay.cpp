@@ -11,6 +11,7 @@
 #include "../../Engine/Graphics/Graphics.h"
 #include "../../Engine/Graphics/Sprite.h"
 #include "../../Engine/Graphics/Texture.h"
+#include "../../Engine/Graphics/Color.h"
 #include "../../Engine/Core/Singleton.h"
 #include "../../Engine/System/eae6320/Time.h"
 #include "../../Engine/Component/World.h"
@@ -42,6 +43,12 @@ namespace
 
 	bool Contacting(std::shared_ptr<Lame::GameObject> go1, std::shared_ptr<Lame::GameObject> go2, const float& go1Size, const float& go2Size);
 	uint8_t GetNumberKeyPressed();
+
+	float framerate = 0.0f;
+	bool red_sphere = false;
+	bool show_sphere = true;
+	float sphere_radius = 250.0f;
+	char frames_per_second[50];
 }
 
 namespace Gameplay
@@ -70,6 +77,16 @@ namespace Gameplay
 				Shutdown();
 				return false;
 			}
+#endif
+
+#ifdef ENABLE_DEBUG_MENU
+			graphics->debug_menu()->CreateText("FPS", frames_per_second);
+			graphics->debug_menu()->CreateCheckBox("Color Sphere Red ", &red_sphere);
+			graphics->debug_menu()->CreateSlider("Sphere Radius", &sphere_radius, 100.0f, 500.0f);
+			graphics->debug_menu()->CreateButton("Reset Sphere Radius", []() { 
+				sphere_radius = 250.0f;
+			});
+			graphics->debug_menu()->CreateCheckBox("Show Sphere (Crashes game) ", &show_sphere);
 #endif
 
 			std::string error;
@@ -139,16 +156,19 @@ namespace Gameplay
 		eae6320::Time::OnNewFrame();
 		float deltaTime = eae6320::Time::GetSecondsElapsedThisFrame();
 		LameInput::Get().Tick(deltaTime);
+		itoa(60.0f / deltaTime, frames_per_second, 10);
 
 		HandleInput(deltaTime);
 
 #ifdef ENABLE_DEBUG_RENDERING
-		graphics->debug_renderer()->AddBox(
-			true, 
-			Lame::Vector3::one * 250.0f,
-			Lame::Transform::CreateDefault() );
-		graphics->debug_renderer()->AddLine(Lame::Vector3::zero, Lame::Vector3(0, 0, -1000), Lame::Color32::blue);
-		graphics->debug_renderer()->AddLine(Lame::Vector3(0, 100, 0), Lame::Vector3(0, 100, -1000), Lame::Color32::red);
+		if (show_sphere)
+		{
+			graphics->debug_renderer()->AddSphere(
+				true,
+				sphere_radius,
+				Lame::Transform::CreateDefault(),
+				red_sphere ? Lame::Color32::red : Lame::Color32::white);
+		}
 #endif
 
 		world->Update(deltaTime);
