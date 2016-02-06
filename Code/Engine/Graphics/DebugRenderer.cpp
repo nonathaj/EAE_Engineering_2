@@ -21,6 +21,9 @@ namespace Lame
 
 	DebugRenderer* DebugRenderer::Create(std::shared_ptr<Lame::Context> i_context, const size_t i_line_count)
 	{
+		if (!i_context)
+			return nullptr;
+
 		std::shared_ptr<Lame::Effect> line_effect;
 		Effect::ConstantHandle line_worldToViewUniformId;
 		Effect::ConstantHandle line_viewToScreenUniformId;
@@ -115,6 +118,7 @@ namespace Lame
 			deb->solid_worldToViewUniformId = solid_worldToViewUniformId;
 			deb->solid_viewToScreenUniformId = solid_viewToScreenUniformId;
 
+			deb->context = i_context;
 			deb->line_renderer = line_renderer;
 			deb->max_lines_count = i_line_count;
 			deb->line_vertices.reserve(i_line_count);
@@ -236,19 +240,19 @@ namespace Lame
 
 	bool DebugRenderer::AddBox(const bool i_render_wireframe, const Lame::Vector3& i_size, const Lame::Transform& i_transform, const Color32& i_color)
 	{
-		std::shared_ptr<Lame::Mesh> mesh(Lame::Mesh::CreateBox(true, solid_shape_effect->get_context(), i_size, i_color));
+		std::shared_ptr<Lame::Mesh> mesh(Lame::Mesh::CreateBox(true, context, i_size, i_color));
 		return AddMesh(mesh, i_transform, i_render_wireframe);
 	}
 
 	bool DebugRenderer::AddSphere(const bool i_render_wireframe, const float i_radius, const Lame::Transform& i_transform, const Color32& i_color)
 	{
-		std::shared_ptr<Lame::Mesh> mesh(Lame::Mesh::CreateSphere(true, solid_shape_effect->get_context(), i_radius, 10, 10, i_color));
+		std::shared_ptr<Lame::Mesh> mesh(Lame::Mesh::CreateSphere(true, context, i_radius, 10, 10, i_color));
 		return AddMesh(mesh, i_transform, i_render_wireframe);
 	}
 
 	bool DebugRenderer::AddCylinder(const bool i_render_wireframe, const float i_top_radius, const float i_bottom_radius, const float i_height, const Lame::Transform& i_transform, const Color32& i_color)
 	{
-		std::shared_ptr<Lame::Mesh> mesh(Lame::Mesh::CreateCylinder(true, solid_shape_effect->get_context(), i_bottom_radius, i_top_radius, i_height, 10, 10, i_color));
+		std::shared_ptr<Lame::Mesh> mesh(Lame::Mesh::CreateCylinder(true, context, i_bottom_radius, i_top_radius, i_height, 10, 10, i_color));
 		return AddMesh(mesh, i_transform, i_render_wireframe);
 	}
 }

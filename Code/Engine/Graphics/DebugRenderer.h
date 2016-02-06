@@ -13,6 +13,7 @@
 
 #include "Vertex.h"
 #include "Effect.h"
+#include "Context.h"
 #include "../Component/Transform.h"
 
 namespace Lame
@@ -21,7 +22,6 @@ namespace Lame
 	class Quaternion;
 	class Matrix4x4;
 	class Color32;
-	class Context;
 	class Mesh;
 
 	class DebugRenderer
@@ -48,6 +48,7 @@ namespace Lame
 		std::shared_ptr<Lame::Effect> get_line_effect() const { return line_effect; }
 		std::shared_ptr<Lame::Effect> get_solid_shape_effect() const { return solid_shape_effect; }
 		std::shared_ptr<Lame::Effect> get_wireframe_shape_effect() const { return wireframe_shape_effect; }
+		std::shared_ptr<Context> get_context() const { return context; }
 
 	private:
 		DebugRenderer() {}
@@ -58,9 +59,11 @@ namespace Lame
 		bool RenderSolidMeshes(const Lame::Matrix4x4& i_worldToView, const Lame::Matrix4x4& i_viewToScreen);
 		bool RenderWireframeMeshes(const Lame::Matrix4x4& i_worldToView, const Lame::Matrix4x4& i_viewToScreen);
 
-		std::shared_ptr<Lame::Effect> line_effect;
-		std::shared_ptr<Lame::Effect> solid_shape_effect;
-		std::shared_ptr<Lame::Effect> wireframe_shape_effect;
+		std::shared_ptr<Effect> line_effect;
+		std::shared_ptr<Effect> solid_shape_effect;
+		std::shared_ptr<Effect> wireframe_shape_effect;
+
+		std::shared_ptr<Context> context;
 
 		std::vector<Lame::Vertex> line_vertices;
 		size_t max_lines_count;
