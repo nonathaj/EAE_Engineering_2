@@ -20,7 +20,9 @@ namespace
 		{
 		case Lame::Mesh::PrimitiveType::TriangleList: return D3DPT_TRIANGLELIST;
 		case Lame::Mesh::PrimitiveType::TriangleStrip: return D3DPT_TRIANGLESTRIP;
+		case Lame::Mesh::PrimitiveType::TriangleFan: return D3DPT_TRIANGLEFAN;
 		case Lame::Mesh::PrimitiveType::LineList: return D3DPT_LINELIST;
+		case Lame::Mesh::PrimitiveType::LineStrip: return D3DPT_LINESTRIP;
 		default: return static_cast<D3DPRIMITIVETYPE>(0);
 		}
 	}

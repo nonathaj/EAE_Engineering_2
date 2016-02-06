@@ -301,8 +301,12 @@ namespace Lame
 			return i_index_count / 3;
 		case Lame::Mesh::PrimitiveType::TriangleStrip: 
 			return i_index_count < 3 ? 0 : i_index_count - 2;
+		case Lame::Mesh::PrimitiveType::TriangleFan:
+			return i_index_count < 3 ? 0 : i_index_count - 2;
 		case Lame::Mesh::PrimitiveType::LineList:
 			return i_index_count / 2;
+		case Lame::Mesh::PrimitiveType::LineStrip:
+			return i_index_count < 2 ? 0 : i_index_count - 1;
 		default: 
 			return 0;
 		}

@@ -32,7 +32,9 @@ namespace Lame
 		{ 
 			TriangleList,	//Sequence of Independent Triangles
 			TriangleStrip,	//Sequence of Sliding Triangles
+			TriangleFan,	//Sequence of Sliding Triangles based on the first vertex rendered
 			LineList,		//Sequence of Independent Lines
+			LineStrip,		//Sequence of Sliding Lines
 		};
 		static size_t GetPrimitiveCount(const PrimitiveType i_primitive_type, const size_t i_index_count);
 
