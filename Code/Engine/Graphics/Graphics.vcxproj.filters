@@ -49,6 +49,10 @@
       <Filter>OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="FontRenderer.h" />
+    <ClCompile Include="Direct3D\FontRenderer.d3d.cpp">
+      <Filter>Direct3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics.h" />
