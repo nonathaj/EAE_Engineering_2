@@ -52,7 +52,7 @@ namespace Lame
 		std::shared_ptr<Mesh> mesh;
 		{
 			const Color32 color = Color32::white;
-			const Lame::Rectangle2D realsc = Graphics::GetRealScreenCoord(i_screen_coords);
+			const Lame::Rectangle2D realsc = Context::GetRealScreenCoord(i_screen_coords);
 			sprite->vertices[0] = Vertex(Lame::Vector2(realsc.left(), realsc.top()), Lame::Vector2(i_texture_coords.left(), i_texture_coords.top()), color);
 			sprite->vertices[1] = Vertex(Lame::Vector2(realsc.right(), realsc.top()), Lame::Vector2(i_texture_coords.right(), i_texture_coords.top()), color);
 			sprite->vertices[2] = Vertex(Lame::Vector2(realsc.left(), realsc.bottom()), Lame::Vector2(i_texture_coords.left(), i_texture_coords.bottom()), color);
@@ -85,7 +85,7 @@ namespace Lame
 
 	bool Sprite::screen_coords(const Lame::Rectangle2D& i_screen_coords)
 	{
-		Lame::Rectangle2D realsc = Graphics::GetRealScreenCoord(i_screen_coords);
+		Lame::Rectangle2D realsc = Context::GetRealScreenCoord(i_screen_coords);
 		vertices[0].position = Lame::Vector2(realsc.left(), realsc.top());
 		vertices[1].position = Lame::Vector2(realsc.right(), realsc.top());
 		vertices[2].position = Lame::Vector2(realsc.left(), realsc.bottom());
@@ -111,7 +111,7 @@ namespace Lame
 	Lame::Rectangle2D Sprite::screen_coords() const
 	{
 		Lame::Rectangle2D real_screen(vertices[0].position.x(), vertices[3].position.x(), vertices[0].position.y(), vertices[3].position.y());
-		return Graphics::GetVirtualScreenCoord(real_screen);
+		return Context::GetVirtualScreenCoord(real_screen);
 	}
 
 	bool Sprite::SelectFromSheet(const size_t i_horz_count, const size_t i_vert_count, const size_t i_index)

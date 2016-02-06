@@ -6,6 +6,7 @@
 #include "RenderableComponent.h"
 #include "DebugRenderer.h"
 #include "Sprite.h"
+#include "FontRenderer.h"
 #include "../Component/GameObject.h"
 #include "../Core/Matrix4x4.h"
 #include "../System/Console.h"
@@ -169,24 +170,6 @@ namespace Lame
 			return true;
 		}
 		return false;
-	}
-
-	Lame::Rectangle2D Graphics::GetRealScreenCoord(const Lame::Rectangle2D& i_virtual_screen_coord)
-	{
-		return Lame::Rectangle2D(
-			i_virtual_screen_coord.left() * 2.0f - 1.0f,
-			i_virtual_screen_coord.right() * 2.0f - 1.0f,
-			i_virtual_screen_coord.top() * 2.0f - 1.0f,
-			i_virtual_screen_coord.bottom() * 2.0f - 1.0f);
-	}
-
-	Lame::Rectangle2D Graphics::GetVirtualScreenCoord(const Lame::Rectangle2D& i_real_screen_coord)
-	{
-		return Lame::Rectangle2D(
-			(i_real_screen_coord.left() + 1.0f) / 2.0f,
-			(i_real_screen_coord.right() + 1.0f) / 2.0f,
-			(i_real_screen_coord.top() + 1.0f) / 2.0f,
-			(i_real_screen_coord.bottom() + 1.0f) / 2.0f);
 	}
 
 #ifdef ENABLE_DEBUG_RENDERING

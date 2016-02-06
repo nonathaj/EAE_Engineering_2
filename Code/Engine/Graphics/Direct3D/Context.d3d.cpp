@@ -6,6 +6,7 @@
 #include <d3d9types.h>
 
 #include "../../System/UserOutput.h"
+#include "../../Core/Rectangle2D.h"
 
 namespace
 {
@@ -124,6 +125,24 @@ namespace Lame
 			Lame::UserOutput::Display("Direct3D failed to get the device's creation parameters");
 		}
 		return result;
+	}
+
+	Rectangle2D Context::GetRealScreenCoord(const Rectangle2D& i_virtual_screen_coord)
+	{
+		return Lame::Rectangle2D(
+			i_virtual_screen_coord.left() * 2.0f - 1.0f,
+			i_virtual_screen_coord.right() * 2.0f - 1.0f,
+			i_virtual_screen_coord.top() * 2.0f - 1.0f,
+			i_virtual_screen_coord.bottom() * 2.0f - 1.0f);
+	}
+
+	Rectangle2D Context::GetVirtualScreenCoord(const Rectangle2D& i_real_screen_coord)
+	{
+		return Lame::Rectangle2D(
+			(i_real_screen_coord.left() + 1.0f) / 2.0f,
+			(i_real_screen_coord.right() + 1.0f) / 2.0f,
+			(i_real_screen_coord.top() + 1.0f) / 2.0f,
+			(i_real_screen_coord.bottom() + 1.0f) / 2.0f);
 	}
 }
 

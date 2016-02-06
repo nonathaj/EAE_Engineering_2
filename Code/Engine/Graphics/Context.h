@@ -15,6 +15,8 @@
 
 namespace Lame
 {
+	class Rectangle2D;
+
 	class Context
 	{
 	public:
@@ -44,6 +46,9 @@ namespace Lame
 		HGLRC get_openGlRenderingContext() const { return openGlRenderingContext; }
 #endif
 
+		Rectangle2D GetPixelCoord(const Rectangle2D& i_virtual_screen_coord);
+		static Rectangle2D GetRealScreenCoord(const Rectangle2D& i_virtual_screen_coord);
+		static Rectangle2D GetVirtualScreenCoord(const Rectangle2D& i_real_screen_coord);
 	private:
 		Context(HWND i_renderingWindow);
 

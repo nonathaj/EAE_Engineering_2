@@ -42,9 +42,6 @@ namespace Lame
 
 		DebugRenderer* debug_renderer() const { return debug_renderer_.get(); }
 #endif
-
-		static Lame::Rectangle2D GetRealScreenCoord(const Lame::Rectangle2D& i_virtual_screen_coord);
-		static Lame::Rectangle2D GetVirtualScreenCoord(const Lame::Rectangle2D& i_real_screen_coord);
 	private:
 		Graphics(std::shared_ptr<Context> i_context, std::shared_ptr<CameraComponent> i_camera, std::shared_ptr<Lame::GameObject> i_camera_gamebject);
 
