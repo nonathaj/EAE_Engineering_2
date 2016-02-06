@@ -5,8 +5,6 @@
 #include <string>
 #include <utility>
 
-#include "../../Engine/LameEngine/Engine.h"
-
 #include "../../Engine/Graphics/Context.h"
 #include "../../Engine/Graphics/Mesh.h"
 #include "../../Engine/Graphics/Effect.h"
@@ -28,6 +26,13 @@
 
 namespace
 {
+	std::shared_ptr<Lame::Material> CreateMaterial(const std::string& i_material);
+	std::shared_ptr<Lame::Mesh> CreateMesh(const std::string& i_mesh);
+	std::shared_ptr<Lame::RenderableComponent> CreateRenderableObject(std::shared_ptr<Lame::GameObject> i_go, std::shared_ptr<Lame::Mesh> i_mesh, std::shared_ptr<Lame::Material> i_material);
+
+	std::unique_ptr<Lame::Graphics> graphics;
+	std::unique_ptr<Lame::World> world;
+
 	std::shared_ptr<Lame::Effect> sprite_effect;
 
 	std::shared_ptr<Lame::Sprite> sprite;
@@ -43,12 +48,39 @@ namespace Gameplay
 {
 	bool Initialize(HWND i_window)
 	{
-		if (!Lame::Engine::Setup(i_window))
-			return false;
+		{
+			world = std::unique_ptr<Lame::World>(new Lame::World());
+			if (!world)
+			{
+				Shutdown();
+				return false;
+			}
 
-		using namespace Lame::Engine;
+			graphics = std::unique_ptr<Lame::Graphics>(Lame::Graphics::Create(i_window));
+			if (!graphics)
+			{
+				Shutdown();
+				return false;
+			}
 
-		Lame::Graphics* graphics = Lame::Engine::graphics();
+#ifdef ENABLE_DEBUG_RENDERING
+			//enable debug drawing for graphics
+			if (!graphics->EnableDebugDrawing(10000))
+			{
+				Shutdown();
+				return false;
+			}
+#endif
+
+			std::string error;
+			if (!eae6320::Time::Initialize(&error))
+			{
+				Lame::UserOutput::Display(error, "Time initialization error");
+				Shutdown();
+				return false;
+			}
+		}
+
 		graphics->camera()->gameObject()->transform().position(Lame::Vector3(0, 0, 15));
 		graphics->camera()->near_clip_plane(1.0f);
 		graphics->camera()->far_clip_plane(5000.0f);
@@ -104,30 +136,31 @@ namespace Gameplay
 
 	bool RunFrame()
 	{
-		float deltaTime;
-		if (!Lame::Engine::BeginFrame(deltaTime))
-			return false;
+		eae6320::Time::OnNewFrame();
+		float deltaTime = eae6320::Time::GetSecondsElapsedThisFrame();
 
 		HandleInput(deltaTime);
 
 #ifdef ENABLE_DEBUG_RENDERING
-		Lame::Engine::graphics()->debug_renderer()->AddBox(
+		graphics->debug_renderer()->AddBox(
 			true, 
 			Lame::Vector3::one * 250.0f,
-			Lame::Transform::CreateDefault());
-
-		Lame::Engine::graphics()->debug_renderer()->AddLine(Lame::Vector3::zero, Lame::Vector3(0, 0, -1000), Lame::Color32::blue);
-		Lame::Engine::graphics()->debug_renderer()->AddLine(Lame::Vector3(0, 100, 0), Lame::Vector3(0, 100, -1000), Lame::Color32::red);
-
+			Lame::Transform::CreateDefault() );
+		graphics->debug_renderer()->AddLine(Lame::Vector3::zero, Lame::Vector3(0, 0, -1000), Lame::Color32::blue);
+		graphics->debug_renderer()->AddLine(Lame::Vector3(0, 100, 0), Lame::Vector3(0, 100, -1000), Lame::Color32::red);
 #endif
-		return Lame::Engine::EndFrame();
+
+		world->Update(deltaTime);
+		return graphics->Render();
 	}
 
 	bool Shutdown()
 	{
 		sprite_effect.reset();
 		sprite.reset();
-		return Lame::Engine::Shutdown();
+		graphics.reset();
+		world.reset();
+		return true;
 	}
 }
 
@@ -163,8 +196,6 @@ namespace
 	{
 		using namespace Lame;
 		using namespace Lame::UserInput;
-
-		Graphics* graphics = Lame::Engine::graphics();
 
 		const float movementAmount = 300.0f * deltaTime;
 		std::shared_ptr<GameObject> movableObject = graphics->camera()->gameObject();
@@ -217,5 +248,62 @@ namespace
 	bool Contacting(std::shared_ptr<Lame::GameObject> go1, std::shared_ptr<Lame::GameObject> go2, const float& go1Size, const float& go2Size)
 	{
 		return go1->transform().position().distance(go2->transform().position()) <= go1Size + go2Size;
+	}
+
+	std::shared_ptr<Lame::Material> CreateMaterial(const std::string& i_material)
+	{
+		using namespace Lame;
+
+		if (!graphics || !graphics->context())
+			return nullptr;
+		return std::shared_ptr<Material>(Material::Create(graphics->context(), i_material));
+	}
+
+	std::shared_ptr<Lame::Mesh> CreateMesh(const std::string& i_mesh)
+	{
+		using namespace Lame;
+
+		if (!graphics || !graphics->context())
+			return nullptr;
+		return std::shared_ptr<Mesh>(Mesh::Create(graphics->context(), i_mesh));
+	}
+
+	std::shared_ptr<Lame::RenderableComponent> CreateRenderableObject(std::shared_ptr<Lame::GameObject> i_go, std::shared_ptr<Lame::Mesh> i_mesh, std::shared_ptr<Lame::Material> i_material)
+	{
+		using namespace Lame;
+
+		if (!world || !graphics || !graphics->context() || !i_mesh || !i_material)
+			return nullptr;
+
+		//create the gameObject, if we did not receive a valid one
+		std::shared_ptr<GameObject> go = i_go;
+		if (!go)
+		{
+			go = world->AddNewGameObject();
+			if (!go)
+				return nullptr;
+		}
+		else
+		{
+			if (!world->Add(go))
+				return nullptr;
+		}
+
+		//create the renderable
+		std::shared_ptr<RenderableComponent> renderable(RenderableComponent::Create(go, i_mesh, i_material));
+		if (!renderable)
+		{
+			world->Remove(go);
+			return nullptr;
+		}
+
+		//add the renderable to the graphics system
+		if (!graphics->Add(renderable))
+		{
+			world->Remove(go);
+			return nullptr;
+		}
+
+		return renderable;
 	}
 }
