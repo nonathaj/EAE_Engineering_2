@@ -28,8 +28,6 @@ namespace Lame
 		class Module
 		{
 		public:
-			Module() : enabled_(true) {}
-
 			bool Up(const Keyboard::Key i_key) const;
 			bool Up(const Mouse::Button i_button) const;
 			bool Down(const Keyboard::Key i_key) const;
@@ -53,6 +51,8 @@ namespace Lame
 
 			void Tick(const float deltaTime);
 		private:
+			Module() : enabled_(true) {}
+
 			struct KeyState
 			{
 				bool last_frame;
@@ -64,6 +64,8 @@ namespace Lame
 			bool enabled_;
 			std::unordered_map<Lame::Input::Keyboard::Key, KeyState> kb_state;
 			std::unordered_map<Lame::Input::Mouse::Button, KeyState> mouse_state;
+
+			friend Lame::Singleton<Lame::Input::Module>;
 		};
 	}
 }

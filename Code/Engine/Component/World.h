@@ -4,6 +4,8 @@
 #include <vector>
 #include <memory>
 
+#include "../Core/Singleton.h"
+
 namespace Lame
 {
 	class GameObject;
@@ -11,8 +13,9 @@ namespace Lame
 	class World
 	{
 	public:
-		World();
 		~World();
+
+		bool Setup();
 
 		void Update(float deltaTime);
 
@@ -23,8 +26,14 @@ namespace Lame
 		std::shared_ptr<GameObject> AddNewGameObject();			//returns a new gameobject inside this world
 
 	private:
+		World();
+
 		std::vector<std::shared_ptr<GameObject>> gameObjects_;
+
+		friend Lame::Singleton<Lame::World>;
 	};
 }
+
+typedef Lame::Singleton<Lame::World> LameWorld;
 
 #endif //_ENGINE_WORLD_H

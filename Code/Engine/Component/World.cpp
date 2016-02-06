@@ -14,6 +14,11 @@ namespace Lame
 	{
 	}
 
+	bool World::Setup()
+	{
+		return true;
+	}
+
 	void World::Update(float deltaTime)
 	{
 		for (auto itr = gameObjects_.begin(); itr != gameObjects_.end(); /**/)

@@ -16,19 +16,19 @@
 
 namespace Lame
 {
-	Graphics* Graphics::Create(const HWND i_renderingWindow)
+	bool Graphics::Setup(const HWND i_renderingWindow)
 	{
-		return Create(std::shared_ptr<Context>(Lame::Context::Create(i_renderingWindow)));
+		return Setup(std::shared_ptr<Context>(Lame::Context::Create(i_renderingWindow)));
 	}
 
-	Graphics* Graphics::Create(std::shared_ptr<Context> i_context)
+	bool Graphics::Setup(std::shared_ptr<Context> i_context)
 	{
-		if (!i_context)
-			return nullptr;
+		if (!i_context || context_)
+			return false;
 
 		std::shared_ptr<Lame::GameObject> cameraGameObject(new Lame::GameObject());
 		if (!cameraGameObject)
-			return nullptr;
+			return false;
 
 #ifdef ENABLE_DEBUG_MENU
 		std::shared_ptr<Debug::Menu> dm(Debug::Menu::Create(i_context));
@@ -40,28 +40,16 @@ namespace Lame
 
 		std::shared_ptr<CameraComponent> cam(new CameraComponent(cameraGameObject, i_context));
 		if (!cam)
-			return nullptr;
-		
-		Graphics* g = new Graphics(i_context, cam, cameraGameObject);
-		if (g)
-		{
-			g->debug_menu_ = dm;
-		}
-		return g;
-	}
+			return false;
 
-	Graphics::Graphics(std::shared_ptr<Context> i_context, std::shared_ptr<CameraComponent> i_camera, std::shared_ptr<Lame::GameObject> i_camera_gamebject) :
-		context_(i_context),
-		camera_(i_camera),
-		camera_gamebject_(i_camera_gamebject),
-		renderables_()
-#ifdef ENABLE_DEBUG_RENDERING
-		, debug_renderer_(nullptr)
-#endif
+		context_ = i_context;
+		camera_ = cam;
+		camera_gameobject_ = cameraGameObject;
 #ifdef ENABLE_DEBUG_MENU
-		, debug_menu_(nullptr)
+		debug_menu_ = dm;
 #endif
-	{ }
+		return true;
+	}
 
 	bool Graphics::Render()
 	{

@@ -12,7 +12,8 @@ namespace Lame
 
 		static T & Get();
 		static void Release();
-
+		static void Touch();
+		static bool Exists();
 	private:
 		// make non-copyable
 		Singleton( Singleton const & );

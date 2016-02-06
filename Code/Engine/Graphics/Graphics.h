@@ -6,6 +6,9 @@
 #include <string>
 
 #include "../../Engine/Windows/Includes.h"
+
+#include "../Core/Singleton.h"
+
 #include "CameraComponent.h"
 #include "DebugRenderer.h"
 #include "DebugMenu.h"
@@ -18,11 +21,16 @@ namespace Lame
 	class Sprite;
 	class Rectangle2D;
 
+	namespace Shader
+	{
+		enum Type { Unknown, Vertex, Fragment, };
+	}
+
 	class Graphics
 	{
 	public:
-		static Graphics* Create(const HWND i_renderingWindow);
-		static Graphics* Create(std::shared_ptr<Context> i_context);
+		bool Setup(const HWND i_renderingWindow);
+		bool Setup(std::shared_ptr<Context> i_context);
 
 		bool Render();
 
@@ -40,7 +48,6 @@ namespace Lame
 		
 #ifdef ENABLE_DEBUG_RENDERING
 		bool EnableDebugDrawing(const size_t i_line_count);
-
 		DebugRenderer* debug_renderer() const { return debug_renderer_.get(); }
 #endif
 
@@ -48,12 +55,7 @@ namespace Lame
 		Debug::Menu* debug_menu() const { return debug_menu_.get(); }
 #endif
 	private:
-		Graphics(std::shared_ptr<Context> i_context, std::shared_ptr<CameraComponent> i_camera, std::shared_ptr<Lame::GameObject> i_camera_gamebject);
-
-		//Do not allow Graphics to be managed without pointers
-		Graphics();
-		Graphics(const Graphics &i_other);
-		Graphics& operator=(const Graphics &i_other);
+		Graphics() {}
 
 		std::shared_ptr<Context> context_;
 		std::vector<std::shared_ptr<RenderableComponent>> renderables_;
@@ -67,14 +69,13 @@ namespace Lame
 		std::shared_ptr<Debug::Menu> debug_menu_;
 #endif
 		//store the camera's gameobject, so it lives for the duration of this graphics
-		std::shared_ptr<Lame::GameObject> camera_gamebject_;
+		std::shared_ptr<Lame::GameObject> camera_gameobject_;
 		std::shared_ptr<CameraComponent> camera_;
-	};
 
-	namespace Shader
-	{
-		enum Type { Unknown, Vertex, Fragment, };
-	}
+		friend Lame::Singleton<Lame::Graphics>;
+	};
 }
+
+typedef Lame::Singleton<Lame::Graphics> LameGraphics;
 
 #endif	// LAME_GRAPHICS_H

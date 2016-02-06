@@ -31,9 +31,6 @@ namespace
 	std::shared_ptr<Lame::Mesh> CreateMesh(const std::string& i_mesh);
 	std::shared_ptr<Lame::RenderableComponent> CreateRenderableObject(std::shared_ptr<Lame::GameObject> i_go, std::shared_ptr<Lame::Mesh> i_mesh, std::shared_ptr<Lame::Material> i_material);
 
-	std::unique_ptr<Lame::Graphics> graphics;
-	std::unique_ptr<Lame::World> world;
-
 	std::shared_ptr<Lame::Effect> sprite_effect;
 
 	std::shared_ptr<Lame::Sprite> sprite;
@@ -56,15 +53,8 @@ namespace Gameplay
 	bool Initialize(HWND i_window)
 	{
 		{
-			world = std::unique_ptr<Lame::World>(new Lame::World());
-			if (!world)
-			{
-				Shutdown();
-				return false;
-			}
-
-			graphics = std::unique_ptr<Lame::Graphics>(Lame::Graphics::Create(i_window));
-			if (!graphics)
+			if (!LameWorld::Get().Setup() || 
+				!LameGraphics::Get().Setup(i_window))
 			{
 				Shutdown();
 				return false;
@@ -72,7 +62,7 @@ namespace Gameplay
 
 #ifdef ENABLE_DEBUG_RENDERING
 			//enable debug drawing for graphics
-			if (!graphics->EnableDebugDrawing(10000))
+			if (!LameGraphics::Get().EnableDebugDrawing(10000))
 			{
 				Shutdown();
 				return false;
@@ -80,13 +70,13 @@ namespace Gameplay
 #endif
 
 #ifdef ENABLE_DEBUG_MENU
-			graphics->debug_menu()->CreateText("FPS", frames_per_second);
-			graphics->debug_menu()->CreateCheckBox("Color Sphere Red ", &red_sphere);
-			graphics->debug_menu()->CreateSlider("Sphere Radius", &sphere_radius, 100.0f, 500.0f);
-			graphics->debug_menu()->CreateButton("Reset Sphere Radius", []() { 
+			LameGraphics::Get().debug_menu()->CreateText("FPS", frames_per_second);
+			LameGraphics::Get().debug_menu()->CreateCheckBox("Color Sphere Red ", &red_sphere);
+			LameGraphics::Get().debug_menu()->CreateSlider("Sphere Radius", &sphere_radius, 100.0f, 500.0f);
+			LameGraphics::Get().debug_menu()->CreateButton("Reset Sphere Radius", []() { 
 				sphere_radius = 250.0f;
 			});
-			graphics->debug_menu()->CreateCheckBox("Show Sphere (Crashes game) ", &show_sphere);
+			LameGraphics::Get().debug_menu()->CreateCheckBox("Show Sphere (Crashes game) ", &show_sphere);
 #endif
 
 			std::string error;
@@ -98,9 +88,9 @@ namespace Gameplay
 			}
 		}
 
-		graphics->camera()->gameObject()->transform().position(Lame::Vector3(0, 0, 15));
-		graphics->camera()->near_clip_plane(1.0f);
-		graphics->camera()->far_clip_plane(5000.0f);
+		LameGraphics::Get().camera()->gameObject()->transform().position(Lame::Vector3(0, 0, 15));
+		LameGraphics::Get().camera()->near_clip_plane(1.0f);
+		LameGraphics::Get().camera()->far_clip_plane(5000.0f);
 
 		if (
 			!CreateRenderableObject(nullptr, CreateMesh("data/ceiling_mesh.mesh.bin"), CreateMaterial("data/cement_wall.material.bin")) ||
@@ -116,7 +106,7 @@ namespace Gameplay
 			return false;
 		}
 
-		sprite_effect = std::shared_ptr<Lame::Effect>(Lame::Effect::Create(graphics->context(), "data/sprite.effect.bin"));
+		sprite_effect = std::shared_ptr<Lame::Effect>(Lame::Effect::Create(LameGraphics::Get().context(), "data/sprite.effect.bin"));
 		if (!sprite_effect)
 		{
 			Shutdown();
@@ -126,11 +116,11 @@ namespace Gameplay
 		sprite = std::shared_ptr<Lame::Sprite>(
 			Lame::Sprite::Create(
 			sprite_effect,
-			std::shared_ptr<Lame::Texture>(Lame::Texture::Create(graphics->context(), "data/alpha.DDS")),
+			std::shared_ptr<Lame::Texture>(Lame::Texture::Create(LameGraphics::Get().context(), "data/alpha.DDS")),
 			Lame::Vector2::one * 0.1f,
 			0.2f,
 			Lame::Rectangle2D::CreateTLNormalized() ));
-		if (!sprite || !graphics->Add(sprite))
+		if (!sprite || !LameGraphics::Get().Add(sprite))
 		{
 			Shutdown();
 			return false;
@@ -138,10 +128,10 @@ namespace Gameplay
 
 		number = std::shared_ptr<Lame::Sprite>(Lame::Sprite::Create(
 			sprite_effect,
-			std::shared_ptr<Lame::Texture>(Lame::Texture::Create(graphics->context(), "data/numbers.DDS")),
+			std::shared_ptr<Lame::Texture>(Lame::Texture::Create(LameGraphics::Get().context(), "data/numbers.DDS")),
 			Lame::Rectangle2D(Lame::Vector2::one * 0.8f, Lame::Vector2(0.2f, 0.3f)),
 			Lame::Rectangle2D::CreateTLNormalized() ));
-		if (!number || !graphics->Add(number))
+		if (!number || !LameGraphics::Get().Add(number))
 		{
 			Shutdown();
 			return false;
@@ -156,14 +146,14 @@ namespace Gameplay
 		eae6320::Time::OnNewFrame();
 		float deltaTime = eae6320::Time::GetSecondsElapsedThisFrame();
 		LameInput::Get().Tick(deltaTime);
-		itoa(60.0f / deltaTime, frames_per_second, 10);
+		_itoa_s(static_cast<int>(60.0f / deltaTime), frames_per_second, 10);
 
 		HandleInput(deltaTime);
 
 #ifdef ENABLE_DEBUG_RENDERING
 		if (show_sphere)
 		{
-			graphics->debug_renderer()->AddSphere(
+			LameGraphics::Get().debug_renderer()->AddSphere(
 				true,
 				sphere_radius,
 				Lame::Transform::CreateDefault(),
@@ -171,16 +161,16 @@ namespace Gameplay
 		}
 #endif
 
-		world->Update(deltaTime);
-		return graphics->Render();
+		LameWorld::Get().Update(deltaTime);
+		return LameGraphics::Get().Render();
 	}
 
 	bool Shutdown()
 	{
 		sprite_effect.reset();
 		sprite.reset();
-		graphics.reset();
-		world.reset();
+		LameGraphics::Release();
+		LameWorld::Release();
 		LameInput::Release();
 		return true;
 	}
@@ -220,7 +210,7 @@ namespace
 		using namespace Lame::Input;
 
 		const float movementAmount = 300.0f * deltaTime;
-		std::shared_ptr<GameObject> movableObject = graphics->camera()->gameObject();
+		std::shared_ptr<GameObject> movableObject = LameGraphics::Get().camera()->gameObject();
 		Vector3 movementVector = Vector3::zero;
 		if (LameInput::Get().Held(Keyboard::W))						//forward
 			movementVector += Vector3::forward;
@@ -235,12 +225,12 @@ namespace
 		if (LameInput::Get().Held(Keyboard::Q))						//down
 			movementVector += Vector3::down;
 
-		movementVector = graphics->camera()->gameObject()->transform().rotation() * movementVector * movementAmount;
+		movementVector = LameGraphics::Get().camera()->gameObject()->transform().rotation() * movementVector * movementAmount;
 		if (!Math::Float::IsNaN(movementVector.x()) &&
 			!Math::Float::IsNaN(movementVector.y()) &&
 			!Math::Float::IsNaN(movementVector.z()))
 		{
-			graphics->camera()->gameObject()->transform().Move(movementVector);
+			LameGraphics::Get().camera()->gameObject()->transform().Move(movementVector);
 		}
 		else
 		{
@@ -275,39 +265,37 @@ namespace
 	std::shared_ptr<Lame::Material> CreateMaterial(const std::string& i_material)
 	{
 		using namespace Lame;
-
-		if (!graphics || !graphics->context())
+		if (!LameGraphics::Exists())
 			return nullptr;
-		return std::shared_ptr<Material>(Material::Create(graphics->context(), i_material));
+		return std::shared_ptr<Material>(Material::Create(LameGraphics::Get().context(), i_material));
 	}
 
 	std::shared_ptr<Lame::Mesh> CreateMesh(const std::string& i_mesh)
 	{
 		using namespace Lame;
-
-		if (!graphics || !graphics->context())
+		if (!LameGraphics::Exists())
 			return nullptr;
-		return std::shared_ptr<Mesh>(Mesh::Create(graphics->context(), i_mesh));
+		return std::shared_ptr<Mesh>(Mesh::Create(LameGraphics::Get().context(), i_mesh));
 	}
 
 	std::shared_ptr<Lame::RenderableComponent> CreateRenderableObject(std::shared_ptr<Lame::GameObject> i_go, std::shared_ptr<Lame::Mesh> i_mesh, std::shared_ptr<Lame::Material> i_material)
 	{
 		using namespace Lame;
 
-		if (!world || !graphics || !graphics->context() || !i_mesh || !i_material)
+		if (!LameWorld::Exists() || !LameGraphics::Exists() || !i_mesh || !i_material)
 			return nullptr;
 
 		//create the gameObject, if we did not receive a valid one
 		std::shared_ptr<GameObject> go = i_go;
 		if (!go)
 		{
-			go = world->AddNewGameObject();
+			go = LameWorld::Get().AddNewGameObject();
 			if (!go)
 				return nullptr;
 		}
 		else
 		{
-			if (!world->Add(go))
+			if (!LameWorld::Get().Add(go))
 				return nullptr;
 		}
 
@@ -315,14 +303,14 @@ namespace
 		std::shared_ptr<RenderableComponent> renderable(RenderableComponent::Create(go, i_mesh, i_material));
 		if (!renderable)
 		{
-			world->Remove(go);
+			LameWorld::Get().Remove(go);
 			return nullptr;
 		}
 
 		//add the renderable to the graphics system
-		if (!graphics->Add(renderable))
+		if (!LameGraphics::Get().Add(renderable))
 		{
-			world->Remove(go);
+			LameWorld::Get().Remove(go);
 			return nullptr;
 		}
 
