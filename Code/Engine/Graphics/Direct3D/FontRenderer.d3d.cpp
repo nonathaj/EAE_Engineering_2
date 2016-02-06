@@ -101,8 +101,6 @@ namespace Lame
 		}
 		LPD3DXFONT f = reinterpret_cast<LPD3DXFONT>(font);
 		INT height = f->DrawTextA(nullptr, i_str, -1, &screen_rect, format, *reinterpret_cast<const D3DCOLOR*>(&i_color));
-
-		DEBUG_PRINT("r(%d, %d, %d, %d) fmt(%d)", screen_rect.left, screen_rect.right, screen_rect.top, screen_rect.bottom, format);
 		return height != 0;
 	}
 }

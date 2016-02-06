@@ -154,8 +154,6 @@ namespace Lame
 				widgets[x]->stream(content, width_, x == selected_widget_);
 			}
 
-			DEBUG_PRINT("str(\n%s\n)", content.str().c_str());
-
 			return font_renderer()->Render(
 				content.str().c_str(),
 				Rectangle2D::CreateBLNormalized(),
