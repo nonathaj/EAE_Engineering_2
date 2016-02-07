@@ -87,24 +87,18 @@ namespace Lame
 
 	bool Context::BeginFrame()
 	{
-		HRESULT result = direct3dDevice->BeginScene();
-		return SUCCEEDED(result);
+		return SUCCEEDED(direct3dDevice->BeginScene());
 	}
 
 	bool Context::EndFrame()
 	{
-		HRESULT result = direct3dDevice->EndScene();
-		bool success = SUCCEEDED(result);
+		bool success = SUCCEEDED(direct3dDevice->EndScene());
 
 		// Everything has been drawn to the "back buffer", which is just an image in memory.
 		// In order to display it, the contents of the back buffer must be "presented"
 		// (to the front buffer)
 		{
-			const RECT* noSourceRectangle = nullptr;
-			const RECT* noDestinationRectangle = nullptr;
-			const HWND useDefaultWindow = nullptr;
-			const RGNDATA* noDirtyRegion = nullptr;
-			HRESULT result = direct3dDevice->Present(noSourceRectangle, noDestinationRectangle, useDefaultWindow, noDirtyRegion);
+			HRESULT result = direct3dDevice->Present(nullptr, nullptr, nullptr, nullptr);
 			success = success && SUCCEEDED(result);
 		}
 		return success;

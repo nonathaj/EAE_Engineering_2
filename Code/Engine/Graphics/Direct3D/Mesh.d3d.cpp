@@ -94,13 +94,8 @@ namespace Lame
 
 			// Create a vertex buffer
 			const UINT bufferSize = static_cast<UINT>(i_vertex_count * sizeof(Vertex));
-			// We will define our own vertex format
-			const DWORD useSeparateVertexDeclaration = 0;
-			// Place the vertex buffer into memory that Direct3D thinks is the most appropriate
-			const D3DPOOL useDefaultPool = D3DPOOL_DEFAULT;
-			HANDLE* const notUsed = NULL;
-			const HRESULT result = i_context->get_direct3dDevice()->CreateVertexBuffer(bufferSize, usage, useSeparateVertexDeclaration, useDefaultPool,
-				&mesh->vertex_buffer_, notUsed);
+			const HRESULT result = i_context->get_direct3dDevice()->CreateVertexBuffer(
+				bufferSize, usage, 0, D3DPOOL_DEFAULT, &mesh->vertex_buffer_, nullptr);
 			if (FAILED(result))
 			{
 				Lame::UserOutput::Display("Direct3D failed to create a vertex buffer");
@@ -112,16 +107,9 @@ namespace Lame
 		//Create the Index Buffer
 		if (i_index_count > 0)
 		{
-			// We are drawing a square
 			UINT bufferSize = static_cast<UINT>(i_index_count * sizeof(uint32_t));
-			// We'll use 32-bit indices in this class to keep things simple
-			// (i.e. every index will be a 32 bit unsigned integer)
-			const D3DFORMAT format = D3DFMT_INDEX32;
-			// Place the index buffer into memory that Direct3D thinks is the most appropriate
-			const D3DPOOL useDefaultPool = D3DPOOL_DEFAULT;
-			HANDLE* notUsed = NULL;
-			const HRESULT result = i_context->get_direct3dDevice()->CreateIndexBuffer(bufferSize, usage, format, useDefaultPool,
-				&mesh->index_buffer_, notUsed);
+			const HRESULT result = i_context->get_direct3dDevice()->CreateIndexBuffer(
+				bufferSize, usage, D3DFMT_INDEX32, D3DPOOL_DEFAULT, &mesh->index_buffer_, nullptr);
 			if (FAILED(result))
 			{
 				Lame::UserOutput::Display("Direct3D failed to create an index buffer");
@@ -141,7 +129,7 @@ namespace Lame
 	{
 		if (i_index_count % 3 != 0)		//index buffer must be a list of triangles
 		{
-			Lame::UserOutput::Display("Cannot create a Mesh with non-triangular data. (Ensure number of indices is divisible by 3)");
+			Lame::UserOutput::Display("Cannot create a TriList Mesh with non-triangular data. (Ensure number of indices is divisible by 3)");
 			return nullptr;
 		}
 		bool hasIndices = i_index_count > 0 && i_indices;
@@ -158,6 +146,11 @@ namespace Lame
 	//Create a mesh with LEFT-HANDED indices
 	Mesh* Mesh::CreateLeftHandedTriList(const bool i_static, std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
 	{
+		if (i_index_count % 3 != 0)		//index buffer must be a list of triangles
+		{
+			Lame::UserOutput::Display("Cannot create a TriList Mesh with non-triangular data. (Ensure number of indices is divisible by 3)");
+			return nullptr;
+		}
 		Mesh* mesh = CreateEmpty(i_static, i_context, Lame::Mesh::PrimitiveType::TriangleList, i_vertex_count, i_index_count);
 		if (!mesh)
 			return nullptr;
@@ -220,6 +213,7 @@ namespace Lame
 		}
 
 		// Bind a specific index buffer to the device as a data source
+		if(index_buffer_)
 		{
 			result = context->get_direct3dDevice()->SetIndices(index_buffer_);
 			if (FAILED(result))

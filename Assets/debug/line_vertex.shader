@@ -12,7 +12,6 @@ uniform float4x4 view_to_screen;
 ////////////////////////////////////////////////////////////////////////////////////////
 
 void main(
-
 	in const float3 i_position : POSITION,
 	in const float4 i_color : COLOR,
 	in const float2 i_texcoords : TEXCOORD0,
