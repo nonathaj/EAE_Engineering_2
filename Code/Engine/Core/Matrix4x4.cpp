@@ -1,6 +1,8 @@
 
 #include "Matrix4x4.h"
 
+#include <sstream>
+
 #include "FloatMath.h"
 #include "Vector3.h"
 #include "Quaternion.h"
@@ -58,6 +60,11 @@ namespace Lame
 	Matrix4x4 Matrix4x4::CreateTransformation(const Vector3& i_translation, const Quaternion& i_rotation)
 	{
 		return CreateTranslation(i_translation) * CreateRotation(i_rotation);
+	}
+
+	Matrix4x4 Matrix4x4::CreateTransformation(const Vector3& i_translation, const Quaternion& i_rotation, const Vector3& i_scale)
+	{
+		return CreateTranslation(i_translation) * CreateRotation(i_rotation) * CreateScale(i_scale);
 	}
 
 	Matrix4x4 Matrix4x4::CreateTranslation(float i_x, float i_y, float i_z)
@@ -132,6 +139,20 @@ namespace Lame
 			0.0f, 0.0f, 0.0f, 1.0f);
 	}
 
+	Matrix4x4 Matrix4x4::CreateScale(const Vector3& i_scale)
+	{
+		return CreateScale(i_scale.x(), i_scale.y(), i_scale.z());
+	}
+
+	Matrix4x4 Matrix4x4::CreateScale(float i_x, float i_y, float i_z)
+	{
+		return Matrix4x4(
+			i_x, 0.0f, 0.0f, 0.0f,
+			0.0f, i_y, 0.0f, 0.0f,
+			0.0f, 0.0f, i_z, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f );
+	}
+
 	Matrix4x4 Matrix4x4::CreateWorldToView(const Vector3& i_cameraPosition, const Quaternion& i_cameraOrientation)
 	{
 		Matrix4x4 viewToWorld = CreateTransformation(i_cameraPosition, i_cameraOrientation);
@@ -148,7 +169,7 @@ namespace Lame
 			0.0f, 0.0f, 0.0f, 1.0f);
 	}
 
-	Matrix4x4 Matrix4x4::CreateViewToScreen(const float i_fieldOfView_y, const float i_aspectRatio, const float i_z_nearPlane, const float i_z_farPlane)
+	Matrix4x4 Matrix4x4::CreatePerspectiveViewToScreen(const float i_fieldOfView_y, const float i_aspectRatio, const float i_z_nearPlane, const float i_z_farPlane)
 	{
 		const float yScale = 1.0f / std::tan(i_fieldOfView_y * 0.5f);
 		const float xScale = yScale / i_aspectRatio;
@@ -167,6 +188,16 @@ namespace Lame
 			0.0f, 0.0f, (i_z_nearPlane + i_z_farPlane) * zDistanceScale, (2.0f * i_z_nearPlane * i_z_farPlane) * zDistanceScale,
 			0.0f, 0.0f, -1.0f, 0.0f);
 #endif
+	}
+
+	Matrix4x4 Matrix4x4::CreateOrthographicViewToScreen(const float i_width, const float i_height, const float i_z_nearPlane, const float i_z_farPlane)
+	{
+		const float z_dist = i_z_farPlane - i_z_nearPlane;
+		return Matrix4x4(
+			2.0f / i_width, 0, 0, 0,
+			0, 2.0f / i_height, 0, 0,
+			0, 0, -1.0f / z_dist, i_z_nearPlane / z_dist,
+			0, 0, 0, 1 );
 	}
 
 	float Matrix4x4::Determinant() const
@@ -297,6 +328,22 @@ namespace Lame
 			i_rhs.x() * Get(0, 0) + i_rhs.y() * Get(0, 1) + i_rhs.z() * Get(0, 2) + i_w * Get(0, 3),
 			i_rhs.x() * Get(1, 0) + i_rhs.y() * Get(1, 1) + i_rhs.z() * Get(1, 2) + i_w * Get(1, 3),
 			i_rhs.x() * Get(2, 0) + i_rhs.y() * Get(2, 1) + i_rhs.z() * Get(2, 2) + i_w * Get(2, 3) );
+	}
+
+	std::string Matrix4x4::to_string(bool i_format_on_single_line) const
+	{
+		char break_char = i_format_on_single_line ? ' ' : '\n';
+		char open = '{';
+		char close = '}';
+		std::string separator = ", ";
+		std::stringstream mstr;
+		mstr << open << break_char <<
+			open << ' ' << Get(0, 0) << separator << Get(0, 1) << separator << Get(0, 2) << separator << Get(0, 3) << ' ' << close << break_char <<
+			open << ' ' << Get(1, 0) << separator << Get(1, 1) << separator << Get(1, 2) << separator << Get(1, 3) << ' ' << close << break_char <<
+			open << ' ' << Get(2, 0) << separator << Get(2, 1) << separator << Get(2, 2) << separator << Get(2, 3) << ' ' << close << break_char <<
+			open << ' ' << Get(3, 0) << separator << Get(3, 1) << separator << Get(3, 2) << separator << Get(3, 3) << ' ' << close << break_char <<
+			break_char << close;
+		return mstr.str();
 	}
 
 	Matrix4x4& Matrix4x4::operator*=(const float i_rhs)

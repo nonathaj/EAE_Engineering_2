@@ -12,6 +12,8 @@ namespace Lame
 	{
 		ADD_TYPEID()
 	public:
+		enum class Type { Orthographic, Perspective };
+
 		CameraComponent(std::weak_ptr<Lame::GameObject> go, std::shared_ptr<Context> contextPtr, float i_vertical_fov_degree = 60.0f, float i_near_clip_plane = 0.1f, float i_far_clip_plane = 100.0f);
 
 		Lame::Matrix4x4 WorldToView() const;
@@ -23,17 +25,23 @@ namespace Lame
 		float far_clip_plane() const { return far_clip_plane_; }
 		void far_clip_plane(const float& i_far_clip_plane) { far_clip_plane_ = i_far_clip_plane; }
 
-		//in degrees
-		float vertical_fov() const { return vertical_fov_degrees_; }
-		void vertical_fov(const float& i_vertical_fov_degrees) { vertical_fov_degrees_ = i_vertical_fov_degrees; }
+		//Vertical field of view for Perspective camera in degrees
+		float vertical_fov() const { return vertical_size_; }
+		void vertical_fov(const float& i_vertical_fov_degrees) { vertical_size_ = i_vertical_fov_degrees; }
 
 		float aspect_ratio() const;
+
+		float ortho_height() const { return vertical_size_; }
+		void ortho_height(const float i_height) { vertical_size_ = i_height; }
+
+		Type camer_type() const { return camera_type_; }
 
 		inline std::shared_ptr<Context> context() const { return context_; }
 	private:
 		CameraComponent();
 
-		float vertical_fov_degrees_;
+		Type camera_type_;
+		float vertical_size_;
 		float near_clip_plane_; 
 		float far_clip_plane_;
 

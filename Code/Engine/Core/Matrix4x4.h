@@ -2,6 +2,7 @@
 #define _ENGINE_CORE_MATRIX4X4
 
 #include <cassert>
+#include <string>
 
 #include "FloatMath.h"
 
@@ -23,6 +24,7 @@ namespace Lame
 			const float r1c4, const float r2c4, const float r3c4, const float r4c4);
 
 		static Matrix4x4 CreateTransformation(const Vector3& i_translation, const Quaternion& i_rotation);
+		static Matrix4x4 CreateTransformation(const Vector3& i_translation, const Quaternion& i_rotation, const Vector3& i_scale);
 		static Matrix4x4 CreateTranslation(float i_x, float i_y, float i_z);
 		static Matrix4x4 CreateTranslation(const Vector3& i_translation);
 		static Matrix4x4 CreateRotationX(const float i_x_degrees);
@@ -31,8 +33,11 @@ namespace Lame
 		static Matrix4x4 CreateRotation(float i_x_deg, float i_y_deg, float i_z_deg);
 		static Matrix4x4 CreateRotation(const Vector3& i_euler_angles_degrees);
 		static Matrix4x4 CreateRotation(const Quaternion& i_rotation);
+		static Matrix4x4 CreateScale(const Vector3& i_scale);
+		static Matrix4x4 CreateScale(float i_x, float i_y, float i_z);
 		static Matrix4x4 CreateWorldToView(const Vector3& i_cameraPosition, const Quaternion& i_cameraOrientation);
-		static Matrix4x4 CreateViewToScreen(const float i_fieldOfView_y, const float i_aspectRatio, const float i_z_nearPlane, const float i_z_farPlane);
+		static Matrix4x4 CreatePerspectiveViewToScreen(const float i_fieldOfView_y, const float i_aspectRatio, const float i_z_nearPlane, const float i_z_farPlane);
+		static Matrix4x4 CreateOrthographicViewToScreen(const float i_width, const float i_height, const float i_z_nearPlane, const float i_z_farPlane);
 
 		inline float Get(const size_t i_row, const size_t i_column) const;
 		inline void Set(const size_t i_row, const size_t i_column, const float i_value);
@@ -52,6 +57,8 @@ namespace Lame
 		float Minor(const size_t i_row, const size_t i_column) const;
 
 		Vector3 Multiply(const Vector3& i_rhs, const float i_w = 1.0f) const;
+
+		std::string to_string(bool i_format_on_single_line = true) const;
 
 		Matrix4x4& operator*=(const Matrix4x4& i_other);
 		Matrix4x4& operator+=(const Matrix4x4& i_other);

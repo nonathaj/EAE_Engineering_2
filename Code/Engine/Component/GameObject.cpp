@@ -5,7 +5,7 @@
 namespace Lame
 {
 	GameObject::GameObject() :
-		transform_(Lame::Vector3::zero, Lame::Quaternion::identity),
+		transform_(Vector3::zero, Quaternion::identity, Vector3::one),
 		name_(""),
 		enabled_(true),
 		components_()

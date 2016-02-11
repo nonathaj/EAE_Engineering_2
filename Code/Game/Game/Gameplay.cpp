@@ -146,7 +146,7 @@ namespace Gameplay
 		eae6320::Time::OnNewFrame();
 		float deltaTime = eae6320::Time::GetSecondsElapsedThisFrame();
 		LameInput::Get().Tick(deltaTime);
-		_itoa_s(static_cast<int>(60.0f / deltaTime), frames_per_second, 10);
+		_itoa_s(static_cast<int>(1.0f / deltaTime), frames_per_second, 10);
 
 		HandleInput(deltaTime);
 
@@ -155,8 +155,8 @@ namespace Gameplay
 		{
 			LameGraphics::Get().debug_renderer()->AddSphere(
 				true,
-				sphere_radius,
-				Lame::Transform::CreateDefault(),
+				1.0f,
+				Lame::Transform(Lame::Vector3::zero, Lame::Quaternion::identity, Lame::Vector3::one * sphere_radius),
 				red_sphere ? Lame::Color32::red : Lame::Color32::white);
 		}
 #endif

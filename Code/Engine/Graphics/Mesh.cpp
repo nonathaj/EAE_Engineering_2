@@ -67,37 +67,38 @@ namespace Lame
 	{
 		const Lame::Vector3 half = i_size / 2.0f;
 
-		std::vector<Vertex> vertices;
-		// front
-		vertices.push_back(Lame::Vertex(Lame::Vector3(-half.x(), -half.y(), -half.z()), Lame::Vector2(0, 1), i_color));
-		vertices.push_back(Lame::Vertex(Lame::Vector3(-half.x(), +half.y(), -half.z()), Lame::Vector2(0, 0), i_color));
-		vertices.push_back(Lame::Vertex(Lame::Vector3(+half.x(), +half.y(), -half.z()), Lame::Vector2(1, 0), i_color));
-		vertices.push_back(Lame::Vertex(Lame::Vector3(+half.x(), -half.y(), -half.z()), Lame::Vector2(1, 1), i_color));
-		// back
-		vertices.push_back(Lame::Vertex(Lame::Vector3(-half.x(), -half.y(), +half.z()), Lame::Vector2(1, 1), i_color));
-		vertices.push_back(Lame::Vertex(Lame::Vector3(+half.x(), -half.y(), +half.z()), Lame::Vector2(0, 1), i_color));
-		vertices.push_back(Lame::Vertex(Lame::Vector3(+half.x(), +half.y(), +half.z()), Lame::Vector2(0, 0), i_color));
-		vertices.push_back(Lame::Vertex(Lame::Vector3(-half.x(), +half.y(), +half.z()), Lame::Vector2(1, 0), i_color));
-		// top
-		vertices.push_back(Lame::Vertex(Lame::Vector3(-half.x(), +half.y(), -half.z()), Lame::Vector2(0, 1), i_color));
-		vertices.push_back(Lame::Vertex(Lame::Vector3(-half.x(), +half.y(), +half.z()), Lame::Vector2(0, 0), i_color));
-		vertices.push_back(Lame::Vertex(Lame::Vector3(+half.x(), +half.y(), +half.z()), Lame::Vector2(1, 0), i_color));
-		vertices.push_back(Lame::Vertex(Lame::Vector3(+half.x(), +half.y(), -half.z()), Lame::Vector2(1, 1), i_color));
-		// bottom
-		vertices.push_back(Lame::Vertex(Lame::Vector3(-half.x(), -half.y(), -half.z()), Lame::Vector2(1, 1), i_color));
-		vertices.push_back(Lame::Vertex(Lame::Vector3(+half.x(), -half.y(), -half.z()), Lame::Vector2(0, 1), i_color));
-		vertices.push_back(Lame::Vertex(Lame::Vector3(+half.x(), -half.y(), +half.z()), Lame::Vector2(0, 0), i_color));
-		vertices.push_back(Lame::Vertex(Lame::Vector3(-half.x(), -half.y(), +half.z()), Lame::Vector2(1, 0), i_color));
-		// left
-		vertices.push_back(Lame::Vertex(Lame::Vector3(-half.x(), -half.y(), +half.z()), Lame::Vector2(0, 1), i_color));
-		vertices.push_back(Lame::Vertex(Lame::Vector3(-half.x(), +half.y(), +half.z()), Lame::Vector2(0, 0), i_color));
-		vertices.push_back(Lame::Vertex(Lame::Vector3(-half.x(), +half.y(), -half.z()), Lame::Vector2(1, 0), i_color));
-		vertices.push_back(Lame::Vertex(Lame::Vector3(-half.x(), -half.y(), -half.z()), Lame::Vector2(1, 1), i_color));
-		// right
-		vertices.push_back(Lame::Vertex(Lame::Vector3(+half.x(), -half.y(), -half.z()), Lame::Vector2(0, 1), i_color));
-		vertices.push_back(Lame::Vertex(Lame::Vector3(+half.x(), +half.y(), -half.z()), Lame::Vector2(0, 0), i_color));
-		vertices.push_back(Lame::Vertex(Lame::Vector3(+half.x(), +half.y(), +half.z()), Lame::Vector2(1, 0), i_color));
-		vertices.push_back(Lame::Vertex(Lame::Vector3(+half.x(), -half.y(), +half.z()), Lame::Vector2(1, 1), i_color));
+		std::vector<Vertex> vertices = {
+			// front
+			Lame::Vertex(Lame::Vector3(-half.x(), -half.y(), -half.z()), Lame::Vector2(0, 1), i_color),
+			Lame::Vertex(Lame::Vector3(-half.x(), +half.y(), -half.z()), Lame::Vector2(0, 0), i_color),
+			Lame::Vertex(Lame::Vector3(+half.x(), +half.y(), -half.z()), Lame::Vector2(1, 0), i_color),
+			Lame::Vertex(Lame::Vector3(+half.x(), -half.y(), -half.z()), Lame::Vector2(1, 1), i_color),
+			// back
+			Lame::Vertex(Lame::Vector3(-half.x(), -half.y(), +half.z()), Lame::Vector2(1, 1), i_color),
+			Lame::Vertex(Lame::Vector3(+half.x(), -half.y(), +half.z()), Lame::Vector2(0, 1), i_color),
+			Lame::Vertex(Lame::Vector3(+half.x(), +half.y(), +half.z()), Lame::Vector2(0, 0), i_color),
+			Lame::Vertex(Lame::Vector3(-half.x(), +half.y(), +half.z()), Lame::Vector2(1, 0), i_color),
+			// top
+			Lame::Vertex(Lame::Vector3(-half.x(), +half.y(), -half.z()), Lame::Vector2(0, 1), i_color),
+			Lame::Vertex(Lame::Vector3(-half.x(), +half.y(), +half.z()), Lame::Vector2(0, 0), i_color),
+			Lame::Vertex(Lame::Vector3(+half.x(), +half.y(), +half.z()), Lame::Vector2(1, 0), i_color),
+			Lame::Vertex(Lame::Vector3(+half.x(), +half.y(), -half.z()), Lame::Vector2(1, 1), i_color),
+			// bottom
+			Lame::Vertex(Lame::Vector3(-half.x(), -half.y(), -half.z()), Lame::Vector2(1, 1), i_color),
+			Lame::Vertex(Lame::Vector3(+half.x(), -half.y(), -half.z()), Lame::Vector2(0, 1), i_color),
+			Lame::Vertex(Lame::Vector3(+half.x(), -half.y(), +half.z()), Lame::Vector2(0, 0), i_color),
+			Lame::Vertex(Lame::Vector3(-half.x(), -half.y(), +half.z()), Lame::Vector2(1, 0), i_color),
+			// left
+			Lame::Vertex(Lame::Vector3(-half.x(), -half.y(), +half.z()), Lame::Vector2(0, 1), i_color),
+			Lame::Vertex(Lame::Vector3(-half.x(), +half.y(), +half.z()), Lame::Vector2(0, 0), i_color),
+			Lame::Vertex(Lame::Vector3(-half.x(), +half.y(), -half.z()), Lame::Vector2(1, 0), i_color),
+			Lame::Vertex(Lame::Vector3(-half.x(), -half.y(), -half.z()), Lame::Vector2(1, 1), i_color),
+			// right
+			Lame::Vertex(Lame::Vector3(+half.x(), -half.y(), -half.z()), Lame::Vector2(0, 1), i_color),
+			Lame::Vertex(Lame::Vector3(+half.x(), +half.y(), -half.z()), Lame::Vector2(0, 0), i_color),
+			Lame::Vertex(Lame::Vector3(+half.x(), +half.y(), +half.z()), Lame::Vector2(1, 0), i_color),
+			Lame::Vertex(Lame::Vector3(+half.x(), -half.y(), +half.z()), Lame::Vector2(1, 1), i_color)
+		};
 
 		std::vector<uint32_t> indices = {
 			0,1,2,0,2,3,
