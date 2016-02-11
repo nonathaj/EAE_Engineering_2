@@ -30,11 +30,6 @@ namespace Lame
 		{
 			Lame::Transform transform;
 			std::shared_ptr<Lame::Mesh> mesh;
-
-			~DebugMesh() 
-			{ 
-				mesh.reset();
-			}
 		};
 	public:
 		static DebugRenderer* Create(std::shared_ptr<Lame::Context> i_context, const size_t i_line_count);

@@ -150,7 +150,6 @@ namespace Lame
 		end.position = i_end;
 		end.color = i_end_color;
 		line_vertices.push_back(end);
-
 		return true;
 	}
 
@@ -174,7 +173,6 @@ namespace Lame
 		const bool lines_rendered = RenderLines(i_worldToView, i_viewToScreen);
 		const bool wireframe_meshes_rendered = RenderWireframeMeshes(i_worldToView, i_viewToScreen);
 		const bool solid_meshes_rendered = RenderSolidMeshes(i_worldToView, i_viewToScreen);
-
 		line_vertices.clear();
 		wireframe_meshes.clear();
 		solid_meshes.clear();
@@ -191,7 +189,6 @@ namespace Lame
 			!line_effect->SetConstant(Effect::Shader::Vertex, line_worldToViewUniformId, i_worldToView) ||
 			!line_effect->SetConstant(Effect::Shader::Vertex, line_viewToScreenUniformId, i_viewToScreen) ||
 			!line_renderer->Draw(line_vertices.size() / 2);
-		line_vertices.clear();
 		return lines_rendered;
 	}
 
