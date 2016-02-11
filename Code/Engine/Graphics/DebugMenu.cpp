@@ -5,6 +5,7 @@
 #include "../Core/Rectangle2D.h"
 #include "../System/UserInput.h"
 #include "../System/Console.h"
+#include "Context.h"
 
 namespace Lame
 {
@@ -153,6 +154,8 @@ namespace Lame
 			{
 				widgets[x]->stream(content, width_, x == selected_widget_);
 			}
+			font_renderer()->context()->get_direct3dDevice()->SetVertexShader(nullptr);
+			font_renderer()->context()->get_direct3dDevice()->SetPixelShader(nullptr);
 
 			return font_renderer()->Render(
 				content.str().c_str(),

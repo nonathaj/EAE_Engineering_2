@@ -88,7 +88,7 @@ namespace Gameplay
 			}
 		}
 
-		LameGraphics::Get().camera()->gameObject()->transform().position(Lame::Vector3(0, 0, 15));
+		LameGraphics::Get().camera()->gameObject()->transform().position(Lame::Vector3(0, 0, 800.0f));
 		LameGraphics::Get().camera()->near_clip_plane(1.0f);
 		LameGraphics::Get().camera()->far_clip_plane(5000.0f);
 

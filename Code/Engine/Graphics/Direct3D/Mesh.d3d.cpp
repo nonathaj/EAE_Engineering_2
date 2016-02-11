@@ -11,6 +11,7 @@
 #include "../Vertex.h"
 #include "../Graphics.h"
 #include "../../System/UserOutput.h"
+#include "../../System/Console.h"
 
 namespace
 {
@@ -38,7 +39,8 @@ namespace Lame
 		vertex_buffer_(nullptr),
 		index_buffer_(nullptr),
 		vertex_declaration_(nullptr)
-	{ }
+	{
+	}
 
 	Mesh::~Mesh()
 	{
@@ -54,7 +56,6 @@ namespace Lame
 		}
 		if (vertex_declaration_)
 		{
-			context->get_direct3dDevice()->SetVertexDeclaration(nullptr);
 			vertex_declaration_->Release();
 			vertex_declaration_ = nullptr;
 		}

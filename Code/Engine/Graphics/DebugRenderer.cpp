@@ -131,20 +131,6 @@ namespace Lame
 		}
 	}
 
-	bool DebugRenderer::RenderLines(const Lame::Matrix4x4& i_worldToView, const Lame::Matrix4x4& i_viewToScreen)
-	{
-		if (line_vertices.size() / 2 == 0)
-			return true;
-
-		bool lines_rendered = !line_renderer->UpdateVertices(line_vertices.data(), line_vertices.size()) ||
-			!line_effect->Bind() ||
-			!line_effect->SetConstant(Effect::Shader::Vertex, line_worldToViewUniformId, i_worldToView) ||
-			!line_effect->SetConstant(Effect::Shader::Vertex, line_viewToScreenUniformId, i_viewToScreen) ||
-			!line_renderer->Draw(line_vertices.size() / 2);
-		line_vertices.clear();
-		return lines_rendered;
-	}
-
 	bool DebugRenderer::AddLine(const Lame::Vector3& i_start, const Lame::Vector3& i_end, const Lame::Color32& i_color)
 	{
 		return AddLine(i_start, i_end, i_color, i_color);
@@ -188,14 +174,32 @@ namespace Lame
 		const bool lines_rendered = RenderLines(i_worldToView, i_viewToScreen);
 		const bool wireframe_meshes_rendered = RenderWireframeMeshes(i_worldToView, i_viewToScreen);
 		const bool solid_meshes_rendered = RenderSolidMeshes(i_worldToView, i_viewToScreen);
+
 		line_vertices.clear();
 		wireframe_meshes.clear();
 		solid_meshes.clear();
 		return lines_rendered && wireframe_meshes_rendered && solid_meshes_rendered;
 	}
 
+	bool DebugRenderer::RenderLines(const Lame::Matrix4x4& i_worldToView, const Lame::Matrix4x4& i_viewToScreen)
+	{
+		if (line_vertices.size() / 2 == 0)
+			return true;
+
+		const bool lines_rendered = !line_renderer->UpdateVertices(line_vertices.data(), line_vertices.size()) ||
+			!line_effect->Bind() ||
+			!line_effect->SetConstant(Effect::Shader::Vertex, line_worldToViewUniformId, i_worldToView) ||
+			!line_effect->SetConstant(Effect::Shader::Vertex, line_viewToScreenUniformId, i_viewToScreen) ||
+			!line_renderer->Draw(line_vertices.size() / 2);
+		line_vertices.clear();
+		return lines_rendered;
+	}
+
 	bool DebugRenderer::RenderSolidMeshes(const Lame::Matrix4x4& i_worldToView, const Lame::Matrix4x4& i_viewToScreen)
 	{
+		if (solid_meshes.size() == 0)
+			return true;
+
 		if (solid_shape_effect->Bind() &&
 			solid_shape_effect->SetConstant(Lame::Effect::Shader::Vertex, solid_worldToViewUniformId, i_worldToView) &&
 			solid_shape_effect->SetConstant(Lame::Effect::Shader::Vertex, solid_viewToScreenUniformId, i_viewToScreen))
@@ -218,6 +222,9 @@ namespace Lame
 
 	bool DebugRenderer::RenderWireframeMeshes(const Lame::Matrix4x4& i_worldToView, const Lame::Matrix4x4& i_viewToScreen)
 	{
+		if (wireframe_meshes.size() == 0)
+			return true;
+
 		if (wireframe_shape_effect->Bind() &&
 			wireframe_shape_effect->SetConstant(Lame::Effect::Shader::Vertex, wire_worldToViewUniformId, i_worldToView) &&
 			wireframe_shape_effect->SetConstant(Lame::Effect::Shader::Vertex, wire_viewToScreenUniformId, i_viewToScreen))

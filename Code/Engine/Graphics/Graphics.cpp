@@ -82,6 +82,11 @@ namespace Lame
 			}
 		}
 
+#ifdef ENABLE_DEBUG_RENDERING
+		if (debug_renderer_)
+			success = debug_renderer_->Render(worldToView, viewToScreen) && success;
+#endif
+
 		//render all the transparent objects on top of the opaque ones
 		for (size_t x = 0; x < transparent.size(); x++)
 		{
@@ -92,11 +97,6 @@ namespace Lame
 		{
 			success = (*itr)->Render() && success;
 		}
-
-#ifdef ENABLE_DEBUG_RENDERING
-		if (debug_renderer_)
-			success = debug_renderer_->Render(worldToView, viewToScreen) && success;
-#endif
 
 #ifdef ENABLE_DEBUG_MENU
 		if (debug_menu_)

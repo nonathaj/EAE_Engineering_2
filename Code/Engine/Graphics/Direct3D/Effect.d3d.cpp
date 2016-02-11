@@ -211,6 +211,7 @@ namespace
 		if (FAILED(result) || !o_fragmentShader)
 		{
 			Lame::UserOutput::Display("Direct3D failed to create the fragment shader", errorHeader);
+			delete[] compiledShader;
 			return false;
 		}
 
@@ -219,6 +220,7 @@ namespace
 		if (FAILED(result) || !o_fragmentConstantTable)
 		{
 			Lame::UserOutput::Display("Direct3D failed to load the Fragment Constant Table", errorHeader);
+			delete[] compiledShader;
 			return false;
 		}
 		delete[] compiledShader;
@@ -240,6 +242,7 @@ namespace
 		if (FAILED(result) || !o_vertexShader)
 		{
 			Lame::UserOutput::Display("Direct3D failed to create the vertex shader", errorHeader);
+			delete[] compiledShader;
 			return false;
 		}
 
@@ -248,6 +251,7 @@ namespace
 		if (FAILED(result) || !o_vertexConstantTable)
 		{
 			Lame::UserOutput::Display("Direct3D failed to load the Vertex Constant Table", errorHeader);
+			delete[] compiledShader;
 			return false;
 		}
 

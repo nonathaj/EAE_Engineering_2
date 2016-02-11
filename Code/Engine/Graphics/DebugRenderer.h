@@ -30,6 +30,11 @@ namespace Lame
 		{
 			Lame::Transform transform;
 			std::shared_ptr<Lame::Mesh> mesh;
+
+			~DebugMesh() 
+			{ 
+				mesh.reset();
+			}
 		};
 	public:
 		static DebugRenderer* Create(std::shared_ptr<Lame::Context> i_context, const size_t i_line_count);
@@ -38,7 +43,7 @@ namespace Lame
 		bool AddLine(const Lame::Vector3& i_start, const Lame::Vector3& i_end, const Lame::Color32& i_color);
 
 		bool AddMesh(std::shared_ptr<Lame::Mesh> i_mesh, const Lame::Transform& i_transform, const bool i_render_as_wireframe);
-
+		
 		bool AddBox(const bool i_render_wireframe, const Lame::Vector3& i_size, const Lame::Transform& i_transform, const Color32& i_color = Color32::white);
 		bool AddSphere(const bool i_render_wireframe, const float i_radius, const Lame::Transform& i_transform, const Color32& i_color = Color32::white);
 		bool AddCylinder(const bool i_render_wireframe, const float i_top_radius, const float i_bottom_radius, const float i_height, const Lame::Transform& i_transform, const Color32& i_color = Color32::white);
