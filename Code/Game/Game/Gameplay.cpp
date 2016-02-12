@@ -73,10 +73,8 @@ namespace Gameplay
 			LameGraphics::Get().debug_menu()->CreateText("FPS", frames_per_second);
 			LameGraphics::Get().debug_menu()->CreateCheckBox("Color Sphere Red ", &red_sphere);
 			LameGraphics::Get().debug_menu()->CreateSlider("Sphere Radius", &sphere_radius, 100.0f, 500.0f);
-			LameGraphics::Get().debug_menu()->CreateButton("Reset Sphere Radius", []() { 
-				sphere_radius = 250.0f;
-			});
-			LameGraphics::Get().debug_menu()->CreateCheckBox("Show Sphere (Crashes game) ", &show_sphere);
+			LameGraphics::Get().debug_menu()->CreateButton("Reset Sphere Radius", []() { sphere_radius = 250.0f; });
+			LameGraphics::Get().debug_menu()->CreateCheckBox("Show Sphere", &show_sphere);
 #endif
 
 			std::string error;

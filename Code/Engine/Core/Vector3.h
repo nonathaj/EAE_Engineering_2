@@ -39,8 +39,9 @@ namespace Lame
 		inline Vector3 normalized() const;						//returns a normalized version of the vector (length 1)
 		inline Vector3& normalize();							//normalizes this vector
 
-		inline Vector3 Reflect(const Vector3& i_normal);
-		inline Vector3 AbsoluteValues();
+		inline Vector3 Reflect(const Vector3& i_normal) const;
+		inline Vector3 ProjectOnPlane(const Vector3& i_normal) const;
+		inline Vector3 AbsoluteValues() const;
 
 		//setters
 		inline void set(const float i_x, const float i_y, const float i_z);
@@ -57,9 +58,7 @@ namespace Lame
 		inline Vector3& operator+=(const Vector3& rhs);
 		inline Vector3& operator-=(const Vector3& rhs);
 		inline Vector3& operator*=(const float &rhs);
-		inline Vector3& operator*=(const double &rhs);
 		inline Vector3& operator/=(const float &rhs);
-		inline Vector3& operator/=(const double &rhs);
 		inline Vector3& operator=(const Vector3 &rhs);
 	private:
 		float m_x, m_y, m_z;
@@ -71,11 +70,8 @@ namespace Lame
 	
 	inline Vector3 operator*(const Vector3 &i_lhs, const float &i_rhs);
 	inline Vector3 operator*(const float &i_lhs, const Vector3 &i_rhs);
-	inline Vector3 operator*(const Vector3 &i_lhs, const double &i_rhs);
-	inline Vector3 operator*(const double &i_lhs, const Vector3 &i_rhs);
 
 	inline Vector3 operator/(const Vector3 &i_lhs, const float &i_rhs);
-	inline Vector3 operator/(const Vector3 &i_lhs, const double &i_rhs);
 
 	inline bool operator==(const Vector3 &i_lhs, const Vector3 &i_rhs);
 	inline bool operator!=(const Vector3 &i_lhs, const Vector3 &i_rhs);

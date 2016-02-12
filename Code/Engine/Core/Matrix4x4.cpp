@@ -332,17 +332,17 @@ namespace Lame
 
 	std::string Matrix4x4::to_string(bool i_format_on_single_line) const
 	{
-		char break_char = i_format_on_single_line ? ' ' : '\n';
-		char open = '{';
-		char close = '}';
-		std::string separator = ", ";
+		const char break_char = i_format_on_single_line ? ' ' : '\n';
+		const char open = '{';
+		const char close = '}';
+		const std::string separator = ", ";
 		std::stringstream mstr;
 		mstr << open << break_char <<
 			open << ' ' << Get(0, 0) << separator << Get(0, 1) << separator << Get(0, 2) << separator << Get(0, 3) << ' ' << close << break_char <<
 			open << ' ' << Get(1, 0) << separator << Get(1, 1) << separator << Get(1, 2) << separator << Get(1, 3) << ' ' << close << break_char <<
 			open << ' ' << Get(2, 0) << separator << Get(2, 1) << separator << Get(2, 2) << separator << Get(2, 3) << ' ' << close << break_char <<
 			open << ' ' << Get(3, 0) << separator << Get(3, 1) << separator << Get(3, 2) << separator << Get(3, 3) << ' ' << close << break_char <<
-			break_char << close;
+			close;
 		return mstr.str();
 	}
 

@@ -55,7 +55,7 @@ inline float Lame::Vector3::magnitude(void) const
 
 inline float Lame::Vector3::sq_magnitude(void) const
 {
-	return x() * x() + y() * y() + z() * z();
+	return this->dot(*this);
 }
 
 inline Lame::Vector3 Lame::Vector3::normalized(void) const
@@ -79,13 +79,19 @@ inline Lame::Vector3& Lame::Vector3::normalize(void)
 	return *this;
 }
 
-inline Lame::Vector3 Lame::Vector3::Reflect(const Vector3& i_normal)
+inline Lame::Vector3 Lame::Vector3::Reflect(const Vector3& i_normal) const
 {
 	Vector3 norm = i_normal.normalized();		//ensure that normal is length 1
 	return *this - 2.0f * this->dot(norm) * norm;
 }
 
-inline Lame::Vector3 Lame::Vector3::AbsoluteValues()
+inline Lame::Vector3 Lame::Vector3::ProjectOnPlane(const Vector3& i_normal) const
+{
+	//assumes the plane is through the origin
+	return *this - i_normal.normalized() * this->dot(i_normal);
+}
+
+inline Lame::Vector3 Lame::Vector3::AbsoluteValues() const
 {
 	return Vector3(fabs(x()), fabs(y()), fabs(z()));
 }
@@ -122,28 +128,12 @@ inline Lame::Vector3 Lame::operator*(const float &i_lhs, const Lame::Vector3 &i_
 	return i_rhs * i_lhs;
 }
 
-inline Lame::Vector3 Lame::operator*(const double &i_lhs, const Lame::Vector3 &i_rhs)
-{
-	return i_rhs * i_lhs;
-}
-
 inline Lame::Vector3 Lame::operator*(const Lame::Vector3 &i_lhs, const float &i_rhs)
 {
 	return Lame::Vector3(i_lhs.x() * i_rhs, i_lhs.y() * i_rhs, i_lhs.z() * i_rhs);
 }
 
-inline Lame::Vector3 Lame::operator*(const Lame::Vector3 &i_lhs, const double &i_rhs)
-{
-	return Lame::Vector3(static_cast<float>(static_cast<double>(i_lhs.x()) * i_rhs), static_cast<float>(static_cast<double>(i_lhs.y()) * i_rhs), static_cast<float>(static_cast<double>(i_lhs.z()) * i_rhs));
-}
-
 inline Lame::Vector3& Lame::Vector3::operator*=(const float& rhs)
-{
-	*this = *this * rhs;
-	return *this;
-}
-
-inline Lame::Vector3& Lame::Vector3::operator*=(const double& rhs)
 {
 	*this = *this * rhs;
 	return *this;
@@ -154,18 +144,7 @@ inline Lame::Vector3 Lame::operator/(const Lame::Vector3 &i_lhs, const float &i_
 	return Lame::Vector3(i_lhs.x() / i_rhs, i_lhs.y() / i_rhs, i_lhs.z() / i_rhs);
 }
 
-inline Lame::Vector3 Lame::operator/(const Lame::Vector3 &i_lhs, const double &i_rhs)
-{
-	return Lame::Vector3(static_cast<float>(static_cast<double>(i_lhs.x()) / i_rhs), static_cast<float>(static_cast<double>(i_lhs.y()) / i_rhs), static_cast<float>(static_cast<double>(i_lhs.z()) / i_rhs));
-}
-
 inline Lame::Vector3& Lame::Vector3::operator/=(const float& rhs)
-{
-	*this = *this / rhs;
-	return *this;
-}
-
-inline Lame::Vector3& Lame::Vector3::operator/=(const double& rhs)
 {
 	*this = *this / rhs;
 	return *this;
