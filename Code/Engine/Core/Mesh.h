@@ -20,6 +20,7 @@ namespace Lame
 		};
 		static size_t GetPrimitiveCount(const PrimitiveType i_primitive_type, const size_t i_index_count);
 
+		Mesh() {}
 		Mesh(const PrimitiveType i_prim_type) : primitive_type_(i_prim_type) { }
 
 		template<typename T>
@@ -37,10 +38,12 @@ namespace Lame
 		size_t primitive_count() const { return GetPrimitiveCount(primitive_type_, has_indices() ? indices_.size() : vertices_.size()); }
 		inline bool has_indices() const { return indices_.size() > 0; }
 
-		static Mesh* CreateBox(const Lame::Vector3& i_size, const Color32& i_vertex_color = Color32::white);
-		static Mesh* CreateSphere(const float i_radius, const size_t i_slice_count, const size_t i_stack_count, const Color32& i_vertex_color = Color32::white);
-		static Mesh* CreateCylinder(const float i_bottom_radius, const float i_top_radius, const float i_height, const float i_slice_count, const float i_stack_count, const Color32& i_vertex_color = Color32::white);
-		static Mesh* CreateQuad(const Lame::Vector2& i_extends, const Color32& i_vertex_color = Color32::white);
+		void SetBox(const Lame::Vector3& i_size, const Color32& i_vertex_color = Color32::white);
+		void SetSphere(const float i_radius, const size_t i_slice_count, const size_t i_stack_count, const Color32& i_vertex_color = Color32::white);
+		void SetCylinder(const float i_bottom_radius, const float i_top_radius, const float i_height, const float i_slice_count, const float i_stack_count, const Color32& i_vertex_color = Color32::white);
+		void SetQuad(const Lame::Vector2& i_extends, const Color32& i_vertex_color = Color32::white);
+
+		bool GetPrimitive(std::vector<Vertex>& o_primitive_vertices, const size_t i_primitive_index) const;
 
 		bool SwapTriangleListNormals();	//swaps the normals for all triangles, assuming this mesh stores TriangleList primitive
 	private:

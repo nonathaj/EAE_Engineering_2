@@ -9,7 +9,6 @@ namespace Lame
 	class CollisionMesh
 	{
 	public:
-
 		Mesh& mesh() { return mesh_; }
 		void mesh(const Mesh& i_mesh) { mesh_ = i_mesh; }
 	private:

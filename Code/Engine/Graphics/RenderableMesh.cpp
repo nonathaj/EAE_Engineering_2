@@ -56,7 +56,8 @@ namespace Lame
 		RenderableMesh* rm = CreateEmpty(i_static, i_context, i_mesh.primitive_type(), i_mesh.vertices_RO().size(), i_mesh.indices_RO().size());
 		if (!rm)
 			return nullptr;
-		if (!rm->UpdateVertices(i_mesh.vertices_RO().data()) || !rm->UpdateIndices(i_mesh.indices_RO().data()))
+		if (!rm->UpdateVertices(i_mesh.vertices_RO().data()) || 
+			(i_mesh.indices_RO().size() > 0 && !rm->UpdateIndices(i_mesh.indices_RO().data())) )
 		{
 			delete rm;
 			return nullptr;

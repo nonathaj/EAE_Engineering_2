@@ -245,32 +245,23 @@ namespace Lame
 
 	bool DebugRenderer::AddBox(const bool i_render_wireframe, const Lame::Vector3& i_size, const Lame::Transform& i_transform, const Color32& i_color)
 	{
-		Mesh* mesh = Mesh::CreateBox(i_size, i_color);
-		if (!mesh)
-			return false;
-		bool added = AddMesh(*mesh, i_transform, i_render_wireframe);
-		delete mesh;
-		return added;
+		Mesh mesh;
+		mesh.SetBox(i_size, i_color);
+		return AddMesh(mesh, i_transform, i_render_wireframe);
 	}
 
 	bool DebugRenderer::AddSphere(const bool i_render_wireframe, const float i_radius, const Lame::Transform& i_transform, const Color32& i_color)
 	{
-		Mesh* mesh = Mesh::CreateSphere(i_radius, 10, 10, i_color);
-		if (!mesh)
-			return false;
-		bool added = AddMesh(*mesh, i_transform, i_render_wireframe);
-		delete mesh;
-		return added;
+		Mesh mesh; 
+		mesh.SetSphere(i_radius, 10, 10, i_color);
+		return AddMesh(mesh, i_transform, i_render_wireframe);
 	}
 
 	bool DebugRenderer::AddCylinder(const bool i_render_wireframe, const float i_top_radius, const float i_bottom_radius, const float i_height, const Lame::Transform& i_transform, const Color32& i_color)
 	{
-		Mesh* mesh = Mesh::CreateCylinder(i_bottom_radius, i_top_radius, i_height, 10, 10, i_color);
-		if (!mesh)
-			return false;
-		bool added = AddMesh(*mesh, i_transform, i_render_wireframe);
-		delete mesh;
-		return added;
+		Mesh mesh;
+		mesh.SetCylinder(i_bottom_radius, i_top_radius, i_height, 10, 10, i_color);
+		return AddMesh(mesh, i_transform, i_render_wireframe);
 	}
 }
 

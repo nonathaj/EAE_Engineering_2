@@ -7,7 +7,7 @@ namespace Lame
 
 	namespace Collision
 	{
-		
+		bool IntersectSegmentTriangle(Vector3 i_ray_start, Vector3 i_ray_direction, Vector3 a, Vector3 b, Vector3 c, Vector3& o_normal, Vector3& o_barycentric_coord, float& o_t);
 	}
 }
 
