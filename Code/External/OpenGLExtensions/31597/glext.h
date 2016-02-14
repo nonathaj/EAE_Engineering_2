@@ -11713,7 +11713,7 @@ GLAPI void APIENTRY glGlobalAlphaFactoruiSUN (GLuint factor);
 #define GL_TRIANGLE_MESH_SUN              0x8615
 typedef void (APIENTRYP PFNGLDRAWMESHARRAYSSUNPROC) (GLenum mode, GLint first, GLsizei count, GLsizei width);
 #ifdef GL_GLEXT_PROTOTYPES
-GLAPI void APIENTRY glDrawMeshArraysSUN (GLenum mode, GLint first, GLsizei count, GLsizei width);
+GLAPI void APIENTRY glDrawRenderableMeshArraysSUN (GLenum mode, GLint first, GLsizei count, GLsizei width);
 #endif
 #endif /* GL_SUN_mesh_array */
 

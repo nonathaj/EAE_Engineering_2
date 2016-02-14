@@ -17,6 +17,7 @@ return
 			{ source = "EAE 6330/metal_mesh.mesh", target = "metal_mesh.mesh.bin" },
 			{ source = "EAE 6330/railing_mesh.mesh", target = "railing_mesh.mesh.bin" },
 			{ source = "EAE 6330/walls_mesh.mesh", target = "walls_mesh.mesh.bin" },
+			{ source = "EAE 6330/level_collision.mesh", target = "level_collision.mesh.bin" },
 		}
 	},
     {

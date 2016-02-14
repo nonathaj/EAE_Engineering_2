@@ -1,13 +1,13 @@
 
 #include "Sprite.h"
 
-#include "Vertex.h"
+#include "../Core/Vertex.h"
 #include "Context.h"
 #include "Texture.h"
 #include "Effect.h"
-#include "Mesh.h"
+#include "RenderableMesh.h"
 #include "Graphics.h"
-
+#include "../Core/Mesh.h"
 #include "../System/UserOutput.h"
 #include "../System/Console.h"
 
@@ -49,7 +49,7 @@ namespace Lame
 			return nullptr;
 		}
 
-		std::shared_ptr<Mesh> mesh;
+		std::shared_ptr<RenderableMesh> mesh;
 		{
 			const Color32 color = Color32::white;
 			const Lame::Rectangle2D realsc = Context::GetRealScreenCoord(i_screen_coords);
@@ -58,10 +58,10 @@ namespace Lame
 			sprite->vertices[2] = Vertex(Lame::Vector2(realsc.left(), realsc.bottom()), Lame::Vector2(i_texture_coords.left(), i_texture_coords.bottom()), color);
 			sprite->vertices[3] = Vertex(Lame::Vector2(realsc.right(), realsc.bottom()), Lame::Vector2(i_texture_coords.right(), i_texture_coords.bottom()), color);
 
-			mesh = std::shared_ptr<Mesh>(Mesh::CreateEmpty(false, i_effect->get_context(), Lame::Mesh::PrimitiveType::TriangleStrip, 4, 0));
+			mesh = std::shared_ptr<RenderableMesh>(RenderableMesh::CreateEmpty(false, i_effect->get_context(), Lame::Mesh::PrimitiveType::TriangleStrip, 4, 0));
 			if (!mesh || !mesh->UpdateVertices(sprite->vertices))
 			{
-				Lame::UserOutput::Display("Unable to create Mesh for Sprite");
+				Lame::UserOutput::Display("Unable to create RenderableMesh for Sprite");
 				delete sprite;
 				return nullptr;
 			}

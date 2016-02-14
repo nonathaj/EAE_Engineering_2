@@ -10,7 +10,7 @@ namespace Lame
 {
 	namespace File
 	{
-		char* LoadBinary(std::string i_file_name, size_t* o_fileLength)
+		char* LoadBinary(const std::string& i_file_name, size_t* o_fileLength)
 		{
 			//open the file
 			std::ifstream in(i_file_name, std::ifstream::binary);

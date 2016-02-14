@@ -4,14 +4,14 @@
 #include <memory>
 
 #include "Effect.h"
-#include "Color.h"
-#include "Vertex.h"
+#include "../Core/Color.h"
+#include "../Core/Vertex.h"
 #include "../Core/Rectangle2D.h"
 
 namespace Lame
 {
 	class Texture;
-	class Mesh;
+	class RenderableMesh;
 
 	class Sprite
 	{
@@ -23,7 +23,7 @@ namespace Lame
 
 		inline std::shared_ptr<Effect> effect() const { return effect_; }
 		inline std::shared_ptr<Texture> texture() const { return texture_; }
-		inline std::shared_ptr<Mesh> mesh() const { return mesh_; }
+		inline std::shared_ptr<RenderableMesh> mesh() const { return mesh_; }
 
 		inline Color color() const { return color_; }
 		inline void color(const Color& i_color) { color_ = i_color; }
@@ -46,7 +46,7 @@ namespace Lame
 
 		std::shared_ptr<Effect> effect_;
 		std::shared_ptr<Texture> texture_;
-		std::shared_ptr<Mesh> mesh_;
+		std::shared_ptr<RenderableMesh> mesh_;
 
 		static char const * const ColorUniformName;
 		static char const * const BaseTextureUniformName;

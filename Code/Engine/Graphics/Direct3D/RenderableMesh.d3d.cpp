@@ -1,5 +1,5 @@
 
-#include "../Mesh.h"
+#include "../RenderableMesh.h"
 
 #include <string>
 #include <sstream>
@@ -8,7 +8,7 @@
 #include <iterator>
 
 #include "../Context.h"
-#include "../Vertex.h"
+#include "../../Core/Vertex.h"
 #include "../Graphics.h"
 #include "../../System/UserOutput.h"
 #include "../../System/Console.h"
@@ -31,7 +31,7 @@ namespace
 
 namespace Lame
 {
-	Mesh::Mesh(size_t i_vertex_count, size_t i_index_count, PrimitiveType i_prim_type, std::shared_ptr<Context> i_context) :
+	RenderableMesh::RenderableMesh(size_t i_vertex_count, size_t i_index_count, Mesh::PrimitiveType i_prim_type, std::shared_ptr<Context> i_context) :
 		vertex_count_(i_vertex_count),
 		index_count_(i_index_count),
 		context(i_context),
@@ -42,7 +42,7 @@ namespace Lame
 	{
 	}
 
-	Mesh::~Mesh()
+	RenderableMesh::~RenderableMesh()
 	{
 		if (vertex_buffer_)
 		{
@@ -61,12 +61,12 @@ namespace Lame
 		}
 	}
 
-	Mesh* Mesh::CreateEmpty(const bool i_static, std::shared_ptr<Context> i_context, PrimitiveType i_prim_type, const size_t i_vertex_count, const size_t i_index_count)
+	RenderableMesh* RenderableMesh::CreateEmpty(const bool i_static, std::shared_ptr<Context> i_context, Mesh::PrimitiveType i_prim_type, const size_t i_vertex_count, const size_t i_index_count)
 	{
-		Mesh *mesh = new Mesh(i_vertex_count, i_index_count, i_prim_type, i_context);
+		RenderableMesh *mesh = new RenderableMesh(i_vertex_count, i_index_count, i_prim_type, i_context);
 		if (!mesh)
 		{
-			Lame::UserOutput::Display("Failed to create Mesh, due to insufficient memory.", "Mesh Loading Error");
+			Lame::UserOutput::Display("Failed to create RenderableMesh, due to insufficient memory.", "RenderableMesh Loading Error");
 			return nullptr;
 		}
 
@@ -87,7 +87,7 @@ namespace Lame
 		//Create the Vertex Buffer
 		{
 			// Initialize the vertex format
-			if (!Lame::Vertex::SetVertexFormat(i_context, &mesh->vertex_declaration_))
+			if (!i_context->SetVertexFormat(&mesh->vertex_declaration_))
 			{
 				delete mesh;
 				return nullptr;
@@ -126,18 +126,18 @@ namespace Lame
 		return mesh;
 	}
 
-	Mesh* Mesh::CreateRightHandedTriList(const bool i_static, std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
+	RenderableMesh* RenderableMesh::CreateRightHandedTriList(const bool i_static, std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
 	{
 		if (i_index_count % 3 != 0)		//index buffer must be a list of triangles
 		{
-			Lame::UserOutput::Display("Cannot create a TriList Mesh with non-triangular data. (Ensure number of indices is divisible by 3)");
+			Lame::UserOutput::Display("Cannot create a TriList RenderableMesh with non-triangular data. (Ensure number of indices is divisible by 3)");
 			return nullptr;
 		}
 		bool hasIndices = i_index_count > 0 && i_indices;
 		if(hasIndices)
 			SwapIndexOrder(i_indices, i_index_count);
 
-		Mesh *mesh = CreateLeftHandedTriList(i_static, i_context, i_vertices, i_vertex_count, i_indices, i_index_count);
+		RenderableMesh *mesh = CreateLeftHandedTriList(i_static, i_context, i_vertices, i_vertex_count, i_indices, i_index_count);
 
 		if (hasIndices)
 			SwapIndexOrder(i_indices, i_index_count);
@@ -145,14 +145,14 @@ namespace Lame
 	}
 
 	//Create a mesh with LEFT-HANDED indices
-	Mesh* Mesh::CreateLeftHandedTriList(const bool i_static, std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
+	RenderableMesh* RenderableMesh::CreateLeftHandedTriList(const bool i_static, std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
 	{
 		if (i_index_count % 3 != 0)		//index buffer must be a list of triangles
 		{
-			Lame::UserOutput::Display("Cannot create a TriList Mesh with non-triangular data. (Ensure number of indices is divisible by 3)");
+			Lame::UserOutput::Display("Cannot create a TriList RenderableMesh with non-triangular data. (Ensure number of indices is divisible by 3)");
 			return nullptr;
 		}
-		Mesh* mesh = CreateEmpty(i_static, i_context, Lame::Mesh::PrimitiveType::TriangleList, i_vertex_count, i_index_count);
+		RenderableMesh* mesh = CreateEmpty(i_static, i_context, Lame::Mesh::PrimitiveType::TriangleList, i_vertex_count, i_index_count);
 		if (!mesh)
 			return nullptr;
 
@@ -171,7 +171,7 @@ namespace Lame
 		return mesh;
 	}
 
-	bool Mesh::UpdateVertices(const Vertex* i_vertices, const size_t i_amount)
+	bool RenderableMesh::UpdateVertices(const Vertex* i_vertices, const size_t i_amount)
 	{
 		Vertex *vertexData;
 		HRESULT result = vertex_buffer_->Lock(0, 0, reinterpret_cast<void**>(&vertexData), 0);
@@ -183,7 +183,7 @@ namespace Lame
 		return SUCCEEDED(vertex_buffer_->Unlock());
 	}
 
-	bool Mesh::UpdateIndices(const uint32_t* i_indices, const size_t i_amount)
+	bool RenderableMesh::UpdateIndices(const uint32_t* i_indices, const size_t i_amount)
 	{
 		if (!index_buffer_)
 			return false;
@@ -197,7 +197,7 @@ namespace Lame
 		return SUCCEEDED(index_buffer_->Unlock());
 	}
 
-	bool Mesh::Draw(const size_t i_max_primitives) const
+	bool RenderableMesh::Draw(const size_t i_max_primitives) const
 	{
 		HRESULT result;
 		// Bind a specific vertex buffer to the device as a data source
@@ -212,30 +212,25 @@ namespace Lame
 			if (FAILED(result))
 				return false;
 		}
-
-		// Bind a specific index buffer to the device as a data source
-		if(index_buffer_)
-		{
-			result = context->get_direct3dDevice()->SetIndices(index_buffer_);
-			if (FAILED(result))
-				return false;
-		}
 		// Render objects from the current streams
 		{
 			const D3DPRIMITIVETYPE primitiveType = GetD3DPrimitiveType(primitive_type());
+			UINT primitiveCount = static_cast<UINT>(primitive_count());
+			if (i_max_primitives > 0 && i_max_primitives < primitiveCount)
+				primitiveCount =  static_cast<UINT>(i_max_primitives);
+
 			if (index_count_ > 0)
 			{
-				UINT primitiveCount = static_cast<UINT>(GetPrimitiveCount(primitive_type(), index_count_));
-				if (i_max_primitives > 0)
-					primitiveCount = i_max_primitives < primitiveCount ? static_cast<UINT>(i_max_primitives) : primitiveCount;
+				// Bind a specific index buffer to the device as a data source
+				result = context->get_direct3dDevice()->SetIndices(index_buffer_);
+				if (FAILED(result))
+					return false;
+				
 				result = context->get_direct3dDevice()->DrawIndexedPrimitive(primitiveType,
 					0, 0, static_cast<UINT>(vertex_count_), 0, primitiveCount);
 			}
 			else
 			{
-				UINT primitiveCount = static_cast<UINT>(GetPrimitiveCount(primitive_type(), vertex_count_));
-				if (i_max_primitives > 0)
-					primitiveCount = i_max_primitives < primitiveCount ? static_cast<UINT>(i_max_primitives) : primitiveCount;
 				result = context->get_direct3dDevice()->DrawPrimitive(primitiveType, 0, primitiveCount);
 			}
 			return SUCCEEDED(result);

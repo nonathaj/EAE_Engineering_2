@@ -1,6 +1,6 @@
 /*
 	This is the base class for builders of specific asset types
-	(meaning that MeshBuilder, ShaderBuilder, TextureBuilder, etc.,
+	(meaning that RenderableMeshBuilder, ShaderBuilder, TextureBuilder, etc.,
 	should all derive from this base class)
 */
 

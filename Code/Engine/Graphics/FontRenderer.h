@@ -4,7 +4,7 @@
 #include <memory>
 #include <string>
 
-#include "Color.h"
+#include "../Core/Color.h"
 
 #if EAE6320_PLATFORM_D3D
 #include <d3d9.h>

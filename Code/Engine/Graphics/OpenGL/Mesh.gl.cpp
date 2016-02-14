@@ -1,5 +1,5 @@
 
-#include "../Mesh.h"
+#include "../RenderableMesh.h"
 
 #include <cassert>
 #include <gl/GL.h>
@@ -15,14 +15,14 @@
 
 namespace Lame
 {
-	Mesh::Mesh(size_t i_vertex_count, size_t i_index_count, std::shared_ptr<Context> i_context) :
+	RenderableMesh::RenderableMesh(size_t i_vertex_count, size_t i_index_count, std::shared_ptr<Context> i_context) :
 		vertex_count_(i_vertex_count), 
 		index_count_(i_index_count),
 		context(i_context),
 		vertex_array_id_(0)
 	{ }
 
-	Mesh::~Mesh()
+	RenderableMesh::~RenderableMesh()
 	{
 		if (vertex_array_id_ != 0)
 		{
@@ -39,25 +39,25 @@ namespace Lame
 		}
 	}
 
-	Mesh* Mesh::CreateLeftHanded(std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
+	RenderableMesh* RenderableMesh::CreateLeftHanded(std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
 	{
 		if (i_index_count % 3 != 0)		//index buffer must be a list of triangles
 		{
-			Lame::UserOutput::Display("Cannot create a Mesh with non-triangular data. (Ensure number of indices is divisible by 3)");
+			Lame::UserOutput::Display("Cannot create a RenderableMesh with non-triangular data. (Ensure number of indices is divisible by 3)");
 			return nullptr;
 		}
 		SwapIndexOrder(i_indices, i_index_count);
-		Mesh *mesh = CreateRightHanded(i_context, i_vertices, i_vertex_count, i_indices, i_index_count);
+		RenderableMesh *mesh = CreateRightHanded(i_context, i_vertices, i_vertex_count, i_indices, i_index_count);
 		SwapIndexOrder(i_indices, i_index_count);
 		return mesh;
 	}
 
 	//Create a mesh with RIGHT-HANDED indices
-	Mesh* Mesh::CreateRightHanded(std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
+	RenderableMesh* RenderableMesh::CreateRightHanded(std::shared_ptr<Context> i_context, Vertex *i_vertices, size_t i_vertex_count, uint32_t *i_indices, size_t i_index_count)
 	{
 		if (i_index_count % 3 != 0)		//index buffer must be a list of triangles
 		{
-			Lame::UserOutput::Display("Cannot create a Mesh with non-triangular data. (Ensure number of indices is divisible by 3)");
+			Lame::UserOutput::Display("Cannot create a RenderableMesh with non-triangular data. (Ensure number of indices is divisible by 3)");
 			return nullptr;
 		}
 
@@ -256,7 +256,7 @@ namespace Lame
 
 		if (!wereThereErrors)
 		{
-			Mesh *mesh = new Mesh(i_vertex_count, i_index_count, i_context);
+			RenderableMesh *mesh = new RenderableMesh(i_vertex_count, i_index_count, i_context);
 			if (mesh)
 			{
 				mesh->vertex_array_id_ = vertex_array_id_;
@@ -269,7 +269,7 @@ namespace Lame
 			return nullptr;
 	}
 
-	bool Mesh::Draw()
+	bool RenderableMesh::Draw()
 	{
 		// Bind a specific vertex buffer to the device as a data source
 		{

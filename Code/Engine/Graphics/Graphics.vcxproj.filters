@@ -12,11 +12,6 @@
     <ClCompile Include="OpenGL\Mesh.gl.cpp">
       <Filter>OpenGL</Filter>
     </ClCompile>
-    <ClCompile Include="Direct3D\Mesh.d3d.cpp">
-      <Filter>Direct3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="Color.cpp" />
     <ClCompile Include="OpenGL\Effect.gl.cpp">
       <Filter>OpenGL</Filter>
     </ClCompile>
@@ -42,9 +37,6 @@
       <Filter>OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="DebugRenderer.cpp" />
-    <ClCompile Include="Direct3D\Vertex.d3d.cpp">
-      <Filter>Direct3D</Filter>
-    </ClCompile>
     <ClCompile Include="OpenGL\Vertex.gl.cpp">
       <Filter>OpenGL</Filter>
     </ClCompile>
@@ -54,12 +46,13 @@
       <Filter>Direct3D</Filter>
     </ClCompile>
     <ClCompile Include="DebugMenu.cpp" />
+    <ClCompile Include="RenderableMesh.cpp" />
+    <ClCompile Include="Direct3D\RenderableMesh.d3d.cpp">
+      <Filter>Direct3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics.h" />
-    <ClInclude Include="Mesh.h" />
-    <ClInclude Include="Vertex.h" />
-    <ClInclude Include="Color.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="Context.h" />
     <ClInclude Include="RenderableComponent.h" />
@@ -70,5 +63,6 @@
     <ClInclude Include="DebugRenderer.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="DebugMenu.h" />
+    <ClInclude Include="RenderableMesh.h" />
   </ItemGroup>
 </Project>

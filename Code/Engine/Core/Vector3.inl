@@ -96,6 +96,27 @@ inline Lame::Vector3 Lame::Vector3::AbsoluteValues() const
 	return Vector3(fabs(x()), fabs(y()), fabs(z()));
 }
 
+inline Lame::Vector3 Lame::Vector3::Cartesian(const Vector3 i_p1, const Vector3 i_p2, const Vector3 i_p3) const
+{
+	return i_p1 * x() + i_p2 * y() + i_p3 * z();
+}
+
+inline Lame::Vector3 Lame::Vector3::Barycentric(const Vector3 i_p1, const Vector3 i_p2, const Vector3 i_p3) const
+{
+	Vector3 v0 = i_p2 - i_p1;
+	Vector3 v1 = i_p3 - i_p1;
+	Vector3 v2 = *this - i_p1;
+	float d00 = v0.dot(v0);
+	float d01 = v0.dot(v1);
+	float d11 = v1.dot(v1);
+	float d20 = v2.dot(v0);
+	float d21 = v2.dot(v1);
+	float denom = d00 * d11 - d01 * d01;
+	float v = (d11 * d20 - d01 * d21) / denom;
+	float w = (d00 * d21 - d01 * d20) / denom;
+	return Vector3(1.0f - v - w, v, w);
+}
+
 inline Lame::Vector3 Lame::operator+(const Lame::Vector3 &i_lhs, const Lame::Vector3 &i_rhs)
 {
 	return Lame::Vector3(i_lhs.x() + i_rhs.x(), i_lhs.y() + i_rhs.y(), i_lhs.z() + i_rhs.z());

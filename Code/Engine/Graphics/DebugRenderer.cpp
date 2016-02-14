@@ -3,15 +3,16 @@
 
 #ifdef ENABLE_DEBUG_RENDERING
 
-#include "Vertex.h"
+#include "../Core/Vertex.h"
 #include "Effect.h"
 #include "Context.h"
-#include "Mesh.h"
+#include "RenderableMesh.h"
 #include "../Core/Matrix4x4.h"
 #include "../System/UserOutput.h"
 #include "../Core/Quaternion.h"
 #include "../System/Console.h"
 #include "../Core/EnumMask.h"
+#include "../Core/Mesh.h"
 
 namespace Lame
 {
@@ -94,7 +95,7 @@ namespace Lame
 			}
 		}
 
-		std::shared_ptr<Lame::Mesh> line_renderer(Lame::Mesh::CreateEmpty(false, i_context, Lame::Mesh::PrimitiveType::LineList, i_line_count * 2, 0));
+		std::shared_ptr<Lame::RenderableMesh> line_renderer(Lame::RenderableMesh::CreateEmpty(false, i_context, Lame::Mesh::PrimitiveType::LineList, i_line_count * 2, 0));
 		if (!line_renderer)
 		{
 			Lame::UserOutput::Display("Failed to create debug line mesh");
@@ -153,26 +154,11 @@ namespace Lame
 		return true;
 	}
 
-	bool DebugRenderer::AddMesh(std::shared_ptr<Lame::Mesh> i_mesh, const Lame::Transform& i_transform, const bool i_render_as_wireframe)
-	{
-		if (!i_mesh)
-			return false;
-
-		DebugMesh dm;
-		dm.mesh = i_mesh;
-		dm.transform = i_transform;
-		if (i_render_as_wireframe)
-			wireframe_meshes.push_back(dm);
-		else
-			solid_meshes.push_back(dm);
-		return true;
-	}
-
 	bool DebugRenderer::Render(const Lame::Matrix4x4& i_worldToView, const Lame::Matrix4x4& i_viewToScreen)
 	{
 		const bool lines_rendered = RenderLines(i_worldToView, i_viewToScreen);
-		const bool wireframe_meshes_rendered = RenderWireframeMeshes(i_worldToView, i_viewToScreen);
-		const bool solid_meshes_rendered = RenderSolidMeshes(i_worldToView, i_viewToScreen);
+		const bool wireframe_meshes_rendered = RenderWireframeRenderableMeshes(i_worldToView, i_viewToScreen);
+		const bool solid_meshes_rendered = RenderSolidRenderableMeshes(i_worldToView, i_viewToScreen);
 		line_vertices.clear();
 		wireframe_meshes.clear();
 		solid_meshes.clear();
@@ -192,7 +178,7 @@ namespace Lame
 		return lines_rendered;
 	}
 
-	bool DebugRenderer::RenderSolidMeshes(const Lame::Matrix4x4& i_worldToView, const Lame::Matrix4x4& i_viewToScreen)
+	bool DebugRenderer::RenderSolidRenderableMeshes(const Lame::Matrix4x4& i_worldToView, const Lame::Matrix4x4& i_viewToScreen)
 	{
 		if (solid_meshes.size() == 0)
 			return true;
@@ -217,7 +203,7 @@ namespace Lame
 		}
 	}
 
-	bool DebugRenderer::RenderWireframeMeshes(const Lame::Matrix4x4& i_worldToView, const Lame::Matrix4x4& i_viewToScreen)
+	bool DebugRenderer::RenderWireframeRenderableMeshes(const Lame::Matrix4x4& i_worldToView, const Lame::Matrix4x4& i_viewToScreen)
 	{
 		if (wireframe_meshes.size() == 0)
 			return true;
@@ -242,22 +228,49 @@ namespace Lame
 		}
 	}
 
+	bool DebugRenderer::AddMesh(const Mesh& i_mesh, const Lame::Transform& i_transform, const bool i_render_as_wireframe)
+	{
+		DebugRenderableMesh dm;
+		dm.mesh = std::shared_ptr<Lame::RenderableMesh>(Lame::RenderableMesh::Create(true, context, i_mesh));
+		if (!dm.mesh)
+			return false;
+
+		dm.transform = i_transform;
+		if (i_render_as_wireframe)
+			wireframe_meshes.push_back(dm);
+		else
+			solid_meshes.push_back(dm);
+		return true;
+	}
+
 	bool DebugRenderer::AddBox(const bool i_render_wireframe, const Lame::Vector3& i_size, const Lame::Transform& i_transform, const Color32& i_color)
 	{
-		std::shared_ptr<Lame::Mesh> mesh(Lame::Mesh::CreateBox(true, context, i_size, i_color));
-		return AddMesh(mesh, i_transform, i_render_wireframe);
+		Mesh* mesh = Mesh::CreateBox(i_size, i_color);
+		if (!mesh)
+			return false;
+		bool added = AddMesh(*mesh, i_transform, i_render_wireframe);
+		delete mesh;
+		return added;
 	}
 
 	bool DebugRenderer::AddSphere(const bool i_render_wireframe, const float i_radius, const Lame::Transform& i_transform, const Color32& i_color)
 	{
-		std::shared_ptr<Lame::Mesh> mesh(Lame::Mesh::CreateSphere(true, context, i_radius, 10, 10, i_color));
-		return AddMesh(mesh, i_transform, i_render_wireframe);
+		Mesh* mesh = Mesh::CreateSphere(i_radius, 10, 10, i_color);
+		if (!mesh)
+			return false;
+		bool added = AddMesh(*mesh, i_transform, i_render_wireframe);
+		delete mesh;
+		return added;
 	}
 
 	bool DebugRenderer::AddCylinder(const bool i_render_wireframe, const float i_top_radius, const float i_bottom_radius, const float i_height, const Lame::Transform& i_transform, const Color32& i_color)
 	{
-		std::shared_ptr<Lame::Mesh> mesh(Lame::Mesh::CreateCylinder(true, context, i_bottom_radius, i_top_radius, i_height, 10, 10, i_color));
-		return AddMesh(mesh, i_transform, i_render_wireframe);
+		Mesh* mesh = Mesh::CreateCylinder(i_bottom_radius, i_top_radius, i_height, 10, 10, i_color);
+		if (!mesh)
+			return false;
+		bool added = AddMesh(*mesh, i_transform, i_render_wireframe);
+		delete mesh;
+		return added;
 	}
 }
 

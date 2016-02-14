@@ -42,6 +42,8 @@ namespace Lame
 		inline Vector3 Reflect(const Vector3& i_normal) const;
 		inline Vector3 ProjectOnPlane(const Vector3& i_normal) const;
 		inline Vector3 AbsoluteValues() const;
+		inline Vector3 Cartesian(const Vector3 i_p1, const Vector3 i_p2, const Vector3 i_p3) const;	//converts this barycentric vector to cartesian
+		inline Vector3 Barycentric(const Vector3 i_p1, const Vector3 i_p2, const Vector3 i_p3) const; //converts this cartesian vector to barycentric coordinates
 
 		//setters
 		inline void set(const float i_x, const float i_y, const float i_z);

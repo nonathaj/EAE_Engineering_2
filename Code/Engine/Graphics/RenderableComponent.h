@@ -3,7 +3,7 @@
 
 #include "../Component/IComponent.h"
 #include "../Component/GameObject.h"
-#include "Mesh.h"
+#include "RenderableMesh.h"
 #include "Material.h"
 
 namespace Lame
@@ -12,7 +12,7 @@ namespace Lame
 	{
 		ADD_TYPEID()
 	public: 		
-		static RenderableComponent* Create(std::weak_ptr<Lame::GameObject> go, std::shared_ptr<Mesh> i_mesh, std::shared_ptr<Material> i_material);
+		static RenderableComponent* Create(std::weak_ptr<Lame::GameObject> go, std::shared_ptr<RenderableMesh> i_mesh, std::shared_ptr<Material> i_material);
 
 		bool Render(const Lame::Matrix4x4& i_worldToView, const Lame::Matrix4x4& i_viewToScreen) const;
 
@@ -20,13 +20,13 @@ namespace Lame
 		bool SetWorldToView(const Lame::Matrix4x4& i_matrix) const;
 		bool SetViewToScreen(const Lame::Matrix4x4& i_matrix) const;
 
-		inline std::shared_ptr<Mesh> mesh() const { return mesh_; }
+		inline std::shared_ptr<RenderableMesh> mesh() const { return mesh_; }
 		inline std::shared_ptr<Material> material() const { return material_; }
 	private:
 		RenderableComponent();
 		RenderableComponent(std::weak_ptr<Lame::GameObject> go) : IComponent(go) { }
 
-		std::shared_ptr<Mesh> mesh_;
+		std::shared_ptr<RenderableMesh> mesh_;
 		std::shared_ptr<Material> material_;
 
 		Effect::ConstantHandle localToWorldUniformId;

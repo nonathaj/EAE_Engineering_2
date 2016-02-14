@@ -11,7 +11,7 @@ namespace Lame
 	char const * const RenderableComponent::WorldToViewUniformName = "world_to_view";
 	char const * const RenderableComponent::ViewToScreenUniformName = "view_to_screen";
 
-	RenderableComponent* RenderableComponent::Create(std::weak_ptr<Lame::GameObject> go, std::shared_ptr<Mesh> i_mesh, std::shared_ptr<Material> i_material)
+	RenderableComponent* RenderableComponent::Create(std::weak_ptr<Lame::GameObject> go, std::shared_ptr<RenderableMesh> i_mesh, std::shared_ptr<Material> i_material)
 	{
 		if (go.expired() || !i_mesh || !i_material)
 			return nullptr;

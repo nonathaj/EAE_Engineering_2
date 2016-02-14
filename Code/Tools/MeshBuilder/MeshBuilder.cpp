@@ -10,26 +10,47 @@
 #include "../../Engine/Windows/Functions.h"
 
 #include "../../External/Lua/Includes.h"
-#include "../../Engine/Graphics/Vertex.h"
+#include "../../Engine/Core/Vertex.h"
 
 #include "../../External/Lua/LuaHelper.h"
 
-bool eae6320::MeshBuilder::Build( const std::vector<std::string>& )
+namespace
 {
-	////////////////////////////////////////////
-	//Data we need
-	////////////////////////////////////////////
+	bool LoadMesh(const std::string& i_source, std::vector<Lame::Vertex>& o_vertices, std::vector<uint32_t>& o_indices);
+
+	template<typename CountType, typename VertexType, typename IndexType>
+	bool WriteMeshBinary(const std::string& i_target, const std::vector<VertexType>& i_vertices, const std::vector<IndexType>& i_indices);
+}
+
+bool eae6320::MeshBuilder::Build( const std::vector<std::string>& i_arguments )
+{
 	std::vector<Lame::Vertex> vertices;
 	std::vector<uint32_t> indices;
 
-	////////////////////////////////////////////
-	//Load data from Lua
-	////////////////////////////////////////////
+	if (!LoadMesh(m_path_source, vertices, indices))
+		return false;
+
+	//loaded indices are right-handed
+#if EAE6320_PLATFORM_D3D
+	//swap the index order to be left-handed
+	size_t numTrianges = indices.size() / 3;
+	for (size_t x = 0; x < numTrianges; x++)
+		std::swap(indices[x * 3], indices[x * 3 + 2]);
+#elif EAE6320_PLATFORM_GL
+	//the indices are already in order.
+#endif
+
+	return WriteMeshBinary<uint32_t>(m_path_target, vertices, indices);
+}
+
+namespace
+{
+	bool LoadMesh(const std::string& i_source, std::vector<Lame::Vertex>& o_vertices, std::vector<uint32_t>& o_indices)
 	{
-		LuaHelper::LuaStack *stack = LuaHelper::LuaStack::Create(m_path_source);
+		LuaHelper::LuaStack *stack = LuaHelper::LuaStack::Create(i_source);
 		if (!stack)
 		{
-			eae6320::OutputErrorMessage("Failed to open the file and create lua state.", m_path_source);
+			eae6320::OutputErrorMessage("Failed to open the file and create lua state.", i_source.c_str());
 			return false;
 		}
 
@@ -54,13 +75,13 @@ bool eae6320::MeshBuilder::Build( const std::vector<std::string>& )
 							vert.position = Lame::Vector3(
 								static_cast<float>(position[0]),
 								static_cast<float>(position[1]),
-								static_cast<float>(position[2]) );
+								static_cast<float>(position[2]));
 						}
 						else
 						{
 							std::stringstream error;
 							error << "Invalid position table in vertex " << x;
-							eae6320::OutputErrorMessage(error.str().c_str(), m_path_source);
+							eae6320::OutputErrorMessage(error.str().c_str(), i_source.c_str());
 							delete stack;
 							return false;
 						}
@@ -80,7 +101,7 @@ bool eae6320::MeshBuilder::Build( const std::vector<std::string>& )
 						{
 							std::stringstream error;
 							error << "Invalid texcoord table in vertex " << x;
-							eae6320::OutputErrorMessage(error.str().c_str(), m_path_source);
+							eae6320::OutputErrorMessage(error.str().c_str(), i_source.c_str());
 							delete stack;
 							return false;
 						}
@@ -102,7 +123,7 @@ bool eae6320::MeshBuilder::Build( const std::vector<std::string>& )
 						{
 							std::stringstream error;
 							error << "Invalid color table in vertex " << x;
-							eae6320::OutputErrorMessage(error.str().c_str(), m_path_source);
+							eae6320::OutputErrorMessage(error.str().c_str(), i_source.c_str());
 							delete stack;
 							return false;
 						}
@@ -113,18 +134,18 @@ bool eae6320::MeshBuilder::Build( const std::vector<std::string>& )
 				{
 					std::stringstream error;
 					error << "Invalid vertex table for vertex " << x;
-					eae6320::OutputErrorMessage(error.str().c_str(), m_path_source);
+					eae6320::OutputErrorMessage(error.str().c_str(), i_source.c_str());
 					delete stack;
 					return false;
 				}
 				stack->Pop();
 
-				vertices.push_back(vert);
+				o_vertices.push_back(vert);
 			}
 		}
 		else
 		{
-			eae6320::OutputErrorMessage("Invalid Vertex Table", m_path_source);
+			eae6320::OutputErrorMessage("Invalid Vertex Table", i_source.c_str());
 			delete stack;
 			return false;
 		}
@@ -143,69 +164,52 @@ bool eae6320::MeshBuilder::Build( const std::vector<std::string>& )
 				stack->Push(static_cast<lua_Unsigned>(x + 1));
 				if (stack->SwapTableKey() && stack->PeekArray(triangleIndices) && triangleIndices.size() == 3)
 				{
-					indices.push_back(static_cast<uint32_t>(triangleIndices[0]));
-					indices.push_back(static_cast<uint32_t>(triangleIndices[1]));
-					indices.push_back(static_cast<uint32_t>(triangleIndices[2]));
+					o_indices.push_back(static_cast<uint32_t>(triangleIndices[0]));
+					o_indices.push_back(static_cast<uint32_t>(triangleIndices[1]));
+					o_indices.push_back(static_cast<uint32_t>(triangleIndices[2]));
 				}
 				else
 				{
 					std::stringstream error;
 					error << "Invalid triangle table for triangle " << x;
-					eae6320::OutputErrorMessage(error.str().c_str(), m_path_source);
+					eae6320::OutputErrorMessage(error.str().c_str(), i_source.c_str());
 					delete stack;
 					return false;
 				}
 				stack->Pop();
 			}
-		} 
+		}
 		else
 		{
-			eae6320::OutputErrorMessage("Invalid Triangle Index Table", m_path_source);
+			eae6320::OutputErrorMessage("Invalid Triangle Index Table", i_source.c_str());
 			delete stack;
 			return false;
 		}
 		stack->Pop();
 
 		delete stack;
+		return true;
 	}
 
-	////////////////////////////////////////////
-	//Fix up loaded data
-	////////////////////////////////////////////
+	template<typename CountType, typename VertexType, typename IndexType>
+	bool WriteMeshBinary(const std::string& i_target, const std::vector<VertexType>& i_vertices, const std::vector<IndexType>& i_indices)
 	{
-		//loaded indices are right-handed
-#if EAE6320_PLATFORM_D3D
-		//swap the index order to be left-handed
-		size_t numTrianges = indices.size() / 3;
-		for (size_t x = 0; x < numTrianges; x++)
-			std::swap(indices[x * 3], indices[x * 3 + 2]);
-#elif EAE6320_PLATFORM_GL
-		//the indices are already in order.
-#endif
-	}
-
-
-	////////////////////////////////////////////
-	//Write data to binary
-	////////////////////////////////////////////
-	{
-		uint32_t vertexCount32 = static_cast<uint32_t>(vertices.size());
-		uint32_t indexCount32 = static_cast<uint32_t>(indices.size());
-		std::ofstream out(m_path_target, std::ofstream::binary);
-		if(!out)
+		CountType vertexCount32 = static_cast<CountType>(i_vertices.size());
+		CountType indexCount32 = static_cast<CountType>(i_indices.size());
+		std::ofstream out(i_target, std::ofstream::binary);
+		if (!out)
 		{
-			eae6320::OutputErrorMessage("Failed to open the output file for writing", m_path_target);
+			eae6320::OutputErrorMessage("Failed to open the output file for writing", i_target.c_str());
 			return false;
 		}
 
 		//write the data
 		out.write(reinterpret_cast<char*>(&vertexCount32), sizeof(vertexCount32));
 		out.write(reinterpret_cast<char*>(&indexCount32), sizeof(indexCount32));
-		out.write(reinterpret_cast<char*>(vertices.data()), sizeof(Lame::Vertex) * vertices.size());
-		out.write(reinterpret_cast<char*>(indices.data()), sizeof(uint32_t) * indices.size());
+		out.write(reinterpret_cast<const char*>(i_vertices.data()), sizeof(*i_vertices.data()) * i_vertices.size());
+		out.write(reinterpret_cast<const char*>(i_indices.data()), sizeof(*i_indices.data()) * i_indices.size());
 
 		out.close();
+		return true;
 	}
-
-	return true;
 }

@@ -6,7 +6,7 @@
 
 #include "../System/UserOutput.h"
 #include "../System/FileLoader.h"
-#include "Color.h"
+#include "../Core/Color.h"
 
 namespace Lame
 {

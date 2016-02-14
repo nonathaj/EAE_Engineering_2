@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <string>
 
-#include "Color.h"
+#include "../Core/Color.h"
 
 #if EAE6320_PLATFORM_D3D
 #include <d3d9.h>
@@ -45,6 +45,11 @@ namespace Lame
 		HDC get_deviceContext() const { return deviceContext; }
 		HGLRC get_openGlRenderingContext() const { return openGlRenderingContext; }
 #endif
+		bool SetVertexFormat(
+#if EAE6320_PLATFORM_D3D
+			IDirect3DVertexDeclaration9 ** o_vertex_declaration			//d3d needs the vertex declaration
+#endif
+			);
 
 		Rectangle2D GetPixelCoord(const Rectangle2D& i_virtual_screen_coord);
 		static Rectangle2D GetRealScreenCoord(const Rectangle2D& i_virtual_screen_coord);

@@ -11,9 +11,9 @@
 #include <cstdint>
 #include <memory>
 
-#include "Vertex.h"
 #include "Effect.h"
 #include "Context.h"
+#include "../Core/Vertex.h"
 #include "../Component/Transform.h"
 
 namespace Lame
@@ -23,13 +23,14 @@ namespace Lame
 	class Matrix4x4;
 	class Color32;
 	class Mesh;
+	class RenderableMesh;
 
 	class DebugRenderer
 	{
-		struct DebugMesh
+		struct DebugRenderableMesh
 		{
 			Lame::Transform transform;
-			std::shared_ptr<Lame::Mesh> mesh;
+			std::shared_ptr<Lame::RenderableMesh> mesh;
 		};
 	public:
 		static DebugRenderer* Create(std::shared_ptr<Lame::Context> i_context, const size_t i_line_count);
@@ -37,7 +38,7 @@ namespace Lame
 		bool AddLine(const Lame::Vector3& i_start, const Lame::Vector3& i_end, const Lame::Color32& i_start_color, const Lame::Color32& i_end_color);
 		bool AddLine(const Lame::Vector3& i_start, const Lame::Vector3& i_end, const Lame::Color32& i_color);
 
-		bool AddMesh(std::shared_ptr<Lame::Mesh> i_mesh, const Lame::Transform& i_transform, const bool i_render_as_wireframe);
+		bool AddMesh(const Mesh& i_mesh, const Lame::Transform& i_transform, const bool i_render_as_wireframe);
 		
 		bool AddBox(const bool i_render_wireframe, const Lame::Vector3& i_size, const Lame::Transform& i_transform, const Color32& i_color = Color32::white);
 		bool AddSphere(const bool i_render_wireframe, const float i_radius, const Lame::Transform& i_transform, const Color32& i_color = Color32::white);
@@ -56,8 +57,8 @@ namespace Lame
 		DebugRenderer& operator=(const DebugRenderer &i_other);
 
 		bool RenderLines(const Lame::Matrix4x4& i_worldToView, const Lame::Matrix4x4& i_viewToScreen);
-		bool RenderSolidMeshes(const Lame::Matrix4x4& i_worldToView, const Lame::Matrix4x4& i_viewToScreen);
-		bool RenderWireframeMeshes(const Lame::Matrix4x4& i_worldToView, const Lame::Matrix4x4& i_viewToScreen);
+		bool RenderSolidRenderableMeshes(const Lame::Matrix4x4& i_worldToView, const Lame::Matrix4x4& i_viewToScreen);
+		bool RenderWireframeRenderableMeshes(const Lame::Matrix4x4& i_worldToView, const Lame::Matrix4x4& i_viewToScreen);
 
 		std::shared_ptr<Effect> line_effect;
 		std::shared_ptr<Effect> solid_shape_effect;
@@ -68,10 +69,10 @@ namespace Lame
 		std::vector<Lame::Vertex> line_vertices;
 		size_t max_lines_count;
 
-		std::shared_ptr<Lame::Mesh> line_renderer;
+		std::shared_ptr<Lame::RenderableMesh> line_renderer;
 
-		std::vector<DebugMesh> wireframe_meshes;
-		std::vector<DebugMesh> solid_meshes;
+		std::vector<DebugRenderableMesh> wireframe_meshes;
+		std::vector<DebugRenderableMesh> solid_meshes;
 
 		Effect::ConstantHandle line_worldToViewUniformId;
 		Effect::ConstantHandle line_viewToScreenUniformId;

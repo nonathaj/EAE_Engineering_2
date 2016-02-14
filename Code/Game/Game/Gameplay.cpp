@@ -6,12 +6,12 @@
 #include <utility>
 
 #include "../../Engine/Graphics/Context.h"
-#include "../../Engine/Graphics/Mesh.h"
+#include "../../Engine/Graphics/RenderableMesh.h"
 #include "../../Engine/Graphics/Effect.h"
 #include "../../Engine/Graphics/Graphics.h"
 #include "../../Engine/Graphics/Sprite.h"
 #include "../../Engine/Graphics/Texture.h"
-#include "../../Engine/Graphics/Color.h"
+#include "../../Engine/Core/Color.h"
 #include "../../Engine/Core/Singleton.h"
 #include "../../Engine/System/eae6320/Time.h"
 #include "../../Engine/Component/World.h"
@@ -28,8 +28,8 @@
 namespace
 {
 	std::shared_ptr<Lame::Material> CreateMaterial(const std::string& i_material);
-	std::shared_ptr<Lame::Mesh> CreateMesh(const std::string& i_mesh);
-	std::shared_ptr<Lame::RenderableComponent> CreateRenderableObject(std::shared_ptr<Lame::GameObject> i_go, std::shared_ptr<Lame::Mesh> i_mesh, std::shared_ptr<Lame::Material> i_material);
+	std::shared_ptr<Lame::RenderableMesh> CreateRenderableMesh(const std::string& i_mesh);
+	std::shared_ptr<Lame::RenderableComponent> CreateRenderableObject(std::shared_ptr<Lame::GameObject> i_go, std::shared_ptr<Lame::RenderableMesh> i_mesh, std::shared_ptr<Lame::Material> i_material);
 
 	std::shared_ptr<Lame::Effect> sprite_effect;
 
@@ -91,13 +91,13 @@ namespace Gameplay
 		LameGraphics::Get().camera()->far_clip_plane(5000.0f);
 
 		if (
-			!CreateRenderableObject(nullptr, CreateMesh("data/ceiling_mesh.mesh.bin"), CreateMaterial("data/cement_wall.material.bin")) ||
-			!CreateRenderableObject(nullptr, CreateMesh("data/cement_mesh.mesh.bin"), CreateMaterial("data/cement_wall.material.bin")) ||
-			!CreateRenderableObject(nullptr, CreateMesh("data/floor_mesh.mesh.bin"), CreateMaterial("data/floor.material.bin")) ||
-			!CreateRenderableObject(nullptr, CreateMesh("data/metal_mesh.mesh.bin"), CreateMaterial("data/metal_brace.material.bin")) ||
-			!CreateRenderableObject(nullptr, CreateMesh("data/railing_mesh.mesh.bin"), CreateMaterial("data/railing.material.bin")) ||
-			!CreateRenderableObject(nullptr, CreateMesh("data/walls_mesh.mesh.bin"), CreateMaterial("data/wall.material.bin")) ||
-			!CreateRenderableObject(nullptr, CreateMesh("data/lambert_objects_mesh.mesh.bin"), CreateMaterial("data/white.material.bin"))
+			!CreateRenderableObject(nullptr, CreateRenderableMesh("data/ceiling_mesh.mesh.bin"), CreateMaterial("data/cement_wall.material.bin")) ||
+			!CreateRenderableObject(nullptr, CreateRenderableMesh("data/cement_mesh.mesh.bin"), CreateMaterial("data/cement_wall.material.bin")) ||
+			!CreateRenderableObject(nullptr, CreateRenderableMesh("data/floor_mesh.mesh.bin"), CreateMaterial("data/floor.material.bin")) ||
+			!CreateRenderableObject(nullptr, CreateRenderableMesh("data/metal_mesh.mesh.bin"), CreateMaterial("data/metal_brace.material.bin")) ||
+			!CreateRenderableObject(nullptr, CreateRenderableMesh("data/railing_mesh.mesh.bin"), CreateMaterial("data/railing.material.bin")) ||
+			!CreateRenderableObject(nullptr, CreateRenderableMesh("data/walls_mesh.mesh.bin"), CreateMaterial("data/wall.material.bin")) ||
+			!CreateRenderableObject(nullptr, CreateRenderableMesh("data/lambert_objects_mesh.mesh.bin"), CreateMaterial("data/white.material.bin"))
 			)
 		{
 			Shutdown();
@@ -268,15 +268,15 @@ namespace
 		return std::shared_ptr<Material>(Material::Create(LameGraphics::Get().context(), i_material));
 	}
 
-	std::shared_ptr<Lame::Mesh> CreateMesh(const std::string& i_mesh)
+	std::shared_ptr<Lame::RenderableMesh> CreateRenderableMesh(const std::string& i_mesh)
 	{
 		using namespace Lame;
 		if (!LameGraphics::Exists())
 			return nullptr;
-		return std::shared_ptr<Mesh>(Mesh::Create(LameGraphics::Get().context(), i_mesh));
+		return std::shared_ptr<RenderableMesh>(RenderableMesh::Create(true, LameGraphics::Get().context(), i_mesh));
 	}
 
-	std::shared_ptr<Lame::RenderableComponent> CreateRenderableObject(std::shared_ptr<Lame::GameObject> i_go, std::shared_ptr<Lame::Mesh> i_mesh, std::shared_ptr<Lame::Material> i_material)
+	std::shared_ptr<Lame::RenderableComponent> CreateRenderableObject(std::shared_ptr<Lame::GameObject> i_go, std::shared_ptr<Lame::RenderableMesh> i_mesh, std::shared_ptr<Lame::Material> i_material)
 	{
 		using namespace Lame;
 
