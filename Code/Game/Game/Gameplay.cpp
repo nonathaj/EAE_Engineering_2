@@ -24,6 +24,7 @@
 #include "../../Engine/Core/Math.h"
 #include "../../Engine/Core/Vector3.h"
 #include "../../Engine/Core/Random.h"
+#include "../../Engine/Physics/Physics.h"
 
 namespace
 {
@@ -54,7 +55,8 @@ namespace Gameplay
 	{
 		{
 			if (!LameWorld::Get().Setup() || 
-				!LameGraphics::Get().Setup(i_window))
+				!LameGraphics::Get().Setup(i_window) ||
+				!LamePhysics::Get().Setup())
 			{
 				Shutdown();
 				return false;
@@ -145,7 +147,7 @@ namespace Gameplay
 		float deltaTime = eae6320::Time::GetSecondsElapsedThisFrame();
 		LameInput::Get().Tick(deltaTime);
 		_itoa_s(static_cast<int>(1.0f / deltaTime), frames_per_second, 10);
-
+		
 		HandleInput(deltaTime);
 
 #ifdef ENABLE_DEBUG_RENDERING
@@ -159,6 +161,7 @@ namespace Gameplay
 		}
 #endif
 
+		LamePhysics::Get().Tick(deltaTime);
 		LameWorld::Get().Update(deltaTime);
 		return LameGraphics::Get().Render();
 	}
@@ -167,6 +170,8 @@ namespace Gameplay
 	{
 		sprite_effect.reset();
 		sprite.reset();
+
+		LamePhysics::Release();
 		LameGraphics::Release();
 		LameWorld::Release();
 		LameInput::Release();

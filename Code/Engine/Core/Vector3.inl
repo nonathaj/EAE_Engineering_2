@@ -26,7 +26,7 @@ inline void Lame::Vector3::set(const float i_x, const float i_y, const float i_z
 
 inline float Lame::Vector3::angle(const Vector3 &rhs) const
 {
-	return acos( dot(rhs) );
+	return std::acos( dot(rhs) );
 }
 
 inline float Lame::Vector3::dot(const Vector3 &rhs) const
@@ -50,7 +50,7 @@ inline float Lame::Vector3::distance(const Vector3 &rhs) const
 
 inline float Lame::Vector3::magnitude(void) const
 {
-	return sqrt(sq_magnitude());
+	return std::sqrt(sq_magnitude());
 }
 
 inline float Lame::Vector3::sq_magnitude(void) const
@@ -93,7 +93,7 @@ inline Lame::Vector3 Lame::Vector3::ProjectOnPlane(const Vector3& i_normal) cons
 
 inline Lame::Vector3 Lame::Vector3::AbsoluteValues() const
 {
-	return Vector3(fabs(x()), fabs(y()), fabs(z()));
+	return Vector3(std::fabs(x()), std::fabs(y()), std::fabs(z()));
 }
 
 inline Lame::Vector3 Lame::Vector3::Cartesian(const Vector3 i_p1, const Vector3 i_p2, const Vector3 i_p3) const
@@ -181,16 +181,8 @@ inline bool Lame::operator!=(const Lame::Vector3 &i_lhs, const Lame::Vector3 &i_
 	return !Lame::Math::Float::AlmostEqual(i_lhs.x(), i_rhs.x()) || !Lame::Math::Float::AlmostEqual(i_lhs.y(), i_rhs.y()) || !Lame::Math::Float::AlmostEqual(i_lhs.z(), i_rhs.z());
 }
 
-inline std::ostream& Lame::operator<<(std::ostream &out, Lame::Vector3 &vec)
+inline Lame::Vector3& Lame::Vector3::operator=(const Lame::Vector3 &i_other)
 {
-	out << "(" << vec.x() << ", " << vec.y() << ", " << vec.z() << ")";
-	return out;
-}
-
-inline Lame::Vector3& Lame::Vector3::operator=(const Lame::Vector3 &rhs)
-{
-	x(rhs.x());
-	y(rhs.y());
-	z(rhs.z());
+	set(i_other.x(), i_other.y(), i_other.z());
 	return *this;
 }

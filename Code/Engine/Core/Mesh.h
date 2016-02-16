@@ -19,12 +19,10 @@ namespace Lame
 			LineStrip,		//Sequence of Sliding Lines
 		};
 		static size_t GetPrimitiveCount(const PrimitiveType i_primitive_type, const size_t i_index_count);
+		static bool IsTriangles(const PrimitiveType i_primitive_type);
 
 		Mesh() {}
 		Mesh(const PrimitiveType i_prim_type) : primitive_type_(i_prim_type) { }
-
-		template<typename T>
-		static bool SwapTriangleListNormals(std::vector<T>& io_tri_list);
 
 		std::vector<Vertex>& vertices() { return vertices_; }
 		std::vector<uint32_t>& indices() { return indices_; }
@@ -46,6 +44,9 @@ namespace Lame
 		bool GetPrimitive(std::vector<Vertex>& o_primitive_vertices, const size_t i_primitive_index) const;
 
 		bool SwapTriangleListNormals();	//swaps the normals for all triangles, assuming this mesh stores TriangleList primitive
+
+		template<typename T>
+		static bool SwapTriangleListNormals(std::vector<T>& io_tri_list);
 	private:
 		std::vector<Vertex> vertices_;
 		std::vector<uint32_t> indices_;

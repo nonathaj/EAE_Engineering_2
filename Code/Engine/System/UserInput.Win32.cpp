@@ -89,16 +89,14 @@ namespace Lame
 			for (size_t t = 0; t < Keyboard::Key::Count; t++)
 			{
 				Keyboard::Key k = static_cast<Keyboard::Key>(t);
-				KeyState last = kb_state[k];
-				kb_state[k].last_frame = last.this_frame;
+				kb_state[k].last_frame = kb_state[k].this_frame;
 				kb_state[k].this_frame = IsVirtualKeyDown(keyCodes[k]);
 			}
 
 			for (size_t t = 0; t < Mouse::Button::Count; t++)
 			{
 				Mouse::Button b = static_cast<Mouse::Button>(t);
-				KeyState last = mouse_state[b];
-				mouse_state[b].last_frame = last.this_frame;
+				mouse_state[b].last_frame = mouse_state[b].this_frame;
 				mouse_state[b].this_frame = IsVirtualKeyDown(mouseButtonCodes[b]);
 			}
 		}

@@ -2,7 +2,8 @@
 #define _ENGINE_MATH_VECTOR3_H
 
 #include <iostream>
-#include <math.h>
+#include <string>
+#include <cmath>
 #include "FloatMath.h"
 
 namespace Lame
@@ -45,6 +46,8 @@ namespace Lame
 		inline Vector3 Cartesian(const Vector3 i_p1, const Vector3 i_p2, const Vector3 i_p3) const;	//converts this barycentric vector to cartesian
 		inline Vector3 Barycentric(const Vector3 i_p1, const Vector3 i_p2, const Vector3 i_p3) const; //converts this cartesian vector to barycentric coordinates
 
+		std::string to_string() const;							//formats vector as (x, y, z)
+
 		//setters
 		inline void set(const float i_x, const float i_y, const float i_z);
 		inline void x(const float i_x) { m_x = i_x; }
@@ -59,26 +62,24 @@ namespace Lame
 		//operators that alter the state of the class
 		inline Vector3& operator+=(const Vector3& rhs);
 		inline Vector3& operator-=(const Vector3& rhs);
-		inline Vector3& operator*=(const float &rhs);
-		inline Vector3& operator/=(const float &rhs);
-		inline Vector3& operator=(const Vector3 &rhs);
+		inline Vector3& operator*=(const float& rhs);
+		inline Vector3& operator/=(const float& rhs);
+		inline Vector3& operator=(const Vector3& rhs);
 	private:
 		float m_x, m_y, m_z;
 	};
 
-	inline Vector3 operator+(const Vector3 &i_lhs, const Vector3 &i_rhs);
-	inline Vector3 operator-(const Vector3 &i_lhs, const Vector3 &i_rhs);
-	inline Vector3 operator-(const Vector3 &i_rhs);
+	inline Vector3 operator+(const Vector3& i_lhs, const Vector3& i_rhs);
+	inline Vector3 operator-(const Vector3& i_lhs, const Vector3& i_rhs);
+	inline Vector3 operator-(const Vector3& i_rhs);
 	
-	inline Vector3 operator*(const Vector3 &i_lhs, const float &i_rhs);
-	inline Vector3 operator*(const float &i_lhs, const Vector3 &i_rhs);
+	inline Vector3 operator*(const Vector3& i_lhs, const float& i_rhs);
+	inline Vector3 operator*(const float& i_lhs, const Vector3& i_rhs);
 
-	inline Vector3 operator/(const Vector3 &i_lhs, const float &i_rhs);
+	inline Vector3 operator/(const Vector3& i_lhs, const float& i_rhs);
 
-	inline bool operator==(const Vector3 &i_lhs, const Vector3 &i_rhs);
-	inline bool operator!=(const Vector3 &i_lhs, const Vector3 &i_rhs);
-
-	inline std::ostream& operator<< (std::ostream &out, Vector3 &vec);		//streams vector as (x, y, z)
+	inline bool operator==(const Vector3& i_lhs, const Vector3& i_rhs);
+	inline bool operator!=(const Vector3& i_lhs, const Vector3& i_rhs);
 }
 #include "Vector3.inl"
 

@@ -332,6 +332,9 @@ namespace Lame
 
 	std::string Matrix4x4::to_string(bool i_format_on_single_line) const
 	{
+		if (!IsValid())
+			return "{ Invalid Matrix }";
+
 		const char break_char = i_format_on_single_line ? ' ' : '\n';
 		const char open = '{';
 		const char close = '}';

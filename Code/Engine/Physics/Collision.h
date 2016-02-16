@@ -1,13 +1,24 @@
 #ifndef _LAME_COLLISION_H
 #define _LAME_COLLISION_H
 
+#include <vector>
+#include "../Core/Vector3.h"
+
 namespace Lame
 {
-	class Vector3;
+	class Mesh;
 
 	namespace Collision
 	{
-		bool IntersectSegmentTriangle(Vector3 i_ray_start, Vector3 i_ray_direction, Vector3 a, Vector3 b, Vector3 c, Vector3& o_normal, Vector3& o_barycentric_coord, float& o_t);
+		struct RaycastHit
+		{
+			Vector3 normal;
+			Vector3 barycentric_coord;
+			float t;
+		};
+
+		bool Raycast(const Vector3& i_ray_start, const Vector3& i_ray_direction, const Vector3& a, const Vector3& b, const Vector3& c, RaycastHit& o_hit_info);
+		bool Raycast(const Vector3& i_ray_start, const Vector3& i_ray_direction, const Mesh& i_mesh, std::vector<RaycastHit>& o_hit_infos);
 	}
 }
 

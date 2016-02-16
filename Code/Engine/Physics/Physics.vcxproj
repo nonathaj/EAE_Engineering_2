@@ -21,10 +21,14 @@
   <ItemGroup>
     <ClInclude Include="Collision.h" />
     <ClInclude Include="CollisionMesh.h" />
+    <ClInclude Include="Physics.h" />
+    <ClInclude Include="Physics3DComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="CollisionMesh.cpp" />
+    <ClCompile Include="Physics.cpp" />
+    <ClCompile Include="Physics3DComponent.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0DECF1DA-6E48-4B17-9F38-930E59B29A39}</ProjectGuid>

@@ -22,6 +22,21 @@ namespace Lame
 		}
 	}
 
+	bool Lame::Mesh::IsTriangles(const Lame::Mesh::PrimitiveType i_primitive_type)
+	{
+		switch (i_primitive_type)
+		{
+		case Lame::Mesh::PrimitiveType::TriangleList:
+		case Lame::Mesh::PrimitiveType::TriangleStrip:
+		case Lame::Mesh::PrimitiveType::TriangleFan:
+			return true;
+		case Lame::Mesh::PrimitiveType::LineList:
+		case Lame::Mesh::PrimitiveType::LineStrip:
+		default:
+			return false;
+		}
+	}
+
 	bool Mesh::SwapTriangleListNormals()
 	{
 		if (has_indices())
