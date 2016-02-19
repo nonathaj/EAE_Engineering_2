@@ -57,7 +57,7 @@ namespace Lame
 		if (!rm)
 			return nullptr;
 		if (!rm->UpdateVertices(i_mesh.vertices_RO().data()) || 
-			(i_mesh.indices_RO().size() > 0 && !rm->UpdateIndices(i_mesh.indices_RO().data())) )
+			(i_mesh.has_indices() && !rm->UpdateIndices(i_mesh.indices_RO().data())) )
 		{
 			delete rm;
 			return nullptr;

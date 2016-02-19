@@ -1,6 +1,7 @@
 
 #include "Vector3.h"
 #include "Vector2.h"
+#include "FloatMath.h"
 
 #include <sstream>
 
@@ -23,4 +24,14 @@ std::string Lame::Vector3::to_string() const
 	std::stringstream str;
 	str << "(" << x() << ", " << y() << ", " << z() << ")";
 	return str.str();
+}
+
+bool Lame::Vector3::AnyNaN() const
+{
+	return Lame::Math::Float::IsNaN(x()) || Lame::Math::Float::IsNaN(y()) || Lame::Math::Float::IsNaN(z());
+}
+
+bool Lame::Vector3::AllNaN() const
+{
+	return Lame::Math::Float::IsNaN(x()) && Lame::Math::Float::IsNaN(y()) && Lame::Math::Float::IsNaN(z());
 }

@@ -40,6 +40,8 @@ namespace Lame
 		inline Vector3 normalized() const;						//returns a normalized version of the vector (length 1)
 		inline Vector3& normalize();							//normalizes this vector
 
+		bool AnyNaN() const;
+		bool AllNaN() const;
 		inline Vector3 Reflect(const Vector3& i_normal) const;
 		inline Vector3 ProjectOnPlane(const Vector3& i_normal) const;
 		inline Vector3 AbsoluteValues() const;

@@ -7,6 +7,11 @@
 
 namespace Lame
 {
+	namespace Collision
+	{
+		struct RaycastHit;
+	}
+
 	class CollisionMesh : public IComponent
 	{
 	public:
@@ -14,6 +19,8 @@ namespace Lame
 
 		Mesh& mesh() { return mesh_; }
 		void mesh(const Mesh& i_mesh) { mesh_ = i_mesh; }
+
+		bool RaycastAgainst(const Vector3& i_ray_start, const Vector3& i_ray_direction, std::vector<Collision::RaycastHit>& o_hit_infos) const;
 	private:
 		Mesh mesh_;
 	};

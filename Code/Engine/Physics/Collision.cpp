@@ -7,6 +7,11 @@ namespace Lame
 {
 	namespace Collision
 	{
+		bool RaycastHit::IsSooner(const RaycastHit& i_other_hit) const
+		{
+			return t < i_other_hit.t;
+		}
+
 		bool Raycast(const Vector3& i_ray_start, const Vector3& i_ray_direction, const Vector3& a, const Vector3& b, const Vector3& c, RaycastHit& o_hit_info)
 		{
 			Vector3 ab = b - a;
@@ -51,12 +56,13 @@ namespace Lame
 			return true;
 		}
 
-		bool Raycast(const Vector3& i_ray_start, const Vector3& i_ray_direction, const Mesh& i_mesh, std::vector<RaycastHit>& o_hit_info)
+		int Raycast(const Vector3& i_ray_start, const Vector3& i_ray_direction, const Mesh& i_mesh, std::vector<RaycastHit>& o_hit_info)
 		{
 			if (!Mesh::IsTriangles(i_mesh.primitive_type()))
-				return false;
+				return -2;
 
 			o_hit_info.clear();
+			int soonest_index = -1;
 			const size_t primitive_count = i_mesh.primitive_count();
 			for (size_t x = 0; x < primitive_count; x++)
 			{
@@ -69,9 +75,36 @@ namespace Lame
 						primitive_vertices[2].position, hitinfo) )
 				{
 					o_hit_info.push_back(hitinfo);
+					if (soonest_index == -1 || hitinfo.IsSooner(o_hit_info[x]))
+					{
+						soonest_index = x;
+					}
 				}
 			}
-			return o_hit_info.size() > 0;
+			return o_hit_info.size() > 0 ? soonest_index : -1;
+		}
+
+		void SortSoonestFirst(std::vector<RaycastHit>& io_hit_list)
+		{
+			std::sort(
+				io_hit_list.begin(), 
+				io_hit_list.end(),
+				[](const RaycastHit& a, const RaycastHit& b) { return a.IsSooner(b) ? a : b; }
+			);
+		}
+
+		int FindSoonestIndex(const std::vector<RaycastHit>& i_hit_list)
+		{
+			if (i_hit_list.size() == 0)
+				return -1;
+
+			int index = 0;
+			for (int i = 1; i < i_hit_list.size(); i++)
+			{
+				if (i_hit_list[i].IsSooner(i_hit_list[index]))
+					index = i;
+			}
+			return index;
 		}
 	}
 }

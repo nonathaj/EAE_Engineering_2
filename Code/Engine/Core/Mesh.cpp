@@ -39,6 +39,9 @@ namespace Lame
 
 	bool Mesh::SwapTriangleListNormals()
 	{
+		if (!IsTriangles(primitive_type_))
+			return false;
+
 		if (has_indices())
 			return SwapTriangleListNormals(indices_);
 		else

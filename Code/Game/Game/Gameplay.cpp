@@ -26,6 +26,8 @@
 #include "../../Engine/Core/Random.h"
 #include "../../Engine/Physics/Physics.h"
 
+#include "FPSWalkerComponent.h"
+
 namespace
 {
 	std::shared_ptr<Lame::Material> CreateMaterial(const std::string& i_material);
@@ -36,6 +38,8 @@ namespace
 
 	std::shared_ptr<Lame::Sprite> sprite;
 	std::shared_ptr<Lame::Sprite> number;
+	
+	std::shared_ptr<FPSWalkerComponent> fpsControls;
 
 	void HandleInput(float deltaTime);
 
@@ -170,6 +174,7 @@ namespace Gameplay
 	{
 		sprite_effect.reset();
 		sprite.reset();
+		fpsControls.reset();
 
 		LamePhysics::Release();
 		LameGraphics::Release();
@@ -229,9 +234,7 @@ namespace
 			movementVector += Vector3::down;
 
 		movementVector = LameGraphics::Get().camera()->gameObject()->transform().rotation() * movementVector * movementAmount;
-		if (!Math::Float::IsNaN(movementVector.x()) &&
-			!Math::Float::IsNaN(movementVector.y()) &&
-			!Math::Float::IsNaN(movementVector.z()))
+		if (!movementVector.AnyNaN())
 		{
 			LameGraphics::Get().camera()->gameObject()->transform().Move(movementVector);
 		}
