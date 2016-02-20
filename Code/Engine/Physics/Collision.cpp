@@ -2,6 +2,7 @@
 #include "Collision.h"
 #include "../Core/Vector3.h"
 #include "../Core/Mesh.h"
+#include "../System/Console.h"
 
 namespace Lame
 {
@@ -61,7 +62,6 @@ namespace Lame
 			if (!Mesh::IsTriangles(i_mesh.primitive_type()))
 				return -2;
 
-			o_hit_info.clear();
 			int soonest_index = -1;
 			const size_t primitive_count = i_mesh.primitive_count();
 			for (size_t x = 0; x < primitive_count; x++)
@@ -75,9 +75,9 @@ namespace Lame
 						primitive_vertices[2].position, hitinfo) )
 				{
 					o_hit_info.push_back(hitinfo);
-					if (soonest_index == -1 || hitinfo.IsSooner(o_hit_info[x]))
+					if (soonest_index == -1 || hitinfo.IsSooner(o_hit_info[soonest_index]))
 					{
-						soonest_index = x;
+						soonest_index = static_cast<int>(x);
 					}
 				}
 			}
@@ -89,7 +89,7 @@ namespace Lame
 			std::sort(
 				io_hit_list.begin(), 
 				io_hit_list.end(),
-				[](const RaycastHit& a, const RaycastHit& b) { return a.IsSooner(b) ? a : b; }
+				[](const RaycastHit& a, const RaycastHit& b) { return a.IsSooner(b); }
 			);
 		}
 

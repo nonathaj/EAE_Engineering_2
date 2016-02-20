@@ -20,7 +20,15 @@ public:
 	float rotation_rate() const { return rotation_rate_; }
 	void rotation_rate(const float i_rot_rate) { rotation_rate_ = i_rot_rate; }
 
+	float height() const { return height_; }
+	void height(const float i_height) { height_ = i_height; }
+
+	float groundable_check_length() const { return groundable_check_length_; }
+	void groundable_check_length(const float i_gr_check_length) { groundable_check_length_ = i_gr_check_length; }
+
 	std::shared_ptr<Lame::Physics3DComponent> physics_comp() const { return physics_comp_; }
+
+	Lame::Vector3 FootPosition() const;
 
 	void Update(float i_deltatime) override;
 
@@ -29,6 +37,8 @@ private:
 
 	float speed_;
 	float rotation_rate_;
+	float height_;
+	float groundable_check_length_;
 };
 
 #endif //_FPSWALKERCOMPONENT_H

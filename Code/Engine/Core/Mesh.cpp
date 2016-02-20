@@ -3,6 +3,20 @@
 
 namespace Lame
 {
+	Mesh::Mesh(const PrimitiveType i_prim_type, size_t i_vertex_count, Vertex* i_vertices, size_t i_index_count, uint32_t* i_indices)
+		:vertices_(), indices_(), primitive_type_(i_prim_type)
+	{
+		if (i_vertex_count > 0 && i_vertices)
+		{
+			vertices_.insert(vertices_.end(), i_vertices, i_vertices + i_vertex_count);
+		}
+
+		if (i_index_count > 0 && i_indices)
+		{
+			indices_.insert(indices_.end(), i_indices, i_indices + i_index_count);
+		}
+	}
+
 	size_t Mesh::GetPrimitiveCount(const Lame::Mesh::PrimitiveType i_primitive_type, const size_t i_index_count)
 	{
 		switch (i_primitive_type)

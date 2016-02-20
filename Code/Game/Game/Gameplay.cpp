@@ -25,6 +25,8 @@
 #include "../../Engine/Core/Vector3.h"
 #include "../../Engine/Core/Random.h"
 #include "../../Engine/Physics/Physics.h"
+#include "../../Engine/Physics/Physics3DComponent.h"
+#include "../../Engine/Physics/CollisionMesh.h"
 
 #include "FPSWalkerComponent.h"
 
@@ -32,6 +34,7 @@ namespace
 {
 	std::shared_ptr<Lame::Material> CreateMaterial(const std::string& i_material);
 	std::shared_ptr<Lame::RenderableMesh> CreateRenderableMesh(const std::string& i_mesh);
+	std::shared_ptr<Lame::CollisionMesh> CreateCollisionMesh(const std::string& i_mesh);
 	std::shared_ptr<Lame::RenderableComponent> CreateRenderableObject(std::shared_ptr<Lame::GameObject> i_go, std::shared_ptr<Lame::RenderableMesh> i_mesh, std::shared_ptr<Lame::Material> i_material);
 
 	std::shared_ptr<Lame::Effect> sprite_effect;
@@ -46,10 +49,6 @@ namespace
 	bool Contacting(std::shared_ptr<Lame::GameObject> go1, std::shared_ptr<Lame::GameObject> go2, const float& go1Size, const float& go2Size);
 	uint8_t GetNumberKeyPressed();
 
-	float framerate = 0.0f;
-	bool red_sphere = false;
-	bool show_sphere = true;
-	float sphere_radius = 250.0f;
 	char frames_per_second[50];
 }
 
@@ -60,7 +59,8 @@ namespace Gameplay
 		{
 			if (!LameWorld::Get().Setup() || 
 				!LameGraphics::Get().Setup(i_window) ||
-				!LamePhysics::Get().Setup())
+				!LamePhysics::Get().Setup() ||
+				!LameWorld::Get().Add(LameGraphics::Get().camera()->gameObject()) )
 			{
 				Shutdown();
 				return false;
@@ -77,10 +77,6 @@ namespace Gameplay
 
 #ifdef ENABLE_DEBUG_MENU
 			LameGraphics::Get().debug_menu()->CreateText("FPS", frames_per_second);
-			LameGraphics::Get().debug_menu()->CreateCheckBox("Color Sphere Red ", &red_sphere);
-			LameGraphics::Get().debug_menu()->CreateSlider("Sphere Radius", &sphere_radius, 100.0f, 500.0f);
-			LameGraphics::Get().debug_menu()->CreateButton("Reset Sphere Radius", []() { sphere_radius = 250.0f; });
-			LameGraphics::Get().debug_menu()->CreateCheckBox("Show Sphere", &show_sphere);
 #endif
 
 			std::string error;
@@ -110,6 +106,30 @@ namespace Gameplay
 			return false;
 		}
 
+		//add the player physics and controls
+		{
+			std::shared_ptr<Lame::Physics3DComponent> player_phys(new Lame::Physics3DComponent(LameGraphics::Get().camera()->gameObject()));
+			fpsControls = std::shared_ptr<FPSWalkerComponent>(new FPSWalkerComponent(player_phys));
+			if (!player_phys || !LamePhysics::Get().Add(player_phys)
+				|| !fpsControls
+				)
+			{
+				Shutdown();
+				return false;
+			}
+		}
+
+		//Add the world's collider
+		{
+			auto cm = CreateCollisionMesh("data/level_collision.mesh.bin");
+				
+			if (!cm || !LamePhysics::Get().Add(cm))
+			{
+				Shutdown();
+				return false;
+			}
+		}
+
 		sprite_effect = std::shared_ptr<Lame::Effect>(Lame::Effect::Create(LameGraphics::Get().context(), "data/sprite.effect.bin"));
 		if (!sprite_effect)
 		{
@@ -119,11 +139,11 @@ namespace Gameplay
 
 		sprite = std::shared_ptr<Lame::Sprite>(
 			Lame::Sprite::Create(
-			sprite_effect,
-			std::shared_ptr<Lame::Texture>(Lame::Texture::Create(LameGraphics::Get().context(), "data/alpha.DDS")),
-			Lame::Vector2::one * 0.1f,
-			0.2f,
-			Lame::Rectangle2D::CreateTLNormalized() ));
+				sprite_effect,
+				std::shared_ptr<Lame::Texture>(Lame::Texture::Create(LameGraphics::Get().context(), "data/alpha.DDS")),
+				Lame::Vector2::one * 0.1f,
+				0.2f,
+				Lame::Rectangle2D::CreateTLNormalized() ) );
 		if (!sprite || !LameGraphics::Get().Add(sprite))
 		{
 			Shutdown();
@@ -152,17 +172,16 @@ namespace Gameplay
 		LameInput::Get().Tick(deltaTime);
 		_itoa_s(static_cast<int>(1.0f / deltaTime), frames_per_second, 10);
 		
-		HandleInput(deltaTime);
+		//HandleInput(deltaTime);
 
 #ifdef ENABLE_DEBUG_RENDERING
-		if (show_sphere)
-		{
-			LameGraphics::Get().debug_renderer()->AddSphere(
-				true,
-				1.0f,
-				Lame::Transform(Lame::Vector3::zero, Lame::Quaternion::identity, Lame::Vector3::one * sphere_radius),
-				red_sphere ? Lame::Color32::red : Lame::Color32::white);
-		}
+		LameGraphics::Get().debug_renderer()->AddCylinder(
+			true,
+			60,
+			60,
+			250,
+			Lame::Transform::CreateDefault(),
+			Lame::Color32::green);
 #endif
 
 		LamePhysics::Get().Tick(deltaTime);
@@ -282,6 +301,15 @@ namespace
 		if (!LameGraphics::Exists())
 			return nullptr;
 		return std::shared_ptr<RenderableMesh>(RenderableMesh::Create(true, LameGraphics::Get().context(), i_mesh));
+	}
+
+	std::shared_ptr<Lame::CollisionMesh> CreateCollisionMesh(const std::string& i_mesh)
+	{
+		using namespace Lame;
+		if (!LameWorld::Exists() || !LamePhysics::Exists())
+			return nullptr;
+		std::shared_ptr<CollisionMesh> cm(CollisionMesh::Create(LameWorld::Get().AddNewGameObject(), i_mesh));
+		return cm;
 	}
 
 	std::shared_ptr<Lame::RenderableComponent> CreateRenderableObject(std::shared_ptr<Lame::GameObject> i_go, std::shared_ptr<Lame::RenderableMesh> i_mesh, std::shared_ptr<Lame::Material> i_material)

@@ -38,7 +38,7 @@ namespace Lame
 		bool Remove(std::shared_ptr<RenderableComponent> i_renderable);
 
 		bool Add(std::shared_ptr<Sprite> i_sprite);
-		bool Remove(std::shared_ptr<Sprite> i_renderable);
+		bool Remove(std::shared_ptr<Sprite> i_sprite);
 
 		//does this renderable have the same context as this graphics object
 		bool MatchesContext(std::shared_ptr<RenderableComponent> i_renderable);

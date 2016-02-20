@@ -23,6 +23,7 @@ namespace Lame
 
 		Mesh() {}
 		Mesh(const PrimitiveType i_prim_type) : primitive_type_(i_prim_type) { }
+		Mesh(const PrimitiveType i_prim_type, size_t i_vertex_count, Vertex* i_vertices, size_t i_index_count, uint32_t* i_indices);
 
 		std::vector<Vertex>& vertices() { return vertices_; }
 		std::vector<uint32_t>& indices() { return indices_; }
