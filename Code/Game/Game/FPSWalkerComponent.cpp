@@ -34,8 +34,10 @@ void FPSWalkerComponent::Update(float i_deltatime)
 	using namespace Lame;
 	using namespace Lame::Input;
 
+	std::shared_ptr<Lame::GameObject> go = gameObject();
+
 	std::vector<Lame::Collision::RaycastHit> grounded_hits;
-	bool grounded = LamePhysics::Get().RaycastAgainst(FootPosition(), Lame::Vector3::down * groundable_check_length_, grounded_hits);
+	bool grounded = LamePhysics::Get().RaycastAgainst(go->transform().position(), Lame::Vector3::down * (groundable_check_length_ + height()), grounded_hits);
 	if (grounded || grounded_hits.size() > 0)
 	{
 		DEBUG_PRINT("grounded=%s hits=%d", grounded ? "yes" : "no", grounded_hits.size());
@@ -71,7 +73,6 @@ void FPSWalkerComponent::Update(float i_deltatime)
 			physics_comp_->velocity(physics_comp_->velocity() + Vector3::up * 10.0f);
 	}
 
-	std::shared_ptr<Lame::GameObject> go = gameObject();
 	if (localMovement.sq_magnitude() > 0.0f)
 	{
 		Vector3 worldMovement = gameObject()->transform().rotation() * localMovement.normalized() * speed() * i_deltatime;

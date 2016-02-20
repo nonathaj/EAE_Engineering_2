@@ -62,6 +62,7 @@ namespace Lame
 			if (!Mesh::IsTriangles(i_mesh.primitive_type()))
 				return -2;
 
+			const size_t start_index = o_hit_info.size();	//we can already have a list of hit items
 			int soonest_index = -1;
 			const size_t primitive_count = i_mesh.primitive_count();
 			for (size_t x = 0; x < primitive_count; x++)
@@ -77,7 +78,7 @@ namespace Lame
 					o_hit_info.push_back(hitinfo);
 					if (soonest_index == -1 || hitinfo.IsSooner(o_hit_info[soonest_index]))
 					{
-						soonest_index = static_cast<int>(x);
+						soonest_index = static_cast<int>(start_index + x);
 					}
 				}
 			}
