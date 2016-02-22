@@ -22,6 +22,7 @@ namespace Lame
 		inline void enabled(bool i_enabled) { enabled_ = i_enabled; }
 
 		virtual void Update(float deltaTime) {}
+		virtual void PhysicsUpdate(float deltaTime) {}
 
 	protected:
 		//must be created by a child with this constructor

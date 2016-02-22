@@ -35,6 +35,22 @@ namespace Lame
 		}
 	}
 
+	void World::PhysicsUpdate(float deltaTime)
+	{
+		for (auto itr = gameObjects_.begin(); itr != gameObjects_.end(); /**/)
+		{
+			if ((*itr)->IsDestroying())
+			{
+				itr = gameObjects_.erase(itr);
+			}
+			else
+			{
+				(*itr)->PhysicsUpdate(deltaTime);
+				++itr;
+			}
+		}
+	}
+
 	bool World::Add(std::shared_ptr<GameObject> i_gameObject)
 	{
 		if (!Has(i_gameObject))

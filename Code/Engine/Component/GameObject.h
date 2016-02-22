@@ -17,6 +17,7 @@ namespace Lame
 		GameObject();
 
 		void Update(float deltaTime);
+		void PhysicsUpdate(float deltaTime);
 		
 		inline std::string name() const { return name_; }
 		inline void name(const std::string& i_name) { name_ = i_name; }

@@ -49,6 +49,6 @@ namespace Lame
 
 	bool CollisionMesh::RaycastAgainst(const Vector3& i_ray_start, const Vector3& i_ray_direction, std::vector<Collision::RaycastHit>& o_hit_infos) const
 	{
-		return Collision::Raycast(i_ray_start, i_ray_direction, mesh_, o_hit_infos) >= 0;
+		return Collision::Raycast(i_ray_start, i_ray_direction, mesh_, o_hit_infos);
 	}
 }

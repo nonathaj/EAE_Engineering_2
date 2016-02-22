@@ -5,12 +5,13 @@
 #include "../Component/GameObject.h"
 #include "../Component/Transform.h"
 #include "CollisionMesh.h"
+#include "../Component/World.h"
 
 namespace Lame
 {
 	Physics::Physics() :
 		gravity_(0, -9.81f, 0),
-		fixed_timestep_(0.02f),
+		fixed_timestep_(0.1f),
 		current_frame_time_remaining(0.0f),
 		physics_objects_()
 	{
@@ -105,6 +106,10 @@ namespace Lame
 			{
 				itr = physics_objects_.erase(itr);
 			}
+		}
+		if (LameWorld::Exists())
+		{
+			LameWorld::Get().PhysicsUpdate(fixed_timestep_);
 		}
 	}
 

@@ -18,6 +18,7 @@ namespace Lame
 		bool Setup();
 
 		void Update(float deltaTime);
+		void PhysicsUpdate(float deltaTime);
 
 		bool Add(std::shared_ptr<GameObject> i_gameObject);
 		bool Has(std::shared_ptr<GameObject> i_gameObject);

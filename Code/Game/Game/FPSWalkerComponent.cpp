@@ -7,6 +7,7 @@
 #include "../../Engine/Physics/Physics.h"
 #include "../../Engine/System/UserInput.h"
 #include "../../Engine/System/Console.h"
+#include "../../Engine/Graphics/Graphics.h"
 
 FPSWalkerComponent::FPSWalkerComponent(std::shared_ptr<Lame::Physics3DComponent> i_physics_comp) :
 	IComponent(i_physics_comp->gameObject()),
@@ -36,11 +37,24 @@ void FPSWalkerComponent::Update(float i_deltatime)
 
 	std::shared_ptr<Lame::GameObject> go = gameObject();
 
-	std::vector<Lame::Collision::RaycastHit> grounded_hits;
-	bool grounded = LamePhysics::Get().RaycastAgainst(go->transform().position(), Lame::Vector3::down * (groundable_check_length_ + height()), grounded_hits);
-	if (grounded || grounded_hits.size() > 0)
+	bool grounded = false;
+	Vector3 ground_normal = Vector3::up;
 	{
-		DEBUG_PRINT("grounded=%s hits=%d", grounded ? "yes" : "no", grounded_hits.size());
+		Vector3 ray_start = go->transform().position();
+		Vector3 ray_dir = Lame::Vector3::down * (groundable_check_length_ + height());
+		std::vector<Lame::Collision::RaycastHit> grounded_hits;
+
+		grounded = LamePhysics::Get().RaycastAgainst(ray_start, ray_dir, grounded_hits);
+		if (grounded)
+		{
+			//DEBUG_PRINT("grounded=%s hits=%d", grounded ? "yes" : "no", grounded_hits.size());
+			int soonest_index = Lame::Collision::FindSoonestIndex(grounded_hits);
+			if (soonest_index >= 0)
+			{
+				ground_normal = grounded_hits[soonest_index].normal;
+				DEBUG_PRINT("ground_norm = %s, t=%f", ground_normal.to_string().c_str(), grounded_hits[soonest_index].t);
+			}
+		}
 	}
 
 	if (grounded)
@@ -64,6 +78,11 @@ void FPSWalkerComponent::Update(float i_deltatime)
 		if (LameInput::Get().Held(Keyboard::S))
 			localMovement += Vector3::back;
 
+		if (LameInput::Get().Held(Keyboard::Q))
+		{
+			go->transform().Move(Vector3::down * 30.0f);
+		}
+
 		if (LameInput::Get().Held(Keyboard::Left))						//rotate left
 			localRotationAxis += Vector3::up;
 		if (LameInput::Get().Held(Keyboard::Right))						//rotate Right
@@ -75,8 +94,10 @@ void FPSWalkerComponent::Update(float i_deltatime)
 
 	if (localMovement.sq_magnitude() > 0.0f)
 	{
-		Vector3 worldMovement = gameObject()->transform().rotation() * localMovement.normalized() * speed() * i_deltatime;
-
+		Vector3 projectedMovement = gameObject()->transform().rotation() * localMovement.normalized();
+		projectedMovement = projectedMovement.ProjectOnPlane(ground_normal).normalized();
+		Vector3 worldMovement = projectedMovement * (speed() * i_deltatime);
+		
 		go->transform().Move(worldMovement);
 	}
 	go->transform().Rotate(Quaternion::Euler(localRotationAxis * rotation_rate_* i_deltatime));

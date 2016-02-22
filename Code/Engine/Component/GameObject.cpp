@@ -17,4 +17,10 @@ namespace Lame
 		for (size_t x = 0; x < components_.size(); x++)
 			components_[x]->Update(deltaTime);
 	}
+
+	void GameObject::PhysicsUpdate(float deltaTime)
+	{
+		for (size_t x = 0; x < components_.size(); x++)
+			components_[x]->PhysicsUpdate(deltaTime);
+	}
 }
