@@ -33,8 +33,7 @@ namespace Lame
 			o_hit_info.normal = ab.cross(ac);
 			o_hit_info.normal.normalize();
 
-			// Compute denominator d. If d <= 0, segment is parallel to or points
-			// away from triangle, so exit early
+			// If segment is parallel to or points away from triangle, exit early
 			float distanceOnNormal = i_ray_direction.dot(o_hit_info.normal);
 			if (distanceOnNormal <= 0.0f)
 				return false;
