@@ -13,7 +13,7 @@ FPSWalkerComponent::FPSWalkerComponent(std::shared_ptr<Lame::Physics3DComponent>
 	IComponent(i_physics_comp->gameObject()),
 	speed_(300.0f),
 	rotation_rate_(60.0f),
-	height_(150.0f),
+	height_(120.0f),
 	groundable_check_length_(23.0f),
 	physics_comp_(i_physics_comp)
 {
