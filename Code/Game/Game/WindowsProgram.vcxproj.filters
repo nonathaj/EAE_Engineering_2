@@ -28,11 +28,13 @@
     <ClInclude Include="WindowsProgram.h" />
     <ClInclude Include="Gameplay.h" />
     <ClInclude Include="FPSWalkerComponent.h" />
+    <ClInclude Include="FlyCamComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EntryPoint.cpp" />
     <ClCompile Include="WindowsProgram.cpp" />
     <ClCompile Include="Gameplay.cpp" />
     <ClCompile Include="FPSWalkerComponent.cpp" />
+    <ClCompile Include="FlyCamComponent.cpp" />
   </ItemGroup>
 </Project>

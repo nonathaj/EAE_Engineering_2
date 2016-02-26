@@ -204,6 +204,7 @@
     <Image Include="Resources\small.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FlyCamComponent.h" />
     <ClInclude Include="FPSWalkerComponent.h" />
     <ClInclude Include="Gameplay.h" />
     <ClInclude Include="Resources\Resource.h" />
@@ -212,6 +213,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EntryPoint.cpp" />
+    <ClCompile Include="FlyCamComponent.cpp" />
     <ClCompile Include="FPSWalkerComponent.cpp" />
     <ClCompile Include="Gameplay.cpp" />
     <ClCompile Include="WindowsProgram.cpp" />

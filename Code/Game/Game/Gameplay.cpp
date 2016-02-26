@@ -29,6 +29,7 @@
 #include "../../Engine/Physics/CollisionMesh.h"
 
 #include "FPSWalkerComponent.h"
+#include "FlyCamComponent.h"
 
 namespace
 {
@@ -38,11 +39,9 @@ namespace
 	std::shared_ptr<Lame::RenderableComponent> CreateRenderableObject(std::shared_ptr<Lame::GameObject> i_go, std::shared_ptr<Lame::RenderableMesh> i_mesh, std::shared_ptr<Lame::Material> i_material);
 
 	std::shared_ptr<Lame::Effect> sprite_effect;
-
-	std::shared_ptr<Lame::Sprite> sprite;
-	std::shared_ptr<Lame::Sprite> number;
 	
 	std::shared_ptr<FPSWalkerComponent> fpsControls;
+	std::shared_ptr<FlyCamComponent> flyCam;
 
 	void HandleInput(float deltaTime);
 
@@ -50,6 +49,8 @@ namespace
 	uint8_t GetNumberKeyPressed();
 
 	char frames_per_second[50];
+
+	bool flyCamMode = false;
 }
 
 namespace Gameplay
@@ -110,13 +111,19 @@ namespace Gameplay
 		{
 			std::shared_ptr<Lame::Physics3DComponent> player_phys(new Lame::Physics3DComponent(LameGraphics::Get().camera()->gameObject()));
 			fpsControls = std::shared_ptr<FPSWalkerComponent>(new FPSWalkerComponent(player_phys));
-			if (!player_phys || !LamePhysics::Get().Add(player_phys)
-				|| !fpsControls
-				)
+			if (!player_phys || !LamePhysics::Get().Add(player_phys) || !fpsControls)
 			{
 				Shutdown();
 				return false;
 			}
+
+			flyCam = std::shared_ptr<FlyCamComponent>(new FlyCamComponent(LameGraphics::Get().camera()->gameObject()));
+			if (!flyCam)
+			{
+				Shutdown();
+				return false;
+			}
+			flyCam->enabled(false);
 		}
 
 		//Add the world's collider
@@ -136,32 +143,6 @@ namespace Gameplay
 			Shutdown();
 			return false;
 		}
-
-		sprite = std::shared_ptr<Lame::Sprite>(
-			Lame::Sprite::Create(
-				sprite_effect,
-				std::shared_ptr<Lame::Texture>(Lame::Texture::Create(LameGraphics::Get().context(), "data/alpha.DDS")),
-				Lame::Vector2::one * 0.1f,
-				0.2f,
-				Lame::Rectangle2D::CreateTLNormalized() ) );
-		if (!sprite || !LameGraphics::Get().Add(sprite))
-		{
-			Shutdown();
-			return false;
-		}
-
-		number = std::shared_ptr<Lame::Sprite>(Lame::Sprite::Create(
-			sprite_effect,
-			std::shared_ptr<Lame::Texture>(Lame::Texture::Create(LameGraphics::Get().context(), "data/numbers.DDS")),
-			Lame::Rectangle2D(Lame::Vector2::one * 0.8f, Lame::Vector2(0.2f, 0.3f)),
-			Lame::Rectangle2D::CreateTLNormalized() ));
-		if (!number || !LameGraphics::Get().Add(number))
-		{
-			Shutdown();
-			return false;
-		}
-		number->SelectFromSheet(10, 1, 0);
-
 		return true;
 	}
 
@@ -172,16 +153,23 @@ namespace Gameplay
 		LameInput::Get().Tick(deltaTime);
 		_itoa_s(static_cast<int>(1.0f / deltaTime), frames_per_second, 10);
 		
-		//HandleInput(deltaTime);
+		HandleInput(deltaTime);
 
 #ifdef ENABLE_DEBUG_RENDERING
-		LameGraphics::Get().debug_renderer()->AddCylinder(
-			true,
-			60,
-			60,
-			250,
-			Lame::Transform::CreateDefault(),
-			Lame::Color32::green);
+		if (flyCamMode)
+		{
+			Lame::Transform player;
+			player.position(fpsControls->detached_pos() + Lame::Vector3::down * (fpsControls->height() / 2));
+			player.rotation(fpsControls->detached_rot());
+			player.scale(Lame::Vector3::one);
+			LameGraphics::Get().debug_renderer()->AddCylinder(
+				true,
+				60,
+				60,
+				175,
+				player,
+				Lame::Color32::green);
+		}
 #endif
 
 		LamePhysics::Get().Tick(deltaTime);
@@ -191,9 +179,8 @@ namespace Gameplay
 
 	bool Shutdown()
 	{
-		sprite_effect.reset();
-		sprite.reset();
 		fpsControls.reset();
+		flyCam.reset();
 
 		LamePhysics::Release();
 		LameGraphics::Release();
@@ -233,52 +220,12 @@ namespace
 
 	void HandleInput(float deltaTime)
 	{
-		using namespace Lame;
 		using namespace Lame::Input;
-
-		const float movementAmount = 300.0f * deltaTime;
-		std::shared_ptr<GameObject> movableObject = LameGraphics::Get().camera()->gameObject();
-		Vector3 movementVector = Vector3::zero;
-		if (LameInput::Get().Held(Keyboard::W))						//forward
-			movementVector += Vector3::forward;
-		if (LameInput::Get().Held(Keyboard::S))						//backward
-			movementVector += Vector3::back;
-		if (LameInput::Get().Held(Keyboard::D))						//right
-			movementVector += Vector3::right;
-		if (LameInput::Get().Held(Keyboard::A))						//left
-			movementVector += Vector3::left;
-		if (LameInput::Get().Held(Keyboard::E))						//up
-			movementVector += Vector3::up;
-		if (LameInput::Get().Held(Keyboard::Q))						//down
-			movementVector += Vector3::down;
-
-		movementVector = LameGraphics::Get().camera()->gameObject()->transform().rotation() * movementVector * movementAmount;
-		if (!movementVector.AnyNaN())
+		if (LameInput::Get().Down(Keyboard::C))
 		{
-			LameGraphics::Get().camera()->gameObject()->transform().Move(movementVector);
-		}
-		else
-		{
-			DEBUG_PRINT("Invalid movement vector");
-		}
-
-		const float rotationAmount = 40.0f * deltaTime;
-		Vector3 rotationAxis = Vector3::zero;
-		if (LameInput::Get().Held(Keyboard::Left))						//rotate left
-			rotationAxis += Vector3::up;
-		if (LameInput::Get().Held(Keyboard::Right))						//rotate Right
-			rotationAxis += Vector3::down;
-		//if (Keyboard::Pressed(Keyboard::Up))						//rotate up
-		//	rotationAxis += Vector3::Vector3::right;
-		//if (Keyboard::Pressed(Keyboard::Down))						//rotate Down
-		//	rotationAxis += Vector3::Vector3::left;
-
-		movableObject->transform().Rotate(Quaternion::Euler(rotationAxis * rotationAmount));
-
-		uint8_t num = GetNumberKeyPressed();
-		if (num < 10)
-		{
-			number->SelectFromSheet(10, 1, num);
+			flyCamMode = !flyCamMode;
+			flyCam->enabled(flyCamMode);
+			fpsControls->enabled(!flyCamMode);
 		}
 	}
 

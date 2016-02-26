@@ -30,6 +30,30 @@ Lame::Vector3 FPSWalkerComponent::FootPosition() const
 	return gameObject()->transform().position() + Lame::Vector3::down * height();
 }
 
+void FindPlayerPosition(Lame::Vector3& io_position, const Lame::Vector3& i_world_dir, int index)
+{
+	using namespace Lame;
+
+	if (i_world_dir == Vector3::zero || index <= 0)
+		return;
+
+	std::vector<Lame::Collision::RaycastHit> hits;
+	if (LamePhysics::Get().RaycastAgainst(io_position, i_world_dir, hits))
+	{
+		int soonest_index = Lame::Collision::FindSoonestIndex(hits);
+		if (soonest_index >= 0)
+		{
+			io_position = io_position + i_world_dir * hits[soonest_index].t + hits[soonest_index].normal * 10.0f;
+			Vector3 dir = (i_world_dir * (1.0f - hits[soonest_index].t)).ProjectOnPlane(hits[soonest_index].normal);
+			FindPlayerPosition(io_position, dir, index - 1);
+		}
+		else
+			io_position += i_world_dir;
+	}
+	else
+		io_position += i_world_dir;
+}
+
 void FPSWalkerComponent::Update(float i_deltatime)
 {
 	using namespace Lame;
@@ -38,7 +62,7 @@ void FPSWalkerComponent::Update(float i_deltatime)
 	std::shared_ptr<Lame::GameObject> go = gameObject();
 
 	bool grounded = false;
-	Vector3 ground_normal = Vector3::up;
+	Lame::Collision::RaycastHit hitInfo;
 	{
 		Vector3 ray_start = go->transform().position();
 		Vector3 ray_dir = Lame::Vector3::down * (groundable_check_length_ + height());
@@ -47,14 +71,16 @@ void FPSWalkerComponent::Update(float i_deltatime)
 		grounded = LamePhysics::Get().RaycastAgainst(ray_start, ray_dir, grounded_hits);
 		if (grounded)
 		{
-			//DEBUG_PRINT("grounded=%s hits=%d", grounded ? "yes" : "no", grounded_hits.size());
 			int soonest_index = Lame::Collision::FindSoonestIndex(grounded_hits);
 			if (soonest_index >= 0)
 			{
-				ground_normal = grounded_hits[soonest_index].normal;
-				DEBUG_PRINT("ground_norm = %s, t=%f", ground_normal.to_string().c_str(), grounded_hits[soonest_index].t);
+				hitInfo = grounded_hits[soonest_index];
 			}
+			else
+				hitInfo.normal = Lame::Vector3::up;
 		}
+		else
+			hitInfo.normal = Lame::Vector3::up;
 	}
 
 	if (grounded)
@@ -78,11 +104,6 @@ void FPSWalkerComponent::Update(float i_deltatime)
 		if (LameInput::Get().Held(Keyboard::S))
 			localMovement += Vector3::back;
 
-		if (LameInput::Get().Held(Keyboard::Q))
-		{
-			go->transform().Move(Vector3::down * 30.0f);
-		}
-
 		if (LameInput::Get().Held(Keyboard::Left))						//rotate left
 			localRotationAxis += Vector3::up;
 		if (LameInput::Get().Held(Keyboard::Right))						//rotate Right
@@ -95,10 +116,30 @@ void FPSWalkerComponent::Update(float i_deltatime)
 	if (localMovement.sq_magnitude() > 0.0f)
 	{
 		Vector3 projectedMovement = gameObject()->transform().rotation() * localMovement.normalized();
-		projectedMovement = projectedMovement.ProjectOnPlane(ground_normal).normalized();
+		projectedMovement = projectedMovement.ProjectOnPlane(hitInfo.normal).normalized();
 		Vector3 worldMovement = projectedMovement * (speed() * i_deltatime);
-		
-		go->transform().Move(worldMovement);
+
+		//try to move the player
+		Vector3 playerPos = FootPosition();
+		FindPlayerPosition(playerPos, worldMovement, 2);
+		go->transform().position(playerPos + Vector3::up * height());
 	}
+
 	go->transform().Rotate(Quaternion::Euler(localRotationAxis * rotation_rate_* i_deltatime));
+}
+
+void FPSWalkerComponent::Enabled(bool enabled)
+{
+	physics_comp_->enabled(enabled);
+	Lame::Transform& t = gameObject()->transform();
+	if (enabled)
+	{
+		t.position(pos);
+		t.rotation(rot);
+	}
+	else
+	{
+		pos = t.position();
+		rot = t.rotation();
+	}
 }

@@ -32,6 +32,11 @@ public:
 
 	void Update(float i_deltatime) override;
 
+	void Enabled(bool enabled) override;
+
+	Lame::Vector3 detached_pos() const { return pos; }
+	Lame::Quaternion detached_rot() const { return rot; }
+
 private:
 	std::shared_ptr<Lame::Physics3DComponent> physics_comp_;
 
@@ -39,6 +44,10 @@ private:
 	float rotation_rate_;
 	float height_;
 	float groundable_check_length_;
+
+	//detach storage
+	Lame::Vector3 pos;
+	Lame::Quaternion rot;
 };
 
 #endif //_FPSWALKERCOMPONENT_H

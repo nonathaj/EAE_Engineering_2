@@ -32,6 +32,18 @@ namespace Lame
 		template<typename T>
 		inline T Repeat(const T i_num, const T i_lim);
 
+		template<typename T>
+		inline T Clamp(const T& i_val, const T& i_min, const T& i_max);
+
+		template<typename T>
+		inline T Clamp01(const T i_val);
+
+		template<typename T>
+		inline T Lerp(const T& i_from, const T& i_to, const float i_t);
+
+		template<typename T>
+		inline T LerpUnclamped(const T& i_from, const T& i_to, const float i_t);
+
 		namespace Int
 		{
 			template<typename T>

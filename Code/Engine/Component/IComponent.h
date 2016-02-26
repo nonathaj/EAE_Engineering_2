@@ -19,7 +19,7 @@ namespace Lame
 		inline std::shared_ptr<GameObject> gameObject() const { return gameObject_.expired() ? nullptr : gameObject_.lock(); }
 
 		inline bool enabled() const { return !gameObject_.expired() && enabled_; }
-		inline void enabled(bool i_enabled) { enabled_ = i_enabled; }
+		inline void enabled(bool i_enabled) { enabled_ = i_enabled; Enabled(enabled_); }
 
 		virtual void Update(float deltaTime) {}
 		virtual void PhysicsUpdate(float deltaTime) {}
@@ -27,6 +27,8 @@ namespace Lame
 	protected:
 		//must be created by a child with this constructor
 		IComponent(std::weak_ptr<GameObject> go);
+
+		virtual void Enabled(bool enable) {}
 
 	private:
 		IComponent();

@@ -14,13 +14,23 @@ namespace Lame
 
 	void GameObject::Update(float deltaTime)
 	{
+		if (!enabled())
+			return;
 		for (size_t x = 0; x < components_.size(); x++)
-			components_[x]->Update(deltaTime);
+		{
+			if(components_[x]->enabled())
+				components_[x]->Update(deltaTime);
+		}
 	}
 
 	void GameObject::PhysicsUpdate(float deltaTime)
 	{
+		if (!enabled())
+			return;
 		for (size_t x = 0; x < components_.size(); x++)
-			components_[x]->PhysicsUpdate(deltaTime);
+		{
+			if (components_[x]->enabled())
+				components_[x]->PhysicsUpdate(deltaTime);
+		}
 	}
 }

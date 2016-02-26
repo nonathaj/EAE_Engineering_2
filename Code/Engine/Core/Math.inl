@@ -68,6 +68,36 @@ namespace Lame
 				result += i_lim;
 			return result;
 		}
+
+		template<typename T>
+		inline T Clamp(const T& i_val, const T& i_min, const T& i_max)
+		{
+			if (i_val < i_min)
+				return i_min;
+			else if (i_val > i_max)
+				return i_max;
+			else
+				return i_val;
+		}
+
+		template<typename T>
+		inline T Clamp01(const T& i_val)
+		{
+			return Clamp(i_val, T(0), T(1));
+		}
+
+		template<typename T>
+		inline T Lerp(const T& i_from, const T& i_to, const float i_t)
+		{
+			return LerpUnclamped(i_from, i_to, Clamp01(i_t));
+		}
+
+		template<typename T>
+		inline T LerpUnclamped(const T& i_from, const T& i_to, const float i_t)
+		{
+			T diff = i_to - i_from;
+			return i_from + diff * i_t;
+		}
 		
 		namespace Int
 		{

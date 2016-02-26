@@ -95,10 +95,13 @@ namespace Lame
 			std::shared_ptr<Lame::GameObject> go = (*itr)->gameObject();
 			if (go && !go->IsDestroying())
 			{
-				Vector3 position, velocity;
-				Predict(*itr, fixed_timestep_, position, velocity);
-				go->transform().position(position);
-				(*itr)->velocity(velocity);
+				if ((*itr)->enabled())
+				{
+					Vector3 position, velocity;
+					Predict(*itr, fixed_timestep_, position, velocity);
+					go->transform().position(position);
+					(*itr)->velocity(velocity);
+				}
 
 				++itr;
 			}

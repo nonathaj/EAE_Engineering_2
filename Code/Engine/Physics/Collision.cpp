@@ -27,14 +27,15 @@ namespace Lame
 		{
 			Vector3 ab = b - a;
 			Vector3 ac = c - a;
+			Vector3 reverse_dir = -i_ray_direction;
 
 			// Compute triangle normal. Can be precalculated or cached if
 			// intersecting multiple segments against the same triangle
-			o_hit_info.normal = ab.cross(ac);
-			o_hit_info.normal.normalize();
+			o_hit_info.normal = ac.cross(ab);
+			//o_hit_info.normal.normalize();
 
 			// If segment is parallel to or points away from triangle, exit early
-			float distanceOnNormal = i_ray_direction.dot(o_hit_info.normal);
+			float distanceOnNormal = reverse_dir.dot(o_hit_info.normal);
 			if (distanceOnNormal <= 0.0f)
 				return false;
 
@@ -49,19 +50,12 @@ namespace Lame
 				return false; // For segment; exclude this code line for a ray test
 
 			// Compute barycentric coordinate components and test if within bounds
-			Vector3 e = i_ray_direction.cross(a_to_start);
-			e.normalize();
-			o_hit_info.barycentric_coord.y(ac.dot(e));
-			DEBUG_PRINT("\n\nnorm=%s distOnNorm=%f \na_to_start=%s t=%f\nbary-y=%f", 
-				o_hit_info.normal.to_string().c_str(),
-				distanceOnNormal, 
-				a_to_start.to_string().c_str(),
-				o_hit_info.t,
-				o_hit_info.barycentric_coord.y() 
-				);
+			Vector3 e = reverse_dir.cross(a_to_start);
+			//e.normalize();
+			o_hit_info.barycentric_coord.y(ab.dot(e));
 			if (o_hit_info.barycentric_coord.y() < 0.0f || o_hit_info.barycentric_coord.y() > distanceOnNormal)
 				return false;
-			o_hit_info.barycentric_coord.z(-ab.dot(e));
+			o_hit_info.barycentric_coord.z(-ac.dot(e));
 			if (o_hit_info.barycentric_coord.z() < 0.0f || o_hit_info.barycentric_coord.y() + o_hit_info.barycentric_coord.z() > distanceOnNormal)
 				return false;
 
@@ -72,6 +66,7 @@ namespace Lame
 			o_hit_info.barycentric_coord.y(o_hit_info.barycentric_coord.y() * ood);
 			o_hit_info.barycentric_coord.z(o_hit_info.barycentric_coord.z() * ood);
 			o_hit_info.barycentric_coord.x(1.0f - o_hit_info.barycentric_coord.y() - o_hit_info.barycentric_coord.z());
+			o_hit_info.normal.normalize();
 			return true;
 		}
 
